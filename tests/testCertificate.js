@@ -7,13 +7,13 @@ describe("Certificate parsing", function() {
   describe("parse v2", function() {
     it("parses a v2 certificate", function (done) {
       setTimeout(function () {
-        fs.readFile('tests/sample_signed_cert-valid-2.0-alpha.json', 'utf8', function (err, data) {
+        fs.readFile('tests/sample_signed_cert-revoked-2.0-alpha.json', 'utf8', function (err, data) {
           if (err) {
             assert.fail();
             done(err);
           }
           cert = Certificate.parseJson(JSON.parse(data));
-          expect(cert.name).to.equal("Arya Stark");
+          expect(cert.name).to.equal("Daenerys Targaryen");
           done();
         });
       });
@@ -31,6 +31,7 @@ describe("Certificate parsing", function() {
           }
           cert = Certificate.parseJson(JSON.parse(data));
           expect(cert.name).to.equal("Arya Stark");
+          expect(cert.signature).to.equal("H0osFKllW8LrBhNMc4gC0TbRU0OK9Qgpebji1PgmNsgtSKCLXHL217cEG3FoHkaF/G2woGaoKDV/MrmpROvD860=");
           done();
         });
       });

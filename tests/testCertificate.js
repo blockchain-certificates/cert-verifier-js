@@ -7,7 +7,7 @@ describe("Certificate parsing", function() {
   describe("parse v2", function() {
     it("parses a v2 certificate", function (done) {
       setTimeout(function () {
-        fs.readFile('tests/sample_signed_cert-valid-2.0.json', 'utf8', function (err, data) {
+        fs.readFile('tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
           if (err) {
             assert.fail();
             done(err);
@@ -24,7 +24,7 @@ describe("Certificate parsing", function() {
 
     it("parses a v1 certificate", function (done) {
       setTimeout(function () {
-        fs.readFile('tests/sample_signed_cert-valid-1.2.0.json', 'utf8', function (err, data) {
+        fs.readFile('tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
           if (err) {
             assert.fail();
             done(err);

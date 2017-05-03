@@ -42,7 +42,6 @@ describe("Certificate verifier", function() {
           assert.isOk(data);
           done();
         });
-
       });
     });
 
@@ -56,7 +55,6 @@ describe("Certificate verifier", function() {
           done();
         });
       });
-
     });
 
     it("ensures a revoked v2 certificate fails", function(done) {
@@ -71,6 +69,32 @@ describe("Certificate verifier", function() {
       });
 
     });
+
+    it("ensures a v2 certificate with a revoked issuing key fails", function(done) {
+      // In other words, transaction happened after issuing key was revoked
+      this.timeout(10000);
+      fs.readFile('tests/sample_cert-with-revoked-key-2.0.json', 'utf8', function (err, data) {
+        var certVerifier = new CertificateVerifier(data);
+        certVerifier.verify(function(err, data) {
+          assert.isOk(err);
+          expect(data).to.equal("Transaction occurred at time when issuing address was not considered valid.");
+          done();
+        });
+      });
+    });
+    it("ensures a v2 certificate with a v1 issuer passes", function(done) {
+      // In other words, transaction happened after issuing key was revoked
+      this.timeout(10000);
+      fs.readFile('tests/sample_cert-with_v1_issuer-2.0.json', 'utf8', function (err, data) {
+        var certVerifier = new CertificateVerifier(data);
+        certVerifier.verify(function(err, data) {
+          assert.isNotOk(err);
+          assert.isOk(data);
+          done();
+        });
+      });
+    });
+
   });
 
 

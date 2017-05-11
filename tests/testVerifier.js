@@ -1,10 +1,8 @@
 'use strict';
-var expect    = require("chai").expect;
-var assert    = require("chai").assert;
-var CertificateVerifier = require("../lib/verifier");
 
-
-var fs = require('fs');
+import { assert, expect } from 'chai'
+import  fs  from 'fs'
+import { CertificateVerifier } from '../lib/index'
 
 
 describe("Certificate verifier", function() {

@@ -15,6 +15,7 @@
     "verror": "^1.9.0",
     "xmlhttprequest": "^1.8.0"
   },
+  "main": "verifier.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha --reporter spec tests/*",
     "build": "browserify lib/index.js -o verifier.js -t [ babelify --presets [ es2015 ] ]"

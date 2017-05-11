@@ -756,7 +756,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   return CertificateVerifier;
 }();
 
-//module.exports = CertificateVerifier;
+module.exports = CertificateVerifier;
 
 /*
 var fs = require('fs');

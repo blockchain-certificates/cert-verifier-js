@@ -65,7 +65,6 @@ describe("Certificate verifier", function() {
           done();
         });
       });
-
     });
 
     it("ensures a v2 certificate with a revoked issuing key fails", function(done) {
@@ -80,6 +79,7 @@ describe("Certificate verifier", function() {
         });
       });
     });
+
     it("ensures a v2 certificate with a v1 issuer passes", function(done) {
       // In other words, transaction happened after issuing key was revoked
       this.timeout(10000);
@@ -92,8 +92,5 @@ describe("Certificate verifier", function() {
         });
       });
     });
-
   });
-
-
 });

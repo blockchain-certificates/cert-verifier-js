@@ -18,8 +18,8 @@
   "main": "verifier.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
-    "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015 ] ]"
-  },
+    "build": "browserify lib/certificate.js --s Certificate -o certificate.js -t [ babelify --presets [ es2015 ] ] && browserify lib/status.js --s Status -o status.js -t [ babelify --presets [ es2015 ] ] && browserify lib/verifier.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015 ] ]"
+},
   "author": "Kim Duffy",
   "license": "MIT",
   "devDependencies": {
@@ -29,3 +29,10 @@
     "browserify": "^14.3.0"
   }
 }
+
+
+
+
+
+
+

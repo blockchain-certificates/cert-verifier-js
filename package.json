@@ -17,7 +17,6 @@
   },
   "main": "verifier.js",
   "scripts": {
-    "postinstall": "npm run build",
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
     "build": "browserify lib/index.js --s Verifier -o bundle.js -t [ babelify --presets [ es2015 ] ] && npm run uglify",
     "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js"

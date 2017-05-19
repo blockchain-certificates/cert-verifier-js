@@ -7,4 +7,5 @@ node_modules/*
 bower_components/*
 
 bundle*.js
+verifier.js
 .babel*

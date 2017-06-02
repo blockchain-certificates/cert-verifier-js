@@ -54,7 +54,7 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
 
 ## Using in a browser
 
-`npm install` generates the browserified script `verifier.js`. 
+`npm run build` generates the browserified script `verifier.js`. 
 
 The following shows how you can use it: 
 

@@ -260,14 +260,30 @@ var getChainForAddress = function getChainForAddress(publicKey) {
   }
 };
 
-var getTxUrlForChain = function getTxUrlForChain(transactionId, chain) {
-  var url = void 0;
+var getTxUrlsAndParsers = function getTxUrlsAndParsers(transactionId, chain) {
+  var blockCypherUrl = void 0;
   if (chain === bitcoin.networks.mainnet) {
-    url = "https://api.blockcypher.com/v1/btc/main/txs/" + transactionId + "?limit=500";
+    blockCypherUrl = "https://api.blockcypher.com/v1/btc/main/txs/" + transactionId + "?limit=500";
   } else {
-    url = "http://api.blockcypher.com/v1/btc/test3/txs/" + transactionId + "?limit=500";
+    blockCypherUrl = "https://api.blockcypher.com/v1/btc/test3/txs/" + transactionId + "?limit=500";
   }
-  return url;
+  var blockCypherHandler = {
+    url: blockCypherUrl,
+    parser: parseBlockCypherResponse
+  };
+
+  var blockrIoUrl = void 0;
+  if (chain === bitcoin.networks.mainnet) {
+    blockrIoUrl = "https://btc.blockr.io/api/v1/tx/info/" + transactionId;
+  } else {
+    blockrIoUrl = "https://tbtc.blockr.io/api/v1/tx/info/" + transactionId;
+  }
+  var blockrIoHandler = {
+    url: blockrIoUrl,
+    parser: parseBlockrIoResponse
+  };
+
+  return [blockCypherHandler, blockrIoHandler];
 };
 
 var TransactionData = function TransactionData(remoteHash, issuingAddress, time, revokedAddresses) {
@@ -288,7 +304,7 @@ var Key = function Key(publicKey, created, revoked, expires) {
   this.expires = expires;
 };
 
-var parseTxResponse = function parseTxResponse(jsonResponse) {
+var parseBlockCypherResponse = function parseBlockCypherResponse(jsonResponse) {
   var time = jsonResponse.received;
   var outputs = jsonResponse.outputs;
   var lastOutput = outputs[outputs.length - 1];
@@ -298,6 +314,21 @@ var parseTxResponse = function parseTxResponse(jsonResponse) {
     return !!output.spent_by;
   }).map(function (output) {
     return output.addresses[0];
+  });
+  return new TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
+};
+
+var parseBlockrIoResponse = function parseBlockrIoResponse(jsonResponse) {
+  var time = jsonResponse.data.time_utc;
+  var outputs = jsonResponse.data.vouts;
+  var lastOutput = outputs[outputs.length - 1];
+  var issuingAddress = jsonResponse.data.vins[0].address;
+
+  var opReturnScript = lastOutput.extras.script.substr(4); // remove first 4 chars
+  var revokedAddresses = outputs.filter(function (output) {
+    return output.is_spent != null && output.is_spent == 49;
+  }).map(function (output) {
+    return output.address;
   });
   return new TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
 };
@@ -341,6 +372,39 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
       return completionCallback(e, reason);
     }
   }, {
+    key: '_lookForTx',
+    value: function _lookForTx(index, items, completionCallback) {
+      var _this = this;
+
+      if (index >= items.length) {
+        return this._failed(completionCallback, 'Could not fetch or parse remote transaction data');
+      }
+      var item = items[index];
+      var request = new XMLHttpRequest();
+      request.addEventListener('load', function () {
+        var status = request.status;
+        if (status != 200) {
+          // try next handler
+          return _this._lookForTx(index + 1, items, completionCallback);
+        }
+        try {
+          var responseData = JSON.parse(request.responseText);
+          var txData = item.parser(responseData);
+          _this._verificationState.remoteHash = txData.remoteHash;
+          _this._verificationState.revokedAddresses = txData.revokedAddresses;
+          _this._verificationState.txIssuingAddress = txData.issuingAddress;
+          _this._verificationState.time = txData.time;
+          return _this._compareHashes(completionCallback);
+        } catch (e) {
+          // try next handler
+          return _this._lookForTx(index + 1, items, completionCallback);
+        }
+      });
+      request.open('GET', item.url);
+      request.responseType = "json";
+      request.send();
+    }
+  }, {
     key: 'verify',
     value: function verify(completionCallback) {
       completionCallback = completionCallback || noop;
@@ -350,7 +414,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   }, {
     key: '_computeLocalHash',
     value: function _computeLocalHash(completionCallback) {
-      var _this = this;
+      var _this2 = this;
 
       this.statusCallback(_status.Status.computingLocalHash);
 
@@ -371,7 +435,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         }, function (err, normalized) {
           if (!!err) {
             var reason = "Failed JSON-LD normalization";
-            return _this._failed(completionCallback, reason, err);
+            return _this2._failed(completionCallback, reason, err);
           } else {
 
             var myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
@@ -382,11 +446,11 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
                 unmappedFields.push(matches[i]);
               }
               var reason = "Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",");
-              return _this._failed(completionCallback, reason, err);
+              return _this2._failed(completionCallback, reason, err);
             }
-            _this._verificationState.normalized = normalized;
-            _this._verificationState.localHash = sha256(_this._toUTF8Data(normalized));
-            _this._fetchRemoteHash(completionCallback);
+            _this2._verificationState.normalized = normalized;
+            _this2._verificationState.localHash = sha256(_this2._toUTF8Data(normalized));
+            _this2._fetchRemoteHash(completionCallback);
           }
         });
       }
@@ -394,8 +458,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   }, {
     key: '_fetchRemoteHash',
     value: function _fetchRemoteHash(completionCallback) {
-      var _this2 = this;
-
       this.statusCallback(_status.Status.fetchingRemoteHash);
 
       var transactionID;
@@ -407,34 +469,11 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         return this._failed(completionCallback, reason, e);
       }
 
-      var request = new XMLHttpRequest();
-
-      request.addEventListener('load', function () {
-        var status = request.status;
-        if (status != 200) {
-          var reason = "Got unexpected response when trying to get remote transaction data; " + status;
-          return _this2._failed(completionCallback, reason);
-        }
-        try {
-          var responseData = JSON.parse(request.responseText);
-          var txData = parseTxResponse(responseData);
-          _this2._verificationState.remoteHash = txData.remoteHash;
-          _this2._verificationState.revokedAddresses = txData.revokedAddresses;
-          _this2._verificationState.txIssuingAddress = txData.issuingAddress;
-          _this2._verificationState.time = txData.time;
-        } catch (e) {
-          var reason = "Unable to parse JSON out of remote transaction data.";
-          return _this2._failed(completionCallback, reason, e);
-        }
-
-        _this2._compareHashes(completionCallback);
-      });
       var chain = getChainForAddress(this.certificate.publicKey);
       this._verificationState.chain = chain;
-      var url = getTxUrlForChain(transactionID, chain);
-      request.open('GET', url);
-      request.responseType = "json";
-      request.send();
+      var handlers = getTxUrlsAndParsers(transactionID, chain);
+
+      return this._lookForTx(0, handlers, completionCallback);
     }
   }, {
     key: '_compareHashes',
@@ -760,6 +799,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 }();
 
 /*
+
 var fs = require('fs');
 
 function statusCallback(arg1) {

@@ -253,7 +253,7 @@ var SECURITY_CONTEXT_URL = "https://w3id.org/security/v1";
 var noop = function noop() {};
 
 var getChainForAddress = function getChainForAddress(publicKey) {
-  if (publicKey.startsWith("1")) {
+  if (publicKey.startsWith("1") || publicKey.startsWith("ecdsa-koblitz-pubkey:1")) {
     return bitcoin.networks.mainnet;
   } else {
     return bitcoin.networks.testnet;

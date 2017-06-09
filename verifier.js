@@ -804,6 +804,8 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   return CertificateVerifier;
 }();
 
+/*
+
 var fs = require('fs');
 
 function statusCallback(arg1) {
@@ -825,9 +827,12 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
       console.log("done");
     }
   });
+
 });
 
-},{"./certificate":1,"./certificateVersion":2,"./status":4,"bitcoinjs-lib":22,"fs":32,"jsonld":62,"sha256":90,"verror":108,"xmlhttprequest":112}],6:[function(require,module,exports){
+*/
+
+},{"./certificate":1,"./certificateVersion":2,"./status":4,"bitcoinjs-lib":22,"jsonld":62,"sha256":90,"verror":108,"xmlhttprequest":112}],6:[function(require,module,exports){
 (function (global){
 'use strict';
 

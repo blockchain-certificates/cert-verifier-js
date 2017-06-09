@@ -24,6 +24,14 @@ var getChainForAddress = function getChainForAddress(publicKey) {
   }
 };
 
+var getNameForChain = function getNameForChain(chain) {
+  if (chain === bitcoin.networks.bitcoin) {
+    return 'bitcoin';
+  } else {
+    return 'testnet';
+  }
+};
+
 var Certificate = exports.Certificate = function () {
   function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain) {
     _classCallCheck(this, Certificate);
@@ -43,6 +51,7 @@ var Certificate = exports.Certificate = function () {
     this.publicKey = publicKey;
     this.revocationKey = revocationKey;
     this.chain = chain;
+    this.chainAsString = getNameForChain(chain);
   }
 
   _createClass(Certificate, null, [{
@@ -145,17 +154,19 @@ var SignatureImage = exports.SignatureImage = function SignatureImage(image, job
 };
 
 /*
+
 var fs = require('fs');
 
-fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
+fs.readFile('../tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }
 
   let cert = Certificate.parseJson(JSON.parse(data));
-  console.log(cert.chain);
+  console.log(cert.chainAsString);
 
-});*/
+});
+*/
 
 },{"./certificateVersion":2,"bitcoinjs-lib":22}],2:[function(require,module,exports){
 "use strict";

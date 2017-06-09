@@ -14,8 +14,18 @@ var _certificateVersion = require('./certificateVersion');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var bitcoin = require('bitcoinjs-lib');
+
+var getChainForAddress = function getChainForAddress(publicKey) {
+  if (publicKey.startsWith("1") || publicKey.startsWith("ecdsa-koblitz-pubkey:1")) {
+    return bitcoin.networks.bitcoin;
+  } else {
+    return bitcoin.networks.testnet;
+  }
+};
+
 var Certificate = exports.Certificate = function () {
-  function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey) {
+  function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain) {
     _classCallCheck(this, Certificate);
 
     this.version = version;
@@ -32,6 +42,7 @@ var Certificate = exports.Certificate = function () {
     this.signature = signature;
     this.publicKey = publicKey;
     this.revocationKey = revocationKey;
+    this.chain = chain;
   }
 
   _createClass(Certificate, null, [{
@@ -79,7 +90,9 @@ var Certificate = exports.Certificate = function () {
         version = _certificateVersion.CertificateVersion.v1_2;
       }
 
-      return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, signature, publicKey, revocationKey);
+      var chain = getChainForAddress(publicKey);
+
+      return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain);
     }
   }, {
     key: 'parseV2',
@@ -105,7 +118,8 @@ var Certificate = exports.Certificate = function () {
       var issuer = badge.issuer;
       var receipt = certificateJson.signature;
       var publicKey = recipient.recipientProfile.publicKey;
-      return new Certificate(_certificateVersion.CertificateVersion.v2_0, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey);
+      var chain = getChainForAddress(certificateJson.verification.creator);
+      return new Certificate(_certificateVersion.CertificateVersion.v2_0, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chain);
     }
   }, {
     key: 'parseJson',
@@ -133,17 +147,17 @@ var SignatureImage = exports.SignatureImage = function SignatureImage(image, job
 /*
 var fs = require('fs');
 
-fs.readFile('../tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
+fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }
 
   let cert = Certificate.parseJson(JSON.parse(data));
-  console.log(cert.name);
+  console.log(cert.chain);
 
 });*/
 
-},{"./certificateVersion":2}],2:[function(require,module,exports){
+},{"./certificateVersion":2,"bitcoinjs-lib":22}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -252,17 +266,9 @@ var SECURITY_CONTEXT_URL = "https://w3id.org/security/v1";
 
 var noop = function noop() {};
 
-var getChainForAddress = function getChainForAddress(publicKey) {
-  if (publicKey.startsWith("1") || publicKey.startsWith("ecdsa-koblitz-pubkey:1")) {
-    return bitcoin.networks.mainnet;
-  } else {
-    return bitcoin.networks.testnet;
-  }
-};
-
 var getTxUrlsAndParsers = function getTxUrlsAndParsers(transactionId, chain) {
   var blockCypherUrl = void 0;
-  if (chain === bitcoin.networks.mainnet) {
+  if (chain === bitcoin.networks.bitcoin) {
     blockCypherUrl = "https://api.blockcypher.com/v1/btc/main/txs/" + transactionId + "?limit=500";
   } else {
     blockCypherUrl = "https://api.blockcypher.com/v1/btc/test3/txs/" + transactionId + "?limit=500";
@@ -273,7 +279,7 @@ var getTxUrlsAndParsers = function getTxUrlsAndParsers(transactionId, chain) {
   };
 
   var blockrIoUrl = void 0;
-  if (chain === bitcoin.networks.mainnet) {
+  if (chain === bitcoin.networks.bitcoin) {
     blockrIoUrl = "https://btc.blockr.io/api/v1/tx/info/" + transactionId;
   } else {
     blockrIoUrl = "https://tbtc.blockr.io/api/v1/tx/info/" + transactionId;
@@ -469,7 +475,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         return this._failed(completionCallback, reason, e);
       }
 
-      var chain = getChainForAddress(this.certificate.publicKey);
+      var chain = this.certificate.chain;
       this._verificationState.chain = chain;
       var handlers = getTxUrlsAndParsers(transactionID, chain);
 
@@ -656,7 +662,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
           var revocationKeys = responseData.revocationKeys || [];
           issuerKey = issuerKeys[0].key;
           revocationKey = revocationKeys[0].key;
-          if (!bitcoin.message.verify(issuerKey, _this4.certificate.signature, _this4.certificate.id, getChainForAddress(issuerKey))) {
+          if (!bitcoin.message.verify(issuerKey, _this4.certificate.signature, _this4.certificate.id, _this4.certificate.chain)) {
             // TODO: `Issuer key doesn't match derived address. Address: ${address}, Issuer Key: ${issuerKey}`
             var reason = "Issuer key doesn't match derived address.";
             return _this4._failed(completionCallback, reason, null);
@@ -798,8 +804,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   return CertificateVerifier;
 }();
 
-/*
-
 var fs = require('fs');
 
 function statusCallback(arg1) {
@@ -821,12 +825,9 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
       console.log("done");
     }
   });
-
 });
 
-*/
-
-},{"./certificate":1,"./certificateVersion":2,"./status":4,"bitcoinjs-lib":22,"jsonld":62,"sha256":90,"verror":108,"xmlhttprequest":112}],6:[function(require,module,exports){
+},{"./certificate":1,"./certificateVersion":2,"./status":4,"bitcoinjs-lib":22,"fs":32,"jsonld":62,"sha256":90,"verror":108,"xmlhttprequest":112}],6:[function(require,module,exports){
 (function (global){
 'use strict';
 

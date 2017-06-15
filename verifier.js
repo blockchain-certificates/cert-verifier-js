@@ -780,6 +780,8 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         var reason = "This certificate has expired.";
         return this._failed(completionCallback, reason, null);
       }
+
+      return this._succeed(completionCallback);
     }
 
     // Helper functions

@@ -25,7 +25,7 @@ describe("Certificate verifier", function() {
       });
     });
 
-    it("ensures an expired v1 certificate fails", function(done) {
+    it("ensures an expired v1 certificate fails expiration check", function(done) {
       this.timeout(3000);
       fs.readFile('tests/data/sample_cert-expired-1.2.0.json', 'utf8', function (err, data) {
         if (err) {
@@ -111,7 +111,7 @@ describe("Certificate verifier", function() {
       });
     });
 
-    it("ensures an expired v2 certificate fails", function(done) {
+    it("ensures an expired v2 certificate fails expiration check", function(done) {
       this.timeout(3000);
       fs.readFile('tests/data/sample_cert-expired-2.0.json', 'utf8', function (err, data) {
         if (err) {
@@ -124,6 +124,24 @@ describe("Certificate verifier", function() {
         certVerifier._checkExpiryDate(function(err, data) {
           assert.isOk(err);
           expect(data).to.contain("expired");
+          done();
+        });
+      });
+    });
+
+    it("ensures an not-expired v2 certificate does not fail expiration check", function(done) {
+      this.timeout(3000);
+      fs.readFile('tests/data/sample_cert-notexpired-2.0.json', 'utf8', function (err, data) {
+        if (err) {
+          assert.fail();
+          done(err);
+        }
+        var certVerifier = new CertificateVerifier(data);
+        // This just checks the expiration date since the certificate was modified to expire it. We should issue an
+        // expires certificate as well for an end-to-end test case.
+        certVerifier._checkExpiryDate(function(err, data) {
+          assert.isNotOk(err);
+          assert.isOk(data);
           done();
         });
       });

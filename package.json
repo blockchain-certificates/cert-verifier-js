@@ -18,7 +18,7 @@
   "main": "verifier.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
-    "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015 ] ]",
+    "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015 ] ] -t [ brfs ]",
     "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js"
   },
   "author": "Kim Duffy",

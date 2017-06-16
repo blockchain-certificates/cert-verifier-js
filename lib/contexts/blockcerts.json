@@ -1,0 +1,65 @@
+{
+  "@context": {
+    "id": "@id",
+    "type": "@type",
+    "bc": "https://w3id.org/blockcerts#",
+    "obi": "https://w3id.org/openbadges#",
+    "cp": "https://w3id.org/chainpoint#",
+    "schema": "http://schema.org/",
+    "sec": "https://w3id.org/security#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    
+    "MerkleProof2017": "sec:MerkleProof2017",
+    
+    "RecipientProfile": "bc:RecipientProfile",
+    "SignatureLine": "bc:SignatureLine",
+    "MerkleProofVerification2017": "bc:MerkleProofVerification2017",
+    
+    "recipientProfile": "bc:recipientProfile",
+    "signatureLines": "bc:signatureLines",
+    "introductionUrl": { "@id": "bc:introductionUrl", "@type": "@id" },
+    
+    "subtitle": "bc:subtitle",
+    
+    "jobTitle": "schema:jobTitle",
+    
+    "creator": { "@id": "dc:creator", "@type": "@id" },
+    "expires": {
+      "@id": "sec:expiration",
+      "@type": "xsd:dateTime"
+    },
+    "revoked": {
+      "@id": "sec:expiration",
+      "@type": "xsd:dateTime"
+    },
+    "CryptographicKey": "sec:Key",
+    "signature": "sec:signature", 
+    
+    "verification": "bc:verification",
+    "publicKeys": "bc:publicKeys",
+    
+    "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+    "BTCOpReturn": "cp:BTCOpReturn",
+    "targetHash": "cp:targetHash",
+    "merkleRoot": "cp:merkleRoot",
+    "proof": "cp:proof",
+    "anchors": "cp:anchors",
+    "sourceId": "cp:sourceId",
+    "right": "cp:right",
+    "left": "cp:left"
+  },
+  "obi:validation": [
+    {
+      "obi:validatesType": "RecipientProfile",
+      "obi:validationSchema": "https://w3id.org/blockcerts/schema/2.0-alpha/recipientSchema.json"
+    },
+    {
+      "obi:validatesType": "SignatureLine",
+      "obi:validationSchema": "https://w3id.org/blockcerts/schema/2.0-alpha/signatureLineSchema.json"
+    },
+    {
+      "obi:validatesType": "MerkleProof2017",
+      "obi:validationSchema": "https://w3id.org/blockcerts/schema/2.0-alpha/merkleProof2017Schema.json"
+    }
+  ]
+}

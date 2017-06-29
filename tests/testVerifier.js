@@ -61,6 +61,22 @@ describe("Certificate verifier", function() {
       });
     });
 
+    it("verifies a v2 alpha certificate", function(done) {
+      this.timeout(10000);
+      fs.readFile('tests/data/sample_cert-valid-2.0-alpha.json', 'utf8', function (err, data) {
+        if (err) {
+          assert.fail();
+          return done(err);
+        }
+        var certVerifier = new CertificateVerifier(data);
+        certVerifier.verify(function (err, data) {
+          assert.isNotOk(err);
+          assert.isOk(data);
+          done();
+        });
+      });
+    });
+
     it("ensures a tampered v2 certificate fails", function(done) {
       this.timeout(10000);
       fs.readFile('tests/data/sample_cert-unmapped-2.0.json', 'utf8', function (err, data) {

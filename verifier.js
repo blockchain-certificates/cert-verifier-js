@@ -881,7 +881,7 @@ function statusCallback(arg1) {
   console.log("status=" + arg1);
 }
 
-fs.readFile('../tests/data/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
+fs.readFile('../tests/data/sample_cert-with-revoked-key-2.0.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }

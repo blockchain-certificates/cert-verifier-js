@@ -111,7 +111,9 @@ var Certificate = exports.Certificate = function () {
       var recipient = certificateJson.recipient;
       var badge = certificateJson.badge;
       var certificateImage = badge.image;
-      var name = recipient.recipientProfile.name;
+      // backcompat for alpha
+      var recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+      var name = recipientProfile.name;
       var title = badge.name;
       var description = badge.description;
       var expires = certificateJson.expires;
@@ -129,8 +131,10 @@ var Certificate = exports.Certificate = function () {
       var id = certificateJson.id;
       var issuer = badge.issuer;
       var receipt = certificateJson.signature;
-      var publicKey = recipient.recipientProfile.publicKey;
-      var chain = getChainForAddress(certificateJson.verification.creator);
+      var publicKey = recipientProfile.publicKey;
+      // backcompat for alpha
+      var issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
+      var chain = getChainForAddress(issuerKey);
       return new Certificate(_certificateVersion.CertificateVersion.v2_0, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chain, expires);
     }
   }, {
@@ -465,11 +469,12 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         }
 
         var nodeDocumentLoader = jsonld.documentLoaders.node();
+        var TEMP_CONTEXTS = {};
         var customLoader = function customLoader(url, callback) {
-          if (url in CONTEXTS) {
+          if (url in TEMP_CONTEXTS) {
             return callback(null, {
               contextUrl: null,
-              document: CONTEXTS[url],
+              document: TEMP_CONTEXTS[url],
               documentUrl: url
             });
           }
@@ -626,13 +631,16 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
           var keyMap = {};
           if ('@context' in responseData) {
-            var responseKeys = responseData.publicKeys;
+            // backcompat for v2 alpha
+            var responseKeys = responseData.publicKey || responseData.publicKeys;
             for (var i = 0; i < responseKeys.length; i++) {
               var key = responseKeys[i];
               var created = key.created || null;
               var revoked = key.revoked || null;
               var expires = key.expires || null;
-              var publicKey = key.publicKey.replace('ecdsa-koblitz-pubkey:', '');
+              // backcompat for v2 alpha
+              var publicKeyTemp = key.id || key.publicKey;
+              var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
               var k = new Key(publicKey, created, revoked, expires);
               keyMap[k.publicKey] = k;
             }
@@ -870,7 +878,7 @@ function statusCallback(arg1) {
   console.log("status=" + arg1);
 }
 
-fs.readFile('../tests/data/certificate_fail.json', 'utf8', function (err, data) {
+fs.readFile('../tests/data/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }
@@ -886,8 +894,7 @@ fs.readFile('../tests/data/certificate_fail.json', 'utf8', function (err, data) 
     }
   });
 
-});
-*/
+});*/
 
 },{"./certificate":1,"./certificateVersion":2,"./status":4,"bitcoinjs-lib":22,"jsonld":62,"path":63,"sha256":91,"verror":109,"xmlhttprequest":113}],6:[function(require,module,exports){
 (function (global){

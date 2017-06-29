@@ -14,7 +14,7 @@ describe('Certificate parsing', function() {
             done(err);
           }
           let cert = Certificate.parseJson(JSON.parse(data));
-          expect(cert.name).to.equal('Arya Stark');
+          expect(cert.name).to.equal('Eularia Landroth');
           done();
         });
       });

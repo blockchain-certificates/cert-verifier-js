@@ -296,6 +296,7 @@ var BLOCKCERTSV2_CONTEXT = JSON.parse(BLOCKCERTSV2_CONTENT);
 // Preload contexts
 CONTEXTS["https://w3id.org/blockcerts/schema/2.0-alpha/context.json"] = BLOCKCERTS_CONTEXT;
 CONTEXTS["https://www.blockcerts.org/schema/2.0-alpha/context.json"] = BLOCKCERTS_CONTEXT;
+CONTEXTS["https://w3id.org/openbadges/v2"] = OBI_CONTEXT;
 CONTEXTS["https://openbadgespec.org/v2/context.json"] = OBI_CONTEXT;
 CONTEXTS["https://w3id.org/blockcerts/v2"] = BLOCKCERTSV2_CONTEXT;
 
@@ -472,12 +473,11 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         }
 
         var nodeDocumentLoader = jsonld.documentLoaders.node();
-        var TEMP_CONTEXTS = {};
         var customLoader = function customLoader(url, callback) {
-          if (url in TEMP_CONTEXTS) {
+          if (url in CONTEXTS) {
             return callback(null, {
               contextUrl: null,
-              document: TEMP_CONTEXTS[url],
+              document: CONTEXTS[url],
               documentUrl: url
             });
           }

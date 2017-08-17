@@ -85,13 +85,18 @@ The `anchors` entry below says that the transaction was performed on the Bitcoin
 "sourceId": "8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d"
 ```
 
-Supplied with the blockchain identifier and transaction id, the transaction can be obtained from a service like [blockchain.info](http://blockchain.info/). The general query format is: 
+Supplied with the blockchain identifier and transaction id, the transaction can be obtained from a service like [blockchain.info](http://blockchain.info/). [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is: 
 
 ```
 http://blockchain.info/rawtx/<transaction_id>
 ```
 
 So in this example we would download [http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d](http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d)
+
+#### Securely looking up a Blockchain transaction
+For purposes of demonstrating the process, we used the blockchain.info explorer to look up a transaction. There are problems with this that should be considered for your deployment.
+
+Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. At minimum, a mitigation is to check multiple services to see if they agree.
 
 ### Issuer identity
 

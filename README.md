@@ -96,7 +96,9 @@ So in this example we would download [http://blockchain.info/rawtx/8623beadbc787
 #### Securely looking up a Blockchain transaction
 For purposes of demonstrating the process, we used the blockchain.info explorer to look up a transaction. There are problems with this that should be considered for your deployment.
 
-Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. At minimum, a mitigation is to check multiple services to see if they agree.
+Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. However, this requires machine resources that may not be feasible in all installations. At minimum, a mitigation is to check multiple services to see if they agree.
+
+Note that this also assumes the verifier is online. We are pursuing alternative ways to resolve this and the above issue (securely looking up a transaction withput SPOFs and without prohibitive hardware resounses).
 
 ### Issuer identity
 

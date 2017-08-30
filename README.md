@@ -66,6 +66,10 @@ In Crome DevTools to turn on debug mode:
 
 localStorage.debug = 'verifier'
 
+In Node.js:
+
+DEBUG=verifier babel-node lib/verifier.js  
+
 See [debug] (https://www.npmjs.com/package/debug) for an example.
 
 ## Verification Process

@@ -9,11 +9,25 @@ module.exports = {
 
     SecurityContextUrl: "https://w3id.org/security/v1",
 
-    Url:{
+    Url: {
         blockCypherUrl: "https://api.blockcypher.com/v1/btc/main/txs/",
         blockCypherTestUrl: "https://api.blockcypher.com/v1/btc/test3/txs/",
         blockrIoUrl: "https://btc.blockr.io/api/v1/tx/info/",
         blockrIoTestUrl: "https://tbtc.blockr.io/api/v1/tx/info/",
+    },
+
+    Status: {
+        computingLocalHash: "computingLocalHash",
+        fetchingRemoteHash: "fetchingRemoteHash",
+        comparingHashes: "comparingHashes",
+        checkingMerkleRoot: "checkingMerkleRoot",
+        checkingReceipt: "checkingReceipt",
+        checkingIssuerSignature: "checkingIssuerSignature",
+        checkingAuthenticity: "checkingAuthenticity",
+        checkingRevokedStatus: "checkingRevokedStatus",
+        checkingExpiresDate: "checkingExpiresDate",
+        success: "success",
+        failure: "failure"
     },
 
     PublicKey: "ecdsa-koblitz-pubkey:1",

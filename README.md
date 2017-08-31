@@ -62,6 +62,16 @@ const cert = Verifier.Certificate.parseJson(certJson);
 
 See [cert-web-component](https://github.com/blockchain-certificates/cert-web-component) for an example.
 
+In Crome DevTools to turn on debug mode:
+
+localStorage.debug = 'verifier'
+
+In Node.js:
+
+DEBUG=verifier babel-node lib/verifier.js  
+
+See [debug] (https://www.npmjs.com/package/debug) for an example.
+
 ## Verification Process
 
 This library and the python [cert-verifier](https://github.com/blockchain-certificates/cert-verifier) library verify Blockchain Certificates. However, anyone should be able to verify independently, whether manually or by writing their own library or service. These steps walk you through the certificate verification steps.

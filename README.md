@@ -121,11 +121,11 @@ The `badge.issuer.id` field in the Blockchain Certificate says where to find the
     {
       "created": "2012-01-03T14:34:57+0000",
       "revoked": "2012-05-01T18:11:19+0000",
-      "@id": "ecdsa-koblitz-pubkey:16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki"
+      "id": "ecdsa-koblitz-pubkey:16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki"
     },
     {
       "created": "2016-01-03T14:34:57+0000",
-      "@id": "ecdsa-koblitz-pubkey:1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619"
+      "id": "ecdsa-koblitz-pubkey:1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619"
     }
   ],
   ...
@@ -233,11 +233,11 @@ This public key is valid:
     {
       "created": "2012-01-03T14:34:57+0000",
       "revoked": "2012-05-01T18:11:19+0000",
-      "@id": "ecdsa-koblitz-pubkey:16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki"
+      "id": "ecdsa-koblitz-pubkey:16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki"
     },
     {
       "created": "2016-01-03T14:34:57+0000",
-      "@id": "ecdsa-koblitz-pubkey:1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619",
+      "id": "ecdsa-koblitz-pubkey:1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619",
       "expires": "2017-01-03T14:34:57+0000",
     }
   ],

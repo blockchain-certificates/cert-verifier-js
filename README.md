@@ -99,35 +99,6 @@ http://blockchain.info/rawtx/<transaction_id>
 
 So in this example we would download [http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d](http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d)
 
-#### Securely looking up a Blockchain transaction
-For purposes of demonstrating the process, we used the blockchain.info explorer to look up a transaction. There are problems with this that should be considered for your deployment.
-
-Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. However, this requires machine resources that may not be feasible in all installations. At minimum, a mitigation is to check multiple services to see if they agree.
-
-Note that this also assumes the verifier is online. We are pursuing alternative ways to resolve this and the above issue (securely looking up a transaction withput SPOFs and without prohibitive hardware resources).
-
-Lastly, it is a best practice with blockchain transactions to factor in the number of confirmations a transaction has received. For payment transactions, more confirmations increases confidence that the transaction is accepted by the network and that is not a double spend. The minimum  number of confirmations required by Bitcoin payment acceptors varies per confidence required (some as low as 3 confirmations; some 6). With Blockcerts, issuers have less incentive to perform double spends, but checking the number of confirmations is a good practice.
-
-#### Experimenting with and applying blockchain transaction lookup best practices
-
-`cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply these best practices:
-
-```
-MininumConfirmations: 6,
-MinimumBlockchainExplorers: 2,
-```
-
-- `MinimumConfirmations` sets the minimum confirmation threshold for a transaction to be considered valid. Different Blockchain APIs may return different values; this setting discards any results from a Blockchain API with fewer than the threshold confirmations
-- `MinimumBlockchainExplorers` sets the minimum number of Blockchain APIs that need to be consulted and compared for a transaction to be considered valid. For example, if the setting is 2, then at least 2 blockchain explorers must return transaction details, and the details must agree on the following values:
-  - remoteHash
-  - issuingAddress
-  
-`cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
-  
-See `lib\bitcoinConnectors.js` for details on how they are used. 
-
-The defaults for these settings are low (set at 1) to allow users to experiment with these libraries more easily (to help avoid problems with blockchain API rate limits, wait times, etc), but these should be carefully considered for deployed systems.
-
 ### Issuer identity
 
 The `badge.issuer.id` field in the Blockchain Certificate says where to find the issuer's current information about which keys are valid. Currently, this is a HTTP URI (although the schema allows for other implementations), which (when dereferenced) contains an array of public keys claimed by the issuer.
@@ -284,6 +255,34 @@ If the certificate has been revoked, the (optional) `revocationReason` may provi
 
 The certificate may contain an expiration date (an ISO-8601 date). If present, verification must compare this value, available in the `expires` field, against the current time.
 
+## Securely looking up a Blockchain transaction
+For purposes of demonstrating the process, we used the blockchain.info explorer to look up a transaction. There are problems with this that should be considered for your deployment.
+
+Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. However, this requires machine resources that may not be feasible in all installations. At minimum, a mitigation is to check multiple services to see if they agree.
+
+Note that this also assumes the verifier is online. We are pursuing alternative ways to resolve this and the above issue (securely looking up a transaction withput SPOFs and without prohibitive hardware resources).
+
+Lastly, it is a best practice with blockchain transactions to factor in the number of confirmations a transaction has received. For payment transactions, more confirmations increases confidence that the transaction is accepted by the network and that is not a double spend. The minimum  number of confirmations required by Bitcoin payment acceptors varies per confidence required (some as low as 3 confirmations; some 6). With Blockcerts, issuers have less incentive to perform double spends, but checking the number of confirmations is a good practice.
+
+## Experimenting with and applying blockchain transaction lookup best practices
+
+`cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply these best practices:
+
+```
+MininumConfirmations: 6,
+MinimumBlockchainExplorers: 2,
+```
+
+- `MinimumConfirmations` sets the minimum confirmation threshold for a transaction to be considered valid. Different Blockchain APIs may return different values; this setting discards any results from a Blockchain API with fewer than the threshold confirmations
+- `MinimumBlockchainExplorers` sets the minimum number of Blockchain APIs that need to be consulted and compared for a transaction to be considered valid. For example, if the setting is 2, then at least 2 blockchain explorers must return transaction details, and the details must agree on the following values:
+  - remoteHash
+  - issuingAddress
+  
+`cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
+  
+See `lib\bitcoinConnectors.js` for details on how they are used. 
+
+The defaults for these settings are low (set at 1) to allow users to experiment with these libraries more easily (to help avoid problems with blockchain API rate limits, wait times, etc), but these should be carefully considered for deployed systems.
 
 ## Running tests
 

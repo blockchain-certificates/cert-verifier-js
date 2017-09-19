@@ -5,14 +5,14 @@
   "main": "verifier.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
-    "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015 ] ] -t [ brfs ]",
+    "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [ es2015] ]",
     "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js"
   },
   "author": "Kim Duffy",
   "license": "MIT",
   "babel": {
     "presets": [
-      "es2015"
+      "env"
     ]
   },
   "dependencies": {
@@ -24,7 +24,7 @@
     "debug": "^3.0.1",
     "ecurve": "^1.0.4",
     "jsonld": "^0.4.11",
-    "mocha": "^3.2.0",
+    "mocha": "^3.5.3",
     "sha256": "^0.2.0",
     "string.prototype.startswith": "^0.2.0",
     "verror": "^1.9.0",

@@ -264,9 +264,9 @@ Note that this also assumes the verifier is online. We are pursuing alternative 
 
 Lastly, it is a best practice with blockchain transactions to factor in the number of confirmations a transaction has received. For payment transactions, more confirmations increases confidence that the transaction is accepted by the network and that is not a double spend. The minimum  number of confirmations required by Bitcoin payment acceptors varies per confidence required (some as low as 3 confirmations; some 6). With Blockcerts, issuers have less incentive to perform double spends, but checking the number of confirmations is a good practice.
 
-## Experimenting with and applying blockchain transaction lookup best practices
+## Experimenting with and applying better blockchain transaction API practices
 
-`cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply these best practices:
+`cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply better practices when relying on blockchain APIs:
 
 ```
 MininumConfirmations: 6,

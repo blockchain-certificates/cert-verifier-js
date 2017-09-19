@@ -1,166 +1,94 @@
 'use strict';
 
-import { assert, expect } from 'chai'
-import  fs  from 'fs'
-import { CertificateVerifier } from '../lib/index'
+import {assert, expect} from 'chai'
+import {CertificateVerifier} from '../lib/index'
+import {readFileAsync} from '../lib/promisifiedRequests'
 
+describe("Certificate verifier", async () => {
 
-describe("Certificate verifier", function() {
-
-  describe("verify v1", function() {
-    it("verifies a v1 certificate", function(done) {
-      this.timeout(3000);
-      fs.readFile('tests/data/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-
-        certVerifier.verify(function(err, data) {
-          assert.isNotOk(err);
-          assert.isOk(data);
-          done();
-        });
-      });
+  describe("verify v1", async () => {
+    it("verifies a v1 certificate", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-valid-1.2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.isOk(result);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
     });
 
-    it("ensures an expired v1 certificate fails expiration check", function(done) {
-      this.timeout(3000);
-      fs.readFile('tests/data/sample_cert-expired-1.2.0.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-        // This just checks the expiration date since the certificate was modified to expire it. We should issue an 
-        // expires certificate as well for an end-to-end test case.
-        certVerifier._checkExpiryDate(function(err, data) {
-          assert.isOk(err);
-          expect(data).to.contain("expired");
-          done();
-        });
-      });
-    });
   });
 
-  describe("verify v2", function() {
-    it("verifies a v2 certificate", function(done) {
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          return done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function (err, data) {
-          assert.isNotOk(err);
-          assert.isOk(data);
-          done();
-        });
-      });
+  describe("verify v2", () => {
+    it("verifies a v2 certificate", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.isOk(result);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
     });
 
-    it("verifies a v2 alpha certificate", function(done) {
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-valid-2.0-alpha.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          return done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function (err, data) {
-          assert.isNotOk(err);
-          assert.isOk(data);
-          done();
-        });
-      });
+    it("verifies a v2 alpha certificate", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-valid-2.0-alpha.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.isOk(result);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
     });
 
-    it("ensures a tampered v2 certificate fails", function(done) {
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-unmapped-2.0.json', 'utf8', function (err, data) {
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function(err, data) {
-          assert.isOk(err);
-          expect(data).to.contain("Found unmapped fields during JSON-LD normalization");
-          done();
-        });
-      });
+    it("ensures a tampered v2 certificate fails", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-unmapped-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.fail("This should not pass");
+      } catch (err) {
+        expect(err.message).to.contain("unmapped fields");
+      }
     });
 
-    it("ensures a revoked v2 certificate fails", function(done) {
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-revoked-2.0.json', 'utf8', function (err, data) {
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function(err, data) {
-          assert.isOk(err);
-          expect(data).to.equal("This certificate has been revoked by the issuer.");
-          done();
-        });
-      });
+    it("ensures a revoked v2 certificate fails", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-revoked-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.fail("This should not pass");
+      } catch (err) {
+        assert.isOk(err);
+        expect(err.message).to.contain("This certificate has been revoked by the issuer.");
+
+      }
     });
 
-    it("ensures a v2 certificate with a revoked issuing key fails", function(done) {
+    it("ensures a v2 certificate with a revoked issuing key fails", async () => {
       // In other words, transaction happened after issuing key was revoked
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-with-revoked-key-2.0.json', 'utf8', function (err, data) {
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function(err, data) {
-          assert.isOk(err);
-          expect(data).to.equal("Transaction occurred at time when issuing address was not considered valid.");
-          done();
-        });
-      });
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-with-revoked-key-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.fail("This should not pass");
+      } catch (err) {
+        assert.isOk(err);
+        expect(err.message).to.contain("Transaction occurred at time when issuing address was not considered valid.");
+      }
     });
 
-    it("ensures a v2 certificate with a v1 issuer passes", function(done) {
-      // In other words, transaction happened after issuing key was revoked
-      this.timeout(10000);
-      fs.readFile('tests/data/sample_cert-with_v1_issuer-2.0.json', 'utf8', function (err, data) {
-        var certVerifier = new CertificateVerifier(data);
-        certVerifier.verify(function(err, data) {
-          assert.isNotOk(err);
-          assert.isOk(data);
-          done();
-        });
-      });
-    });
-
-    it("ensures an expired v2 certificate fails expiration check", function(done) {
-      this.timeout(3000);
-      fs.readFile('tests/data/sample_cert-expired-2.0.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-        // This just checks the expiration date since the certificate was modified to expire it. We should issue an
-        // expires certificate as well for an end-to-end test case.
-        certVerifier._checkExpiryDate(function(err, data) {
-          assert.isOk(err);
-          expect(data).to.contain("expired");
-          done();
-        });
-      });
-    });
-
-    it("ensures an not-expired v2 certificate does not fail expiration check", function(done) {
-      this.timeout(3000);
-      fs.readFile('tests/data/sample_cert-notexpired-2.0.json', 'utf8', function (err, data) {
-        if (err) {
-          assert.fail();
-          done(err);
-        }
-        var certVerifier = new CertificateVerifier(data);
-        // This just checks the expiration date since the certificate was modified to expire it. We should issue an
-        // expires certificate as well for an end-to-end test case.
-        certVerifier._checkExpiryDate(function(err, data) {
-          assert.isNotOk(err);
-          assert.isOk(data);
-          done();
-        });
-      });
+    it("ensures a v2 certificate with a v1 issuer passes", async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-with_v1_issuer-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.isOk(result);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
     });
   });
 

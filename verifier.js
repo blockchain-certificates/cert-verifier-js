@@ -1470,7 +1470,13 @@ exports.getIssuerProfile = getIssuerProfile;
 exports.getIssuerKeys = getIssuerKeys;
 exports.getRevocationList = getRevocationList;
 
+var _verror = require('verror');
+
+var _verror2 = _interopRequireDefault(_verror);
+
 var _promisifiedRequests = require('./promisifiedRequests');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1518,7 +1524,7 @@ function parseIssuerKeys(issuerProfileJson) {
     }
     return keyMap;
   } catch (e) {
-    throw new VError(e, "Unable to parse JSON out of issuer identification data.");
+    throw new _verror2.default(e, "Unable to parse JSON out of issuer identification data.");
   }
 };
 
@@ -1535,10 +1541,10 @@ function getIssuerProfile(issuerId) {
         var issuerProfileJson = JSON.parse(response);
         resolve(issuerProfileJson);
       } catch (err) {
-        reject(new VError(err));
+        reject(new _verror2.default(err));
       }
     }).catch(function (err) {
-      reject(new VError(err));
+      reject(new _verror2.default(err));
     });
   });
   return issuerProfileFetcher;
@@ -1551,10 +1557,10 @@ function getIssuerKeys(issuerId) {
         var issuerKeyMap = parseIssuerKeys(issuerProfileJson);
         resolve(issuerKeyMap);
       } catch (err) {
-        reject(new VError(err));
+        reject(new _verror2.default(err));
       }
     }).catch(function (err) {
-      reject(new VError(err));
+      reject(new _verror2.default(err));
     });
   });
   return issuerKeyFetcher;
@@ -1567,16 +1573,16 @@ function getRevocationList(revocationListUrl) {
         var revocationListJson = JSON.parse(response);
         resolve(revocationListJson);
       } catch (err) {
-        reject(new VError(err));
+        reject(new _verror2.default(err));
       }
     }).catch(function (err) {
-      reject(new VError(err));
+      reject(new _verror2.default(err));
     });
   });
   return revocationListFetcher;
 }
 
-},{"./promisifiedRequests":6}],9:[function(require,module,exports){
+},{"./promisifiedRequests":6,"verror":115}],9:[function(require,module,exports){
 (function (global){
 'use strict';
 

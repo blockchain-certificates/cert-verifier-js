@@ -497,7 +497,8 @@ function getBlockcypherFetcher(transactionId, chain) {
         var txData = parseBlockCypherResponse(responseData);
         resolve(txData);
       } catch (err) {
-        reject(new _verror2.default(err));
+        // don't need to wrap this exception
+        reject(err);
       }
     }).catch(function (err) {
       reject(new _verror2.default(err));
@@ -521,7 +522,8 @@ function getChainSoFetcher(transactionId, chain) {
         var txData = parseChainSoResponse(responseData);
         resolve(txData);
       } catch (err) {
-        reject(new _verror2.default(err));
+        // don't need to wrap this exception
+        reject(err);
       }
     }).catch(function (err) {
       reject(new _verror2.default(err));
@@ -538,7 +540,7 @@ function parseBlockCypherResponse(jsonResponse) {
   var outputs = jsonResponse.outputs;
   var lastOutput = outputs[outputs.length - 1];
   var issuingAddress = jsonResponse.inputs[0].addresses[0];
-  var opReturnScript = cleanupRemoteHash(lastOutput.data_hex);
+  var opReturnScript = cleanupRemoteHash(lastOutput.script);
   var revokedAddresses = outputs.filter(function (output) {
     return !!output.spent_by;
   }).map(function (output) {

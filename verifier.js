@@ -1019,8 +1019,9 @@ function computeLocalHash(document, version) {
         var unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
           reject(new _verror2.default("Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
+        } else {
+          resolve((0, _sha2.default)(_toUTF8Data(normalized)));
         }
-        resolve((0, _sha2.default)(_toUTF8Data(normalized)));
       }
     });
   });
@@ -1289,7 +1290,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     value: function _failed(completionCallback, err) {
       log('failure:' + err.message);
       this.statusCallback(_default.Status.failure, err.message);
-      throw new _verror2.default(err);
+      throw err;
     }
   }, {
     key: 'doAction',
@@ -1443,7 +1444,7 @@ function statusCallback(arg1) {
 
 async function test() {
   try {
-    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-2.0.json');
+    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-1.2.0.json');
     //var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
     certVerifier.verify().then(function (x) {
@@ -1457,7 +1458,7 @@ async function test() {
   }
 }
 
-//test();
+test();
 
 },{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],8:[function(require,module,exports){
 'use strict';

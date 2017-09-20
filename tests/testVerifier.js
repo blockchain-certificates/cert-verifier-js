@@ -50,7 +50,7 @@ describe("Certificate verifier", async () => {
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
         assert.fail("This should not pass");
       } catch (err) {
-        expect(err.message).to.contain("unmapped fields");
+        expect(err.message).to.equal("Found unmapped fields during JSON-LD normalization: <http://fallback.org/someUnmappedField>,someUnmappedField");
       }
     });
 
@@ -62,7 +62,7 @@ describe("Certificate verifier", async () => {
         assert.fail("This should not pass");
       } catch (err) {
         assert.isOk(err);
-        expect(err.message).to.contain("This certificate has been revoked by the issuer.");
+        expect(err.message).to.equal("This certificate has been revoked by the issuer.");
 
       }
     });
@@ -76,7 +76,7 @@ describe("Certificate verifier", async () => {
         assert.fail("This should not pass");
       } catch (err) {
         assert.isOk(err);
-        expect(err.message).to.contain("Transaction occurred at time when issuing address was not considered valid.");
+        expect(err.message).to.equal("Transaction occurred at time when issuing address was not considered valid.");
       }
     });
 

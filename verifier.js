@@ -1364,11 +1364,11 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         return checks.computeLocalHash(docToVerify, _this2.certificate.version);
       });
 
-      var _ref3 = await Promise.all([bitcoinConnectors.lookForTx(transactionId, this.certificate.chain), (0, _verifierModels.getIssuerKeys)(this.certificate.issuer.id), (0, _verifierModels.getRevocationList)(this.certificate.issuer.revocationList)]),
+      var _ref3 = await Promise.all([bitcoinConnectors.lookForTx(transactionId, this.certificate.chain), (0, _verifierModels.getIssuerKeys)(this.certificate.issuer.id), (0, _verifierModels.getRevokedAssertions)(this.certificate.issuer.revocationList)]),
           _ref4 = _slicedToArray(_ref3, 3),
           txData = _ref4[0],
           issuerKeyMap = _ref4[1],
-          issuerRevocationJson = _ref4[2];
+          revokedAssertions = _ref4[2];
 
       this.doAction(_default.Status.comparingHashes, function () {
         return checks.ensureHashesEqual(localHash, _this2.certificate.receipt.targetHash);
@@ -1380,7 +1380,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         return checks.ensureValidReceipt(_this2.certificate.receipt);
       });
       this.doAction(_default.Status.checkingRevokedStatus, function () {
-        return checks.ensureNotRevokedByList(issuerRevocationJson.revokedAssertions, _this2.certificate.id);
+        return checks.ensureNotRevokedByList(revokedAssertions, _this2.certificate.id);
       });
       this.doAction(_default.Status.checkingAuthenticity, function () {
         return checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
@@ -1441,7 +1441,7 @@ function statusCallback(arg1) {
 
 async function test() {
   try {
-    //var data = await readFileAsync('../tests/data/sample_cert-valid-2.0.json');
+    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-2.0.json');
     //var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
     certVerifier.verify().then(function (x) {
@@ -1468,7 +1468,7 @@ exports.parseIssuerKeys = parseIssuerKeys;
 exports.parseRevocationKey = parseRevocationKey;
 exports.getIssuerProfile = getIssuerProfile;
 exports.getIssuerKeys = getIssuerKeys;
-exports.getRevocationList = getRevocationList;
+exports.getRevokedAssertions = getRevokedAssertions;
 
 var _verror = require('verror');
 
@@ -1566,12 +1566,16 @@ function getIssuerKeys(issuerId) {
   return issuerKeyFetcher;
 }
 
-function getRevocationList(revocationListUrl) {
+function getRevokedAssertions(revocationListUrl) {
+  if (!revocationListUrl) {
+    return Promise.resolve([]);
+  }
   var revocationListFetcher = new Promise(function (resolve, reject) {
     return (0, _promisifiedRequests.request)({ url: revocationListUrl }).then(function (response) {
       try {
-        var revocationListJson = JSON.parse(response);
-        resolve(revocationListJson);
+        var issuerRevocationJson = JSON.parse(response);
+        var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
+        resolve(revokedAssertions);
       } catch (err) {
         reject(new _verror2.default(err));
       }

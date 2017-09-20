@@ -1446,7 +1446,7 @@ function statusCallback(arg1) {
 
 async function test() {
   try {
-    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-1.2.0.json');
+    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-2.0.json');
     //var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
     certVerifier.verify().then(function (x) {
@@ -1460,7 +1460,7 @@ async function test() {
   }
 }
 
-test();
+//test();
 
 },{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],8:[function(require,module,exports){
 'use strict';

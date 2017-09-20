@@ -65,6 +65,8 @@ module.exports = {
   // Try all blockchain explorers (even > MinimumBlockchainExplorers) to increase the chance of a successful query.
   Race: false,
 
+  CheckForUnmappedFields: true,
+
   PublicKey: "ecdsa-koblitz-pubkey:1",
 
   //TODO Fixes or read direct in files??
@@ -989,7 +991,7 @@ function computeLocalHashV1_1(certificateString) {
 function computeLocalHash(document, version) {
   var expandContext = document["@context"];
   var theDocument = document;
-  if (version === _default.CertificateVersion.v2_0) {
+  if (version === _default.CertificateVersion.v2_0 && _default.CheckForUnmappedFields) {
     expandContext.push({ "@vocab": "http://fallback.org/" });
   }
   var nodeDocumentLoader = _jsonld2.default.documentLoaders.node({ request: _promisifiedRequests.request });

@@ -58,6 +58,8 @@ module.exports = {
   // Try all blockchain explorers (even > MinimumBlockchainExplorers) to increase the chance of a successful query.
   Race: false,
 
+  CheckForUnmappedFields: true,
+
   PublicKey: "ecdsa-koblitz-pubkey:1",
 
   //TODO Fixes or read direct in files??

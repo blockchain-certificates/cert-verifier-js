@@ -486,9 +486,9 @@ function cleanupRemoteHash(remoteHash) {
 function getBlockcypherFetcher(transactionId, chain) {
   var blockCypherUrl = void 0;
   if (chain === _default.Blockchain.bitcoin) {
-    blockCypherUrl = _default.Url.blockCypherUrl + transactionId;
+    blockCypherUrl = _default.Url.blockCypherUrl + transactionId + "?limit=500";
   } else {
-    blockCypherUrl = _default.Url.blockCypherTestUrl + transactionId;
+    blockCypherUrl = _default.Url.blockCypherTestUrl + transactionId + "?limit=500";
   }
   var blockcypherFetcher = new Promise(function (resolve, reject) {
     return (0, _promisifiedRequests.request)({ url: blockCypherUrl }).then(function (response) {
@@ -887,17 +887,21 @@ CONTEXTS["https://w3id.org/blockcerts/v2"] = BLOCKCERTSV2_CONTEXT;
 CONTEXTS["https://w3id.org/blockcerts/v1"] = BLOCKCERTSV1_2_CONTEXT;
 
 function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, recipientRevocationKey) {
-  var isRevokedByIssuer = -1 != revokedAddresses.findIndex(function (address) {
-    return address === issuerRevocationKey;
-  });
-  if (isRevokedByIssuer) {
-    throw new _verror2.default("This certificate batch has been revoked by the issuer.");
+  if (issuerRevocationKey) {
+    var isRevokedByIssuer = -1 != revokedAddresses.findIndex(function (address) {
+      return address === issuerRevocationKey;
+    });
+    if (isRevokedByIssuer) {
+      throw new _verror2.default("This certificate batch has been revoked by the issuer.");
+    }
   }
-  var isRevokedByRecipient = -1 != revokedAddresses.findIndex(function (address) {
-    return address === recipientRevocationKey;
-  });
-  if (isRevokedByRecipient) {
-    throw new _verror2.default("This recipient's certificate has been revoked.");
+  if (recipientRevocationKey) {
+    var isRevokedByRecipient = -1 != revokedAddresses.findIndex(function (address) {
+      return address === recipientRevocationKey;
+    });
+    if (isRevokedByRecipient) {
+      throw new _verror2.default("This recipient's certificate has been revoked.");
+    }
   }
 }
 
@@ -1460,7 +1464,7 @@ async function test() {
   }
 }
 
-//test();
+test();
 
 },{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],8:[function(require,module,exports){
 'use strict';
@@ -1534,9 +1538,10 @@ function parseIssuerKeys(issuerProfileJson) {
 };
 
 function parseRevocationKey(issuerProfileJson) {
-  var revocationKeys = issuerProfileJson.revocationKeys || [];
-  var revocationKey = revocationKeys[0].key;
-  return revocationKey;
+  if (issuerProfileJson.revocationKeys && issuerProfileJson.revocationKeys.length > 0) {
+    return issuerProfileJson.revocationKeys[0].key;
+  }
+  return null;
 }
 
 function getIssuerProfile(issuerId) {

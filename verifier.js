@@ -1281,22 +1281,25 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   _createClass(CertificateVerifier, [{
     key: '_succeed',
     value: function _succeed(completionCallback) {
+      var status = void 0;
       if (this.certificate.chain === _default.Blockchain.mocknet) {
         log("This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.");
-        this.statusCallback(_default.Status.mockSuccess);
-        return _default.Status.mockSuccess;
+        status = _default.Status.mockSuccess;
       } else {
         log("success");
-        this.statusCallback(_default.Status.success);
-        return _default.Status.success;
+        status = _default.Status.success;
       }
+      this.statusCallback(status);
+      completionCallback(status);
+      return status;
     }
   }, {
     key: '_failed',
     value: function _failed(completionCallback, err) {
       log('failure:' + err.message);
       this.statusCallback(_default.Status.failure, err.message);
-      throw err;
+      completionCallback(_default.Status.failure, err.message);
+      return _default.Status.failure;
     }
   }, {
     key: 'doAction',
@@ -1450,13 +1453,14 @@ function statusCallback(arg1) {
 
 async function test() {
   try {
-    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-2.0.json');
+    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-expired-1.2.0.json');
     //var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
-    certVerifier.verify().then(function (x) {
-      return console.log('final result: ' + x);
-    }).catch(function (e) {
-      return console.error('failed: ' + e);
+    certVerifier.verify(function (status, message) {
+      console.log(status);
+      if (message) {
+        console.error(message);
+      }
     });
   } catch (err) {
     console.error('Failed!');
@@ -1464,7 +1468,7 @@ async function test() {
   }
 }
 
-test();
+//test();
 
 },{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],8:[function(require,module,exports){
 'use strict';

@@ -3,6 +3,7 @@
 import {assert, expect} from 'chai'
 import {CertificateVerifier} from '../lib/index'
 import {readFileAsync} from '../lib/promisifiedRequests'
+import {Status} from '../config/default'
 
 describe("Certificate verifier", async () => {
 
@@ -12,7 +13,7 @@ describe("Certificate verifier", async () => {
         var data = await readFileAsync('tests/data/sample_cert-valid-1.2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.isOk(result);
+        assert.equal(result, Status.success);
       } catch (err) {
         assert.fail(err, null, "This should not fail");
       }
@@ -26,7 +27,7 @@ describe("Certificate verifier", async () => {
         var data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.isOk(result);
+        assert.equal(result, Status.success);
       } catch (err) {
         assert.fail(err, null, "This should not fail");
       }
@@ -37,7 +38,7 @@ describe("Certificate verifier", async () => {
         var data = await readFileAsync('tests/data/sample_cert-valid-2.0-alpha.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.isOk(result);
+        assert.equal(result, Status.success);
       } catch (err) {
         assert.fail(err, null, "This should not fail");
       }
@@ -47,10 +48,12 @@ describe("Certificate verifier", async () => {
       try {
         var data = await readFileAsync('tests/data/sample_cert-unmapped-2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
-        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.fail("This should not pass");
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {returnMessage = message});
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, "Found unmapped fields during JSON-LD normalization: <http://fallback.org/someUnmappedField>,someUnmappedField");
       } catch (err) {
-        expect(err.message).to.equal("Found unmapped fields during JSON-LD normalization: <http://fallback.org/someUnmappedField>,someUnmappedField");
+        assert.fail(err, null, "Caught unexpected exception");
       }
     });
 
@@ -59,11 +62,12 @@ describe("Certificate verifier", async () => {
         var data = await readFileAsync('tests/data/sample_cert-revoked-2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.fail("This should not pass");
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {returnMessage = message});
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, "This certificate has been revoked by the issuer.");
       } catch (err) {
-        assert.isOk(err);
-        expect(err.message).to.equal("This certificate has been revoked by the issuer.");
-
+        assert.fail(err, null, "Caught unexpected exception");
       }
     });
 
@@ -72,11 +76,12 @@ describe("Certificate verifier", async () => {
       try {
         var data = await readFileAsync('tests/data/sample_cert-with-revoked-key-2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
-        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.fail("This should not pass");
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {returnMessage = message});
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, "Transaction occurred at time when issuing address was not considered valid.");
       } catch (err) {
-        assert.isOk(err);
-        expect(err.message).to.equal("Transaction occurred at time when issuing address was not considered valid.");
+        assert.fail(err, null, "Caught unexpected exception");
       }
     });
 
@@ -85,7 +90,7 @@ describe("Certificate verifier", async () => {
         var data = await readFileAsync('tests/data/sample_cert-with_v1_issuer-2.0.json');
         var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
         var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
-        assert.isOk(result);
+        assert.equal(result, Status.success);
       } catch (err) {
         assert.fail(err, null, "This should not fail");
       }

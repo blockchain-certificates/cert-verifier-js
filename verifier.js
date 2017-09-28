@@ -3,7 +3,19 @@
 
 var _ref;
 
+var _verror = require("verror");
+
+var _verror2 = _interopRequireDefault(_verror);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Status = {
   computingLocalHash: "computingLocalHash",
@@ -34,6 +46,18 @@ var getVerboseMessage = function getVerboseMessage(status) {
   return verboseMessageMap[status];
 };
 
+var VerifierError = function (_VError) {
+  _inherits(VerifierError, _VError);
+
+  function VerifierError(message) {
+    _classCallCheck(this, VerifierError);
+
+    return _possibleConstructorReturn(this, (VerifierError.__proto__ || Object.getPrototypeOf(VerifierError)).call(this, message));
+  }
+
+  return VerifierError;
+}(_verror2.default);
+
 module.exports = {
   CertificateVersion: {
     v1_1: "1.1",
@@ -46,6 +70,8 @@ module.exports = {
     testnet: "testnet",
     mocknet: "mocknet"
   },
+
+  VerifierError: VerifierError,
 
   SecurityContextUrl: "https://w3id.org/security/v1",
 
@@ -433,7 +459,7 @@ module.exports = {
 
 };
 
-},{}],2:[function(require,module,exports){
+},{"verror":115}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -444,10 +470,6 @@ exports.lookForTx = lookForTx;
 var _debug = require('debug');
 
 var _debug2 = _interopRequireDefault(_debug);
-
-var _verror = require('verror');
-
-var _verror2 = _interopRequireDefault(_verror);
 
 var _verifierModels = require('./verifierModels');
 
@@ -501,7 +523,7 @@ function getBlockcypherFetcher(transactionId, chain) {
         reject(err);
       }
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
   return blockcypherFetcher;
@@ -526,7 +548,7 @@ function getChainSoFetcher(transactionId, chain) {
         reject(err);
       }
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
   return chainSoFetcher;
@@ -534,7 +556,7 @@ function getChainSoFetcher(transactionId, chain) {
 
 function parseBlockCypherResponse(jsonResponse) {
   if (jsonResponse.confirmations < _default.MininumConfirmations) {
-    throw new _verror2.default("Number of transaction confirmations were less than the minimum required, according to Blockcypher API");
+    throw new _default.VerifierError("Number of transaction confirmations were less than the minimum required, according to Blockcypher API");
   }
   var time = Date.parse(jsonResponse.received);
   var outputs = jsonResponse.outputs;
@@ -551,7 +573,7 @@ function parseBlockCypherResponse(jsonResponse) {
 
 function parseChainSoResponse(jsonResponse) {
   if (jsonResponse.data.confirmations < _default.MininumConfirmations) {
-    throw new _verror2.default("Number of transaction confirmations were less than the minimum required, according to Chain.so API");
+    throw new _default.VerifierError("Number of transaction confirmations were less than the minimum required, according to Chain.so API");
   }
   var time = new Date(jsonResponse.data.time * 1000);
   var outputs = jsonResponse.data.outputs;
@@ -570,10 +592,10 @@ function parseChainSoResponse(jsonResponse) {
 function lookForTx(transactionId, chain, certificateVersion) {
   // First ensure we can satisfy the MinimumBlockchainExplorers setting
   if (_default.MinimumBlockchainExplorers < 0 || _default.MinimumBlockchainExplorers > BlockchainExplorers.length) {
-    return Promise.reject(new _verror2.default("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
   }
   if (_default.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion == _default.CertificateVersion.v1_1 || certificateVersion == _default.CertificateVersion.v1_2)) {
-    return Promise.reject(new _verror2.default("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
   }
 
   // Queue up blockchain explorer APIs
@@ -593,7 +615,7 @@ function lookForTx(transactionId, chain, certificateVersion) {
   return new Promise(function (resolve, reject) {
     return Promise.properRace(promises, _default.MinimumBlockchainExplorers).then(function (winners) {
       if (!winners || winners.length == 0) {
-        return Promise.reject(new _verror2.default("Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
+        return Promise.reject(new _default.VerifierError("Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
       }
 
       // Compare results returned by different blockchain apis. We pick off the first result and compare the others
@@ -609,15 +631,15 @@ function lookForTx(transactionId, chain, certificateVersion) {
       for (var i = 1; i < winners.length; i++) {
         var thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-          throw new _verror2.default("Issuing addresses returned by the blockchain APIs were different");
+          throw new _default.VerifierError("Issuing addresses returned by the blockchain APIs were different");
         }
         if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-          throw new _verror2.default("Remote hashes returned by the blockchain APIs were different");
+          throw new _default.VerifierError("Remote hashes returned by the blockchain APIs were different");
         }
       }
       resolve(firstResponse);
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
 }
@@ -628,7 +650,7 @@ Promise.properRace = function (promises, count) {
   // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
   promises = Array.from(promises);
   if (promises.length < count) {
-    return Promise.reject(new _verror2.default("Could not confirm the transaction"));
+    return Promise.reject(new _default.VerifierError("Could not confirm the transaction"));
   }
 
   var indexPromises = promises.map(function (p, index) {
@@ -655,7 +677,7 @@ Promise.properRace = function (promises, count) {
   });
 };
 
-},{"../config/default":1,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],3:[function(require,module,exports){
+},{"../config/default":1,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -850,17 +872,11 @@ var _jsonld = require('jsonld');
 
 var _jsonld2 = _interopRequireDefault(_jsonld);
 
-var _verror = require('verror');
-
-var _verror2 = _interopRequireDefault(_verror);
-
 var _debug = require('debug');
 
 var _debug2 = _interopRequireDefault(_debug);
 
 var _default = require('../config/default');
-
-var _promisifiedRequests = require('./promisifiedRequests');
 
 var _sha = require('sha256');
 
@@ -884,6 +900,7 @@ CONTEXTS["https://www.blockcerts.org/schema/2.0-alpha/context.json"] = BLOCKCERT
 CONTEXTS["https://w3id.org/openbadges/v2"] = OBI_CONTEXT;
 CONTEXTS["https://openbadgespec.org/v2/context.json"] = OBI_CONTEXT;
 CONTEXTS["https://w3id.org/blockcerts/v2"] = BLOCKCERTSV2_CONTEXT;
+CONTEXTS["https://www.w3id.org/blockcerts/schema/2.0/context.json"] = BLOCKCERTSV2_CONTEXT;
 CONTEXTS["https://w3id.org/blockcerts/v1"] = BLOCKCERTSV1_2_CONTEXT;
 
 function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, recipientRevocationKey) {
@@ -892,7 +909,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
       return address === issuerRevocationKey;
     });
     if (isRevokedByIssuer) {
-      throw new _verror2.default("This certificate batch has been revoked by the issuer.");
+      throw new _default.VerifierError("This certificate batch has been revoked by the issuer.");
     }
   }
   if (recipientRevocationKey) {
@@ -900,7 +917,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
       return address === recipientRevocationKey;
     });
     if (isRevokedByRecipient) {
-      throw new _verror2.default("This recipient's certificate has been revoked.");
+      throw new _default.VerifierError("This recipient's certificate has been revoked.");
     }
   }
 }
@@ -917,26 +934,26 @@ function ensureNotRevokedByList(revokedAssertions, assertionUid) {
     return id === assertionUid;
   });
   if (isRevokedByIssuer) {
-    throw new _verror2.default("This certificate has been revoked by the issuer.");
+    throw new _default.VerifierError("This certificate has been revoked by the issuer.");
   }
 }
 
 function ensureIssuerSignature(issuerKey, certificateUid, certificateSignature, chain) {
   var bitcoinChain = chain === _default.Blockchain.bitcoin ? _bitcoinjsLib2.default.networks.bitcoin : _bitcoinjsLib2.default.networks.testnet;
   if (!_bitcoinjsLib2.default.message.verify(issuerKey, certificateSignature, certificateUid, bitcoinChain)) {
-    throw new _verror2.default("Issuer key doesn't match derived address.");
+    throw new _default.VerifierError("Issuer key doesn't match derived address.");
   }
 }
 
 function ensureHashesEqual(actual, expected) {
   if (actual !== expected) {
-    throw new _verror2.default("Computed hash does not match remote hash");
+    throw new _default.VerifierError("Computed hash does not match remote hash");
   }
 }
 
 function ensureMerkleRootEqual(merkleRoot, remoteHash) {
   if (merkleRoot !== remoteHash) {
-    throw new _verror2.default("Merkle root does not match remote hash.");
+    throw new _default.VerifierError("Merkle root does not match remote hash.");
   }
 }
 
@@ -956,7 +973,7 @@ function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
     }
   }
   if (!validKey) {
-    throw new _verror2.default("Transaction occurred at time when issuing address was not considered valid.");
+    throw new _default.VerifierError("Transaction occurred at time when issuing address was not considered valid.");
   }
 };
 
@@ -975,16 +992,16 @@ function ensureValidReceipt(receipt) {
           var appendedBuffer = _toByteArray('' + proofHash + node.right);
           proofHash = (0, _sha2.default)(appendedBuffer);
         } else {
-          throw new _verror2.default("We should never get here.");
+          throw new _default.VerifierError("We should never get here.");
         }
       }
     }
   } catch (e) {
-    throw new _verror2.default("The receipt is malformed. There was a problem navigating the merkle tree in the receipt.");
+    throw new _default.VerifierError("The receipt is malformed. There was a problem navigating the merkle tree in the receipt.");
   }
 
   if (proofHash !== merkleRoot) {
-    throw new _verror2.default("Invalid Merkle Receipt. Proof hash didn't match Merkle root");
+    throw new _default.VerifierError("Invalid Merkle Receipt. Proof hash didn't match Merkle root");
   }
 };
 
@@ -1000,7 +1017,7 @@ function computeLocalHash(document, version) {
   if (version === _default.CertificateVersion.v2_0 && _default.CheckForUnmappedFields) {
     expandContext.push({ "@vocab": "http://fallback.org/" });
   }
-  var nodeDocumentLoader = _jsonld2.default.documentLoaders.node({ request: _promisifiedRequests.request });
+  var nodeDocumentLoader = _jsonld2.default.documentLoaders.node();
   var customLoader = function customLoader(url, callback) {
     if (url in CONTEXTS) {
       return callback(null, {
@@ -1020,11 +1037,11 @@ function computeLocalHash(document, version) {
       expandContext: expandContext
     }, function (err, normalized) {
       if (!!err) {
-        reject(new _verror2.default(err, "Failed JSON-LD normalization"));
+        reject(new _default.VerifierError(err, "Failed JSON-LD normalization"));
       } else {
         var unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
-          reject(new _verror2.default("Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
+          reject(new _default.VerifierError("Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
         } else {
           resolve((0, _sha2.default)(_toUTF8Data(normalized)));
         }
@@ -1052,7 +1069,7 @@ function ensureNotExpired(expires) {
   }
   var expiryDate = Date.parse(expires);
   if (new Date() >= expiryDate) {
-    throw new _verror2.default("This certificate has expired.");
+    throw new _default.VerifierError("This certificate has expired.");
   }
   // otherwise, it's fine
 }
@@ -1101,7 +1118,7 @@ function _hexFromByteArray(byteArray) {
   return out;
 };
 
-},{"../config/default":1,"./promisifiedRequests":6,"bitcoinjs-lib":25,"debug":52,"jsonld":67,"sha256":96,"string.prototype.startswith":102,"verror":115}],5:[function(require,module,exports){
+},{"../config/default":1,"bitcoinjs-lib":25,"debug":52,"jsonld":67,"sha256":96,"string.prototype.startswith":102}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1157,15 +1174,15 @@ var _debug = require('debug');
 
 var _debug2 = _interopRequireDefault(_debug);
 
-var _verror = require('verror');
-
-var _verror2 = _interopRequireDefault(_verror);
+var _default = require('../config/default');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
+
 var log = (0, _debug2.default)("promisifiedRequests");
+
 function request(obj) {
   return new Promise(function (resolve, reject) {
     var url = obj.url;
@@ -1177,12 +1194,12 @@ function request(obj) {
       } else {
         var failureMessage = 'Error fetching url:' + url + '; status code:' + request.status;
         log(failureMessage);
-        reject(new _verror2.default(failureMessage));
+        reject(new _default.VerifierError(failureMessage));
       }
     });
     request.addEventListener('error', function () {
-      log('Request failed with error ' + request.status);
-      reject(new _verror2.default(request.status));
+      log('Request failed with error ' + request.responseText);
+      reject(new _default.VerifierError(request.responseText));
     });
 
     request.open(obj.method || "GET", url);
@@ -1211,7 +1228,7 @@ function readFile(path) {
   });
 }
 
-},{"debug":52,"fs":35,"verror":115,"xmlhttprequest":119}],7:[function(require,module,exports){
+},{"../config/default":1,"debug":52,"fs":35,"xmlhttprequest":119}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1226,10 +1243,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _debug = require('debug');
 
 var _debug2 = _interopRequireDefault(_debug);
-
-var _verror = require('verror');
-
-var _verror2 = _interopRequireDefault(_verror);
 
 var _certificate = require('./certificate');
 
@@ -1323,7 +1336,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         transactionId = this.certificate.receipt.anchors[0].sourceId;
         return transactionId;
       } catch (e) {
-        throw new _verror2.default("Can't verify this certificate without a transaction ID to compare against.");
+        throw new _default.VerifierError("Can't verify this certificate without a transaction ID to compare against.");
       }
     }
   }, {
@@ -1425,7 +1438,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     key: 'verify',
     value: async function verify(completionCallback) {
       if (this.certificate.version == _default.CertificateVersion.v1_1) {
-        throw new _verror2.default("Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification");
+        throw new _default.VerifierError("Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification");
       }
       completionCallback = completionCallback || noop;
       try {
@@ -1439,7 +1452,10 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
         return this._succeed(completionCallback);
       } catch (e) {
-        return this._failed(completionCallback, e);
+        if (e instanceof _default.VerifierError) {
+          return this._failed(completionCallback, e);
+        }
+        throw e;
       }
     }
   }]);
@@ -1448,19 +1464,21 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 }();
 
 function statusCallback(arg1) {
-  console.log('status: ' + arg1);
+  console.log('callback status: ' + arg1);
 }
 
 async function test() {
   try {
-    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-expired-1.2.0.json');
-    //var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
+    //var data = await readFileAsync('../tests/data/sample_cert-revoked-2.0.json');
+    var data = await (0, _promisifiedRequests.readFileAsync)('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
     certVerifier.verify(function (status, message) {
-      console.log(status);
+      console.log("completion status: " + status);
       if (message) {
-        console.error(message);
+        console.error("completion message: " + message);
       }
+    }).catch(function (err) {
+      console.error("Unexpected error: " + err);
     });
   } catch (err) {
     console.error('Failed!');
@@ -1470,7 +1488,7 @@ async function test() {
 
 //test();
 
-},{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102,"verror":115}],8:[function(require,module,exports){
+},{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":52,"string.prototype.startswith":102}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1483,13 +1501,9 @@ exports.getIssuerProfile = getIssuerProfile;
 exports.getIssuerKeys = getIssuerKeys;
 exports.getRevokedAssertions = getRevokedAssertions;
 
-var _verror = require('verror');
-
-var _verror2 = _interopRequireDefault(_verror);
-
 var _promisifiedRequests = require('./promisifiedRequests');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _default = require('../config/default');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1537,7 +1551,7 @@ function parseIssuerKeys(issuerProfileJson) {
     }
     return keyMap;
   } catch (e) {
-    throw new _verror2.default(e, "Unable to parse JSON out of issuer identification data.");
+    throw new _default.VerifierError(e, "Unable to parse JSON out of issuer identification data.");
   }
 };
 
@@ -1555,10 +1569,10 @@ function getIssuerProfile(issuerId) {
         var issuerProfileJson = JSON.parse(response);
         resolve(issuerProfileJson);
       } catch (err) {
-        reject(new _verror2.default(err));
+        reject(new _default.VerifierError(err));
       }
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
   return issuerProfileFetcher;
@@ -1571,10 +1585,10 @@ function getIssuerKeys(issuerId) {
         var issuerKeyMap = parseIssuerKeys(issuerProfileJson);
         resolve(issuerKeyMap);
       } catch (err) {
-        reject(new _verror2.default(err));
+        reject(new _default.VerifierError(err));
       }
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
   return issuerKeyFetcher;
@@ -1591,16 +1605,16 @@ function getRevokedAssertions(revocationListUrl) {
         var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
         resolve(revokedAssertions);
       } catch (err) {
-        reject(new _verror2.default(err));
+        reject(new _default.VerifierError(err));
       }
     }).catch(function (err) {
-      reject(new _verror2.default(err));
+      reject(new _default.VerifierError(err));
     });
   });
   return revocationListFetcher;
 }
 
-},{"./promisifiedRequests":6,"verror":115}],9:[function(require,module,exports){
+},{"../config/default":1,"./promisifiedRequests":6}],9:[function(require,module,exports){
 (function (global){
 'use strict';
 

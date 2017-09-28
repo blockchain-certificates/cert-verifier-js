@@ -1026,7 +1026,7 @@ function computeLocalHash(document, version) {
         documentUrl: url
       });
     }
-    nodeDocumentLoader(url, callback);
+    return nodeDocumentLoader(url, callback);
   };
   _jsonld2.default.documentLoader = customLoader;
 

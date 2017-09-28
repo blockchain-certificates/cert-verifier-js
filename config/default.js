@@ -1,3 +1,5 @@
+import VError from 'verror';
+
 let Status = {
   computingLocalHash: "computingLocalHash",
   fetchingRemoteHash: "fetchingRemoteHash",
@@ -27,6 +29,12 @@ let getVerboseMessage = function (status) {
   return verboseMessageMap[status];
 };
 
+class VerifierError extends VError {
+  constructor(message) {
+    super(message);
+  }
+}
+
 module.exports = {
   CertificateVersion: {
     v1_1: "1.1",
@@ -39,6 +47,8 @@ module.exports = {
     testnet: "testnet",
     mocknet: "mocknet"
   },
+
+  VerifierError,
 
   SecurityContextUrl: "https://w3id.org/security/v1",
 

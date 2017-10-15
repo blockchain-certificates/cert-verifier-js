@@ -45,7 +45,25 @@ module.exports = {
   Blockchain: {
     bitcoin: "bitcoin",
     testnet: "testnet",
-    mocknet: "mocknet"
+    regtest: "regtest",
+    mocknet: "mocknet",
+    ethmain: "ethmain",
+    ethropst: "ethropst",
+    ethtest: "ethtest"
+  },
+
+  ChainSignatureValue: {
+    /*
+    These are the external display of `chain` in the signature suite. Adding a new type since `Blockchain` is
+    used by the web component and so we need to remain compatible.
+    */
+    bitcoin: "bitcoinMainnet",
+    testnet: "bitcoinTestnet",
+    regtest: "bitcoinRegtest",
+    ethmain: "ethereumMainnet",
+    ethropst: "ethereumRopsten",
+    ethtest: "ethereumTestnet",
+    mocknet: "mockchain"
   },
 
   VerifierError,

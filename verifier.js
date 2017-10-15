@@ -68,7 +68,25 @@ module.exports = {
   Blockchain: {
     bitcoin: "bitcoin",
     testnet: "testnet",
-    mocknet: "mocknet"
+    regtest: "regtest",
+    mocknet: "mocknet",
+    ethmain: "ethmain",
+    ethropst: "ethropst",
+    ethtest: "ethtest"
+  },
+
+  ChainSignatureValue: {
+    /*
+    These are the external display of `chain` in the signature suite. Adding a new type since `Blockchain` is
+    used by the web component and so we need to remain compatible.
+    */
+    bitcoin: "bitcoinMainnet",
+    testnet: "bitcoinTestnet",
+    regtest: "bitcoinRegtest",
+    ethmain: "ethereumMainnet",
+    ethropst: "ethereumRopsten",
+    ethtest: "ethereumTestnet",
+    mocknet: "mockchain"
   },
 
   VerifierError: VerifierError,
@@ -695,26 +713,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 require('string.prototype.startswith');
 
-var getChainForAddress = function getChainForAddress(bitcoinAddress) {
+var isBitcoinMainnetAddress = function isBitcoinMainnetAddress(bitcoinAddress) {
   if (bitcoinAddress.startsWith("1") || bitcoinAddress.startsWith(_default.PublicKey)) {
-    return _default.Blockchain.bitcoin;
-  } else {
-    return _default.Blockchain.testnet;
+    return true;
   }
+  return false;
 };
 
 var getChain = function getChain(signature, bitcoinAddress) {
-  var anchorType = signature.anchors[0].type;
-  if (anchorType == "BTCOpReturn") {
-    // From legacy versions, this may be either testnet or mainnet; detect from address
-    return getChainForAddress(bitcoinAddress);
-  } else if (anchorType == "XTNOpReturn") {
-    return _default.Blockchain.testnet;
-  } else if (anchorType == "MockOpReturn") {
-    return _default.Blockchain.mocknet;
-  } else {
-    return _default.Blockchain.mocknet;
+  var anchor = signature.anchors[0];
+  if (anchor.chain) {
+    var chain = anchor.chain;
+    if (chain == _default.ChainSignatureValue.bitcoin) {
+      return _default.ChainSignatureValue.bitcoin;
+    } else if (chain == _default.ChainSignatureValue.testnet) {
+      return _default.Blockchain.testnet;
+    } else if (chain == _default.ChainSignatureValue.regtest) {
+      return _default.Blockchain.regtest;
+    } else if (chain == _default.ChainSignatureValue.mocknet) {
+      return _default.Blockchain.mocknet;
+    } else {
+      throw new VError("Didn't recognize chain value");
+    }
   }
+  // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
+  // otherwise try to determine the chain from a bitcoin address
+  if (isBitcoinMainnetAddress(bitcoinAddress)) {
+    return _default.Blockchain.bitcoin;
+  }
+  return _default.Blockchain.testnet;
 };
 
 var getNameForChain = function getNameForChain(chain) {
@@ -790,7 +817,12 @@ var Certificate = exports.Certificate = function () {
         version = _default.CertificateVersion.v1_2;
       }
 
-      var chain = getChainForAddress(publicKey);
+      var chain;
+      if (isBitcoinMainnetAddress(publicKey)) {
+        chain = _default.Blockchain.bitcoin;
+      } else {
+        chain = _default.Blockchain.testnet;
+      }
 
       return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires);
     }
@@ -1295,7 +1327,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     key: '_succeed',
     value: function _succeed(completionCallback) {
       var status = void 0;
-      if (this.certificate.chain === _default.Blockchain.mocknet) {
+      if (this.certificate.chain == _default.Blockchain.mocknet || this.certificate.chain == _default.Blockchain.regtest) {
         log("This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.");
         status = _default.Status.mockSuccess;
       } else {
@@ -1444,7 +1476,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
       try {
         if (this.certificate.version == _default.CertificateVersion.v1_2) {
           await this.verifyV1_2();
-        } else if (this.certificate.chain == _default.Blockchain.mocknet) {
+        } else if (this.certificate.chain == _default.Blockchain.mocknet || this.certificate.chain == _default.Blockchain.regtest) {
           await this.verifyV2Mock();
         } else {
           await this.verifyV2();

@@ -95,6 +95,41 @@ describe("Certificate verifier", async () => {
         assert.fail(err, null, "This should not fail");
       }
     });
+
+    it("ensures a v2 mocknet passes", async () => {
+      try {
+        var data = await readFileAsync('tests/data/mocknet-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.equal(result, Status.mockSuccess);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
+    });
+
+    it("ensures a v2 regtest passes", async () => {
+      try {
+        var data = await readFileAsync('tests/data/regtest-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.equal(result, Status.mockSuccess);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
+    });
+
+    it("ensures a v2 testnet passes", async () => {
+      try {
+        var data = await readFileAsync('tests/data/testnet-2.0.json');
+        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var result = await certVerifier.verify((finalMessage) => {console.log(finalMessage)});
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, "This should not fail");
+      }
+    });
+
+
   });
 
 });

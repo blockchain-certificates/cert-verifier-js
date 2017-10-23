@@ -289,3 +289,6 @@ The defaults for these settings are low (set at 1) to allow users to experiment 
 ```
 npm run test
 ```
+## Contact
+
+Contact us at [the Blockcerts community forum](http://community.blockcerts.org/).

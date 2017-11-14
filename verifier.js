@@ -502,9 +502,9 @@ var log = (0, _debug2.default)("bitcoinConnectors");
 require('string.prototype.startswith');
 
 var BlockchainExplorers = [function (transactionId, chain) {
-  return getBlockcypherFetcher(transactionId, chain);
-}, function (transactionId, chain) {
   return getChainSoFetcher(transactionId, chain);
+}, function (transactionId, chain) {
+  return getBlockcypherFetcher(transactionId, chain);
 }];
 
 // for legacy (pre-v2) Blockcerts

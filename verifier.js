@@ -725,7 +725,7 @@ var getChain = function getChain(signature, bitcoinAddress) {
   if (anchor.chain) {
     var chain = anchor.chain;
     if (chain == _default.ChainSignatureValue.bitcoin) {
-      return _default.ChainSignatureValue.bitcoin;
+      return _default.Blockchain.bitcoin;
     } else if (chain == _default.ChainSignatureValue.testnet) {
       return _default.Blockchain.testnet;
     } else if (chain == _default.ChainSignatureValue.regtest) {

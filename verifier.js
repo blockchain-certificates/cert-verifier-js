@@ -1194,33 +1194,6 @@ exports.Status = _default.Status;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.readFileAsync = undefined;
-
-var readFileAsync = exports.readFileAsync = function () {
-  var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(path) {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            _context.next = 2;
-            return readFile(path);
-
-          case 2:
-            return _context.abrupt('return', _context.sent);
-
-          case 3:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, _callee, this);
-  }));
-
-  return function readFileAsync(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
 exports.request = request;
 exports.readFile = readFile;
 
@@ -1235,8 +1208,6 @@ var _debug2 = _interopRequireDefault(_debug);
 var _default = require('../config/default');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -1272,6 +1243,11 @@ function request(obj) {
   });
 };
 
+/*
+export async function readFileAsync(path) {
+  return await readFile(path);
+}*/
+
 function readFile(path) {
   return new Promise(function (resolve, reject) {
     _fs2.default.readFile(path, 'utf8', function (err, data) {
@@ -1295,6 +1271,8 @@ exports.CertificateVerifier = undefined;
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+//import {readFileAsync} from './promisifiedRequests'
+
 
 var _debug = require('debug');
 
@@ -1303,8 +1281,6 @@ var _debug2 = _interopRequireDefault(_debug);
 var _certificate = require('./certificate');
 
 var _default = require('../config/default');
-
-var _promisifiedRequests = require('./promisifiedRequests');
 
 var _checks = require('./checks');
 
@@ -1737,7 +1713,7 @@ async function test() {
 
 //test();
 
-},{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./promisifiedRequests":6,"./verifierModels":8,"debug":109,"string.prototype.startswith":122}],8:[function(require,module,exports){
+},{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./verifierModels":8,"debug":109,"string.prototype.startswith":122}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

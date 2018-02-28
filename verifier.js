@@ -739,7 +739,7 @@ var getChain = function getChain(signature, bitcoinAddress) {
   // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
   // otherwise try to determine the chain from a bitcoin address
   if (isBitcoinMainnetAddress(bitcoinAddress)) {
-    return _default.Blockchain.bitcoin;
+    return _default.Blockchain.bitcoin; // mainnet
   }
   return _default.Blockchain.testnet;
 };
@@ -1047,13 +1047,12 @@ function computeLocalHash(document, version) {
   var expandContext = document["@context"];
   var theDocument = document;
   if (version === _default.CertificateVersion.v2_0 && _default.CheckForUnmappedFields) {
-    if (expandContext.find(function (x) {
+    var ec = expandContext.find(function (x) {
       return x === Object(x) && "@vocab" in x;
-    })) {
-      expandContext = null;
-    } else {
-      expandContext.push({ "@vocab": "http://fallback.org/" });
-    }
+    });
+    //if (!ec) {
+    expandContext.push({ "@vocab": "http://fallback.org/" });
+    // }
   }
   var nodeDocumentLoader = _jsonld2.default.documentLoaders.node();
   var customLoader = function customLoader(url, callback) {
@@ -13534,6 +13533,7 @@ jsonld.normalize = function(input, options, callback) {
     opts.produceGeneralizedRdf = false;
     jsonld.toRDF(input, opts, function(err, dataset) {
       if(err) {
+        console.log(input);
         return callback(new JsonLdError(
           'Could not convert input to RDF dataset before normalization.',
           'jsonld.NormalizeError', {cause: err}));
@@ -17442,6 +17442,7 @@ function _createNodeMap(input, graphs, graph, issuer, name, list) {
     var types = input['@type'];
     for(var i = 0; i < types.length; ++i) {
       var type = types[i];
+      console.log(type);
       if(type.indexOf('_:') === 0) {
         issuer.getId(type);
       }

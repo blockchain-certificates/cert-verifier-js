@@ -1047,12 +1047,7 @@ function computeLocalHash(document, version) {
   var expandContext = document["@context"];
   var theDocument = document;
   if (version === _default.CertificateVersion.v2_0 && _default.CheckForUnmappedFields) {
-    var ec = expandContext.find(function (x) {
-      return x === Object(x) && "@vocab" in x;
-    });
-    //if (!ec) {
     expandContext.push({ "@vocab": "http://fallback.org/" });
-    // }
   }
   var nodeDocumentLoader = _jsonld2.default.documentLoaders.node();
   var customLoader = function customLoader(url, callback) {
@@ -1066,16 +1061,13 @@ function computeLocalHash(document, version) {
     return nodeDocumentLoader(url, callback);
   };
   _jsonld2.default.documentLoader = customLoader;
-  var normalizeArgs = {
-    algorithm: 'URDNA2015',
-    format: 'application/nquads'
-  };
-  if (expandContext) {
-    normalizeArgs.expandContext = expandContext;
-  }
 
   return new Promise(function (resolve, reject) {
-    _jsonld2.default.normalize(theDocument, normalizeArgs, function (err, normalized) {
+    _jsonld2.default.normalize(theDocument, {
+      algorithm: 'URDNA2015',
+      format: 'application/nquads',
+      expandContext: expandContext
+    }, function (err, normalized) {
       if (!!err) {
         reject(new _default.VerifierError(err, "Failed JSON-LD normalization"));
       } else {
@@ -1203,7 +1195,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.request = request;
-exports.readFileAsync = readFileAsync;
 exports.readFile = readFile;
 
 var _fs = require('fs');
@@ -1252,24 +1243,10 @@ function request(obj) {
   });
 };
 
-function readFileAsync(path) {
-  return regeneratorRuntime.async(function readFileAsync$(_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          _context.next = 2;
-          return regeneratorRuntime.awrap(readFile(path));
-
-        case 2:
-          return _context.abrupt('return', _context.sent);
-
-        case 3:
-        case 'end':
-          return _context.stop();
-      }
-    }
-  }, null, this);
-}
+/*
+export async function readFileAsync(path) {
+  return await readFile(path);
+}*/
 
 function readFile(path) {
   return new Promise(function (resolve, reject) {
@@ -1294,6 +1271,8 @@ exports.CertificateVerifier = undefined;
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+//import {readFileAsync} from './promisifiedRequests'
+
 
 var _debug = require('debug');
 
@@ -1667,17 +1646,15 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   return CertificateVerifier;
 }();
 
-/*
-import {readFileAsync} from './promisifiedRequests'
-
 function statusCallback(arg1) {
-  console.log(`callback status: ${arg1}`);
+  console.log('callback status: ' + arg1);
 }
 
+/*
 async function test() {
   try {
     //var data = await readFileAsync('../tests/data/sample_cert-revoked-2.0.json');
-    var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json')
+    var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json');
     var certVerifier = new CertificateVerifier(data, statusCallback);
     certVerifier.verify((status, message) => {
       console.log("completion status: " + status);
@@ -1690,9 +1667,9 @@ async function test() {
     console.error(err);
   }
 }
-
-test();
 */
+
+//test();
 
 },{"../config/default":1,"./bitcoinConnectors":2,"./certificate":3,"./checks":4,"./verifierModels":8,"debug":54,"string.prototype.startswith":128}],8:[function(require,module,exports){
 'use strict';

@@ -1370,8 +1370,9 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   }, {
     key: 'doAction',
     value: function doAction(status, action) {
-      log((0, _default.getVerboseMessage)(status));
-      this.statusCallback(status);
+      var message = (0, _default.getVerboseMessage)(status);
+      log(message);
+      this.statusCallback(status, message);
       return action();
     }
 
@@ -1387,8 +1388,9 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     key: 'doAsyncAction',
     value: async function doAsyncAction(status, action) {
       if (status != null) {
-        log((0, _default.getVerboseMessage)(status));
-        this.statusCallback(status);
+        var message = (0, _default.getVerboseMessage)(status);
+        log(message);
+        this.statusCallback(status, message);
       }
       return await action();
     }

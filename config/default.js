@@ -3,6 +3,8 @@ import VError from 'verror';
 let Status = {
   computingLocalHash: "computingLocalHash",
   fetchingRemoteHash: "fetchingRemoteHash",
+  gettingIssuerProfile: "gettingIssuerProfile",
+  parsingIssuerKeys: "parsingIssuerKeys",
   comparingHashes: "comparingHashes",
   checkingMerkleRoot: "checkingMerkleRoot",
   checkingReceipt: "checkingReceipt",
@@ -17,6 +19,9 @@ let Status = {
 
 var verboseMessageMap = {};
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
+verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remove hash";
+verboseMessageMap[Status.gettingIssuerProfile] = "Getting issuer profile";
+verboseMessageMap[Status.parsingIssuerKeys] = "Parsing issuer keys";
 verboseMessageMap[Status.comparingHashes] = "Comparing Hashes";
 verboseMessageMap[Status.checkingMerkleRoot] = "Checking Merkle Root";
 verboseMessageMap[Status.checkingReceipt] = "Checking Receipt";

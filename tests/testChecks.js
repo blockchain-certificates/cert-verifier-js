@@ -1,5 +1,6 @@
 'use strict';
 
+import "babel-polyfill";
 import {assert, expect} from 'chai'
 import * as helpers from '../lib/checks'
 

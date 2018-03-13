@@ -1260,8 +1260,23 @@ function request(obj) {
   });
 };
 
-async function readFileAsync(path) {
-  return await readFile(path);
+function readFileAsync(path) {
+  return regeneratorRuntime.async(function readFileAsync$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          _context.next = 2;
+          return regeneratorRuntime.awrap(readFile(path));
+
+        case 2:
+          return _context.abrupt('return', _context.sent);
+
+        case 3:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, null, this);
 }
 
 function readFile(path) {
@@ -1386,13 +1401,30 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'doAsyncAction',
-    value: async function doAsyncAction(status, action) {
-      if (status != null) {
-        var message = (0, _default.getVerboseMessage)(status);
-        log(message);
-        this.statusCallback(status, message);
-      }
-      return await action();
+    value: function doAsyncAction(status, action) {
+      var message;
+      return regeneratorRuntime.async(function doAsyncAction$(_context) {
+        while (1) {
+          switch (_context.prev = _context.next) {
+            case 0:
+              if (status != null) {
+                message = (0, _default.getVerboseMessage)(status);
+
+                log(message);
+                this.statusCallback(status, message);
+              }
+              _context.next = 3;
+              return regeneratorRuntime.awrap(action());
+
+            case 3:
+              return _context.abrupt('return', _context.sent);
+
+            case 4:
+            case 'end':
+              return _context.stop();
+          }
+        }
+      }, null, this);
     }
 
     /**
@@ -1423,59 +1455,116 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'verifyV1_2',
-    value: async function verifyV1_2() {
+    value: function verifyV1_2() {
       var _this = this;
 
-      var transactionId = this.getTransactionId();
-      var docToVerify = this.document;
+      var transactionId, docToVerify, localHash, txData, issuerProfileJson, issuerKeyMap;
+      return regeneratorRuntime.async(function verifyV1_2$(_context5) {
+        while (1) {
+          switch (_context5.prev = _context5.next) {
+            case 0:
+              transactionId = this.getTransactionId();
+              docToVerify = this.document;
 
-      // Compute local hash
-      var localHash = await this.doAsyncAction(_default.Status.computingLocalHash, async function () {
-        return checks.computeLocalHash(docToVerify, _this.certificate.version);
-      });
+              // Compute local hash
 
-      // Get remote hash
-      var txData = await this.doAsyncAction(_default.Status.fetchingRemoteHash, async function () {
-        return bitcoinConnectors.lookForTx(transactionId, _this.certificate.chain, _this.certificate.version);
-      });
+              _context5.next = 4;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.computingLocalHash, function _callee() {
+                return regeneratorRuntime.async(function _callee$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        return _context2.abrupt('return', checks.computeLocalHash(docToVerify, _this.certificate.version));
 
-      // Get issuer profile
-      var issuerProfileJson = await this.doAsyncAction(_default.Status.gettingIssuerProfile, async function () {
-        return (0, _verifierModels.getIssuerProfile)(_this.certificate.issuer.id);
-      });
+                      case 1:
+                      case 'end':
+                        return _context2.stop();
+                    }
+                  }
+                }, null, _this);
+              }));
 
-      // Parse issuer keys
-      var issuerKeyMap = await this.doAsyncAction(_default.Status.parsingIssuerKeys, (0, _verifierModels.parseIssuerKeys)(issuerProfileJson));
+            case 4:
+              localHash = _context5.sent;
+              _context5.next = 7;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.fetchingRemoteHash, function _callee2() {
+                return regeneratorRuntime.async(function _callee2$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        return _context3.abrupt('return', bitcoinConnectors.lookForTx(transactionId, _this.certificate.chain, _this.certificate.version));
 
-      // Compare hashes
-      this.doAction(_default.Status.comparingHashes, function () {
-        return checks.ensureHashesEqual(localHash, _this.certificate.receipt.targetHash);
-      });
+                      case 1:
+                      case 'end':
+                        return _context3.stop();
+                    }
+                  }
+                }, null, _this);
+              }));
 
-      // Check merkle root
-      this.doAction(_default.Status.checkingMerkleRoot, function () {
-        return checks.ensureMerkleRootEqual(_this.certificate.receipt.merkleRoot, txData.remoteHash);
-      });
+            case 7:
+              txData = _context5.sent;
+              _context5.next = 10;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.gettingIssuerProfile, function _callee3() {
+                return regeneratorRuntime.async(function _callee3$(_context4) {
+                  while (1) {
+                    switch (_context4.prev = _context4.next) {
+                      case 0:
+                        return _context4.abrupt('return', (0, _verifierModels.getIssuerProfile)(_this.certificate.issuer.id));
 
-      // Check receipt
-      this.doAction(_default.Status.checkingReceipt, function () {
-        return checks.ensureValidReceipt(_this.certificate.receipt);
-      });
+                      case 1:
+                      case 'end':
+                        return _context4.stop();
+                    }
+                  }
+                }, null, _this);
+              }));
 
-      // Check revoke status
-      this.doAction(_default.Status.checkingRevokedStatus, function () {
-        return checks.ensureNotRevokedBySpentOutput(txData.revokedAddresses, (0, _verifierModels.parseRevocationKey)(issuerProfileJson), _this.certificate.revocationKey);
-      });
+            case 10:
+              issuerProfileJson = _context5.sent;
+              _context5.next = 13;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.parsingIssuerKeys, (0, _verifierModels.parseIssuerKeys)(issuerProfileJson)));
 
-      // Check authenticity
-      this.doAction(_default.Status.checkingAuthenticity, function () {
-        return checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
-      });
+            case 13:
+              issuerKeyMap = _context5.sent;
 
-      // Check expiration
-      this.doAction(_default.Status.checkingExpiresDate, function () {
-        return checks.ensureNotExpired(_this.certificate.expires);
-      });
+
+              // Compare hashes
+              this.doAction(_default.Status.comparingHashes, function () {
+                return checks.ensureHashesEqual(localHash, _this.certificate.receipt.targetHash);
+              });
+
+              // Check merkle root
+              this.doAction(_default.Status.checkingMerkleRoot, function () {
+                return checks.ensureMerkleRootEqual(_this.certificate.receipt.merkleRoot, txData.remoteHash);
+              });
+
+              // Check receipt
+              this.doAction(_default.Status.checkingReceipt, function () {
+                return checks.ensureValidReceipt(_this.certificate.receipt);
+              });
+
+              // Check revoke status
+              this.doAction(_default.Status.checkingRevokedStatus, function () {
+                return checks.ensureNotRevokedBySpentOutput(txData.revokedAddresses, (0, _verifierModels.parseRevocationKey)(issuerProfileJson), _this.certificate.revocationKey);
+              });
+
+              // Check authenticity
+              this.doAction(_default.Status.checkingAuthenticity, function () {
+                return checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
+              });
+
+              // Check expiration
+              this.doAction(_default.Status.checkingExpiresDate, function () {
+                return checks.ensureNotExpired(_this.certificate.expires);
+              });
+
+            case 20:
+            case 'end':
+              return _context5.stop();
+          }
+        }
+      }, null, this);
     }
 
     /**
@@ -1488,61 +1577,129 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'verifyV2',
-    value: async function verifyV2() {
+    value: function verifyV2() {
       var _this2 = this;
 
-      var transactionId = this.getTransactionId();
-      var docToVerify = this.document;
+      var transactionId, docToVerify, localHash, txData, issuerKeyMap, revokedAssertions;
+      return regeneratorRuntime.async(function verifyV2$(_context10) {
+        while (1) {
+          switch (_context10.prev = _context10.next) {
+            case 0:
+              transactionId = this.getTransactionId();
+              docToVerify = this.document;
 
-      // Compute local hash
-      var localHash = await this.doAsyncAction(_default.Status.computingLocalHash, async function () {
-        return checks.computeLocalHash(docToVerify, _this2.certificate.version);
-      });
+              // Compute local hash
 
-      // Fetch remote hash
-      var txData = await this.doAsyncAction(_default.Status.fetchingRemoteHash, async function () {
-        return bitcoinConnectors.lookForTx(transactionId, _this2.certificate.chain);
-      });
+              _context10.next = 4;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.computingLocalHash, function _callee4() {
+                return regeneratorRuntime.async(function _callee4$(_context6) {
+                  while (1) {
+                    switch (_context6.prev = _context6.next) {
+                      case 0:
+                        return _context6.abrupt('return', checks.computeLocalHash(docToVerify, _this2.certificate.version));
 
-      // Get issuer keys
-      var issuerKeyMap = await this.doAsyncAction(_default.Status.parsingIssuerKeys, async function () {
-        return (0, _verifierModels.getIssuerKeys)(_this2.certificate.issuer.id);
-      });
+                      case 1:
+                      case 'end':
+                        return _context6.stop();
+                    }
+                  }
+                }, null, _this2);
+              }));
 
-      // Get issuer keys
-      var revokedAssertions = await this.doAsyncAction(null, async function () {
-        return (0, _verifierModels.getRevokedAssertions)(_this2.certificate.issuer.revocationList);
-      });
+            case 4:
+              localHash = _context10.sent;
+              _context10.next = 7;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.fetchingRemoteHash, function _callee5() {
+                return regeneratorRuntime.async(function _callee5$(_context7) {
+                  while (1) {
+                    switch (_context7.prev = _context7.next) {
+                      case 0:
+                        return _context7.abrupt('return', bitcoinConnectors.lookForTx(transactionId, _this2.certificate.chain));
 
-      // Compare hashes
-      this.doAction(_default.Status.comparingHashes, function () {
-        return checks.ensureHashesEqual(localHash, _this2.certificate.receipt.targetHash);
-      });
+                      case 1:
+                      case 'end':
+                        return _context7.stop();
+                    }
+                  }
+                }, null, _this2);
+              }));
 
-      // Check merkle root
-      this.doAction(_default.Status.checkingMerkleRoot, function () {
-        return checks.ensureMerkleRootEqual(_this2.certificate.receipt.merkleRoot, txData.remoteHash);
-      });
+            case 7:
+              txData = _context10.sent;
+              _context10.next = 10;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.parsingIssuerKeys, function _callee6() {
+                return regeneratorRuntime.async(function _callee6$(_context8) {
+                  while (1) {
+                    switch (_context8.prev = _context8.next) {
+                      case 0:
+                        return _context8.abrupt('return', (0, _verifierModels.getIssuerKeys)(_this2.certificate.issuer.id));
 
-      // Check receipt
-      this.doAction(_default.Status.checkingReceipt, function () {
-        return checks.ensureValidReceipt(_this2.certificate.receipt);
-      });
+                      case 1:
+                      case 'end':
+                        return _context8.stop();
+                    }
+                  }
+                }, null, _this2);
+              }));
 
-      // Check revoked status
-      this.doAction(_default.Status.checkingRevokedStatus, function () {
-        return checks.ensureNotRevokedByList(revokedAssertions, _this2.certificate.id);
-      });
+            case 10:
+              issuerKeyMap = _context10.sent;
+              _context10.next = 13;
+              return regeneratorRuntime.awrap(this.doAsyncAction(null, function _callee7() {
+                return regeneratorRuntime.async(function _callee7$(_context9) {
+                  while (1) {
+                    switch (_context9.prev = _context9.next) {
+                      case 0:
+                        return _context9.abrupt('return', (0, _verifierModels.getRevokedAssertions)(_this2.certificate.issuer.revocationList));
 
-      // Check authenticity
-      this.doAction(_default.Status.checkingAuthenticity, function () {
-        return checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
-      });
+                      case 1:
+                      case 'end':
+                        return _context9.stop();
+                    }
+                  }
+                }, null, _this2);
+              }));
 
-      // Check expiration date
-      this.doAction(_default.Status.checkingExpiresDate, function () {
-        return checks.ensureNotExpired(_this2.certificate.expires);
-      });
+            case 13:
+              revokedAssertions = _context10.sent;
+
+
+              // Compare hashes
+              this.doAction(_default.Status.comparingHashes, function () {
+                return checks.ensureHashesEqual(localHash, _this2.certificate.receipt.targetHash);
+              });
+
+              // Check merkle root
+              this.doAction(_default.Status.checkingMerkleRoot, function () {
+                return checks.ensureMerkleRootEqual(_this2.certificate.receipt.merkleRoot, txData.remoteHash);
+              });
+
+              // Check receipt
+              this.doAction(_default.Status.checkingReceipt, function () {
+                return checks.ensureValidReceipt(_this2.certificate.receipt);
+              });
+
+              // Check revoked status
+              this.doAction(_default.Status.checkingRevokedStatus, function () {
+                return checks.ensureNotRevokedByList(revokedAssertions, _this2.certificate.id);
+              });
+
+              // Check authenticity
+              this.doAction(_default.Status.checkingAuthenticity, function () {
+                return checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
+              });
+
+              // Check expiration date
+              this.doAction(_default.Status.checkingExpiresDate, function () {
+                return checks.ensureNotExpired(_this2.certificate.expires);
+              });
+
+            case 20:
+            case 'end':
+              return _context10.stop();
+          }
+        }
+      }, null, this);
     }
 
     /**
@@ -1555,30 +1712,59 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'verifyV2Mock',
-    value: async function verifyV2Mock() {
+    value: function verifyV2Mock() {
       var _this3 = this;
 
-      var docToVerify = this.document;
+      var docToVerify, localHash;
+      return regeneratorRuntime.async(function verifyV2Mock$(_context12) {
+        while (1) {
+          switch (_context12.prev = _context12.next) {
+            case 0:
+              docToVerify = this.document;
 
-      // Compute local hash
-      var localHash = await this.doAsyncAction(_default.Status.computingLocalHash, async function () {
-        return checks.computeLocalHash(docToVerify, _this3.certificate.version);
-      });
+              // Compute local hash
 
-      // Compare hashes
-      this.doAction(_default.Status.comparingHashes, function () {
-        return checks.ensureHashesEqual(localHash, _this3.certificate.receipt.targetHash);
-      });
+              _context12.next = 3;
+              return regeneratorRuntime.awrap(this.doAsyncAction(_default.Status.computingLocalHash, function _callee8() {
+                return regeneratorRuntime.async(function _callee8$(_context11) {
+                  while (1) {
+                    switch (_context11.prev = _context11.next) {
+                      case 0:
+                        return _context11.abrupt('return', checks.computeLocalHash(docToVerify, _this3.certificate.version));
 
-      // Check receipt
-      this.doAction(_default.Status.checkingReceipt, function () {
-        return checks.ensureValidReceipt(_this3.certificate.receipt);
-      });
+                      case 1:
+                      case 'end':
+                        return _context11.stop();
+                    }
+                  }
+                }, null, _this3);
+              }));
 
-      // Check expiration date
-      this.doAction(_default.Status.checkingExpiresDate, function () {
-        return checks.ensureNotExpired(_this3.certificate.expires);
-      });
+            case 3:
+              localHash = _context12.sent;
+
+
+              // Compare hashes
+              this.doAction(_default.Status.comparingHashes, function () {
+                return checks.ensureHashesEqual(localHash, _this3.certificate.receipt.targetHash);
+              });
+
+              // Check receipt
+              this.doAction(_default.Status.checkingReceipt, function () {
+                return checks.ensureValidReceipt(_this3.certificate.receipt);
+              });
+
+              // Check expiration date
+              this.doAction(_default.Status.checkingExpiresDate, function () {
+                return checks.ensureNotExpired(_this3.certificate.expires);
+              });
+
+            case 7:
+            case 'end':
+              return _context12.stop();
+          }
+        }
+      }, null, this);
     }
 
     /**
@@ -1590,27 +1776,74 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'verify',
-    value: async function verify(completionCallback) {
-      if (this.certificate.version === _default.CertificateVersion.v1_1) {
-        throw new _default.VerifierError('Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
-      }
-      completionCallback = completionCallback || noop;
-      try {
-        if (this.certificate.version === _default.CertificateVersion.v1_2) {
-          await this.verifyV1_2();
-        } else if (this.certificate.chain === _default.Blockchain.mocknet || this.certificate.chain === _default.Blockchain.regtest) {
-          await this.verifyV2Mock();
-        } else {
-          await this.verifyV2();
-        }
+    value: function verify(completionCallback) {
+      return regeneratorRuntime.async(function verify$(_context13) {
+        while (1) {
+          switch (_context13.prev = _context13.next) {
+            case 0:
+              if (!(this.certificate.version === _default.CertificateVersion.v1_1)) {
+                _context13.next = 2;
+                break;
+              }
 
-        return this._succeed(completionCallback);
-      } catch (e) {
-        if (e instanceof _default.VerifierError) {
-          return this._failed(completionCallback, e);
+              throw new _default.VerifierError('Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
+
+            case 2:
+              completionCallback = completionCallback || noop;
+              _context13.prev = 3;
+
+              if (!(this.certificate.version === _default.CertificateVersion.v1_2)) {
+                _context13.next = 9;
+                break;
+              }
+
+              _context13.next = 7;
+              return regeneratorRuntime.awrap(this.verifyV1_2());
+
+            case 7:
+              _context13.next = 16;
+              break;
+
+            case 9:
+              if (!(this.certificate.chain === _default.Blockchain.mocknet || this.certificate.chain === _default.Blockchain.regtest)) {
+                _context13.next = 14;
+                break;
+              }
+
+              _context13.next = 12;
+              return regeneratorRuntime.awrap(this.verifyV2Mock());
+
+            case 12:
+              _context13.next = 16;
+              break;
+
+            case 14:
+              _context13.next = 16;
+              return regeneratorRuntime.awrap(this.verifyV2());
+
+            case 16:
+              return _context13.abrupt('return', this._succeed(completionCallback));
+
+            case 19:
+              _context13.prev = 19;
+              _context13.t0 = _context13['catch'](3);
+
+              if (!(_context13.t0 instanceof _default.VerifierError)) {
+                _context13.next = 23;
+                break;
+              }
+
+              return _context13.abrupt('return', this._failed(completionCallback, _context13.t0));
+
+            case 23:
+              throw _context13.t0;
+
+            case 24:
+            case 'end':
+              return _context13.stop();
+          }
         }
-        throw e;
-      }
+      }, null, this, [[3, 19]]);
     }
   }]);
 

@@ -14,7 +14,9 @@ let Status = {
   checkingExpiresDate: "checkingExpiresDate",
   success: "success",
   failure: "failure",
-  mockSuccess: "mockSuccess"
+  starting: "starting",
+  mockSuccess: "mockSuccess",
+  final: "final",
 };
 
 var verboseMessageMap = {};

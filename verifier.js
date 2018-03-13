@@ -31,7 +31,9 @@ var Status = {
   checkingExpiresDate: "checkingExpiresDate",
   success: "success",
   failure: "failure",
-  mockSuccess: "mockSuccess"
+  starting: "starting",
+  mockSuccess: "mockSuccess",
+  final: "final"
 };
 
 var verboseMessageMap = {};
@@ -1361,16 +1363,25 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         log('success');
         status = _default.Status.success;
       }
-      this.statusCallback(status);
-      completionCallback(status);
+      this.statusCallback('result', '', status);
+      completionCallback('result', '', status);
       return status;
     }
+
+    /**
+     * _failed
+     * 
+     * @param {*} stepCode 
+     * @param {*} completionCallback 
+     * @param {*} err 
+     */
+
   }, {
     key: '_failed',
-    value: function _failed(completionCallback, err) {
+    value: function _failed(stepCode, completionCallback, err) {
       log('failure:' + err.message);
-      this.statusCallback(_default.Status.failure, err.message);
-      completionCallback(_default.Status.failure, err.message);
+      this.statusCallback(stepCode, err.message, _default.Status.failure);
+      completionCallback(stepCode, err.message, _default.Status.failure);
       return _default.Status.failure;
     }
 
@@ -1384,34 +1395,34 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: 'doAction',
-    value: function doAction(status, action) {
-      var message = (0, _default.getVerboseMessage)(status);
+    value: function doAction(stepCode, action) {
+      var message = (0, _default.getVerboseMessage)(stepCode);
       log(message);
-      this.statusCallback(status, message);
+      this.statusCallback(stepCode, message, _default.Status.starting);
       return action();
     }
 
     /**
      * doAsyncAction
      *
-     * @param status
+     * @param stepCode
      * @param action
      * @returns {Promise<*>}
      */
 
   }, {
     key: 'doAsyncAction',
-    value: function doAsyncAction(status, action) {
+    value: function doAsyncAction(stepCode, action) {
       var message;
       return regeneratorRuntime.async(function doAsyncAction$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              if (status != null) {
-                message = (0, _default.getVerboseMessage)(status);
+              if (stepCode != null) {
+                message = (0, _default.getVerboseMessage)(stepCode);
 
                 log(message);
-                this.statusCallback(status, message);
+                this.statusCallback(stepCode, message, _default.Status.starting);
               }
               _context.next = 3;
               return regeneratorRuntime.awrap(action());
@@ -1833,7 +1844,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
                 break;
               }
 
-              return _context13.abrupt('return', this._failed(completionCallback, _context13.t0));
+              return _context13.abrupt('return', this._failed(_default.Status.final, completionCallback, _context13.t0));
 
             case 23:
               throw _context13.t0;

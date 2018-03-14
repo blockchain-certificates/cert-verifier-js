@@ -36,9 +36,10 @@ let getVerboseMessage = function (status) {
   return verboseMessageMap[status];
 };
 
-class VerifierError extends VError {
-  constructor(message) {
+class VerifierError extends Error {
+  constructor(stepCode, message) {
     super(message);
+    this.stepCode = stepCode;
   }
 }
 

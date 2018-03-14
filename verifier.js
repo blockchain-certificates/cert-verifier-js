@@ -53,17 +53,20 @@ var getVerboseMessage = function getVerboseMessage(status) {
   return verboseMessageMap[status];
 };
 
-var VerifierError = function (_VError) {
-  _inherits(VerifierError, _VError);
+var VerifierError = function (_Error) {
+  _inherits(VerifierError, _Error);
 
-  function VerifierError(message) {
+  function VerifierError(stepCode, message) {
     _classCallCheck(this, VerifierError);
 
-    return _possibleConstructorReturn(this, (VerifierError.__proto__ || Object.getPrototypeOf(VerifierError)).call(this, message));
+    var _this = _possibleConstructorReturn(this, (VerifierError.__proto__ || Object.getPrototypeOf(VerifierError)).call(this, message));
+
+    _this.stepCode = stepCode;
+    return _this;
   }
 
   return VerifierError;
-}(_verror2.default);
+}(Error);
 
 module.exports = {
   CertificateVersion: {
@@ -617,10 +620,10 @@ function parseChainSoResponse(jsonResponse) {
 function lookForTx(transactionId, chain, certificateVersion) {
   // First ensure we can satisfy the MinimumBlockchainExplorers setting
   if (_default.MinimumBlockchainExplorers < 0 || _default.MinimumBlockchainExplorers > BlockchainExplorers.length) {
-    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError(Status.fetchingRemoteHash, "Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
   }
   if (_default.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion == _default.CertificateVersion.v1_1 || certificateVersion == _default.CertificateVersion.v1_2)) {
-    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError(Status.fetchingRemoteHash, "Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
   }
 
   // Queue up blockchain explorer APIs
@@ -640,7 +643,7 @@ function lookForTx(transactionId, chain, certificateVersion) {
   return new Promise(function (resolve, reject) {
     return Promise.properRace(promises, _default.MinimumBlockchainExplorers).then(function (winners) {
       if (!winners || winners.length == 0) {
-        return Promise.reject(new _default.VerifierError("Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
+        return Promise.reject(new _default.VerifierError(Status.fetchingRemoteHash, "Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
       }
 
       // Compare results returned by different blockchain apis. We pick off the first result and compare the others
@@ -656,10 +659,10 @@ function lookForTx(transactionId, chain, certificateVersion) {
       for (var i = 1; i < winners.length; i++) {
         var thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-          throw new _default.VerifierError("Issuing addresses returned by the blockchain APIs were different");
+          throw new _default.VerifierError(Status.fetchingRemoteHash, "Issuing addresses returned by the blockchain APIs were different");
         }
         if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-          throw new _default.VerifierError("Remote hashes returned by the blockchain APIs were different");
+          throw new _default.VerifierError(Status.fetchingRemoteHash, "Remote hashes returned by the blockchain APIs were different");
         }
       }
       resolve(firstResponse);
@@ -921,6 +924,8 @@ var _sha = require('sha256');
 
 var _sha2 = _interopRequireDefault(_sha);
 
+var _ = require('.');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var log = (0, _debug2.default)("checks");
@@ -948,7 +953,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
       return address === issuerRevocationKey;
     });
     if (isRevokedByIssuer) {
-      throw new _default.VerifierError("This certificate batch has been revoked by the issuer.");
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This certificate batch has been revoked by the issuer.");
     }
   }
   if (recipientRevocationKey) {
@@ -956,7 +961,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
       return address === recipientRevocationKey;
     });
     if (isRevokedByRecipient) {
-      throw new _default.VerifierError("This recipient's certificate has been revoked.");
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This recipient's certificate has been revoked.");
     }
   }
 }
@@ -973,7 +978,7 @@ function ensureNotRevokedByList(revokedAssertions, assertionUid) {
     return id === assertionUid;
   });
   if (isRevokedByIssuer) {
-    throw new _default.VerifierError("This certificate has been revoked by the issuer.");
+    throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This certificate has been revoked by the issuer.");
   }
 }
 
@@ -986,13 +991,13 @@ function ensureIssuerSignature(issuerKey, certificateUid, certificateSignature, 
 
 function ensureHashesEqual(actual, expected) {
   if (actual !== expected) {
-    throw new _default.VerifierError("Computed hash does not match remote hash");
+    throw new _default.VerifierError(_.Status.comparingHashes, "Computed hash does not match remote hash");
   }
 }
 
 function ensureMerkleRootEqual(merkleRoot, remoteHash) {
   if (merkleRoot !== remoteHash) {
-    throw new _default.VerifierError("Merkle root does not match remote hash.");
+    throw new _default.VerifierError(_.Status.checkingMerkleRoot, "Merkle root does not match remote hash.");
   }
 }
 
@@ -1012,7 +1017,7 @@ function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
     }
   }
   if (!validKey) {
-    throw new _default.VerifierError("Transaction occurred at time when issuing address was not considered valid.");
+    throw new _default.VerifierError(_.Status.checkingAuthenticity, "Transaction occurred at time when issuing address was not considered valid.");
   }
 };
 
@@ -1031,16 +1036,16 @@ function ensureValidReceipt(receipt) {
           var appendedBuffer = _toByteArray('' + proofHash + node.right);
           proofHash = (0, _sha2.default)(appendedBuffer);
         } else {
-          throw new _default.VerifierError("We should never get here.");
+          throw new _default.VerifierError(_.Status.checkingReceipt, "We should never get here.");
         }
       }
     }
   } catch (e) {
-    throw new _default.VerifierError("The receipt is malformed. There was a problem navigating the merkle tree in the receipt.");
+    throw new _default.VerifierError(_.Status.checkingReceipt, "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.");
   }
 
   if (proofHash !== merkleRoot) {
-    throw new _default.VerifierError("Invalid Merkle Receipt. Proof hash didn't match Merkle root");
+    throw new _default.VerifierError(_.Status.checkingReceipt, "Invalid Merkle Receipt. Proof hash didn't match Merkle root");
   }
 };
 
@@ -1089,7 +1094,7 @@ function computeLocalHash(document, version) {
       } else {
         var unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
-          reject(new _default.VerifierError("Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
+          reject(new _default.VerifierError(_.Status.computingLocalHash, "Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
         } else {
           resolve((0, _sha2.default)(_toUTF8Data(normalized)));
         }
@@ -1117,7 +1122,7 @@ function ensureNotExpired(expires) {
   }
   var expiryDate = Date.parse(expires);
   if (new Date() >= expiryDate) {
-    throw new _default.VerifierError("This certificate has expired.");
+    throw new _default.VerifierError(_.Status.checkingExpiresDate, "This certificate has expired.");
   }
   // otherwise, it's fine
 }
@@ -1166,7 +1171,7 @@ function _hexFromByteArray(byteArray) {
   return out;
 };
 
-},{"../config/default":1,"bitcoinjs-lib":27,"debug":378,"jsonld":395,"sha256":428,"string.prototype.startswith":434}],5:[function(require,module,exports){
+},{".":5,"../config/default":1,"bitcoinjs-lib":27,"debug":378,"jsonld":395,"sha256":428,"string.prototype.startswith":434}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1378,10 +1383,10 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: '_failed',
-    value: function _failed(stepCode, completionCallback, err) {
-      log('failure:' + err.message);
-      this.statusCallback(stepCode, err.message, _default.Status.failure);
-      completionCallback(stepCode, err.message, _default.Status.failure);
+    value: function _failed(stepCode, completionCallback, message) {
+      log('failure:' + message);
+      this.statusCallback(stepCode, message, _default.Status.failure);
+      completionCallback(stepCode, message, _default.Status.failure);
       return _default.Status.failure;
     }
 
@@ -1452,7 +1457,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         transactionId = this.certificate.receipt.anchors[0].sourceId;
         return transactionId;
       } catch (e) {
-        throw new _default.VerifierError("Can't verify this certificate without a transaction ID to compare against.");
+        throw new _default.VerifierError("getTransaction", "Can't verify this certificate without a transaction ID to compare against.");
       }
     }
 
@@ -1797,7 +1802,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
                 break;
               }
 
-              throw new _default.VerifierError('Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
+              throw new _default.VerifierError('', 'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
 
             case 2:
               completionCallback = completionCallback || noop;
@@ -1844,7 +1849,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
                 break;
               }
 
-              return _context13.abrupt('return', this._failed(_default.Status.final, completionCallback, _context13.t0));
+              return _context13.abrupt('return', this._failed(_context13.t0.stepCode, completionCallback, _context13.t0.message));
 
             case 23:
               throw _context13.t0;
@@ -1951,7 +1956,7 @@ function parseIssuerKeys(issuerProfileJson) {
     }
     return keyMap;
   } catch (e) {
-    throw new _default.VerifierError(e, "Unable to parse JSON out of issuer identification data.");
+    throw new _default.VerifierError(Status.parsingIssuerKeys, "Unable to parse JSON out of issuer identification data.");
   }
 };
 
@@ -1969,10 +1974,10 @@ function getIssuerProfile(issuerId) {
         var issuerProfileJson = JSON.parse(response);
         resolve(issuerProfileJson);
       } catch (err) {
-        reject(new _default.VerifierError(err));
+        reject(new _default.VerifierError(Status.gettingIssuerProfile, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(Status.gettingIssuerProfile, err));
     });
   });
   return issuerProfileFetcher;
@@ -1985,10 +1990,10 @@ function getIssuerKeys(issuerId) {
         var issuerKeyMap = parseIssuerKeys(issuerProfileJson);
         resolve(issuerKeyMap);
       } catch (err) {
-        reject(new _default.VerifierError(err));
+        reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
     });
   });
   return issuerKeyFetcher;
@@ -2005,10 +2010,10 @@ function getRevokedAssertions(revocationListUrl) {
         var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
         resolve(revokedAssertions);
       } catch (err) {
-        reject(new _default.VerifierError(err));
+        reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
     });
   });
   return revocationListFetcher;

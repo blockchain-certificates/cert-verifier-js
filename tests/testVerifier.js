@@ -7,7 +7,7 @@ import { CertificateVerifier } from '../lib/index';
 import { readFileAsync } from '../lib/promisifiedRequests';
 
 describe('Certificate verifier should', async () => {
-  /*it('verify a v1 certificate', async () => {
+  it('verify a v1 certificate', async () => {
     try {
       var data = await readFileAsync(
         'tests/data/sample_cert-valid-1.2.0.json',
@@ -54,7 +54,7 @@ describe('Certificate verifier should', async () => {
     } catch (err) {
       assert.fail(err, null, 'This should not fail');
     }
-  });*/
+  });
 
   it('ensure a tampered v2 certificate fails', async () => {
     try {
@@ -74,7 +74,8 @@ describe('Certificate verifier should', async () => {
         'Found unmapped fields during JSON-LD normalization: <http://fallback.org/someUnmappedField>,someUnmappedField',
       );
     } catch (err) {
-      assert.fail(err, null, 'Caught unexpected exception');
+      assert.equal(err.stepCode, 'computingLocalHash');
+      //assert.fail(err, null, 'Caught unexpected exception');
     }
   });
 
@@ -83,8 +84,8 @@ describe('Certificate verifier should', async () => {
       var data = await readFileAsync(
         'tests/data/sample_cert-revoked-2.0.json',
       );
-      var certVerifier = new CertificateVerifier(data, (status, message, stepCode) => {
-        console.log('status:', status, '('+message+') | Status:', stepCode);
+      var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        console.log('status:', stepCode, '('+message+') | Status:', status);
       });
       var returnMessage;
       var result = await certVerifier.verify((status, message) => {
@@ -97,7 +98,9 @@ describe('Certificate verifier should', async () => {
         'This certificate has been revoked by the issuer.',
       );
     } catch (err) {
-      assert.fail(err, null, 'Caught unexpected exception');
+      console.log(err.stepCode);
+      assert.equal(err.stepCode, 'checkingRevokedStatus');
+      //assert.fail(err, null, 'Caught unexpected exception');
     }
   });
 
@@ -120,11 +123,12 @@ describe('Certificate verifier should', async () => {
         'Transaction occurred at time when issuing address was not considered valid.',
       );
     } catch (err) {
-      assert.fail(err, null, 'Caught unexpected exception');
+      assert.equal(err.stepCode, 'checkingAuthenticity');
+      //assert.fail(err, null, 'Caught unexpected exception');
     }
   });
 
-  /*it('ensure a v2 certificate with a v1 issuer passes', async () => {
+  it('ensure a v2 certificate with a v1 issuer passes', async () => {
     try {
       var data = await readFileAsync(
         'tests/data/sample_cert-with_v1_issuer-2.0.json',
@@ -184,5 +188,5 @@ describe('Certificate verifier should', async () => {
     } catch (err) {
       assert.fail(err, null, 'This should not fail');
     }
-  });*/
+  });
 });

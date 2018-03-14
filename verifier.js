@@ -18,6 +18,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Status = {
+  getTransactionId: "getTransactionId",
   computingLocalHash: "computingLocalHash",
   fetchingRemoteHash: "fetchingRemoteHash",
   gettingIssuerProfile: "gettingIssuerProfile",
@@ -37,6 +38,7 @@ var Status = {
 };
 
 var verboseMessageMap = {};
+verboseMessageMap[Status.getTransactionId] = "Getting transaction ID";
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
 verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remove hash";
 verboseMessageMap[Status.gettingIssuerProfile] = "Getting issuer profile";
@@ -44,10 +46,15 @@ verboseMessageMap[Status.parsingIssuerKeys] = "Parsing issuer keys";
 verboseMessageMap[Status.comparingHashes] = "Comparing Hashes";
 verboseMessageMap[Status.checkingMerkleRoot] = "Checking Merkle Root";
 verboseMessageMap[Status.checkingReceipt] = "Checking Receipt";
-verboseMessageMap[Status.checkingRevokedStatus] = "Checking Revoked Status";
-verboseMessageMap[Status.checkingAuthenticity] = "Checking Authenticity";
-verboseMessageMap[Status.checkingExpiresDate] = "Checking Expires Date";
 verboseMessageMap[Status.checkingIssuerSignature] = "Checking Issuer Signature";
+verboseMessageMap[Status.checkingAuthenticity] = "Checking Authenticity";
+verboseMessageMap[Status.checkingRevokedStatus] = "Checking Revoked Status";
+verboseMessageMap[Status.checkingExpiresDate] = "Checking Expires Date";
+verboseMessageMap[Status.success] = "Success";
+verboseMessageMap[Status.failure] = "Failure";
+verboseMessageMap[Status.starting] = "Starting";
+verboseMessageMap[Status.mockSuccess] = "mockSuccess";
+verboseMessageMap[Status.final] = "Final";
 
 var getVerboseMessage = function getVerboseMessage(status) {
   return verboseMessageMap[status];
@@ -67,6 +74,13 @@ var VerifierError = function (_Error) {
 
   return VerifierError;
 }(Error);
+
+var ActionResult = function ActionResult(status, data) {
+  _classCallCheck(this, ActionResult);
+
+  this.status = status;
+  this.data = data;
+};
 
 module.exports = {
   CertificateVersion: {
@@ -903,6 +917,7 @@ exports.ensureMerkleRootEqual = ensureMerkleRootEqual;
 exports.ensureValidIssuingKey = ensureValidIssuingKey;
 exports.ensureValidReceipt = ensureValidReceipt;
 exports.computeLocalHashV1_1 = computeLocalHashV1_1;
+exports.getTransactionId = getTransactionId;
 exports.computeLocalHash = computeLocalHash;
 exports.ensureNotExpired = ensureNotExpired;
 
@@ -1055,6 +1070,16 @@ function computeLocalHashV1_1(certificateString) {
   return (0, _sha2.default)(correctedData);
 };
 
+function getTransactionId(certificate) {
+  var transactionId = void 0;
+  try {
+    transactionId = certificate.receipt.anchors[0].sourceId;
+    return transactionId;
+  } catch (e) {
+    throw new _default.VerifierError(_.Status.getTransactionId, "Can't verify this certificate without a transaction ID to compare against.");
+  }
+}
+
 function computeLocalHash(document, version) {
   var expandContext = document["@context"];
   var theDocument = document;
@@ -1090,7 +1115,7 @@ function computeLocalHash(document, version) {
   return new Promise(function (resolve, reject) {
     _jsonld2.default.normalize(theDocument, normalizeArgs, function (err, normalized) {
       if (!!err) {
-        reject(new _default.VerifierError(err, "Failed JSON-LD normalization"));
+        reject(new _default.VerifierError(_.Status.computingLocalHash, "Failed JSON-LD normalization"));
       } else {
         var unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
@@ -1353,11 +1378,42 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     }
     this.document = document;
     this.statusCallback = statusCallback || noop;
+    this.completionCallback = null;
+
     // v1.1 only
     this.certificateString = certificateString;
+
+    // Final verification result
+    // Init status as success, we will update the final status at the end
+    this._stepsStatuses = [];
   }
 
+  /**
+   * _updateCallback
+   * 
+   * calls the origin callback to update on a step status
+   * 
+   * @param {*} stepCode 
+   * @param {*} message 
+   * @param {*} status 
+   */
+
+
   _createClass(CertificateVerifier, [{
+    key: '_updateCallback',
+    value: function _updateCallback(stepCode, message, status) {
+      if (stepCode != null) {
+        this.statusCallback(stepCode, message, status);
+      }
+    }
+
+    /**
+     * _succeed
+     * 
+     * @param {*} completionCallback 
+     */
+
+  }, {
     key: '_succeed',
     value: function _succeed(completionCallback) {
       var status = void 0;
@@ -1368,8 +1424,8 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         log('success');
         status = _default.Status.success;
       }
-      this.statusCallback('result', '', status);
-      completionCallback('result', '', status);
+
+      this.completionCallback(_default.Status.final, '', status);
       return status;
     }
 
@@ -1383,10 +1439,12 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
   }, {
     key: '_failed',
-    value: function _failed(stepCode, completionCallback, message) {
+    value: function _failed(stepCode, message) {
+      stepCode = stepCode || '';
+      message = message || '';
       log('failure:' + message);
-      this.statusCallback(stepCode, message, _default.Status.failure);
-      completionCallback(stepCode, message, _default.Status.failure);
+
+      this.completionCallback(stepCode, message, _default.Status.failure);
       return _default.Status.failure;
     }
 
@@ -1403,8 +1461,17 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     value: function doAction(stepCode, action) {
       var message = (0, _default.getVerboseMessage)(stepCode);
       log(message);
-      this.statusCallback(stepCode, message, _default.Status.starting);
-      return action();
+      this._updateCallback(stepCode, message, _default.Status.starting);
+
+      try {
+        var res = action();
+        this._updateCallback(stepCode, message, _default.Status.success);
+        this._stepsStatuses.push(_default.Status.success);
+        return res;
+      } catch (err) {
+        this._updateCallback(stepCode, err.message, _default.Status.failure);
+        this._stepsStatuses.push(_default.Status.failure);
+      }
     }
 
     /**
@@ -1418,47 +1485,43 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   }, {
     key: 'doAsyncAction',
     value: function doAsyncAction(stepCode, action) {
-      var message;
+      var message, res;
       return regeneratorRuntime.async(function doAsyncAction$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              message = void 0;
+
               if (stepCode != null) {
                 message = (0, _default.getVerboseMessage)(stepCode);
-
                 log(message);
-                this.statusCallback(stepCode, message, _default.Status.starting);
+                this._updateCallback(stepCode, message, _default.Status.starting);
               }
-              _context.next = 3;
+
+              _context.prev = 2;
+              _context.next = 5;
               return regeneratorRuntime.awrap(action());
 
-            case 3:
-              return _context.abrupt('return', _context.sent);
+            case 5:
+              res = _context.sent;
 
-            case 4:
+              this._updateCallback(stepCode, message, _default.Status.success);
+              this._stepsStatuses.push(_default.Status.success);
+              return _context.abrupt('return', res);
+
+            case 11:
+              _context.prev = 11;
+              _context.t0 = _context['catch'](2);
+
+              this._updateCallback(stepCode, _context.t0.message, _default.Status.failure);
+              this._stepsStatuses.push(_default.Status.failure);
+
+            case 15:
             case 'end':
               return _context.stop();
           }
         }
-      }, null, this);
-    }
-
-    /**
-     * getTransactionId
-     *
-     * @returns {string|*}
-     */
-
-  }, {
-    key: 'getTransactionId',
-    value: function getTransactionId() {
-      var transactionId = void 0;
-      try {
-        transactionId = this.certificate.receipt.anchors[0].sourceId;
-        return transactionId;
-      } catch (e) {
-        throw new _default.VerifierError("getTransaction", "Can't verify this certificate without a transaction ID to compare against.");
-      }
+      }, null, this, [[2, 11]]);
     }
 
     /**
@@ -1479,7 +1542,10 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              transactionId = this.getTransactionId();
+              // Get transaction
+              transactionId = this.doAction(_default.Status.getTransactionId, function () {
+                return checks.getTransactionId(_this.certificate);
+              });
               docToVerify = this.document;
 
               // Compute local hash
@@ -1601,7 +1667,10 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         while (1) {
           switch (_context10.prev = _context10.next) {
             case 0:
-              transactionId = this.getTransactionId();
+              // Get transaction
+              transactionId = this.doAction(_default.Status.getTransactionId, function () {
+                return checks.getTransactionId(_this2.certificate);
+              });
               docToVerify = this.document;
 
               // Compute local hash
@@ -1805,7 +1874,10 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
               throw new _default.VerifierError('', 'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
 
             case 2:
-              completionCallback = completionCallback || noop;
+
+              // Save completion callback
+              this.completionCallback = completionCallback || noop;
+
               _context13.prev = 3;
 
               if (!(this.certificate.version === _default.CertificateVersion.v1_2)) {
@@ -1838,28 +1910,30 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
               return regeneratorRuntime.awrap(this.verifyV2());
 
             case 16:
-              return _context13.abrupt('return', this._succeed(completionCallback));
-
-            case 19:
-              _context13.prev = 19;
-              _context13.t0 = _context13['catch'](3);
-
-              if (!(_context13.t0 instanceof _default.VerifierError)) {
-                _context13.next = 23;
+              if (!(this._stepsStatuses.indexOf(_default.Status.failure) > -1)) {
+                _context13.next = 20;
                 break;
               }
 
-              return _context13.abrupt('return', this._failed(_context13.t0.stepCode, completionCallback, _context13.t0.message));
+              return _context13.abrupt('return', this._failed(_default.Status.final));
+
+            case 20:
+              return _context13.abrupt('return', this._succeed());
+
+            case 21:
+              _context13.next = 25;
+              break;
 
             case 23:
-              throw _context13.t0;
+              _context13.prev = 23;
+              _context13.t0 = _context13['catch'](3);
 
-            case 24:
+            case 25:
             case 'end':
               return _context13.stop();
           }
         }
-      }, null, this, [[3, 19]]);
+      }, null, this, [[3, 23]]);
     }
   }]);
 

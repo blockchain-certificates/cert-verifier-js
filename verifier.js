@@ -1910,6 +1910,14 @@ var Key = exports.Key = function Key(publicKey, created, revoked, expires) {
   this.expires = expires;
 };
 
+function dateToUnixTimestamp(date) {
+  var idx = date.indexOf('+');
+  if (idx > -1) {
+    date = date.slice(0, idx);
+  }
+  return Date.parse(date);
+}
+
 function parseIssuerKeys(issuerProfileJson) {
   try {
     var keyMap = {};
@@ -1918,9 +1926,9 @@ function parseIssuerKeys(issuerProfileJson) {
       var responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
       for (var i = 0; i < responseKeys.length; i++) {
         var key = responseKeys[i];
-        var created = key.created ? Date.parse(key.created) : null;
-        var revoked = key.revoked ? Date.parse(key.revoked) : null;
-        var expires = key.expires ? Date.parse(key.expires) : null;
+        var created = key.created ? dateToUnixTimestamp(key.created) : null;
+        var revoked = key.revoked ? dateToUnixTimestamp(key.revoked) : null;
+        var expires = key.expires ? dateToUnixTimestamp(key.expires) : null;
         // backcompat for v2 alpha
         var publicKeyTemp = key.id || key.publicKey;
         var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');

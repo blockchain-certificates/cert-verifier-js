@@ -612,6 +612,39 @@ function parseChainSoResponse(jsonResponse) {
   return new _verifierModels.TransactionData(opReturnScript, issuingAddress, time, undefined);
 }
 
+var PromiseProperRace = function PromiseProperRace(promises, count) {
+  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+  promises = Array.from(promises);
+  if (promises.length < count) {
+    return Promise.reject(new _default.VerifierError("Could not confirm the transaction"));
+  }
+
+  var indexPromises = promises.map(function (p, index) {
+    return p.then(function () {
+      return index;
+    }).catch(function (err) {
+      log(err);
+      throw index;
+    });
+  });
+
+  return Promise.race(indexPromises).then(function (index) {
+    var p = promises.splice(index, 1)[0];
+    p.then(function (e) {
+      return results.push(e);
+    });
+    if (count === 1) {
+      return results;
+    }
+    return PromiseProperRace(promises, count - 1, results);
+  }).catch(function (index) {
+    promises.splice(index, 1);
+    return PromiseProperRace(promises, count, results);
+  });
+};
+
 function lookForTx(transactionId, chain, certificateVersion) {
   // First ensure we can satisfy the MinimumBlockchainExplorers setting
   if (_default.MinimumBlockchainExplorers < 0 || _default.MinimumBlockchainExplorers > BlockchainExplorers.length) {
@@ -636,7 +669,7 @@ function lookForTx(transactionId, chain, certificateVersion) {
   }
 
   return new Promise(function (resolve, reject) {
-    return Promise.properRace(promises, _default.MinimumBlockchainExplorers).then(function (winners) {
+    return PromiseProperRace(promises, _default.MinimumBlockchainExplorers).then(function (winners) {
       if (!winners || winners.length == 0) {
         return Promise.reject(new _default.VerifierError("Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
       }
@@ -666,39 +699,6 @@ function lookForTx(transactionId, chain, certificateVersion) {
     });
   });
 }
-
-Promise.properRace = function (promises, count) {
-  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-  promises = Array.from(promises);
-  if (promises.length < count) {
-    return Promise.reject(new _default.VerifierError("Could not confirm the transaction"));
-  }
-
-  var indexPromises = promises.map(function (p, index) {
-    return p.then(function () {
-      return index;
-    }).catch(function (err) {
-      log(err);
-      throw index;
-    });
-  });
-
-  return Promise.race(indexPromises).then(function (index) {
-    var p = promises.splice(index, 1)[0];
-    p.then(function (e) {
-      return results.push(e);
-    });
-    if (count === 1) {
-      return results;
-    }
-    return Promise.properRace(promises, count - 1, results);
-  }).catch(function (index) {
-    promises.splice(index, 1);
-    return Promise.properRace(promises, count, results);
-  });
-};
 
 },{"../config/default":1,"./promisifiedRequests":6,"./verifierModels":8,"debug":378,"string.prototype.startswith":434}],3:[function(require,module,exports){
 'use strict';

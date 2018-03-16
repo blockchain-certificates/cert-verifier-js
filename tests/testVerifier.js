@@ -100,7 +100,6 @@ describe('Certificate verifier should', async () => {
     var data = await readFileAsync('tests/data/mocknet-2.0.json');
     var certVerifier = new CertificateVerifier(data);
     await certVerifier.verify((stepCode, message, status) => {
-      console.log('FINAL 1 ', stepCode, status);
       assert.equal(status, Status.mockSuccess);
     });
   });
@@ -109,7 +108,6 @@ describe('Certificate verifier should', async () => {
     var data = await readFileAsync('tests/data/regtest-2.0.json');
     var certVerifier = new CertificateVerifier(data);
     await certVerifier.verify((stepCode, message, status) => {
-      console.log('FINAL 2 ', stepCode, status);
       assert.equal(status, Status.mockSuccess);
     });
   });

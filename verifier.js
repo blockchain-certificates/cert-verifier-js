@@ -2038,7 +2038,7 @@ function parseIssuerKeys(issuerProfileJson) {
     }
     return keyMap;
   } catch (e) {
-    throw new _default.VerifierError(Status.parsingIssuerKeys, "Unable to parse JSON out of issuer identification data.");
+    throw new _default.VerifierError(_default.Status.parsingIssuerKeys, "Unable to parse JSON out of issuer identification data.");
   }
 };
 
@@ -2056,10 +2056,10 @@ function getIssuerProfile(issuerId) {
         var issuerProfileJson = JSON.parse(response);
         resolve(issuerProfileJson);
       } catch (err) {
-        reject(new _default.VerifierError(Status.gettingIssuerProfile, err));
+        reject(new _default.VerifierError(_default.Status.gettingIssuerProfile, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(Status.gettingIssuerProfile, err));
+      reject(new _default.VerifierError(_default.Status.gettingIssuerProfile, err));
     });
   });
   return issuerProfileFetcher;
@@ -2072,10 +2072,10 @@ function getIssuerKeys(issuerId) {
         var issuerKeyMap = parseIssuerKeys(issuerProfileJson);
         resolve(issuerKeyMap);
       } catch (err) {
-        reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
+        reject(new _default.VerifierError(_default.Status.parsingIssuerKeys, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
+      reject(new _default.VerifierError(_default.Status.parsingIssuerKeys, err));
     });
   });
   return issuerKeyFetcher;
@@ -2092,10 +2092,10 @@ function getRevokedAssertions(revocationListUrl) {
         var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
         resolve(revokedAssertions);
       } catch (err) {
-        reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
+        reject(new _default.VerifierError(_default.Status.parsingIssuerKeys, err));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(Status.parsingIssuerKeys, err));
+      reject(new _default.VerifierError(_default.Status.parsingIssuerKeys, err));
     });
   });
   return revocationListFetcher;

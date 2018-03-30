@@ -99,6 +99,11 @@ module.exports = {
     chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/"
   },
 
+  generateRevocationReason: function(reason) {
+    var reason = reason.length > 0 ? ` Reason given: ${reason}` : '';
+    return `This certificate has been revoked by the issuer.${reason}`;
+  },
+
   Status,
   getVerboseMessage,
   // Minimum number of confirmations to consider a transaction valid. Recommended setting = 10

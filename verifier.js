@@ -124,6 +124,11 @@ module.exports = {
     chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/"
   },
 
+  generateRevocationReason: function generateRevocationReason(reason) {
+    var reason = reason.length > 0 ? " Reason given: " + reason : '';
+    return "This certificate has been revoked by the issuer." + reason;
+  },
+
   Status: Status,
   getVerboseMessage: getVerboseMessage,
   // Minimum number of confirmations to consider a transaction valid. Recommended setting = 10
@@ -969,7 +974,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
     });
     var isRevokedByIssuer = revokedAssertionId !== -1;
     if (isRevokedByIssuer) {
-      throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAddresses[revokedAssertionId].revocationReason || 'This certificate batch has been revoked by the issuer.');
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, (0, _default.generateRevocationReason)(revokedAddresses[revokedAssertionId].revocationReason));
     }
   }
   if (recipientRevocationKey) {
@@ -978,7 +983,7 @@ function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, re
     });
     var isRevokedByRecipient = _revokedAssertionId !== -1;
     if (isRevokedByRecipient) {
-      throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAddresses[_revokedAssertionId].revocationReason || 'This recipient\'s certificate has been revoked.');
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, (0, _default.generateRevocationReason)(revokedAddresses[_revokedAssertionId].revocationReason));
     }
   }
 }
@@ -997,7 +1002,7 @@ function ensureNotRevokedByList(revokedAssertions, assertionUid) {
   var isRevokedByIssuer = revokedAssertionId !== -1;
 
   if (isRevokedByIssuer) {
-    throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAssertions[revokedAssertionId].revocationReason || 'This certificate has been revoked by the issuer.');
+    throw new _default.VerifierError(_.Status.checkingRevokedStatus, (0, _default.generateRevocationReason)(revokedAssertions[revokedAssertionId].revocationReason));
   }
 }
 

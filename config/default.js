@@ -100,7 +100,8 @@ module.exports = {
   },
 
   generateRevocationReason: function(reason) {
-    var reason = reason.length > 0 ? ` Reason given: ${reason}` : '';
+    reason = reason.trim();
+    reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
     return `This certificate has been revoked by the issuer.${reason}`;
   },
 

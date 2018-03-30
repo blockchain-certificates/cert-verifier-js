@@ -72,8 +72,7 @@ describe('Certificate verifier should', async () => {
   it('ensure a v2 certificate with a revoked issuing key fails', async () => {
     // In other words, transaction happened after issuing key was revoked
     var data = await readFileAsync(
-      //'tests/data/sample_cert-with-revoked-key-2.0.json',
-      'tests/data/certificate-revoked.json',
+      'tests/data/sample_cert-with-revoked-key-2.0.json',
     );
 
     var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {

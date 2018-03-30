@@ -964,19 +964,21 @@ CONTEXTS["https://w3id.org/blockcerts/v1"] = BLOCKCERTSV1_2_CONTEXT;
 
 function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, recipientRevocationKey) {
   if (issuerRevocationKey) {
-    var isRevokedByIssuer = -1 != revokedAddresses.findIndex(function (address) {
+    var revokedAssertionId = revokedAddresses.findIndex(function (address) {
       return address === issuerRevocationKey;
     });
+    var isRevokedByIssuer = revokedAssertionId !== -1;
     if (isRevokedByIssuer) {
-      throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This certificate batch has been revoked by the issuer.");
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAddresses[revokedAssertionId].revocationReason || 'This certificate batch has been revoked by the issuer.');
     }
   }
   if (recipientRevocationKey) {
-    var isRevokedByRecipient = -1 != revokedAddresses.findIndex(function (address) {
+    var _revokedAssertionId = revokedAddresses.findIndex(function (address) {
       return address === recipientRevocationKey;
     });
+    var isRevokedByRecipient = _revokedAssertionId !== -1;
     if (isRevokedByRecipient) {
-      throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This recipient's certificate has been revoked.");
+      throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAddresses[_revokedAssertionId].revocationReason || 'This recipient\'s certificate has been revoked.');
     }
   }
 }
@@ -989,11 +991,13 @@ function ensureNotRevokedByList(revokedAssertions, assertionUid) {
   var revokedAddresses = revokedAssertions.map(function (output) {
     return output.id;
   });
-  var isRevokedByIssuer = -1 != revokedAddresses.findIndex(function (id) {
+  var revokedAssertionId = revokedAddresses.findIndex(function (id) {
     return id === assertionUid;
   });
+  var isRevokedByIssuer = revokedAssertionId !== -1;
+
   if (isRevokedByIssuer) {
-    throw new _default.VerifierError(_.Status.checkingRevokedStatus, "This certificate has been revoked by the issuer.");
+    throw new _default.VerifierError(_.Status.checkingRevokedStatus, revokedAssertions[revokedAssertionId].revocationReason || 'This certificate has been revoked by the issuer.');
   }
 }
 

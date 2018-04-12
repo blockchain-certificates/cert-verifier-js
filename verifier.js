@@ -1133,7 +1133,7 @@ function computeLocalHash(document, version) {
       } else {
         var unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
-          reject(new _default.VerifierError(_.Status.computingLocalHash, "Found unmapped fields during JSON-LD normalization: " + unmappedFields.join(",")));
+          reject(new _default.VerifierError(_.Status.computingLocalHash, "Found unmapped fields during JSON-LD normalization")); // + unmappedFields.join(",")
         } else {
           resolve((0, _sha2.default)(_toUTF8Data(normalized)));
         }
@@ -1383,7 +1383,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
     var certificateJson = JSON.parse(certificateString);
     this.certificate = _certificate.Certificate.parseJson(certificateJson);
-
     var document = certificateJson.document;
     if (!document) {
       var certCopy = JSON.parse(certificateString);
@@ -1463,9 +1462,24 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     }
 
     /**
+     * _isFailing
+     *
+     * whether or not the current verification is failing
+     *
+     * @returns {boolean}
+     * @private
+     */
+
+  }, {
+    key: '_isFailing',
+    value: function _isFailing() {
+      return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(_default.Status.failure) > -1;
+    }
+
+    /**
      * doAction
      *
-     * @param status
+     * @param stepCode
      * @param action
      * @returns {*}
      */
@@ -1473,6 +1487,11 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
   }, {
     key: 'doAction',
     value: function doAction(stepCode, action) {
+      // If not failing already
+      if (this._isFailing()) {
+        return;
+      }
+
       var message = (0, _default.getVerboseMessage)(stepCode);
       log(message);
       this._updateCallback(stepCode, message, _default.Status.starting);
@@ -1504,6 +1523,14 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
+              if (!this._isFailing()) {
+                _context.next = 2;
+                break;
+              }
+
+              return _context.abrupt('return');
+
+            case 2:
               message = void 0;
 
               if (stepCode != null) {
@@ -1512,30 +1539,30 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
                 this._updateCallback(stepCode, message, _default.Status.starting);
               }
 
-              _context.prev = 2;
-              _context.next = 5;
+              _context.prev = 4;
+              _context.next = 7;
               return regeneratorRuntime.awrap(action());
 
-            case 5:
+            case 7:
               res = _context.sent;
 
               this._updateCallback(stepCode, message, _default.Status.success);
               this._stepsStatuses.push(_default.Status.success);
               return _context.abrupt('return', res);
 
-            case 11:
-              _context.prev = 11;
-              _context.t0 = _context['catch'](2);
+            case 13:
+              _context.prev = 13;
+              _context.t0 = _context['catch'](4);
 
               this._updateCallback(stepCode, _context.t0.message, _default.Status.failure);
               this._stepsStatuses.push(_default.Status.failure);
 
-            case 15:
+            case 17:
             case 'end':
               return _context.stop();
           }
         }
-      }, null, this, [[2, 11]]);
+      }, null, this, [[4, 13]]);
     }
 
     /**
@@ -1820,7 +1847,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
           switch (_context12.prev = _context12.next) {
             case 0:
               docToVerify = this.document;
-
               // Compute local hash
 
               _context12.next = 3;
@@ -1891,7 +1917,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
               // Save completion callback
               this.completionCallback = completionCallback || noop;
-
               _context13.prev = 3;
 
               if (!(this.certificate.version === _default.CertificateVersion.v1_2)) {

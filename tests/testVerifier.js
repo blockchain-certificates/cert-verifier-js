@@ -42,13 +42,15 @@ describe('Certificate verifier should', async () => {
       'tests/data/sample_cert-unmapped-2.0.json',
     );
     
-    var certVerifier = new CertificateVerifier(data, (stepCode, statusMessage, status) => {
+    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      //console.log(stepCode, message, status);
       if (stepCode === 'computingLocalHash' && status !== Status.starting) {
         assert.equal(status, Status.failure);
       }
     });
-    
+
     await certVerifier.verify((stepCode, message, status) => {
+      //console.log('FINAL', stepCode, message, status);
       assert.equal(status, Status.failure);
     });
   });
@@ -58,13 +60,15 @@ describe('Certificate verifier should', async () => {
       'tests/data/sample_cert-revoked-2.0.json',
     );
 
-    var certVerifier = new CertificateVerifier(data, (stepCode, statusMessage, status) => {
+    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      //console.log(stepCode, message, status);
       if (stepCode === 'checkingRevokedStatus' && status !== Status.starting) {
         assert.equal(status, Status.failure);
       }
     });
 
     await certVerifier.verify((stepCode, message, status) => {
+      //console.log('FINAL', stepCode, message, status);
       assert.equal(status, Status.failure);
     });
   });
@@ -76,13 +80,14 @@ describe('Certificate verifier should', async () => {
     );
 
     var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      console.log(stepCode, message, status);
+      //console.log(stepCode, message, status);
       if (stepCode === 'checkingAuthenticity' && status !== Status.starting) {
         assert.strictEqual(status, 'failure');
       }
     });
 
     await certVerifier.verify((stepCode, message, status) => {
+      //console.log('FINAL', stepCode, message, status);
       assert.equal(status, Status.failure);
     });
   });
@@ -102,6 +107,24 @@ describe('Certificate verifier should', async () => {
     var certVerifier = new CertificateVerifier(data);
     await certVerifier.verify((stepCode, message, status) => {
       assert.equal(status, Status.mockSuccess);
+    });
+  });
+
+  it('ensure an invalid v2 mocknet fails', async () => {
+    var data = await readFileAsync(
+      'tests/data/mocknet-invalid.json',
+    );
+
+    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log(stepCode, message, status);
+      if (stepCode === 'computingLocalHash' && status !== Status.starting) {
+        assert.strictEqual(status, 'failure');
+      }
+    });
+
+    await certVerifier.verify((stepCode, message, status) => {
+      // console.log('FINAL', stepCode, message, status);
+      assert.equal(status, Status.failure);
     });
   });
 

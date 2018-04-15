@@ -1,5 +1,6 @@
 'use strict';
 
+import "babel-polyfill";
 import { assert, expect } from 'chai'
 import { Blockchain, Certificate } from '../lib/index'
 import {readFileAsync} from '../lib/promisifiedRequests'

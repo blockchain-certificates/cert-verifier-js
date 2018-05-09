@@ -257,6 +257,7 @@ module.exports = {
         "publicKeys": "bc:publicKeys",
 
         "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+        "BTCOpReturn": "cp:BTCOpReturn",
         "targetHash": "cp:targetHash",
         "merkleRoot": "cp:merkleRoot",
         "proof": "cp:proof",
@@ -388,7 +389,7 @@ module.exports = {
         "@type": "@id"
       }), _defineProperty(_ref, "uid", {
         "@id": "obi:uid"
-      }), _defineProperty(_ref, "revocationList", "obi:revocationList"), _defineProperty(_ref, "TypeValidation", "obi:TypeValidation"), _defineProperty(_ref, "FrameValidation", "obi:FrameValidation"), _defineProperty(_ref, "validatesType", "obi:validatesType"), _defineProperty(_ref, "validationSchema", "obi:validationSchema"), _defineProperty(_ref, "validationFrame", "obi:validationFrame"), _defineProperty(_ref, "ChainpointSHA224v2", "cp:ChainpointSHA224v2"), _defineProperty(_ref, "ChainpointSHA256v2", "cp:ChainpointSHA256v2"), _defineProperty(_ref, "ChainpointSHA384v2", "cp:ChainpointSHA384v2"), _defineProperty(_ref, "ChainpointSHA512v2", "cp:ChainpointSHA512v2"), _defineProperty(_ref, "ChainpointSHA3-224v2", "cp:ChainpointSHA3-224v2"), _defineProperty(_ref, "ChainpointSHA3-256v2", "cp:ChainpointSHA3-256v2"), _defineProperty(_ref, "ChainpointSHA3-384v2", "cp:ChainpointSHA3-384v2"), _defineProperty(_ref, "ChainpointSHA3-512v2", "cp:ChainpointSHA3-512v2"), _defineProperty(_ref, "targetHash", "cp:targetHash"), _defineProperty(_ref, "merkleRoot", "cp:merkleRoot"), _defineProperty(_ref, "proof", "cp:proof"), _defineProperty(_ref, "anchors", "cp:anchors"), _defineProperty(_ref, "sourceId", "cp:sourceId"), _defineProperty(_ref, "right", "cp:right"), _defineProperty(_ref, "left", "cp:left"), _ref)],
+      }), _defineProperty(_ref, "revocationList", "obi:revocationList"), _defineProperty(_ref, "TypeValidation", "obi:TypeValidation"), _defineProperty(_ref, "FrameValidation", "obi:FrameValidation"), _defineProperty(_ref, "validatesType", "obi:validatesType"), _defineProperty(_ref, "validationSchema", "obi:validationSchema"), _defineProperty(_ref, "validationFrame", "obi:validationFrame"), _defineProperty(_ref, "ChainpointSHA224v2", "cp:ChainpointSHA224v2"), _defineProperty(_ref, "ChainpointSHA256v2", "cp:ChainpointSHA256v2"), _defineProperty(_ref, "ChainpointSHA384v2", "cp:ChainpointSHA384v2"), _defineProperty(_ref, "ChainpointSHA512v2", "cp:ChainpointSHA512v2"), _defineProperty(_ref, "ChainpointSHA3-224v2", "cp:ChainpointSHA3-224v2"), _defineProperty(_ref, "ChainpointSHA3-256v2", "cp:ChainpointSHA3-256v2"), _defineProperty(_ref, "ChainpointSHA3-384v2", "cp:ChainpointSHA3-384v2"), _defineProperty(_ref, "ChainpointSHA3-512v2", "cp:ChainpointSHA3-512v2"), _defineProperty(_ref, "BTCOpReturn", "cp:BTCOpReturn"), _defineProperty(_ref, "targetHash", "cp:targetHash"), _defineProperty(_ref, "merkleRoot", "cp:merkleRoot"), _defineProperty(_ref, "proof", "cp:proof"), _defineProperty(_ref, "anchors", "cp:anchors"), _defineProperty(_ref, "sourceId", "cp:sourceId"), _defineProperty(_ref, "right", "cp:right"), _defineProperty(_ref, "left", "cp:left"), _ref)],
       "validation": [{
         "type": "TypeValidation",
         "validatesType": "Assertion",
@@ -461,6 +462,7 @@ module.exports = {
         },
 
         "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+        "BTCOpReturn": "cp:BTCOpReturn",
         "targetHash": "cp:targetHash",
         "merkleRoot": "cp:merkleRoot",
         "proof": "cp:proof",
@@ -644,7 +646,6 @@ function lookForTx(transactionId, chain, certificateVersion) {
       break;
     case _default.Blockchain.ethmain:
     case _default.Blockchain.ethropst:
-    case _default.Blockchain.ethtest:
       BlockchainExplorers = EthereumExplorers;
       break;
     default:

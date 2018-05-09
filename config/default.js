@@ -234,6 +234,7 @@ module.exports = {
         "publicKeys": "bc:publicKeys",
 
         "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+        "BTCOpReturn": "cp:BTCOpReturn",
         "targetHash": "cp:targetHash",
         "merkleRoot": "cp:merkleRoot",
         "proof": "cp:proof",
@@ -415,6 +416,7 @@ module.exports = {
               "ChainpointSHA3-256v2": "cp:ChainpointSHA3-256v2",
               "ChainpointSHA3-384v2": "cp:ChainpointSHA3-384v2",
               "ChainpointSHA3-512v2": "cp:ChainpointSHA3-512v2",
+              "BTCOpReturn": "cp:BTCOpReturn",
               "targetHash": "cp:targetHash",
               "merkleRoot": "cp:merkleRoot",
               "proof": "cp:proof",
@@ -503,6 +505,7 @@ module.exports = {
         },
 
         "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+        "BTCOpReturn": "cp:BTCOpReturn",
         "targetHash": "cp:targetHash",
         "merkleRoot": "cp:merkleRoot",
         "proof": "cp:proof",

@@ -8,138 +8,157 @@ import { readFileAsync } from '../lib/promisifiedRequests';
 
 describe('Certificate verifier should', async () => {
   it('verify a v1 certificate', async () => {
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-valid-1.2.0.json',
     );
-    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      //console.log('update status:', stepCode, message, status);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
     });
     await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.success);
     });
   });
 
   it('verify a v2 certificate', async () => {
-    var data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
-    var certVerifier = new CertificateVerifier(data);
+    const data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
+    });
     await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.success);
     });
   });
 
   it('verify v2 alpha certificate', async () => {
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-valid-2.0-alpha.json',
     );
-    var certVerifier = new CertificateVerifier(data);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
+    });
     await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.success);
     });  
   });
 
   it('ensure a tampered v2 certificate fails', async () => {
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-unmapped-2.0.json',
     );
     
-    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      //console.log(stepCode, message, status);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log(stepCode, message, status);
       if (stepCode === 'computingLocalHash' && status !== Status.starting) {
         assert.equal(status, Status.failure);
       }
     });
 
-    await certVerifier.verify((stepCode, message, status) => {
-      //console.log('FINAL', stepCode, message, status);
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.failure);
     });
   });
 
   it('ensure a revoked v2 certificate fails', async () => {
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-revoked-2.0.json',
     );
 
-    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      //console.log(stepCode, message, status);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log(stepCode, message, status);
       if (stepCode === 'checkingRevokedStatus' && status !== Status.starting) {
         assert.equal(status, Status.failure);
       }
     });
 
-    await certVerifier.verify((stepCode, message, status) => {
-      //console.log('FINAL', stepCode, message, status);
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.failure);
     });
   });
 
   it('ensure a v2 certificate with a revoked issuing key fails', async () => {
     // In other words, transaction happened after issuing key was revoked
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-with-revoked-key-2.0.json',
     );
 
-    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      //console.log(stepCode, message, status);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log(stepCode, message, status);
       if (stepCode === 'checkingAuthenticity' && status !== Status.starting) {
         assert.strictEqual(status, 'failure');
       }
     });
 
-    await certVerifier.verify((stepCode, message, status) => {
-      //console.log('FINAL', stepCode, message, status);
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.failure);
     });
   });
 
   it('ensure a v2 certificate with a v1 issuer passes', async () => {
-    var data = await readFileAsync(
+    const data = await readFileAsync(
       'tests/data/sample_cert-with_v1_issuer-2.0.json',
     );
-    var certVerifier = new CertificateVerifier(data);
-    await certVerifier.verify((stepCode, message, status) => {
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
+    });
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.success);
     });
   });
 
   it('ensure a v2 mocknet passes', async () => {
-    var data = await readFileAsync('tests/data/mocknet-2.0.json');
-    var certVerifier = new CertificateVerifier(data);
-    await certVerifier.verify((stepCode, message, status) => {
+    const data = await readFileAsync('tests/data/mocknet-2.0.json');
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      console.log('update status:', stepCode, message, status);
+    });
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.mockSuccess);
     });
   });
 
   it('ensure an invalid v2 mocknet fails', async () => {
-    var data = await readFileAsync(
-      'tests/data/mocknet-invalid.json',
+    const data = await readFileAsync(
+      'tests/data/mocknet-weird.json',
     );
 
-    var certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-      // console.log(stepCode, message, status);
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      console.log(stepCode, message, status);
       if (stepCode === 'computingLocalHash' && status !== Status.starting) {
         assert.strictEqual(status, 'failure');
       }
     });
 
-    await certVerifier.verify((stepCode, message, status) => {
-      // console.log('FINAL', stepCode, message, status);
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.failure);
     });
   });
 
   it('ensure a v2 regtest passes', async () => {
-    var data = await readFileAsync('tests/data/regtest-2.0.json');
-    var certVerifier = new CertificateVerifier(data);
-    await certVerifier.verify((stepCode, message, status) => {
+    const data = await readFileAsync('tests/data/regtest-2.0.json');
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
+    });
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.mockSuccess);
     });
   });
 
   it('ensure a v2 testnet passes', async () => {
-    var data = await readFileAsync('tests/data/testnet-2.0.json');
-    var certVerifier = new CertificateVerifier(data);
-    await certVerifier.verify((stepCode, message, status) => {
+    const data = await readFileAsync('tests/data/testnet-2.0.json');
+    const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+      // console.log('update status:', stepCode, message, status);
+    });
+    await certVerifier.verify((finalStep, message, status) => {
+      // console.log('FINAL', finalStep, message, status);
       assert.equal(status, Status.success);
     });
   });

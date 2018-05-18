@@ -84,6 +84,8 @@ The Blockchain Certificate contains:
 
 A Blockchain Certificate must have a `certificate.signature.anchors` field, which must contain at least one anchor to a blockchain transaction. 
 
+#### Bitcoin
+
 The `anchors` entry below says that the transaction was performed on the Bitcoin blockchain, and the field needed to verify  integrity of the certificate is `OP_RETURN` (because `type` is `BTCOpReturn`). This also says the transaction id is `8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d` (via the `sourceId`) field.
  
 ```
@@ -98,6 +100,21 @@ http://blockchain.info/rawtx/<transaction_id>
 ```
 
 So in this example we would download [http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d](http://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d)
+
+#### Ethereum
+
+The `anchors` entry for Ethereum works just like the Bitcoin anchor like above, but with `ETHData` instead of `BTCOpReturn`.
+
+```
+"type": "ETHData",
+"sourceId": "0xc952833ba9c1b630282df24b3ca56e30963e75a70005ca95190a050492298f51"
+```
+
+The Ethereum transaction can be obtained from a service like [etherscan.io](https://etherscan.io) [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is: 
+
+```
+https://etherscan.io/tx/<transaction_id>
+```
 
 ### Issuer identity
 
@@ -171,6 +188,7 @@ Note that Blockcerts performs an additional test during JSON-LD canonicalization
 
 The transaction information in the "Blockchain Transaction" input step obtains the blockchain record of the content. This step compares the value in the transaction with the value in the certificate. 
 
+#### Bitcoin
 The transaction details at https://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d has entries in the `out` array. The entry with the `OP_RETURN` value has a `script` starting with `6a20`. Specifically:
 
 ```
@@ -184,6 +202,19 @@ The transaction details at https://blockchain.info/rawtx/8623beadbc7877a9e20fb7f
 The `OP_RETURN` value in this example is `68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728`, or the value in `script` without the `6a20` prefix.
 
 This value should match that provided in the Blockchain Certificate `signature.merkleRoot` field.
+
+#### Ethereum
+
+The transaction details for a Ethereum transaction at https://ropsten.etherscan.io/tx/0xc952833ba9c1b630282df24b3ca56e30963e75a70005ca95190a050492298f51 has data in the `Input Data` field. Unlike Bitcoin, there is no `OP_RETURN` script or multiple inputs/outputs.
+
+```
+{
+    ...
+    "input":"0x4f48e91f0397a49a5b56718a78d681c51932c8bd9242442b94bcfb93434957db"
+}
+```
+
+Removing the `0x` prefix, the input `4f48e91f0397a49a5b56718a78d681c51932c8bd9242442b94bcfb93434957db` should match what is provided in the Blockchain Certificate `signature.merkleRoot` field.
 
 ### Check certificate authenticity
 
@@ -280,7 +311,7 @@ MinimumBlockchainExplorers: 2,
   
 `cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
   
-See `lib\bitcoinConnectors.js` for details on how they are used. 
+See `lib\blockchainConnectors.js` for details on how they are used. 
 
 The defaults for these settings are low (set at 1) to allow users to experiment with these libraries more easily (to help avoid problems with blockchain API rate limits, wait times, etc), but these should be carefully considered for deployed systems.
 

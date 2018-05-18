@@ -96,7 +96,11 @@ module.exports = {
     blockCypherUrl: "https://api.blockcypher.com/v1/btc/main/txs/",
     blockCypherTestUrl: "https://api.blockcypher.com/v1/btc/test3/txs/",
     chainSoUrl: "https://chain.so/api/v2/get_tx/BTC/",
-    chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/"
+    chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/",
+
+    // Add &apikey={key} to EtherScan URL's if getting rate limited
+    etherScanMainUrl: "https://api.etherscan.io/api?module=proxy",
+    etherScanRopstenUrl: "https://api-ropsten.etherscan.io/api?module=proxy",
   },
 
   generateRevocationReason: function(reason) {

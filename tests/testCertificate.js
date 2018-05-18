@@ -19,6 +19,20 @@ describe('Certificate parsing', async () => {
     });
   });
 
+
+  describe('parse ethereum', async () => {
+      it('parses an ethereum v2 certificate', async () => {
+          try {
+              var data = await readFileAsync('tests/data/sample_ethereum_cert-valid-2.0.json');
+              let cert = Certificate.parseJson(JSON.parse(data));
+              expect(cert.name).to.equal('Eularia Landroth');
+              expect(cert.chain).to.equal(Blockchain.ethropst);
+          } catch (err) {
+              assert.fail('This test should pass')
+          }
+      });
+  });
+
   describe('parse v1', async () => {
     it('parses a v1 certificate', async () => {
 

@@ -19,7 +19,7 @@ let Status = {
 
 var verboseMessageMap = {};
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
-verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remove hash";
+verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remote hash";
 verboseMessageMap[Status.gettingIssuerProfile] = "Getting issuer profile";
 verboseMessageMap[Status.parsingIssuerKeys] = "Parsing issuer keys";
 verboseMessageMap[Status.comparingHashes] = "Comparing Hashes";
@@ -79,7 +79,11 @@ module.exports = {
     blockCypherUrl: "https://api.blockcypher.com/v1/btc/main/txs/",
     blockCypherTestUrl: "https://api.blockcypher.com/v1/btc/test3/txs/",
     chainSoUrl: "https://chain.so/api/v2/get_tx/BTC/",
-    chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/"
+    chainSoTestUrl: "https://chain.so/api/v2/get_tx/BTCTEST/",
+
+    // Add &apikey={key} to EtherScan URL's if getting rate limited
+    etherScanMainUrl: "https://api.etherscan.io/api?module=proxy",
+    etherScanRopstenUrl: "https://api-ropsten.etherscan.io/api?module=proxy",
   },
 
   Status,

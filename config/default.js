@@ -1,5 +1,3 @@
-import VError from 'verror';
-
 let Status = {
   getTransactionId: "getTransactionId",
   computingLocalHash: "computingLocalHash",

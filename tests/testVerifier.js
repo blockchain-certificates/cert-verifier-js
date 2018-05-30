@@ -59,6 +59,21 @@ describe('Certificate verifier', async () => {
           }
       });
 
+    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_ethereum_cert-uppercase-address-valid-2.0.json');
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
+    });
+
     it('verify v2 alpha certificate', async () => {
       try {
         var data = await readFileAsync(

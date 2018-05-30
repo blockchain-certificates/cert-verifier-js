@@ -8,34 +8,27 @@ import { readFileAsync } from '../lib/promisifiedRequests';
 
 describe('Certificate verifier', async () => {
   // Disabling this test; issuer profile call is hanging -- need to allow redirect?
-  /*
-  describe('should', async () => {
+  xdescribe('should', async () => {
     it('verify a v1 certificate', async () => {
-      try {
-        var data = await readFileAsync(
-          'tests/data/sample_cert-valid-1.2.0.json',
-        );
-        var certVerifier = new CertificateVerifier(data, statusMessage => {
-          console.log(statusMessage);
-        });
-        var result = await certVerifier.verify(finalMessage => {
-          console.log(finalMessage);
-        });
-        assert.equal(result, Status.success);
-      } catch (err) {
-        assert.fail(err, null, 'This should not fail');
-      }
+      const data = await readFileAsync('tests/data/sample_cert-valid-1.2.0.json');
+      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        // console.log(stepCode, message, status);
+      });
+      const result = await certVerifier.verify((stepCode, message, status) => {
+        // console.log(stepCode, message, status);
+      });
+      assert.equal(result, Status.success);
     });
-  });*/
+  });
 
   describe('should', () => {
     it('verify a v2 certificate', async () => {
       const data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
-      const certVerifier = new CertificateVerifier(data, statusMessage => {
-        // console.log(statusMessage);
+      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
-      const result = await certVerifier.verify(finalMessage => {
-        // console.log(finalMessage);
+      const result = await certVerifier.verify((stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
       assert.equal(result, Status.success);
     });
@@ -44,11 +37,11 @@ describe('Certificate verifier', async () => {
       const data = await readFileAsync(
         'tests/data/sample_ethereum_cert-valid-2.0.json',
       );
-      const certVerifier = new CertificateVerifier(data, statusMessage => {
-        // console.log(statusMessage);
+      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
-      const result = await certVerifier.verify(finalMessage => {
-        // console.log(finalMessage);
+      const result = await certVerifier.verify((stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
       assert.equal(result, Status.success);
     });
@@ -57,13 +50,27 @@ describe('Certificate verifier', async () => {
       const data = await readFileAsync(
         'tests/data/sample_cert-valid-2.0-alpha.json',
       );
-      const certVerifier = new CertificateVerifier(data, statusMessage => {
-        // console.log(statusMessage);
+      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
-      const result = await certVerifier.verify(finalMessage => {
-        // console.log(finalMessage);
+      const result = await certVerifier.verify((stepCode, message, status) => {
+        // console.log(stepCode, message, status);
       });
       assert.equal(result, Status.success);
+    });
+
+    it('return a failure when issuer profile URL does not exist (404)', async () => {
+      const data = await readFileAsync('tests/data/sample_cert-invalid-issuer-url.json');
+      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
+        // console.log(stepCode, message, status);
+        if (stepCode === 'gettingIssuerProfile' && status !== Status.starting) {
+          assert.equal(status, Status.failure);
+        }
+      });
+      const result = await certVerifier.verify((stepCode, message, status) => {
+        // console.log(stepCode, message, status);
+      });
+      assert.equal(result, Status.failure);
     });
 
     it('ensure a tampered v2 certificate fails', async () => {

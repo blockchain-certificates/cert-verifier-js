@@ -35,16 +35,37 @@ describe('Certificate verifier', async () => {
     });
 
     it('verify an ethereum v2 certificate', async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_ethereum_cert-valid-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-        // console.log(stepCode, message, status);
-      });
-      const result = await certVerifier.verify((stepCode, message, status) => {
-        // console.log(stepCode, message, status);
-      });
-      assert.equal(result, Status.success);
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-valid-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
+    });
+
+    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-uppercase-address-valid-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
     });
 
     it('verify v2 alpha certificate', async () => {
@@ -163,108 +184,118 @@ describe('Certificate verifier', async () => {
     });
 
     it('ensures a v2 certificate with an invalid merkle proof fails', async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_cert-merkle-proof-fail-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(
-        data,
-        (stepCode, message, status) => {
-          if (stepCode === 'checkingReceipt' && status !== Status.starting) {
-            assert.strictEqual(status, 'failure');
-          }
-        },
-      );
-
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.failure);
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-merkle-proof-fail-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
         assert.equal(
-          message,
+          returnMessage,
           "Invalid Merkle Receipt. Proof hash didn't match Merkle root",
         );
-      });
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 certificate that's been tampered with fails", async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_cert-tampered-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(
-        data,
-        (stepCode, message, status) => {
-          if (stepCode === 'comparingHashes' && status !== Status.starting) {
-            assert.strictEqual(status, 'failure');
-          }
-        },
-      );
-
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.failure);
-        assert.equal(message, 'Computed hash does not match remote hash');
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-tampered-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Computed hash does not match remote hash');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 ethereum certificate that's been tampered with fails", async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_ethereum_cert-tampered-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(
-        data,
-        (stepCode, message, status) => {
-          if (stepCode === 'comparingHashes' && status !== Status.starting) {
-            assert.strictEqual(status, 'failure');
-          }
-        },
-      );
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.failure);
-        assert.equal(message, 'Computed hash does not match remote hash');
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-tampered-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Computed hash does not match remote hash');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 certificate that doesn't match blockchain value fails", async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_cert-root-does-not-match-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(
-        data,
-        (stepCode, message, status) => {
-          if (stepCode === 'fetchingRemoteHash' && status !== Status.starting) {
-            assert.strictEqual(status, 'failure');
-          }
-        },
-      );
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.failure);
-        assert.equal(message, 'Merkle root does not match remote hash.');
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-root-does-not-match-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Merkle root does not match remote hash.');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 ethereum certificate that doesn't match blockchain value fails", async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_ethereum_cert-root-does-not-match-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(
-        data,
-        (stepCode, message, status) => {
-          if (stepCode === 'fetchingRemoteHash' && status !== Status.starting) {
-            assert.strictEqual(status, 'failure');
-          }
-        },
-      );
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.failure);
-        assert.equal(message, 'Merkle root does not match remote hash.');
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-root-does-not-match-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Merkle root does not match remote hash.');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it('ensures a v2 certificate with a v1 issuer passes', async () => {
-      const data = await readFileAsync(
-        'tests/data/sample_cert-with_v1_issuer-2.0.json',
-      );
-      const certVerifier = new CertificateVerifier(data);
-      await certVerifier.verify((stepCode, message, status) => {
-        assert.equal(status, Status.success);
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-with_v1_issuer-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
     });
 
     it('ensure a v2 mocknet passes', async () => {

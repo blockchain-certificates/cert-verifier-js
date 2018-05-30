@@ -1069,13 +1069,9 @@ function ensureMerkleRootEqual(merkleRoot, remoteHash) {
 
 function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
   var validKey = false;
-
-  // Parse date
-  txTime = (0, _utils.dateToUnixTimestamp)(txTime);
-
-  if (txIssuingAddress in keyMap) {
+  var theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
+  if (theKey) {
     validKey = true;
-    var theKey = keyMap[txIssuingAddress];
     if (theKey.created) {
       validKey &= txTime >= theKey.created;
     }
@@ -1248,6 +1244,20 @@ function _hexFromByteArray(byteArray) {
     }
   }
   return out;
+}
+
+function getCaseInsensitiveKey(obj, value) {
+  var key = null;
+
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      if (prop.toLowerCase() === value.toLowerCase()) {
+        key = prop;
+      }
+    }
+  }
+
+  return obj[key];
 }
 
 },{".":7,"../config/default":1,"./utils":9,"bitcoinjs-lib":29,"debug":380,"jsonld":396,"sha256":429,"string.prototype.startswith":435}],6:[function(require,module,exports){

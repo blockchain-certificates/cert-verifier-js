@@ -539,10 +539,10 @@ function getBlockcypherFetcher(transactionId, chain) {
         resolve(txData);
       } catch (err) {
         // don't need to wrap this exception
-        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
+        reject(err.message);
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
     });
   });
   return blockcypherFetcher;
@@ -564,7 +564,7 @@ function getChainSoFetcher(transactionId, chain) {
         resolve(txData);
       } catch (err) {
         // don't need to wrap this exception
-        reject(err);
+        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
       }
     }).catch(function (err) {
       reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
@@ -670,15 +670,15 @@ function lookForTx(transactionId, chain, certificateVersion) {
       BlockchainExplorers = EthereumExplorers;
       break;
     default:
-      return Promise.reject(new _default.VerifierError("Invalid chain; does not map to known BlockchainExplorers."));
+      return Promise.reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Invalid chain; does not map to known BlockchainExplorers.'));
   }
 
   // First ensure we can satisfy the MinimumBlockchainExplorers setting
   if (_default.MinimumBlockchainExplorers < 0 || _default.MinimumBlockchainExplorers > BlockchainExplorers.length) {
-    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Invalid application configuration; check the MinimumBlockchainExplorers configuration value'));
   }
   if (_default.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion == _default.CertificateVersion.v1_1 || certificateVersion == _default.CertificateVersion.v1_2)) {
-    return Promise.reject(new _default.VerifierError("Invalid application configuration; check the MinimumBlockchainExplorers configuration value"));
+    return Promise.reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Invalid application configuration; check the MinimumBlockchainExplorers configuration value'));
   }
 
   // Queue up blockchain explorer APIs
@@ -698,7 +698,7 @@ function lookForTx(transactionId, chain, certificateVersion) {
   return new Promise(function (resolve, reject) {
     return PromiseProperRace(promises, _default.MinimumBlockchainExplorers).then(function (winners) {
       if (!winners || winners.length == 0) {
-        return Promise.reject(new _default.VerifierError("Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting."));
+        return Promise.reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.'));
       }
 
       // Compare results returned by different blockchain apis. We pick off the first result and compare the others
@@ -714,15 +714,15 @@ function lookForTx(transactionId, chain, certificateVersion) {
       for (var i = 1; i < winners.length; i++) {
         var thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-          throw new _default.VerifierError("Issuing addresses returned by the blockchain APIs were different");
+          throw new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Issuing addresses returned by the blockchain APIs were different');
         }
         if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-          throw new _default.VerifierError("Remote hashes returned by the blockchain APIs were different");
+          throw new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Remote hashes returned by the blockchain APIs were different');
         }
       }
       resolve(firstResponse);
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, err.message));
     });
   });
 }
@@ -733,7 +733,7 @@ var PromiseProperRace = function PromiseProperRace(promises, count) {
   // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
   promises = Array.from(promises);
   if (promises.length < count) {
-    return Promise.reject(new _default.VerifierError("Could not confirm the transaction"));
+    return Promise.reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Could not confirm the transaction'));
   }
 
   var indexPromises = promises.map(function (p, index) {

@@ -23,8 +23,8 @@ describe('Certificate verifier', async () => {
 
   describe('should', () => {
     it('verify a v2 certificate', async () => {
-      // const data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
-      const data = await readFileAsync('tests/data/certificate-mocknet-invalid.json');
+      const data = await readFileAsync('tests/data/sample_cert-valid-2.0.json');
+      // const data = await readFileAsync('tests/data/certificate-mocknet-invalid.json');
       const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
         // console.log(stepCode, message, status);
       });

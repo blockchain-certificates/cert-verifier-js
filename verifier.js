@@ -1285,14 +1285,14 @@ function getEtherScanFetcher(transactionId, chain) {
           var txData = parseEtherScanResponse(responseTxData, blockResponse);
           resolve(txData);
         }).catch(function (err) {
-          reject(new _default.VerifierError(err));
+          reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
         });
       } catch (err) {
         // don't need to wrap this exception
         reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
     });
   });
   return etherScanFetcher;
@@ -1329,14 +1329,14 @@ function getEtherScanBlock(jsonResponse, chain) {
         checkConfirmationsFetcher.then(function () {
           resolve(blockData);
         }).catch(function (err) {
-          reject(new _default.VerifierError(err));
+          reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
         });
       } catch (err) {
         // don't need to wrap this exception
         reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
     });
   });
 }
@@ -1364,7 +1364,7 @@ function checkEtherScanConfirmations(chain, blockNumber) {
         reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(err));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
     });
   });
 }
@@ -1892,7 +1892,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
 
               // Compare hashes
               this.doAction(_default.Status.comparingHashes, function () {
-                console.log(localHash, _this.certificate.receipt.targetHash);
                 checks.ensureHashesEqual(localHash, _this.certificate.receipt.targetHash);
               });
 

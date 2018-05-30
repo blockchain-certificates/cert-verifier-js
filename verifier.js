@@ -539,7 +539,7 @@ function getBlockcypherFetcher(transactionId, chain) {
         resolve(txData);
       } catch (err) {
         // don't need to wrap this exception
-        reject(new _default.VerifierError(Status.fetchingRemoteHash, 'Unable to get remote hash'));
+        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
       }
     }).catch(function (err) {
       reject(new _default.VerifierError(err));
@@ -567,7 +567,7 @@ function getChainSoFetcher(transactionId, chain) {
         reject(err);
       }
     }).catch(function (err) {
-      reject(new _default.VerifierError(Status.fetchingRemoteHash, 'Unable to get remote hash'));
+      reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, 'Unable to get remote hash'));
     });
   });
   return chainSoFetcher;
@@ -1289,7 +1289,7 @@ function getEtherScanFetcher(transactionId, chain) {
         });
       } catch (err) {
         // don't need to wrap this exception
-        reject(new _default.VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
       reject(new _default.VerifierError(err));
@@ -1333,7 +1333,7 @@ function getEtherScanBlock(jsonResponse, chain) {
         });
       } catch (err) {
         // don't need to wrap this exception
-        reject(new _default.VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
       reject(new _default.VerifierError(err));
@@ -1356,12 +1356,12 @@ function checkEtherScanConfirmations(chain, blockNumber) {
       var currentBlockCount = responseData.result;
       try {
         if (currentBlockCount - blockNumber < _default.MininumConfirmations) {
-          reject(new _default.VerifierError(Status.fetchingRemoteHash, "Number of transaction confirmations were less than the minimum required, according to EtherScan API"));
+          reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Number of transaction confirmations were less than the minimum required, according to EtherScan API"));
         }
         resolve(currentBlockCount);
       } catch (err) {
         // don't need to wrap this exception
-        reject(new _default.VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+        reject(new _default.VerifierError(_default.Status.fetchingRemoteHash, "Unable to get remote hash"));
       }
     }).catch(function (err) {
       reject(new _default.VerifierError(err));

@@ -45,19 +45,38 @@ describe('Certificate verifier', async () => {
     });
 
     it('verify an ethereum v2 certificate', async () => {
-          try {
-              var data = await readFileAsync('tests/data/sample_ethereum_cert-valid-2.0.json');
-              var certVerifier = new CertificateVerifier(data, statusMessage => {
-                  console.log(statusMessage);
-              });
-              var result = await certVerifier.verify(finalMessage => {
-                  console.log(finalMessage);
-              });
-              assert.equal(result, Status.success);
-          } catch (err) {
-              assert.fail(err, null, 'This should not fail');
-          }
-      });
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-valid-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
+    });
+
+    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-uppercase-address-valid-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
+    });
 
     it('verify v2 alpha certificate', async () => {
       try {
@@ -168,72 +187,105 @@ describe('Certificate verifier', async () => {
       }
     });
 
-    it("ensures a v2 certificate with an invalid merkle proof fails", async () => {
-        try {
-            var data = await readFileAsync('tests/data/sample_cert-merkle-proof-fail-2.0.json');
-            var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
-            var returnMessage;
-            var result = await certVerifier.verify((status, message) => {returnMessage = message});
-            assert.equal(result, Status.failure);
-            assert.equal(returnMessage, "Invalid Merkle Receipt. Proof hash didn't match Merkle root");
-        } catch (err) {
-            assert.fail(err, null, "Caught unexpected exception");
-        }
+    it('ensures a v2 certificate with an invalid merkle proof fails', async () => {
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-merkle-proof-fail-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(
+          returnMessage,
+          "Invalid Merkle Receipt. Proof hash didn't match Merkle root",
+        );
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 certificate that's been tampered with fails", async () => {
-        try {
-            var data = await readFileAsync('tests/data/sample_cert-tampered-2.0.json');
-            var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
-            var returnMessage;
-            var result = await certVerifier.verify((status, message) => {returnMessage = message});
-            assert.equal(result, Status.failure);
-            assert.equal(returnMessage, "Computed hash does not match remote hash");
-        } catch (err) {
-            assert.fail(err, null, "Caught unexpected exception");
-        }
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-tampered-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Computed hash does not match remote hash');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 ethereum certificate that's been tampered with fails", async () => {
       try {
-        var data = await readFileAsync('tests/data/sample_ethereum_cert-tampered-2.0.json');
-        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-tampered-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
         var returnMessage;
-        var result = await certVerifier.verify((status, message) => {returnMessage = message});
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
         assert.equal(result, Status.failure);
-        assert.equal(returnMessage, "Computed hash does not match remote hash");
+        assert.equal(returnMessage, 'Computed hash does not match remote hash');
       } catch (err) {
-        assert.fail(err, null, "Caught unexpected exception");
+        assert.fail(err, null, 'Caught unexpected exception');
       }
     });
 
     it("ensures a v2 certificate that doesn't match blockchain value fails", async () => {
-        try {
-            var data = await readFileAsync('tests/data/sample_cert-root-does-not-match-2.0.json');
-            var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
-            var returnMessage;
-            var result = await certVerifier.verify((status, message) => {returnMessage = message});
-            assert.equal(result, Status.failure);
-            assert.equal(returnMessage, "Merkle root does not match remote hash.");
-        } catch (err) {
-            assert.fail(err, null, "Caught unexpected exception");
-        }
+      try {
+        var data = await readFileAsync(
+          'tests/data/sample_cert-root-does-not-match-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
+        var returnMessage;
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
+        assert.equal(result, Status.failure);
+        assert.equal(returnMessage, 'Merkle root does not match remote hash.');
+      } catch (err) {
+        assert.fail(err, null, 'Caught unexpected exception');
+      }
     });
 
     it("ensures a v2 ethereum certificate that doesn't match blockchain value fails", async () => {
       try {
-        var data = await readFileAsync('tests/data/sample_ethereum_cert-root-does-not-match-2.0.json');
-        var certVerifier = new CertificateVerifier(data, (statusMessage) => {console.log(statusMessage)});
+        var data = await readFileAsync(
+          'tests/data/sample_ethereum_cert-root-does-not-match-2.0.json',
+        );
+        var certVerifier = new CertificateVerifier(data, statusMessage => {
+          console.log(statusMessage);
+        });
         var returnMessage;
-        var result = await certVerifier.verify((status, message) => {returnMessage = message});
+        var result = await certVerifier.verify((status, message) => {
+          returnMessage = message;
+        });
         assert.equal(result, Status.failure);
-        assert.equal(returnMessage, "Merkle root does not match remote hash.");
+        assert.equal(returnMessage, 'Merkle root does not match remote hash.');
       } catch (err) {
-        assert.fail(err, null, "Caught unexpected exception");
+        assert.fail(err, null, 'Caught unexpected exception');
       }
     });
 
-    it("ensures a v2 certificate with a v1 issuer passes", async () => {
+    it('ensures a v2 certificate with a v1 issuer passes', async () => {
       try {
         var data = await readFileAsync(
           'tests/data/sample_cert-with_v1_issuer-2.0.json',

@@ -494,11 +494,19 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getBlockcypherFetcher = getBlockcypherFetcher;
 exports.getChainSoFetcher = getChainSoFetcher;
+<<<<<<< HEAD
 
 var _promisifiedRequests = require("./promisifiedRequests");
 
 var _verifierModels = require("./verifierModels");
 
+=======
+
+var _promisifiedRequests = require("./promisifiedRequests");
+
+var _verifierModels = require("./verifierModels");
+
+>>>>>>> 71d251e698aa006db24f7d10168146c5f79b4275
 var _default = require("../config/default");
 
 require('string.prototype.startswith');
@@ -1039,9 +1047,9 @@ function ensureMerkleRootEqual(merkleRoot, remoteHash) {
 
 function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
   var validKey = false;
-  if (txIssuingAddress in keyMap) {
+  var theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
+  if (theKey) {
     validKey = true;
-    var theKey = keyMap[txIssuingAddress];
     if (theKey.created) {
       validKey &= txTime >= theKey.created;
     }
@@ -1207,6 +1215,23 @@ function _hexFromByteArray(byteArray) {
   return out;
 };
 
+<<<<<<< HEAD
+=======
+function getCaseInsensitiveKey(obj, value) {
+  var key = null;
+
+  for (var prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      if (prop.toLowerCase() === value.toLowerCase()) {
+        key = prop;
+      }
+    }
+  }
+
+  return obj[key];
+};
+
+>>>>>>> 71d251e698aa006db24f7d10168146c5f79b4275
 },{"../config/default":1,"bitcoinjs-lib":29,"debug":380,"jsonld":397,"sha256":430,"string.prototype.startswith":436}],6:[function(require,module,exports){
 "use strict";
 

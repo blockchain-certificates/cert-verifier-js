@@ -16,7 +16,6 @@ fs.readFile('./tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data)
 
   let cert = Certificate.parseJson(JSON.parse(data));
   console.log(cert.name);
-
 });
 ```
 
@@ -38,8 +37,15 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
   certVerifier.verify()
     .then(x => console.log(`final result: ${x}`))
     .catch(e => console.error(`failed: ${e}`));
-
 });
+```
+
+### Certificate Blockchain transaction info
+You can access some blockchain information about the certificate such as the transaction ID and a link to the raw transaction:
+```javascript
+let cert = Certificate.parseJson(JSON.parse(data));
+const transactionId = cert.transactionId;
+const rawTransactionLink = cert.rawTransactionLink;
 ```
 
 ### Using in a browser

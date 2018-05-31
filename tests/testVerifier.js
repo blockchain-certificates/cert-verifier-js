@@ -40,6 +40,7 @@ describe('Certificate verifier', async () => {
         });
         assert.equal(result, Status.success);
       } catch (err) {
+        console.log(err);
         assert.fail(err, null, 'This should not fail');
       }
     });

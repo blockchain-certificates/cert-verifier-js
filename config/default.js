@@ -17,6 +17,8 @@ let Status = {
   mockSuccess: "mockSuccess"
 };
 
+const BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
+
 var verboseMessageMap = {};
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
 verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remote hash";
@@ -56,6 +58,21 @@ module.exports = {
     ethropst: "ethropst",
     ethtest: "ethtest"
   },
+
+  /**
+   * These are the templates of the raw transaction api url
+   * Use the values of Blockchain (above) as key when adding one
+   */
+  BlockchainRawTransactionUrl: {
+    bitcoin: `https://blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
+    testnet: `https://testnet.blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    regtest: ``,
+    mocknet: ``,
+    ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    ethropst: `https://ropsten.etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    ethtest: ``
+  },
+  BlockchainRawTransactionIdPlaceholder,
 
   ChainSignatureValue: {
     /*

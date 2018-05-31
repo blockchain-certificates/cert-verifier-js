@@ -301,5 +301,20 @@ describe('Certificate verifier', async () => {
         assert.equal(status, Status.success);
       });
     });
+
+    /*it('ensure a v2 certificate\' dates get transformed to right timezone', async () => {
+      try {
+        var data = await readFileAsync('tests/data/sample_cert-breaking-timezone.json');
+        var certVerifier = new CertificateVerifier(data, (status, message) => {
+          console.log(status, message);
+        });
+        var result = await certVerifier.verify(finalMessage => {
+          // console.log(finalMessage);
+        });
+        assert.equal(result, Status.success);
+      } catch (err) {
+        assert.fail(err, null, 'This should not fail');
+      }
+    });*/
   });
 });

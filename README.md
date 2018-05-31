@@ -6,7 +6,7 @@ A library to enable parsing and verifying a Blockcert. This can be used as a nod
 
 ### Parsing a Blockcert
 
-```
+```javascript
 var fs = require('fs');
 
 fs.readFile('./tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
@@ -21,7 +21,7 @@ fs.readFile('./tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data)
 
 ### Verifying a Blockcert
 
-```
+```javascript
 var fs = require('fs');
 
 function statusCallback(arg1) {
@@ -41,10 +41,14 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
 ```
 
 ### Certificate Blockchain transaction info
-You can access some blockchain information about the certificate such as the transaction ID and a link to the raw transaction:
+You can access some blockchain information about the certificate such as the transaction ID and the links to the transactions:
 ```javascript
 let cert = Certificate.parseJson(JSON.parse(data));
+// Transaction ID
 const transactionId = cert.transactionId;
+// Transaction link
+const transactionLink = cert.transactionLink;
+// Raw transaction link
 const rawTransactionLink = cert.rawTransactionLink;
 ```
 
@@ -54,7 +58,7 @@ const rawTransactionLink = cert.rawTransactionLink;
 
 The following shows how you can use it: 
 
-```
+```javascript
 <script src="./verifier.js"></script>
 
 const certificateContentsString = ...

@@ -83,11 +83,24 @@ module.exports = {
   },
 
   /**
-   * These are the templates of the raw transaction api url
+   * These are the templates of the raw transaction url
    * Use the values of Blockchain (above) as key when adding one
    */
   BlockchainRawTransactionUrl: {
     bitcoin: "https://blockchain.info/rawtx/" + BlockchainRawTransactionIdPlaceholder,
+    testnet: "https://testnet.blockchain.info/rawtx/" + BlockchainRawTransactionIdPlaceholder,
+    regtest: "",
+    mocknet: "",
+    ethmain: "https://etherscan.io/tx/" + BlockchainRawTransactionIdPlaceholder,
+    ethropst: "https://ropsten.etherscan.io/getRawTx?tx=" + BlockchainRawTransactionIdPlaceholder,
+    ethtest: ""
+  },
+  /**
+   * These are the templates of the transaction url
+   * Use the values of Blockchain (above) as key when adding one
+   */
+  BlockchainTransactionUrl: {
+    bitcoin: "https://blockchain.info/tx/" + BlockchainRawTransactionIdPlaceholder,
     testnet: "https://testnet.blockchain.info/tx/" + BlockchainRawTransactionIdPlaceholder,
     regtest: "",
     mocknet: "",
@@ -841,6 +854,19 @@ var getRawTransactionLink = function getRawTransactionLink(transactionId, chain)
   }
 };
 
+/**
+ * getTransactionLink
+ *
+ * Exposes the transaction link (empty string if does not exist)
+ */
+var getTransactionLink = function getTransactionLink(transactionId, chain) {
+  try {
+    return _default.BlockchainTransactionUrl[chain].replace(_default.BlockchainRawTransactionIdPlaceholder, transactionId);
+  } catch (e) {
+    throw new _default.VerifierError("Can't get the raw transaction link.");
+  }
+};
+
 var Certificate = exports.Certificate = function () {
   function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires) {
     _classCallCheck(this, Certificate);
@@ -864,6 +890,7 @@ var Certificate = exports.Certificate = function () {
     this.expires = expires;
     this.transactionId = getTransactionId(this.receipt);
     this.rawTransactionLink = getRawTransactionLink(this.transactionId, this.chain);
+    this.transactionLink = getTransactionLink(this.transactionId, this.chain);
   }
 
   _createClass(Certificate, null, [{

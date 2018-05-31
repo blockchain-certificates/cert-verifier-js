@@ -64,13 +64,100 @@ describe('Certificate.getTransactionId method', () => {
   });
 });
 
-describe('Certificate.getRawTransactionLink method', () => {
+describe('Certificate.transactionLink property', () => {
+  describe('when the certificate transaction is on mainnet', () => {
+    it('should return a link to blockchain.info/tx/', async () => {
+      try {
+        const data = await readFileAsync('tests/data/sample-cert-mainnet-valid-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.transactionLink).to.equal('https://blockchain.info/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
   describe('when the certificate transaction is on testnet', () => {
-    it('should return a link to testnet.blockchain.info', async () => {
+    it('should return a link to testnet.blockchain.info/tx/', async () => {
       try {
         const data = await readFileAsync('tests/data/testnet-2.0.json');
         let cert = Certificate.parseJson(JSON.parse(data));
-        expect(cert.rawTransactionLink).to.equal('https://testnet.blockchain.info/tx/027e21458a168006147a52714cbc01fa9e7188d726727acc56c80a0e25b37df7');
+        expect(cert.transactionLink).to.equal('https://testnet.blockchain.info/tx/027e21458a168006147a52714cbc01fa9e7188d726727acc56c80a0e25b37df7');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
+  describe('when the certificate transaction is with mocknet', () => {
+    it('should return an empty string', async () => {
+      try {
+        const data = await readFileAsync('tests/data/mocknet-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.transactionLink).to.equal('');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
+  describe('when the certificate transaction is with regtest', () => {
+    it('should return an empty string', async () => {
+      try {
+        const data = await readFileAsync('tests/data/regtest-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.transactionLink).to.equal('');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
+  // TODO: when we will have an certificate example on ethereum main
+  xdescribe('when the certificate transaction is on ethereum main', () => {
+    it('should return a link to etherscan.io', async () => {
+      try {
+        const data = await readFileAsync('');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.transactionLink).to.equal('');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
+  describe('when the certificate transaction is on ethereum ropsten',  () => {
+    it('should return a link to ropsten.etherscan.io/tx/', async () => {
+      try {
+        const data = await readFileAsync('tests/data/sample_ethereum_cert-valid-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.transactionLink).to.equal('https://ropsten.etherscan.io/tx/0x7067ef44065cab2ddb8ef86583a9ff5e41708c6494a3b0591228f8508f33e751');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+});
+
+describe('Certificate.rawTransactionLink property', () => {
+  describe('when the certificate transaction is on testnet', () => {
+    it('should return a link to blockchain.info/rawtx/', async () => {
+      try {
+        const data = await readFileAsync('tests/data/sample-cert-mainnet-valid-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.rawTransactionLink).to.equal('https://blockchain.info/rawtx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+      } catch (err) {
+        assert.fail('This test should pass');
+      }
+    });
+  });
+
+  describe('when the certificate transaction is on testnet', () => {
+    it('should return a link to testnet.blockchain.info/rawtx/', async () => {
+      try {
+        const data = await readFileAsync('tests/data/testnet-2.0.json');
+        let cert = Certificate.parseJson(JSON.parse(data));
+        expect(cert.rawTransactionLink).to.equal('https://testnet.blockchain.info/rawtx/027e21458a168006147a52714cbc01fa9e7188d726727acc56c80a0e25b37df7');
       } catch (err) {
         assert.fail('This test should pass');
       }
@@ -115,11 +202,11 @@ describe('Certificate.getRawTransactionLink method', () => {
   });
 
   describe('when the certificate transaction is on ethereum ropsten',  () => {
-    it('should return a link to ropsten.etherscan.io', async () => {
+    it('should return a link to ropsten.etherscan.io/getRawTx', async () => {
       try {
         const data = await readFileAsync('tests/data/sample_ethereum_cert-valid-2.0.json');
         let cert = Certificate.parseJson(JSON.parse(data));
-        expect(cert.rawTransactionLink).to.equal('https://ropsten.etherscan.io/tx/0x7067ef44065cab2ddb8ef86583a9ff5e41708c6494a3b0591228f8508f33e751');
+        expect(cert.rawTransactionLink).to.equal('https://ropsten.etherscan.io/getRawTx?tx=0x7067ef44065cab2ddb8ef86583a9ff5e41708c6494a3b0591228f8508f33e751');
       } catch (err) {
         assert.fail('This test should pass');
       }

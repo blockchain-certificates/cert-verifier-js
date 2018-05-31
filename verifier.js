@@ -34,6 +34,8 @@ var Status = {
   mockSuccess: "mockSuccess"
 };
 
+var BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
+
 var verboseMessageMap = {};
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
 verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remote hash";
@@ -79,6 +81,21 @@ module.exports = {
     ethropst: "ethropst",
     ethtest: "ethtest"
   },
+
+  /**
+   * These are the templates of the raw transaction api url
+   * Use the values of Blockchain (above) as key when adding one
+   */
+  BlockchainRawTransactionUrl: {
+    bitcoin: "https://blockchain.info/rawtx/" + BlockchainRawTransactionIdPlaceholder,
+    testnet: "https://testnet.blockchain.info/tx/" + BlockchainRawTransactionIdPlaceholder,
+    regtest: "",
+    mocknet: "",
+    ethmain: "https://etherscan.io/tx/" + BlockchainRawTransactionIdPlaceholder,
+    ethropst: "https://ropsten.etherscan.io/tx/" + BlockchainRawTransactionIdPlaceholder,
+    ethtest: ""
+  },
+  BlockchainRawTransactionIdPlaceholder: BlockchainRawTransactionIdPlaceholder,
 
   ChainSignatureValue: {
     /*
@@ -798,6 +815,32 @@ var getNameForChain = function getNameForChain(chain) {
   return chain.toString();
 };
 
+/**
+ * getTransactionId
+ *
+ * @returns {string|*}
+ */
+var getTransactionId = function getTransactionId(certificateReceipt) {
+  try {
+    return certificateReceipt.anchors[0].sourceId;
+  } catch (e) {
+    throw new _default.VerifierError("Can't verify this certificate without a transaction ID to compare against.");
+  }
+};
+
+/**
+ * getRawTransactionLink
+ *
+ * Exposes the raw transaction link (empty string if does not exist)
+ */
+var getRawTransactionLink = function getRawTransactionLink(transactionId, chain) {
+  try {
+    return _default.BlockchainRawTransactionUrl[chain].replace(_default.BlockchainRawTransactionIdPlaceholder, transactionId);
+  } catch (e) {
+    throw new _default.VerifierError("Can't get the raw transaction link.");
+  }
+};
+
 var Certificate = exports.Certificate = function () {
   function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires) {
     _classCallCheck(this, Certificate);
@@ -819,6 +862,8 @@ var Certificate = exports.Certificate = function () {
     this.chain = chain;
     this.chainAsString = getNameForChain(chain);
     this.expires = expires;
+    this.transactionId = getTransactionId(this.receipt);
+    this.rawTransactionLink = getRawTransactionLink(this.transactionId, this.chain);
   }
 
   _createClass(Certificate, null, [{
@@ -1044,6 +1089,7 @@ function ensureMerkleRootEqual(merkleRoot, remoteHash) {
 function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
   var validKey = false;
   var theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
+  txTime = (0, _utils.dateToUnixTimestamp)(txTime);
   if (theKey) {
     validKey = true;
     if (theKey.created) {
@@ -1213,7 +1259,6 @@ function _hexFromByteArray(byteArray) {
 
 function getCaseInsensitiveKey(obj, value) {
   var key = null;
-
   for (var prop in obj) {
     if (obj.hasOwnProperty(prop)) {
       if (prop.toLowerCase() === value.toLowerCase()) {
@@ -1221,9 +1266,8 @@ function getCaseInsensitiveKey(obj, value) {
       }
     }
   }
-
   return obj[key];
-};
+}
 
 },{"../config/default":1,"./utils":9,"bitcoinjs-lib":30,"debug":381,"jsonld":398,"sha256":431,"string.prototype.startswith":437}],6:[function(require,module,exports){
 "use strict";
@@ -1675,24 +1719,6 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
     }
 
     /**
-     * getTransactionId
-     *
-     * @returns {string|*}
-     */
-
-  }, {
-    key: 'getTransactionId',
-    value: function getTransactionId() {
-      var transactionId = void 0;
-      try {
-        transactionId = this.certificate.receipt.anchors[0].sourceId;
-        return transactionId;
-      } catch (e) {
-        throw new _default.VerifierError("Can't verify this certificate without a transaction ID to compare against.");
-      }
-    }
-
-    /**
      * verifyV1_2
      *
      * Verified certificate v1.2
@@ -1710,7 +1736,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
-              transactionId = this.getTransactionId();
+              transactionId = this.certificate.transactionId;
               docToVerify = this.document;
 
               // Compute local hash
@@ -1832,7 +1858,7 @@ var CertificateVerifier = exports.CertificateVerifier = function () {
         while (1) {
           switch (_context10.prev = _context10.next) {
             case 0:
-              transactionId = this.getTransactionId();
+              transactionId = this.certificate.transactionId;
               docToVerify = this.document;
 
               // Compute local hash
@@ -2141,6 +2167,8 @@ var _promisifiedRequests = require('./promisifiedRequests');
 
 var _default = require('../config/default');
 
+var _utils = require('./utils');
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var TransactionData = exports.TransactionData = function TransactionData(remoteHash, issuingAddress, time, revokedAddresses) {
@@ -2169,9 +2197,9 @@ function parseIssuerKeys(issuerProfileJson) {
       var responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
       for (var i = 0; i < responseKeys.length; i++) {
         var key = responseKeys[i];
-        var created = key.created ? dateToUnixTimestamp(key.created) : null;
-        var revoked = key.revoked ? dateToUnixTimestamp(key.revoked) : null;
-        var expires = key.expires ? dateToUnixTimestamp(key.expires) : null;
+        var created = key.created ? (0, _utils.dateToUnixTimestamp)(key.created) : null;
+        var revoked = key.revoked ? (0, _utils.dateToUnixTimestamp)(key.revoked) : null;
+        var expires = key.expires ? (0, _utils.dateToUnixTimestamp)(key.expires) : null;
         // backcompat for v2 alpha
         var publicKeyTemp = key.id || key.publicKey;
         var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
@@ -2250,7 +2278,7 @@ function getRevokedAssertions(revocationListUrl) {
   return revocationListFetcher;
 }
 
-},{"../config/default":1,"./promisifiedRequests":8}],12:[function(require,module,exports){
+},{"../config/default":1,"./promisifiedRequests":8,"./utils":9}],12:[function(require,module,exports){
 (function (Buffer,process){
 // Copyright (c) 2012, Mark Cavage. All rights reserved.
 // Copyright 2015 Joyent, Inc.

@@ -17,6 +17,8 @@ let Status = {
   mockSuccess: "mockSuccess"
 };
 
+const BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
+
 var verboseMessageMap = {};
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
 verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remote hash";
@@ -56,6 +58,34 @@ module.exports = {
     ethropst: "ethropst",
     ethtest: "ethtest"
   },
+
+  /**
+   * These are the templates of the raw transaction url
+   * Use the values of Blockchain (above) as key when adding one
+   */
+  BlockchainRawTransactionUrl: {
+    bitcoin: `https://blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
+    testnet: `https://testnet.blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
+    regtest: ``,
+    mocknet: ``,
+    ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    ethropst: `https://ropsten.etherscan.io/getRawTx?tx=${BlockchainRawTransactionIdPlaceholder}`,
+    ethtest: ``
+  },
+  /**
+   * These are the templates of the transaction url
+   * Use the values of Blockchain (above) as key when adding one
+   */
+  BlockchainTransactionUrl: {
+    bitcoin: `https://blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    testnet: `https://testnet.blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    regtest: ``,
+    mocknet: ``,
+    ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    ethropst: `https://ropsten.etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
+    ethtest: ``
+  },
+  BlockchainRawTransactionIdPlaceholder,
 
   ChainSignatureValue: {
     /*

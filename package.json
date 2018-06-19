@@ -25,7 +25,7 @@
     "debug": "^3.0.1",
     "ecurve": "^1.0.4",
     "jsonld": "^0.4.11",
-    "mocha": "^3.5.3",
+    "mocha": "^5.2.0",
     "sha256": "^0.2.0",
     "string.prototype.startswith": "^0.2.0",
     "tsify": "^3.0.4",

@@ -29,7 +29,6 @@
     "sha256": "^0.2.0",
     "string.prototype.startswith": "^0.2.0",
     "tsify": "^3.0.4",
-    "verror": "^1.9.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
@@ -41,6 +40,6 @@
     "babelify": "^7.3.0",
     "brfs": "^1.4.3",
     "browserify": "^14.3.0",
-    "uglify-js": "^3.3.13"
+    "uglify-js": "^3.3.14"
   }
 }

@@ -1,6 +1,5 @@
-import VError from 'verror';
-
 let Status = {
+  getTransactionId: "getTransactionId",
   computingLocalHash: "computingLocalHash",
   fetchingRemoteHash: "fetchingRemoteHash",
   gettingIssuerProfile: "gettingIssuerProfile",
@@ -14,12 +13,15 @@ let Status = {
   checkingExpiresDate: "checkingExpiresDate",
   success: "success",
   failure: "failure",
-  mockSuccess: "mockSuccess"
+  starting: "starting",
+  mockSuccess: "mockSuccess",
+  final: "final",
 };
 
 const BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
 
 var verboseMessageMap = {};
+verboseMessageMap[Status.getTransactionId] = "Getting transaction ID";
 verboseMessageMap[Status.computingLocalHash] = "Computing Local Hash";
 verboseMessageMap[Status.fetchingRemoteHash] = "Fetching remote hash";
 verboseMessageMap[Status.gettingIssuerProfile] = "Getting issuer profile";
@@ -27,18 +29,31 @@ verboseMessageMap[Status.parsingIssuerKeys] = "Parsing issuer keys";
 verboseMessageMap[Status.comparingHashes] = "Comparing Hashes";
 verboseMessageMap[Status.checkingMerkleRoot] = "Checking Merkle Root";
 verboseMessageMap[Status.checkingReceipt] = "Checking Receipt";
-verboseMessageMap[Status.checkingRevokedStatus] = "Checking Revoked Status";
-verboseMessageMap[Status.checkingAuthenticity] = "Checking Authenticity";
-verboseMessageMap[Status.checkingExpiresDate] = "Checking Expires Date";
 verboseMessageMap[Status.checkingIssuerSignature] = "Checking Issuer Signature";
+verboseMessageMap[Status.checkingAuthenticity] = "Checking Authenticity";
+verboseMessageMap[Status.checkingRevokedStatus] = "Checking Revoked Status";
+verboseMessageMap[Status.checkingExpiresDate] = "Checking Expires Date";
+verboseMessageMap[Status.success] = "Success";
+verboseMessageMap[Status.failure] = "Failure";
+verboseMessageMap[Status.starting] = "Starting";
+verboseMessageMap[Status.mockSuccess] = "mockSuccess";
+verboseMessageMap[Status.final] = "Final";
 
 let getVerboseMessage = function (status) {
   return verboseMessageMap[status];
 };
 
-class VerifierError extends VError {
-  constructor(message) {
+class VerifierError extends Error {
+  constructor(stepCode, message) {
     super(message);
+    this.stepCode = stepCode;
+  }
+}
+
+class ActionResult {
+  constructor(status, data) {
+    this.status = status;
+    this.data = data;
   }
 }
 
@@ -114,6 +129,12 @@ module.exports = {
     // Add &apikey={key} to EtherScan URL's if getting rate limited
     etherScanMainUrl: "https://api.etherscan.io/api?module=proxy",
     etherScanRopstenUrl: "https://api-ropsten.etherscan.io/api?module=proxy",
+  },
+
+  generateRevocationReason: function(reason) {
+    reason = reason.trim();
+    reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
+    return `This certificate has been revoked by the issuer.${reason}`;
   },
 
   Status,

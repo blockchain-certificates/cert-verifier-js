@@ -7265,7 +7265,7 @@ function dateToUnixTimestamp(date) {
   return dateFromIso(date);
 }
 
-function startsWith$1 (string, pattern) {
+function startsWith (string, pattern) {
   if (typeof string !== 'string') {
     console.warn('Trying to test a non string variable');
     return false;
@@ -7274,7 +7274,7 @@ function startsWith$1 (string, pattern) {
 }
 
 var isBitcoinMainnetAddress = function (bitcoinAddress) {
-  if (startsWith$1(bitcoinAddress, "1") || startsWith$1(bitcoinAddress, PublicKey)) {
+  if (startsWith(bitcoinAddress, "1") || startsWith(bitcoinAddress, PublicKey)) {
     return true;
   }
   return false;
@@ -11406,6 +11406,10 @@ function isBoolean(arg) {
 
 function isNull(arg) {
   return arg === null;
+}
+
+function isNullOrUndefined(arg) {
+  return arg == null;
 }
 
 function isNumber(arg) {
@@ -30028,12 +30032,2474 @@ function getCaseInsensitiveKey(obj, value) {
   return obj[key];
 }
 
+/*! https://mths.be/punycode v1.4.1 by @mathias */
+
+
+/** Highest positive signed 32-bit float value */
+var maxInt = 2147483647; // aka. 0x7FFFFFFF or 2^31-1
+
+/** Bootstring parameters */
+var base = 36;
+var tMin = 1;
+var tMax = 26;
+var skew = 38;
+var damp = 700;
+var initialBias = 72;
+var initialN = 128; // 0x80
+var delimiter = '-'; // '\x2D'
+var regexNonASCII = /[^\x20-\x7E]/; // unprintable ASCII chars + non-ASCII chars
+var regexSeparators = /[\x2E\u3002\uFF0E\uFF61]/g; // RFC 3490 separators
+
+/** Error messages */
+var errors$1 = {
+  'overflow': 'Overflow: input needs wider integers to process',
+  'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
+  'invalid-input': 'Invalid input'
+};
+
+/** Convenience shortcuts */
+var baseMinusTMin = base - tMin;
+var floor$3 = Math.floor;
+var stringFromCharCode = String.fromCharCode;
+
+/*--------------------------------------------------------------------------*/
+
+/**
+ * A generic error utility function.
+ * @private
+ * @param {String} type The error type.
+ * @returns {Error} Throws a `RangeError` with the applicable error message.
+ */
+function error(type) {
+  throw new RangeError(errors$1[type]);
+}
+
+/**
+ * A generic `Array#map` utility function.
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} callback The function that gets called for every array
+ * item.
+ * @returns {Array} A new array of values returned by the callback function.
+ */
+function map(array, fn) {
+  var length = array.length;
+  var result = [];
+  while (length--) {
+    result[length] = fn(array[length]);
+  }
+  return result;
+}
+
+/**
+ * A simple `Array#map`-like wrapper to work with domain name strings or email
+ * addresses.
+ * @private
+ * @param {String} domain The domain name or email address.
+ * @param {Function} callback The function that gets called for every
+ * character.
+ * @returns {Array} A new string of characters returned by the callback
+ * function.
+ */
+function mapDomain(string, fn) {
+  var parts = string.split('@');
+  var result = '';
+  if (parts.length > 1) {
+    // In email addresses, only the domain name should be punycoded. Leave
+    // the local part (i.e. everything up to `@`) intact.
+    result = parts[0] + '@';
+    string = parts[1];
+  }
+  // Avoid `split(regex)` for IE8 compatibility. See #17.
+  string = string.replace(regexSeparators, '\x2E');
+  var labels = string.split('.');
+  var encoded = map(labels, fn).join('.');
+  return result + encoded;
+}
+
+/**
+ * Creates an array containing the numeric code points of each Unicode
+ * character in the string. While JavaScript uses UCS-2 internally,
+ * this function will convert a pair of surrogate halves (each of which
+ * UCS-2 exposes as separate characters) into a single code point,
+ * matching UTF-16.
+ * @see `punycode.ucs2.encode`
+ * @see <https://mathiasbynens.be/notes/javascript-encoding>
+ * @memberOf punycode.ucs2
+ * @name decode
+ * @param {String} string The Unicode input string (UCS-2).
+ * @returns {Array} The new array of code points.
+ */
+function ucs2decode(string) {
+  var output = [],
+    counter = 0,
+    length = string.length,
+    value,
+    extra;
+  while (counter < length) {
+    value = string.charCodeAt(counter++);
+    if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+      // high surrogate, and there is a next character
+      extra = string.charCodeAt(counter++);
+      if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+      } else {
+        // unmatched surrogate; only append this code unit, in case the next
+        // code unit is the high surrogate of a surrogate pair
+        output.push(value);
+        counter--;
+      }
+    } else {
+      output.push(value);
+    }
+  }
+  return output;
+}
+
+/**
+ * Converts a digit/integer into a basic code point.
+ * @see `basicToDigit()`
+ * @private
+ * @param {Number} digit The numeric value of a basic code point.
+ * @returns {Number} The basic code point whose value (when used for
+ * representing integers) is `digit`, which needs to be in the range
+ * `0` to `base - 1`. If `flag` is non-zero, the uppercase form is
+ * used; else, the lowercase form is used. The behavior is undefined
+ * if `flag` is non-zero and `digit` has no uppercase form.
+ */
+function digitToBasic(digit, flag) {
+  //  0..25 map to ASCII a..z or A..Z
+  // 26..35 map to ASCII 0..9
+  return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
+}
+
+/**
+ * Bias adaptation function as per section 3.4 of RFC 3492.
+ * https://tools.ietf.org/html/rfc3492#section-3.4
+ * @private
+ */
+function adapt(delta, numPoints, firstTime) {
+  var k = 0;
+  delta = firstTime ? floor$3(delta / damp) : delta >> 1;
+  delta += floor$3(delta / numPoints);
+  for ( /* no initialization */ ; delta > baseMinusTMin * tMax >> 1; k += base) {
+    delta = floor$3(delta / baseMinusTMin);
+  }
+  return floor$3(k + (baseMinusTMin + 1) * delta / (delta + skew));
+}
+
+/**
+ * Converts a string of Unicode symbols (e.g. a domain name label) to a
+ * Punycode string of ASCII-only symbols.
+ * @memberOf punycode
+ * @param {String} input The string of Unicode symbols.
+ * @returns {String} The resulting Punycode string of ASCII-only symbols.
+ */
+function encode$4(input) {
+  var n,
+    delta,
+    handledCPCount,
+    basicLength,
+    bias,
+    j,
+    m,
+    q,
+    k,
+    t,
+    currentValue,
+    output = [],
+    /** `inputLength` will hold the number of code points in `input`. */
+    inputLength,
+    /** Cached calculation results */
+    handledCPCountPlusOne,
+    baseMinusT,
+    qMinusT;
+
+  // Convert the input in UCS-2 to Unicode
+  input = ucs2decode(input);
+
+  // Cache the length
+  inputLength = input.length;
+
+  // Initialize the state
+  n = initialN;
+  delta = 0;
+  bias = initialBias;
+
+  // Handle the basic code points
+  for (j = 0; j < inputLength; ++j) {
+    currentValue = input[j];
+    if (currentValue < 0x80) {
+      output.push(stringFromCharCode(currentValue));
+    }
+  }
+
+  handledCPCount = basicLength = output.length;
+
+  // `handledCPCount` is the number of code points that have been handled;
+  // `basicLength` is the number of basic code points.
+
+  // Finish the basic string - if it is not empty - with a delimiter
+  if (basicLength) {
+    output.push(delimiter);
+  }
+
+  // Main encoding loop:
+  while (handledCPCount < inputLength) {
+
+    // All non-basic code points < n have been handled already. Find the next
+    // larger one:
+    for (m = maxInt, j = 0; j < inputLength; ++j) {
+      currentValue = input[j];
+      if (currentValue >= n && currentValue < m) {
+        m = currentValue;
+      }
+    }
+
+    // Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
+    // but guard against overflow
+    handledCPCountPlusOne = handledCPCount + 1;
+    if (m - n > floor$3((maxInt - delta) / handledCPCountPlusOne)) {
+      error('overflow');
+    }
+
+    delta += (m - n) * handledCPCountPlusOne;
+    n = m;
+
+    for (j = 0; j < inputLength; ++j) {
+      currentValue = input[j];
+
+      if (currentValue < n && ++delta > maxInt) {
+        error('overflow');
+      }
+
+      if (currentValue == n) {
+        // Represent delta as a generalized variable-length integer
+        for (q = delta, k = base; /* no condition */ ; k += base) {
+          t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+          if (q < t) {
+            break;
+          }
+          qMinusT = q - t;
+          baseMinusT = base - t;
+          output.push(
+            stringFromCharCode(digitToBasic(t + qMinusT % baseMinusT, 0))
+          );
+          q = floor$3(qMinusT / baseMinusT);
+        }
+
+        output.push(stringFromCharCode(digitToBasic(q, 0)));
+        bias = adapt(delta, handledCPCountPlusOne, handledCPCount == basicLength);
+        delta = 0;
+        ++handledCPCount;
+      }
+    }
+
+    ++delta;
+    ++n;
+
+  }
+  return output.join('');
+}
+
+/**
+ * Converts a Unicode string representing a domain name or an email address to
+ * Punycode. Only the non-ASCII parts of the domain name will be converted,
+ * i.e. it doesn't matter if you call it with a domain that's already in
+ * ASCII.
+ * @memberOf punycode
+ * @param {String} input The domain name or email address to convert, as a
+ * Unicode string.
+ * @returns {String} The Punycode representation of the given domain name or
+ * email address.
+ */
+function toASCII(input) {
+  return mapDomain(input, function(string) {
+    return regexNonASCII.test(string) ?
+      'xn--' + encode$4(string) :
+      string;
+  });
+}
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+// If obj.hasOwnProperty has been overridden, then calling
+// obj.hasOwnProperty(prop) will break.
+// See: https://github.com/joyent/node/issues/1707
+function hasOwnProperty$2(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+var isArray$2 = Array.isArray || function (xs) {
+  return Object.prototype.toString.call(xs) === '[object Array]';
+};
+function stringifyPrimitive(v) {
+  switch (typeof v) {
+    case 'string':
+      return v;
+
+    case 'boolean':
+      return v ? 'true' : 'false';
+
+    case 'number':
+      return isFinite(v) ? v : '';
+
+    default:
+      return '';
+  }
+}
+
+function stringify (obj, sep, eq, name) {
+  sep = sep || '&';
+  eq = eq || '=';
+  if (obj === null) {
+    obj = undefined;
+  }
+
+  if (typeof obj === 'object') {
+    return map$1(objectKeys$1(obj), function(k) {
+      var ks = encodeURIComponent(stringifyPrimitive(k)) + eq;
+      if (isArray$2(obj[k])) {
+        return map$1(obj[k], function(v) {
+          return ks + encodeURIComponent(stringifyPrimitive(v));
+        }).join(sep);
+      } else {
+        return ks + encodeURIComponent(stringifyPrimitive(obj[k]));
+      }
+    }).join(sep);
+
+  }
+
+  if (!name) return '';
+  return encodeURIComponent(stringifyPrimitive(name)) + eq +
+         encodeURIComponent(stringifyPrimitive(obj));
+}
+function map$1 (xs, f) {
+  if (xs.map) return xs.map(f);
+  var res = [];
+  for (var i = 0; i < xs.length; i++) {
+    res.push(f(xs[i], i));
+  }
+  return res;
+}
+
+var objectKeys$1 = Object.keys || function (obj) {
+  var res = [];
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) res.push(key);
+  }
+  return res;
+};
+
+function parse$1(qs, sep, eq, options) {
+  sep = sep || '&';
+  eq = eq || '=';
+  var obj = {};
+
+  if (typeof qs !== 'string' || qs.length === 0) {
+    return obj;
+  }
+
+  var regexp = /\+/g;
+  qs = qs.split(sep);
+
+  var maxKeys = 1000;
+  if (options && typeof options.maxKeys === 'number') {
+    maxKeys = options.maxKeys;
+  }
+
+  var len = qs.length;
+  // maxKeys <= 0 means that we should not limit keys count
+  if (maxKeys > 0 && len > maxKeys) {
+    len = maxKeys;
+  }
+
+  for (var i = 0; i < len; ++i) {
+    var x = qs[i].replace(regexp, '%20'),
+        idx = x.indexOf(eq),
+        kstr, vstr, k, v;
+
+    if (idx >= 0) {
+      kstr = x.substr(0, idx);
+      vstr = x.substr(idx + 1);
+    } else {
+      kstr = x;
+      vstr = '';
+    }
+
+    k = decodeURIComponent(kstr);
+    v = decodeURIComponent(vstr);
+
+    if (!hasOwnProperty$2(obj, k)) {
+      obj[k] = v;
+    } else if (isArray$2(obj[k])) {
+      obj[k].push(v);
+    } else {
+      obj[k] = [obj[k], v];
+    }
+  }
+
+  return obj;
+}
+
+// Copyright Joyent, Inc. and other Node contributors.
+var url = {
+  parse: urlParse,
+  resolve: urlResolve,
+  resolveObject: urlResolveObject,
+  format: urlFormat,
+  Url: Url$1
+}
+function Url$1() {
+  this.protocol = null;
+  this.slashes = null;
+  this.auth = null;
+  this.host = null;
+  this.port = null;
+  this.hostname = null;
+  this.hash = null;
+  this.search = null;
+  this.query = null;
+  this.pathname = null;
+  this.path = null;
+  this.href = null;
+}
+
+// Reference: RFC 3986, RFC 1808, RFC 2396
+
+// define these here so at least they only have to be
+// compiled once on the first module load.
+var protocolPattern = /^([a-z0-9.+-]+:)/i,
+  portPattern = /:[0-9]*$/,
+
+  // Special case for a simple path URL
+  simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/,
+
+  // RFC 2396: characters reserved for delimiting URLs.
+  // We actually just auto-escape these.
+  delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'],
+
+  // RFC 2396: characters not allowed for various reasons.
+  unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims),
+
+  // Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+  autoEscape = ['\''].concat(unwise),
+  // Characters that are never ever allowed in a hostname.
+  // Note that any invalid chars are also handled, but these
+  // are the ones that are *expected* to be seen, so we fast-path
+  // them.
+  nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape),
+  hostEndingChars = ['/', '?', '#'],
+  hostnameMaxLen = 255,
+  hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/,
+  hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/,
+  // protocols that can allow "unsafe" and "unwise" chars.
+  unsafeProtocol = {
+    'javascript': true,
+    'javascript:': true
+  },
+  // protocols that never have a hostname.
+  hostlessProtocol = {
+    'javascript': true,
+    'javascript:': true
+  },
+  // protocols that always contain a // bit.
+  slashedProtocol = {
+    'http': true,
+    'https': true,
+    'ftp': true,
+    'gopher': true,
+    'file': true,
+    'http:': true,
+    'https:': true,
+    'ftp:': true,
+    'gopher:': true,
+    'file:': true
+  };
+
+function urlParse(url, parseQueryString, slashesDenoteHost) {
+  if (url && isObject(url) && url instanceof Url$1) return url;
+
+  var u = new Url$1;
+  u.parse(url, parseQueryString, slashesDenoteHost);
+  return u;
+}
+Url$1.prototype.parse = function(url, parseQueryString, slashesDenoteHost) {
+  return parse$2(this, url, parseQueryString, slashesDenoteHost);
+};
+
+function parse$2(self, url, parseQueryString, slashesDenoteHost) {
+  if (!isString(url)) {
+    throw new TypeError('Parameter \'url\' must be a string, not ' + typeof url);
+  }
+
+  // Copy chrome, IE, opera backslash-handling behavior.
+  // Back slashes before the query string get converted to forward slashes
+  // See: https://code.google.com/p/chromium/issues/detail?id=25916
+  var queryIndex = url.indexOf('?'),
+    splitter =
+    (queryIndex !== -1 && queryIndex < url.indexOf('#')) ? '?' : '#',
+    uSplit = url.split(splitter),
+    slashRegex = /\\/g;
+  uSplit[0] = uSplit[0].replace(slashRegex, '/');
+  url = uSplit.join(splitter);
+
+  var rest = url;
+
+  // trim before proceeding.
+  // This is to support parse stuff like "  http://foo.com  \n"
+  rest = rest.trim();
+
+  if (!slashesDenoteHost && url.split('#').length === 1) {
+    // Try fast path regexp
+    var simplePath = simplePathPattern.exec(rest);
+    if (simplePath) {
+      self.path = rest;
+      self.href = rest;
+      self.pathname = simplePath[1];
+      if (simplePath[2]) {
+        self.search = simplePath[2];
+        if (parseQueryString) {
+          self.query = parse$1(self.search.substr(1));
+        } else {
+          self.query = self.search.substr(1);
+        }
+      } else if (parseQueryString) {
+        self.search = '';
+        self.query = {};
+      }
+      return self;
+    }
+  }
+
+  var proto = protocolPattern.exec(rest);
+  if (proto) {
+    proto = proto[0];
+    var lowerProto = proto.toLowerCase();
+    self.protocol = lowerProto;
+    rest = rest.substr(proto.length);
+  }
+
+  // figure out if it's got a host
+  // user@server is *always* interpreted as a hostname, and url
+  // resolution will treat //foo/bar as host=foo,path=bar because that's
+  // how the browser resolves relative URLs.
+  if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
+    var slashes = rest.substr(0, 2) === '//';
+    if (slashes && !(proto && hostlessProtocol[proto])) {
+      rest = rest.substr(2);
+      self.slashes = true;
+    }
+  }
+  var i, hec, l, p;
+  if (!hostlessProtocol[proto] &&
+    (slashes || (proto && !slashedProtocol[proto]))) {
+
+    // there's a hostname.
+    // the first instance of /, ?, ;, or # ends the host.
+    //
+    // If there is an @ in the hostname, then non-host chars *are* allowed
+    // to the left of the last @ sign, unless some host-ending character
+    // comes *before* the @-sign.
+    // URLs are obnoxious.
+    //
+    // ex:
+    // http://a@b@c/ => user:a@b host:c
+    // http://a@b?@c => user:a host:c path:/?@c
+
+    // v0.12 TODO(isaacs): This is not quite how Chrome does things.
+    // Review our test case against browsers more comprehensively.
+
+    // find the first instance of any hostEndingChars
+    var hostEnd = -1;
+    for (i = 0; i < hostEndingChars.length; i++) {
+      hec = rest.indexOf(hostEndingChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
+    }
+
+    // at this point, either we have an explicit point where the
+    // auth portion cannot go past, or the last @ char is the decider.
+    var auth, atSign;
+    if (hostEnd === -1) {
+      // atSign can be anywhere.
+      atSign = rest.lastIndexOf('@');
+    } else {
+      // atSign must be in auth portion.
+      // http://a@b/c@d => host:b auth:a path:/c@d
+      atSign = rest.lastIndexOf('@', hostEnd);
+    }
+
+    // Now we have a portion which is definitely the auth.
+    // Pull that off.
+    if (atSign !== -1) {
+      auth = rest.slice(0, atSign);
+      rest = rest.slice(atSign + 1);
+      self.auth = decodeURIComponent(auth);
+    }
+
+    // the host is the remaining to the left of the first non-host char
+    hostEnd = -1;
+    for (i = 0; i < nonHostChars.length; i++) {
+      hec = rest.indexOf(nonHostChars[i]);
+      if (hec !== -1 && (hostEnd === -1 || hec < hostEnd))
+        hostEnd = hec;
+    }
+    // if we still have not hit it, then the entire thing is a host.
+    if (hostEnd === -1)
+      hostEnd = rest.length;
+
+    self.host = rest.slice(0, hostEnd);
+    rest = rest.slice(hostEnd);
+
+    // pull out port.
+    parseHost(self);
+
+    // we've indicated that there is a hostname,
+    // so even if it's empty, it has to be present.
+    self.hostname = self.hostname || '';
+
+    // if hostname begins with [ and ends with ]
+    // assume that it's an IPv6 address.
+    var ipv6Hostname = self.hostname[0] === '[' &&
+      self.hostname[self.hostname.length - 1] === ']';
+
+    // validate a little.
+    if (!ipv6Hostname) {
+      var hostparts = self.hostname.split(/\./);
+      for (i = 0, l = hostparts.length; i < l; i++) {
+        var part = hostparts[i];
+        if (!part) continue;
+        if (!part.match(hostnamePartPattern)) {
+          var newpart = '';
+          for (var j = 0, k = part.length; j < k; j++) {
+            if (part.charCodeAt(j) > 127) {
+              // we replace non-ASCII char with a temporary placeholder
+              // we need this to make sure size of hostname is not
+              // broken by replacing non-ASCII by nothing
+              newpart += 'x';
+            } else {
+              newpart += part[j];
+            }
+          }
+          // we test again with ASCII char only
+          if (!newpart.match(hostnamePartPattern)) {
+            var validParts = hostparts.slice(0, i);
+            var notHost = hostparts.slice(i + 1);
+            var bit = part.match(hostnamePartStart);
+            if (bit) {
+              validParts.push(bit[1]);
+              notHost.unshift(bit[2]);
+            }
+            if (notHost.length) {
+              rest = '/' + notHost.join('.') + rest;
+            }
+            self.hostname = validParts.join('.');
+            break;
+          }
+        }
+      }
+    }
+
+    if (self.hostname.length > hostnameMaxLen) {
+      self.hostname = '';
+    } else {
+      // hostnames are always lower case.
+      self.hostname = self.hostname.toLowerCase();
+    }
+
+    if (!ipv6Hostname) {
+      // IDNA Support: Returns a punycoded representation of "domain".
+      // It only converts parts of the domain name that
+      // have non-ASCII characters, i.e. it doesn't matter if
+      // you call it with a domain that already is ASCII-only.
+      self.hostname = toASCII(self.hostname);
+    }
+
+    p = self.port ? ':' + self.port : '';
+    var h = self.hostname || '';
+    self.host = h + p;
+    self.href += self.host;
+
+    // strip [ and ] from the hostname
+    // the host field still retains them, though
+    if (ipv6Hostname) {
+      self.hostname = self.hostname.substr(1, self.hostname.length - 2);
+      if (rest[0] !== '/') {
+        rest = '/' + rest;
+      }
+    }
+  }
+
+  // now rest is set to the post-host stuff.
+  // chop off any delim chars.
+  if (!unsafeProtocol[lowerProto]) {
+
+    // First, make 100% sure that any "autoEscape" chars get
+    // escaped, even if encodeURIComponent doesn't think they
+    // need to be.
+    for (i = 0, l = autoEscape.length; i < l; i++) {
+      var ae = autoEscape[i];
+      if (rest.indexOf(ae) === -1)
+        continue;
+      var esc = encodeURIComponent(ae);
+      if (esc === ae) {
+        esc = escape(ae);
+      }
+      rest = rest.split(ae).join(esc);
+    }
+  }
+
+
+  // chop off from the tail first.
+  var hash = rest.indexOf('#');
+  if (hash !== -1) {
+    // got a fragment string.
+    self.hash = rest.substr(hash);
+    rest = rest.slice(0, hash);
+  }
+  var qm = rest.indexOf('?');
+  if (qm !== -1) {
+    self.search = rest.substr(qm);
+    self.query = rest.substr(qm + 1);
+    if (parseQueryString) {
+      self.query = parse$1(self.query);
+    }
+    rest = rest.slice(0, qm);
+  } else if (parseQueryString) {
+    // no query string, but parseQueryString still requested
+    self.search = '';
+    self.query = {};
+  }
+  if (rest) self.pathname = rest;
+  if (slashedProtocol[lowerProto] &&
+    self.hostname && !self.pathname) {
+    self.pathname = '/';
+  }
+
+  //to support http.request
+  if (self.pathname || self.search) {
+    p = self.pathname || '';
+    var s = self.search || '';
+    self.path = p + s;
+  }
+
+  // finally, reconstruct the href based on what has been validated.
+  self.href = format$1(self);
+  return self;
+}
+
+// format a parsed object into a url string
+function urlFormat(obj) {
+  // ensure it's an object, and not a string url.
+  // If it's an obj, this is a no-op.
+  // this way, you can call url_format() on strings
+  // to clean up potentially wonky urls.
+  if (isString(obj)) obj = parse$2({}, obj);
+  return format$1(obj);
+}
+
+function format$1(self) {
+  var auth = self.auth || '';
+  if (auth) {
+    auth = encodeURIComponent(auth);
+    auth = auth.replace(/%3A/i, ':');
+    auth += '@';
+  }
+
+  var protocol = self.protocol || '',
+    pathname = self.pathname || '',
+    hash = self.hash || '',
+    host = false,
+    query = '';
+
+  if (self.host) {
+    host = auth + self.host;
+  } else if (self.hostname) {
+    host = auth + (self.hostname.indexOf(':') === -1 ?
+      self.hostname :
+      '[' + this.hostname + ']');
+    if (self.port) {
+      host += ':' + self.port;
+    }
+  }
+
+  if (self.query &&
+    isObject(self.query) &&
+    Object.keys(self.query).length) {
+    query = stringify(self.query);
+  }
+
+  var search = self.search || (query && ('?' + query)) || '';
+
+  if (protocol && protocol.substr(-1) !== ':') protocol += ':';
+
+  // only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
+  // unless they had them to begin with.
+  if (self.slashes ||
+    (!protocol || slashedProtocol[protocol]) && host !== false) {
+    host = '//' + (host || '');
+    if (pathname && pathname.charAt(0) !== '/') pathname = '/' + pathname;
+  } else if (!host) {
+    host = '';
+  }
+
+  if (hash && hash.charAt(0) !== '#') hash = '#' + hash;
+  if (search && search.charAt(0) !== '?') search = '?' + search;
+
+  pathname = pathname.replace(/[?#]/g, function(match) {
+    return encodeURIComponent(match);
+  });
+  search = search.replace('#', '%23');
+
+  return protocol + host + pathname + search + hash;
+}
+
+Url$1.prototype.format = function() {
+  return format$1(this);
+};
+
+function urlResolve(source, relative) {
+  return urlParse(source, false, true).resolve(relative);
+}
+
+Url$1.prototype.resolve = function(relative) {
+  return this.resolveObject(urlParse(relative, false, true)).format();
+};
+
+function urlResolveObject(source, relative) {
+  if (!source) return relative;
+  return urlParse(source, false, true).resolveObject(relative);
+}
+
+Url$1.prototype.resolveObject = function(relative) {
+  if (isString(relative)) {
+    var rel = new Url$1();
+    rel.parse(relative, false, true);
+    relative = rel;
+  }
+
+  var result = new Url$1();
+  var tkeys = Object.keys(this);
+  for (var tk = 0; tk < tkeys.length; tk++) {
+    var tkey = tkeys[tk];
+    result[tkey] = this[tkey];
+  }
+
+  // hash is always overridden, no matter what.
+  // even href="" will remove it.
+  result.hash = relative.hash;
+
+  // if the relative url is empty, then there's nothing left to do here.
+  if (relative.href === '') {
+    result.href = result.format();
+    return result;
+  }
+
+  // hrefs like //foo/bar always cut to the protocol.
+  if (relative.slashes && !relative.protocol) {
+    // take everything except the protocol from relative
+    var rkeys = Object.keys(relative);
+    for (var rk = 0; rk < rkeys.length; rk++) {
+      var rkey = rkeys[rk];
+      if (rkey !== 'protocol')
+        result[rkey] = relative[rkey];
+    }
+
+    //urlParse appends trailing / to urls like http://www.example.com
+    if (slashedProtocol[result.protocol] &&
+      result.hostname && !result.pathname) {
+      result.path = result.pathname = '/';
+    }
+
+    result.href = result.format();
+    return result;
+  }
+  var relPath;
+  if (relative.protocol && relative.protocol !== result.protocol) {
+    // if it's a known url protocol, then changing
+    // the protocol does weird things
+    // first, if it's not file:, then we MUST have a host,
+    // and if there was a path
+    // to begin with, then we MUST have a path.
+    // if it is file:, then the host is dropped,
+    // because that's known to be hostless.
+    // anything else is assumed to be absolute.
+    if (!slashedProtocol[relative.protocol]) {
+      var keys = Object.keys(relative);
+      for (var v = 0; v < keys.length; v++) {
+        var k = keys[v];
+        result[k] = relative[k];
+      }
+      result.href = result.format();
+      return result;
+    }
+
+    result.protocol = relative.protocol;
+    if (!relative.host && !hostlessProtocol[relative.protocol]) {
+      relPath = (relative.pathname || '').split('/');
+      while (relPath.length && !(relative.host = relPath.shift()));
+      if (!relative.host) relative.host = '';
+      if (!relative.hostname) relative.hostname = '';
+      if (relPath[0] !== '') relPath.unshift('');
+      if (relPath.length < 2) relPath.unshift('');
+      result.pathname = relPath.join('/');
+    } else {
+      result.pathname = relative.pathname;
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    result.host = relative.host || '';
+    result.auth = relative.auth;
+    result.hostname = relative.hostname || relative.host;
+    result.port = relative.port;
+    // to support http.request
+    if (result.pathname || result.search) {
+      var p = result.pathname || '';
+      var s = result.search || '';
+      result.path = p + s;
+    }
+    result.slashes = result.slashes || relative.slashes;
+    result.href = result.format();
+    return result;
+  }
+
+  var isSourceAbs = (result.pathname && result.pathname.charAt(0) === '/'),
+    isRelAbs = (
+      relative.host ||
+      relative.pathname && relative.pathname.charAt(0) === '/'
+    ),
+    mustEndAbs = (isRelAbs || isSourceAbs ||
+      (result.host && relative.pathname)),
+    removeAllDots = mustEndAbs,
+    srcPath = result.pathname && result.pathname.split('/') || [],
+    psychotic = result.protocol && !slashedProtocol[result.protocol];
+  relPath = relative.pathname && relative.pathname.split('/') || [];
+  // if the url is a non-slashed url, then relative
+  // links like ../.. should be able
+  // to crawl up to the hostname, as well.  This is strange.
+  // result.protocol has already been set by now.
+  // Later on, put the first path part into the host field.
+  if (psychotic) {
+    result.hostname = '';
+    result.port = null;
+    if (result.host) {
+      if (srcPath[0] === '') srcPath[0] = result.host;
+      else srcPath.unshift(result.host);
+    }
+    result.host = '';
+    if (relative.protocol) {
+      relative.hostname = null;
+      relative.port = null;
+      if (relative.host) {
+        if (relPath[0] === '') relPath[0] = relative.host;
+        else relPath.unshift(relative.host);
+      }
+      relative.host = null;
+    }
+    mustEndAbs = mustEndAbs && (relPath[0] === '' || srcPath[0] === '');
+  }
+  var authInHost;
+  if (isRelAbs) {
+    // it's absolute.
+    result.host = (relative.host || relative.host === '') ?
+      relative.host : result.host;
+    result.hostname = (relative.hostname || relative.hostname === '') ?
+      relative.hostname : result.hostname;
+    result.search = relative.search;
+    result.query = relative.query;
+    srcPath = relPath;
+    // fall through to the dot-handling below.
+  } else if (relPath.length) {
+    // it's relative
+    // throw away the existing file, and take the new path instead.
+    if (!srcPath) srcPath = [];
+    srcPath.pop();
+    srcPath = srcPath.concat(relPath);
+    result.search = relative.search;
+    result.query = relative.query;
+  } else if (!isNullOrUndefined(relative.search)) {
+    // just pull out the search.
+    // like href='?foo'.
+    // Put this after the other two cases because it simplifies the booleans
+    if (psychotic) {
+      result.hostname = result.host = srcPath.shift();
+      //occationaly the auth can get stuck only in host
+      //this especially happens in cases like
+      //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+      authInHost = result.host && result.host.indexOf('@') > 0 ?
+        result.host.split('@') : false;
+      if (authInHost) {
+        result.auth = authInHost.shift();
+        result.host = result.hostname = authInHost.shift();
+      }
+    }
+    result.search = relative.search;
+    result.query = relative.query;
+    //to support http.request
+    if (!isNull(result.pathname) || !isNull(result.search)) {
+      result.path = (result.pathname ? result.pathname : '') +
+        (result.search ? result.search : '');
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  if (!srcPath.length) {
+    // no path at all.  easy.
+    // we've already handled the other stuff above.
+    result.pathname = null;
+    //to support http.request
+    if (result.search) {
+      result.path = '/' + result.search;
+    } else {
+      result.path = null;
+    }
+    result.href = result.format();
+    return result;
+  }
+
+  // if a url ENDs in . or .., then it must get a trailing slash.
+  // however, if it ends in anything else non-slashy,
+  // then it must NOT get a trailing slash.
+  var last = srcPath.slice(-1)[0];
+  var hasTrailingSlash = (
+    (result.host || relative.host || srcPath.length > 1) &&
+    (last === '.' || last === '..') || last === '');
+
+  // strip single dots, resolve double dots to parent dir
+  // if the path tries to go above the root, `up` ends up > 0
+  var up = 0;
+  for (var i = srcPath.length; i >= 0; i--) {
+    last = srcPath[i];
+    if (last === '.') {
+      srcPath.splice(i, 1);
+    } else if (last === '..') {
+      srcPath.splice(i, 1);
+      up++;
+    } else if (up) {
+      srcPath.splice(i, 1);
+      up--;
+    }
+  }
+
+  // if the path is allowed to go above the root, restore leading ..s
+  if (!mustEndAbs && !removeAllDots) {
+    for (; up--; up) {
+      srcPath.unshift('..');
+    }
+  }
+
+  if (mustEndAbs && srcPath[0] !== '' &&
+    (!srcPath[0] || srcPath[0].charAt(0) !== '/')) {
+    srcPath.unshift('');
+  }
+
+  if (hasTrailingSlash && (srcPath.join('/').substr(-1) !== '/')) {
+    srcPath.push('');
+  }
+
+  var isAbsolute = srcPath[0] === '' ||
+    (srcPath[0] && srcPath[0].charAt(0) === '/');
+
+  // put the host back
+  if (psychotic) {
+    result.hostname = result.host = isAbsolute ? '' :
+      srcPath.length ? srcPath.shift() : '';
+    //occationaly the auth can get stuck only in host
+    //this especially happens in cases like
+    //url.resolveObject('mailto:local1@domain1', 'local2@domain2')
+    authInHost = result.host && result.host.indexOf('@') > 0 ?
+      result.host.split('@') : false;
+    if (authInHost) {
+      result.auth = authInHost.shift();
+      result.host = result.hostname = authInHost.shift();
+    }
+  }
+
+  mustEndAbs = mustEndAbs || (result.host && srcPath.length);
+
+  if (mustEndAbs && !isAbsolute) {
+    srcPath.unshift('');
+  }
+
+  if (!srcPath.length) {
+    result.pathname = null;
+    result.path = null;
+  } else {
+    result.pathname = srcPath.join('/');
+  }
+
+  //to support request.http
+  if (!isNull(result.pathname) || !isNull(result.search)) {
+    result.path = (result.pathname ? result.pathname : '') +
+      (result.search ? result.search : '');
+  }
+  result.auth = relative.auth || result.auth;
+  result.slashes = result.slashes || relative.slashes;
+  result.href = result.format();
+  return result;
+};
+
+Url$1.prototype.parseHost = function() {
+  return parseHost(this);
+};
+
+function parseHost(self) {
+  var host = self.host;
+  var port = portPattern.exec(host);
+  if (port) {
+    port = port[0];
+    if (port !== ':') {
+      self.port = port.substr(1);
+    }
+    host = host.substr(0, host.length - port.length);
+  }
+  if (host) self.hostname = host;
+}
+
+var url$1 = /*#__PURE__*/Object.freeze({
+	parse: urlParse,
+	resolve: urlResolve,
+	resolveObject: urlResolveObject,
+	format: urlFormat,
+	default: url,
+	Url: Url$1
+});
+
+var empty$1 = {};
+
+var empty$2 = /*#__PURE__*/Object.freeze({
+	default: empty$1
+});
+
+var hasFetch = isFunction$1(global$1.fetch) && isFunction$1(global$1.ReadableStream);
+
+var _blobConstructor;
+function blobConstructor() {
+  if (typeof _blobConstructor !== 'undefined') {
+    return _blobConstructor;
+  }
+  try {
+    new global$1.Blob([new ArrayBuffer(1)]);
+    _blobConstructor = true;
+  } catch (e) {
+    _blobConstructor = false;
+  }
+  return _blobConstructor
+}
+var xhr;
+
+function checkTypeSupport(type) {
+  if (!xhr) {
+    xhr = new global$1.XMLHttpRequest();
+    // If location.host is empty, e.g. if this page/worker was loaded
+    // from a Blob, then use example.com to avoid an error
+    xhr.open('GET', global$1.location.host ? '/' : 'https://example.com');
+  }
+  try {
+    xhr.responseType = type;
+    return xhr.responseType === type
+  } catch (e) {
+    return false
+  }
+
+}
+
+// For some strange reason, Safari 7.0 reports typeof global.ArrayBuffer === 'object'.
+// Safari 7.1 appears to have fixed this bug.
+var haveArrayBuffer = typeof global$1.ArrayBuffer !== 'undefined';
+var haveSlice = haveArrayBuffer && isFunction$1(global$1.ArrayBuffer.prototype.slice);
+
+var arraybuffer = haveArrayBuffer && checkTypeSupport('arraybuffer');
+  // These next two tests unavoidably show warnings in Chrome. Since fetch will always
+  // be used if it's available, just return false for these to avoid the warnings.
+var msstream = !hasFetch && haveSlice && checkTypeSupport('ms-stream');
+var mozchunkedarraybuffer = !hasFetch && haveArrayBuffer &&
+  checkTypeSupport('moz-chunked-arraybuffer');
+var overrideMimeType = isFunction$1(xhr.overrideMimeType);
+var vbArray = isFunction$1(global$1.VBArray);
+
+function isFunction$1(value) {
+  return typeof value === 'function'
+}
+
+xhr = null; // Help gc
+
+var rStates = {
+  UNSENT: 0,
+  OPENED: 1,
+  HEADERS_RECEIVED: 2,
+  LOADING: 3,
+  DONE: 4
+};
+function IncomingMessage(xhr, response, mode) {
+  var self = this;
+  Readable.call(self);
+
+  self._mode = mode;
+  self.headers = {};
+  self.rawHeaders = [];
+  self.trailers = {};
+  self.rawTrailers = [];
+
+  // Fake the 'close' event, but only once 'end' fires
+  self.on('end', function() {
+    // The nextTick is necessary to prevent the 'request' module from causing an infinite loop
+    nextTick(function() {
+      self.emit('close');
+    });
+  });
+  var read;
+  if (mode === 'fetch') {
+    self._fetchResponse = response;
+
+    self.url = response.url;
+    self.statusCode = response.status;
+    self.statusMessage = response.statusText;
+      // backwards compatible version of for (<item> of <iterable>):
+      // for (var <item>,_i,_it = <iterable>[Symbol.iterator](); <item> = (_i = _it.next()).value,!_i.done;)
+    for (var header, _i, _it = response.headers[Symbol.iterator](); header = (_i = _it.next()).value, !_i.done;) {
+      self.headers[header[0].toLowerCase()] = header[1];
+      self.rawHeaders.push(header[0], header[1]);
+    }
+
+    // TODO: this doesn't respect backpressure. Once WritableStream is available, this can be fixed
+    var reader = response.body.getReader();
+
+    read = function () {
+      reader.read().then(function(result) {
+        if (self._destroyed)
+          return
+        if (result.done) {
+          self.push(null);
+          return
+        }
+        self.push(new Buffer(result.value));
+        read();
+      });
+    };
+    read();
+
+  } else {
+    self._xhr = xhr;
+    self._pos = 0;
+
+    self.url = xhr.responseURL;
+    self.statusCode = xhr.status;
+    self.statusMessage = xhr.statusText;
+    var headers = xhr.getAllResponseHeaders().split(/\r?\n/);
+    headers.forEach(function(header) {
+      var matches = header.match(/^([^:]+):\s*(.*)/);
+      if (matches) {
+        var key = matches[1].toLowerCase();
+        if (key === 'set-cookie') {
+          if (self.headers[key] === undefined) {
+            self.headers[key] = [];
+          }
+          self.headers[key].push(matches[2]);
+        } else if (self.headers[key] !== undefined) {
+          self.headers[key] += ', ' + matches[2];
+        } else {
+          self.headers[key] = matches[2];
+        }
+        self.rawHeaders.push(matches[1], matches[2]);
+      }
+    });
+
+    self._charset = 'x-user-defined';
+    if (!overrideMimeType) {
+      var mimeType = self.rawHeaders['mime-type'];
+      if (mimeType) {
+        var charsetMatch = mimeType.match(/;\s*charset=([^;])(;|$)/);
+        if (charsetMatch) {
+          self._charset = charsetMatch[1].toLowerCase();
+        }
+      }
+      if (!self._charset)
+        self._charset = 'utf-8'; // best guess
+    }
+  }
+}
+
+inherits$1(IncomingMessage, Readable);
+
+IncomingMessage.prototype._read = function() {};
+
+IncomingMessage.prototype._onXHRProgress = function() {
+  var self = this;
+
+  var xhr = self._xhr;
+
+  var response = null;
+  switch (self._mode) {
+  case 'text:vbarray': // For IE9
+    if (xhr.readyState !== rStates.DONE)
+      break
+    try {
+      // This fails in IE8
+      response = new global$1.VBArray(xhr.responseBody).toArray();
+    } catch (e) {
+      // pass
+    }
+    if (response !== null) {
+      self.push(new Buffer(response));
+      break
+    }
+    // Falls through in IE8
+  case 'text':
+    try { // This will fail when readyState = 3 in IE9. Switch mode and wait for readyState = 4
+      response = xhr.responseText;
+    } catch (e) {
+      self._mode = 'text:vbarray';
+      break
+    }
+    if (response.length > self._pos) {
+      var newData = response.substr(self._pos);
+      if (self._charset === 'x-user-defined') {
+        var buffer = new Buffer(newData.length);
+        for (var i = 0; i < newData.length; i++)
+          buffer[i] = newData.charCodeAt(i) & 0xff;
+
+        self.push(buffer);
+      } else {
+        self.push(newData, self._charset);
+      }
+      self._pos = response.length;
+    }
+    break
+  case 'arraybuffer':
+    if (xhr.readyState !== rStates.DONE || !xhr.response)
+      break
+    response = xhr.response;
+    self.push(new Buffer(new Uint8Array(response)));
+    break
+  case 'moz-chunked-arraybuffer': // take whole
+    response = xhr.response;
+    if (xhr.readyState !== rStates.LOADING || !response)
+      break
+    self.push(new Buffer(new Uint8Array(response)));
+    break
+  case 'ms-stream':
+    response = xhr.response;
+    if (xhr.readyState !== rStates.LOADING)
+      break
+    var reader = new global$1.MSStreamReader();
+    reader.onprogress = function() {
+      if (reader.result.byteLength > self._pos) {
+        self.push(new Buffer(new Uint8Array(reader.result.slice(self._pos))));
+        self._pos = reader.result.byteLength;
+      }
+    };
+    reader.onload = function() {
+      self.push(null);
+    };
+      // reader.onerror = ??? // TODO: this
+    reader.readAsArrayBuffer(response);
+    break
+  }
+
+  // The ms-stream case handles end separately in reader.onload()
+  if (self._xhr.readyState === rStates.DONE && self._mode !== 'ms-stream') {
+    self.push(null);
+  }
+};
+
+// from https://github.com/jhiesey/to-arraybuffer/blob/6502d9850e70ba7935a7df4ad86b358fc216f9f0/index.js
+function toArrayBuffer (buf) {
+  // If the buffer is backed by a Uint8Array, a faster version will work
+  if (buf instanceof Uint8Array) {
+    // If the buffer isn't a subarray, return the underlying ArrayBuffer
+    if (buf.byteOffset === 0 && buf.byteLength === buf.buffer.byteLength) {
+      return buf.buffer
+    } else if (typeof buf.buffer.slice === 'function') {
+      // Otherwise we need to get a proper copy
+      return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength)
+    }
+  }
+
+  if (isBuffer(buf)) {
+    // This is the slow version that will work with any Buffer
+    // implementation (even in old browsers)
+    var arrayCopy = new Uint8Array(buf.length);
+    var len = buf.length;
+    for (var i = 0; i < len; i++) {
+      arrayCopy[i] = buf[i];
+    }
+    return arrayCopy.buffer
+  } else {
+    throw new Error('Argument must be a Buffer')
+  }
+}
+
+function decideMode(preferBinary, useFetch) {
+  if (hasFetch && useFetch) {
+    return 'fetch'
+  } else if (mozchunkedarraybuffer) {
+    return 'moz-chunked-arraybuffer'
+  } else if (msstream) {
+    return 'ms-stream'
+  } else if (arraybuffer && preferBinary) {
+    return 'arraybuffer'
+  } else if (vbArray && preferBinary) {
+    return 'text:vbarray'
+  } else {
+    return 'text'
+  }
+}
+
+function ClientRequest(opts) {
+  var self = this;
+  Writable.call(self);
+
+  self._opts = opts;
+  self._body = [];
+  self._headers = {};
+  if (opts.auth)
+    self.setHeader('Authorization', 'Basic ' + new Buffer(opts.auth).toString('base64'));
+  Object.keys(opts.headers).forEach(function(name) {
+    self.setHeader(name, opts.headers[name]);
+  });
+
+  var preferBinary;
+  var useFetch = true;
+  if (opts.mode === 'disable-fetch') {
+    // If the use of XHR should be preferred and includes preserving the 'content-type' header
+    useFetch = false;
+    preferBinary = true;
+  } else if (opts.mode === 'prefer-streaming') {
+    // If streaming is a high priority but binary compatibility and
+    // the accuracy of the 'content-type' header aren't
+    preferBinary = false;
+  } else if (opts.mode === 'allow-wrong-content-type') {
+    // If streaming is more important than preserving the 'content-type' header
+    preferBinary = !overrideMimeType;
+  } else if (!opts.mode || opts.mode === 'default' || opts.mode === 'prefer-fast') {
+    // Use binary if text streaming may corrupt data or the content-type header, or for speed
+    preferBinary = true;
+  } else {
+    throw new Error('Invalid value for opts.mode')
+  }
+  self._mode = decideMode(preferBinary, useFetch);
+
+  self.on('finish', function() {
+    self._onFinish();
+  });
+}
+
+inherits$1(ClientRequest, Writable);
+// Taken from http://www.w3.org/TR/XMLHttpRequest/#the-setrequestheader%28%29-method
+var unsafeHeaders = [
+  'accept-charset',
+  'accept-encoding',
+  'access-control-request-headers',
+  'access-control-request-method',
+  'connection',
+  'content-length',
+  'cookie',
+  'cookie2',
+  'date',
+  'dnt',
+  'expect',
+  'host',
+  'keep-alive',
+  'origin',
+  'referer',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+  'user-agent',
+  'via'
+];
+ClientRequest.prototype.setHeader = function(name, value) {
+  var self = this;
+  var lowerName = name.toLowerCase();
+    // This check is not necessary, but it prevents warnings from browsers about setting unsafe
+    // headers. To be honest I'm not entirely sure hiding these warnings is a good thing, but
+    // http-browserify did it, so I will too.
+  if (unsafeHeaders.indexOf(lowerName) !== -1)
+    return
+
+  self._headers[lowerName] = {
+    name: name,
+    value: value
+  };
+};
+
+ClientRequest.prototype.getHeader = function(name) {
+  var self = this;
+  return self._headers[name.toLowerCase()].value
+};
+
+ClientRequest.prototype.removeHeader = function(name) {
+  var self = this;
+  delete self._headers[name.toLowerCase()];
+};
+
+ClientRequest.prototype._onFinish = function() {
+  var self = this;
+
+  if (self._destroyed)
+    return
+  var opts = self._opts;
+
+  var headersObj = self._headers;
+  var body;
+  if (opts.method === 'POST' || opts.method === 'PUT' || opts.method === 'PATCH') {
+    if (blobConstructor()) {
+      body = new global$1.Blob(self._body.map(function(buffer) {
+        return toArrayBuffer(buffer)
+      }), {
+        type: (headersObj['content-type'] || {}).value || ''
+      });
+    } else {
+      // get utf8 string
+      body = Buffer.concat(self._body).toString();
+    }
+  }
+
+  if (self._mode === 'fetch') {
+    var headers = Object.keys(headersObj).map(function(name) {
+      return [headersObj[name].name, headersObj[name].value]
+    });
+
+    global$1.fetch(self._opts.url, {
+      method: self._opts.method,
+      headers: headers,
+      body: body,
+      mode: 'cors',
+      credentials: opts.withCredentials ? 'include' : 'same-origin'
+    }).then(function(response) {
+      self._fetchResponse = response;
+      self._connect();
+    }, function(reason) {
+      self.emit('error', reason);
+    });
+  } else {
+    var xhr = self._xhr = new global$1.XMLHttpRequest();
+    try {
+      xhr.open(self._opts.method, self._opts.url, true);
+    } catch (err) {
+      nextTick(function() {
+        self.emit('error', err);
+      });
+      return
+    }
+
+    // Can't set responseType on really old browsers
+    if ('responseType' in xhr)
+      xhr.responseType = self._mode.split(':')[0];
+
+    if ('withCredentials' in xhr)
+      xhr.withCredentials = !!opts.withCredentials;
+
+    if (self._mode === 'text' && 'overrideMimeType' in xhr)
+      xhr.overrideMimeType('text/plain; charset=x-user-defined');
+
+    Object.keys(headersObj).forEach(function(name) {
+      xhr.setRequestHeader(headersObj[name].name, headersObj[name].value);
+    });
+
+    self._response = null;
+    xhr.onreadystatechange = function() {
+      switch (xhr.readyState) {
+      case rStates.LOADING:
+      case rStates.DONE:
+        self._onXHRProgress();
+        break
+      }
+    };
+      // Necessary for streaming in Firefox, since xhr.response is ONLY defined
+      // in onprogress, not in onreadystatechange with xhr.readyState = 3
+    if (self._mode === 'moz-chunked-arraybuffer') {
+      xhr.onprogress = function() {
+        self._onXHRProgress();
+      };
+    }
+
+    xhr.onerror = function() {
+      if (self._destroyed)
+        return
+      self.emit('error', new Error('XHR error'));
+    };
+
+    try {
+      xhr.send(body);
+    } catch (err) {
+      nextTick(function() {
+        self.emit('error', err);
+      });
+      return
+    }
+  }
+};
+
+/**
+ * Checks if xhr.status is readable and non-zero, indicating no error.
+ * Even though the spec says it should be available in readyState 3,
+ * accessing it throws an exception in IE8
+ */
+function statusValid(xhr) {
+  try {
+    var status = xhr.status;
+    return (status !== null && status !== 0)
+  } catch (e) {
+    return false
+  }
+}
+
+ClientRequest.prototype._onXHRProgress = function() {
+  var self = this;
+
+  if (!statusValid(self._xhr) || self._destroyed)
+    return
+
+  if (!self._response)
+    self._connect();
+
+  self._response._onXHRProgress();
+};
+
+ClientRequest.prototype._connect = function() {
+  var self = this;
+
+  if (self._destroyed)
+    return
+
+  self._response = new IncomingMessage(self._xhr, self._fetchResponse, self._mode);
+  self.emit('response', self._response);
+};
+
+ClientRequest.prototype._write = function(chunk, encoding, cb) {
+  var self = this;
+
+  self._body.push(chunk);
+  cb();
+};
+
+ClientRequest.prototype.abort = ClientRequest.prototype.destroy = function() {
+  var self = this;
+  self._destroyed = true;
+  if (self._response)
+    self._response._destroyed = true;
+  if (self._xhr)
+    self._xhr.abort();
+    // Currently, there isn't a way to truly abort a fetch.
+    // If you like bikeshedding, see https://github.com/whatwg/fetch/issues/27
+};
+
+ClientRequest.prototype.end = function(data, encoding, cb) {
+  var self = this;
+  if (typeof data === 'function') {
+    cb = data;
+    data = undefined;
+  }
+
+  Writable.prototype.end.call(self, data, encoding, cb);
+};
+
+ClientRequest.prototype.flushHeaders = function() {};
+ClientRequest.prototype.setTimeout = function() {};
+ClientRequest.prototype.setNoDelay = function() {};
+ClientRequest.prototype.setSocketKeepAlive = function() {};
+
+function request(opts, cb) {
+  if (typeof opts === 'string')
+    opts = urlParse(opts);
+
+
+  // Normally, the page is loaded from http or https, so not specifying a protocol
+  // will result in a (valid) protocol-relative url. However, this won't work if
+  // the protocol is something else, like 'file:'
+  var defaultProtocol = global$1.location.protocol.search(/^https?:$/) === -1 ? 'http:' : '';
+
+  var protocol = opts.protocol || defaultProtocol;
+  var host = opts.hostname || opts.host;
+  var port = opts.port;
+  var path = opts.path || '/';
+
+  // Necessary for IPv6 addresses
+  if (host && host.indexOf(':') !== -1)
+    host = '[' + host + ']';
+
+  // This may be a relative url. The browser should always be able to interpret it correctly.
+  opts.url = (host ? (protocol + '//' + host) : '') + (port ? ':' + port : '') + path;
+  opts.method = (opts.method || 'GET').toUpperCase();
+  opts.headers = opts.headers || {};
+
+  // Also valid opts.auth, opts.mode
+
+  var req = new ClientRequest(opts);
+  if (cb)
+    req.on('response', cb);
+  return req
+}
+
+function get$1(opts, cb) {
+  var req = request(opts, cb);
+  req.end();
+  return req
+}
+
+function Agent() {}
+Agent.defaultMaxSockets = 4;
+
+var METHODS = [
+  'CHECKOUT',
+  'CONNECT',
+  'COPY',
+  'DELETE',
+  'GET',
+  'HEAD',
+  'LOCK',
+  'M-SEARCH',
+  'MERGE',
+  'MKACTIVITY',
+  'MKCOL',
+  'MOVE',
+  'NOTIFY',
+  'OPTIONS',
+  'PATCH',
+  'POST',
+  'PROPFIND',
+  'PROPPATCH',
+  'PURGE',
+  'PUT',
+  'REPORT',
+  'SEARCH',
+  'SUBSCRIBE',
+  'TRACE',
+  'UNLOCK',
+  'UNSUBSCRIBE'
+];
+var STATUS_CODES = {
+  100: 'Continue',
+  101: 'Switching Protocols',
+  102: 'Processing', // RFC 2518, obsoleted by RFC 4918
+  200: 'OK',
+  201: 'Created',
+  202: 'Accepted',
+  203: 'Non-Authoritative Information',
+  204: 'No Content',
+  205: 'Reset Content',
+  206: 'Partial Content',
+  207: 'Multi-Status', // RFC 4918
+  300: 'Multiple Choices',
+  301: 'Moved Permanently',
+  302: 'Moved Temporarily',
+  303: 'See Other',
+  304: 'Not Modified',
+  305: 'Use Proxy',
+  307: 'Temporary Redirect',
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  402: 'Payment Required',
+  403: 'Forbidden',
+  404: 'Not Found',
+  405: 'Method Not Allowed',
+  406: 'Not Acceptable',
+  407: 'Proxy Authentication Required',
+  408: 'Request Time-out',
+  409: 'Conflict',
+  410: 'Gone',
+  411: 'Length Required',
+  412: 'Precondition Failed',
+  413: 'Request Entity Too Large',
+  414: 'Request-URI Too Large',
+  415: 'Unsupported Media Type',
+  416: 'Requested Range Not Satisfiable',
+  417: 'Expectation Failed',
+  418: 'I\'m a teapot', // RFC 2324
+  422: 'Unprocessable Entity', // RFC 4918
+  423: 'Locked', // RFC 4918
+  424: 'Failed Dependency', // RFC 4918
+  425: 'Unordered Collection', // RFC 4918
+  426: 'Upgrade Required', // RFC 2817
+  428: 'Precondition Required', // RFC 6585
+  429: 'Too Many Requests', // RFC 6585
+  431: 'Request Header Fields Too Large', // RFC 6585
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Time-out',
+  505: 'HTTP Version Not Supported',
+  506: 'Variant Also Negotiates', // RFC 2295
+  507: 'Insufficient Storage', // RFC 4918
+  509: 'Bandwidth Limit Exceeded',
+  510: 'Not Extended', // RFC 2774
+  511: 'Network Authentication Required' // RFC 6585
+};
+
+var http = {
+  request,
+  get: get$1,
+  Agent,
+  METHODS,
+  STATUS_CODES
+}
+
+var http$1 = /*#__PURE__*/Object.freeze({
+	request: request,
+	get: get$1,
+	Agent: Agent,
+	METHODS: METHODS,
+	STATUS_CODES: STATUS_CODES,
+	default: http
+});
+
+var Url$2 = ( url$1 && url ) || url$1;
+
+var fs = ( empty$2 && empty$1 ) || empty$2;
+
+var require$$2 = ( http$1 && http ) || http$1;
+
+/**
+ * Wrapper for built-in http.js to emulate the browser XMLHttpRequest object.
+ *
+ * This can be used with JS designed for browsers to improve reuse of code and
+ * allow the use of existing libraries.
+ *
+ * Usage: include("XMLHttpRequest.js") and use XMLHttpRequest per W3C specs.
+ *
+ * @author Dan DeFelippi <dan@driverdan.com>
+ * @contributor David Ellis <d.f.ellis@ieee.org>
+ * @license MIT
+ */
+
+
+var spawn = fs.spawn;
+
+
+var XMLHttpRequest_1 = function() {
+
+  /**
+   * Private variables
+   */
+  var self = this;
+  var http = require$$2;
+  var https = require$$2;
+
+  // Holds http.js objects
+  var request;
+  var response;
+
+  // Request settings
+  var settings = {};
+
+  // Disable header blacklist.
+  // Not part of XHR specs.
+  var disableHeaderCheck = false;
+
+  // Set some default headers
+  var defaultHeaders = {
+    "User-Agent": "node-XMLHttpRequest",
+    "Accept": "*/*",
+  };
+
+  var headers = {};
+  var headersCase = {};
+
+  // These headers are not user setable.
+  // The following are allowed but banned in the spec:
+  // * user-agent
+  var forbiddenRequestHeaders = [
+    "accept-charset",
+    "accept-encoding",
+    "access-control-request-headers",
+    "access-control-request-method",
+    "connection",
+    "content-length",
+    "content-transfer-encoding",
+    "cookie",
+    "cookie2",
+    "date",
+    "expect",
+    "host",
+    "keep-alive",
+    "origin",
+    "referer",
+    "te",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "via"
+  ];
+
+  // These request methods are not allowed
+  var forbiddenRequestMethods = [
+    "TRACE",
+    "TRACK",
+    "CONNECT"
+  ];
+
+  // Send flag
+  var sendFlag = false;
+  // Error flag, used when errors occur or abort is called
+  var errorFlag = false;
+
+  // Event listeners
+  var listeners = {};
+
+  /**
+   * Constants
+   */
+
+  this.UNSENT = 0;
+  this.OPENED = 1;
+  this.HEADERS_RECEIVED = 2;
+  this.LOADING = 3;
+  this.DONE = 4;
+
+  /**
+   * Public vars
+   */
+
+  // Current state
+  this.readyState = this.UNSENT;
+
+  // default ready state change handler in case one is not set or is set late
+  this.onreadystatechange = null;
+
+  // Result & response
+  this.responseText = "";
+  this.responseXML = "";
+  this.status = null;
+  this.statusText = null;
+  
+  // Whether cross-site Access-Control requests should be made using
+  // credentials such as cookies or authorization headers
+  this.withCredentials = false;
+
+  /**
+   * Private methods
+   */
+
+  /**
+   * Check if the specified header is allowed.
+   *
+   * @param string header Header to validate
+   * @return boolean False if not allowed, otherwise true
+   */
+  var isAllowedHttpHeader = function(header) {
+    return disableHeaderCheck || (header && forbiddenRequestHeaders.indexOf(header.toLowerCase()) === -1);
+  };
+
+  /**
+   * Check if the specified method is allowed.
+   *
+   * @param string method Request method to validate
+   * @return boolean False if not allowed, otherwise true
+   */
+  var isAllowedHttpMethod = function(method) {
+    return (method && forbiddenRequestMethods.indexOf(method) === -1);
+  };
+
+  /**
+   * Public methods
+   */
+
+  /**
+   * Open the connection. Currently supports local server requests.
+   *
+   * @param string method Connection method (eg GET, POST)
+   * @param string url URL for the connection.
+   * @param boolean async Asynchronous connection. Default is true.
+   * @param string user Username for basic authentication (optional)
+   * @param string password Password for basic authentication (optional)
+   */
+  this.open = function(method, url, async, user, password) {
+    this.abort();
+    errorFlag = false;
+
+    // Check for valid request method
+    if (!isAllowedHttpMethod(method)) {
+      throw new Error("SecurityError: Request method not allowed");
+    }
+
+    settings = {
+      "method": method,
+      "url": url.toString(),
+      "async": (typeof async !== "boolean" ? true : async),
+      "user": user || null,
+      "password": password || null
+    };
+
+    setState(this.OPENED);
+  };
+
+  /**
+   * Disables or enables isAllowedHttpHeader() check the request. Enabled by default.
+   * This does not conform to the W3C spec.
+   *
+   * @param boolean state Enable or disable header checking.
+   */
+  this.setDisableHeaderCheck = function(state) {
+    disableHeaderCheck = state;
+  };
+
+  /**
+   * Sets a header for the request or appends the value if one is already set.
+   *
+   * @param string header Header name
+   * @param string value Header value
+   */
+  this.setRequestHeader = function(header, value) {
+    if (this.readyState !== this.OPENED) {
+      throw new Error("INVALID_STATE_ERR: setRequestHeader can only be called when state is OPEN");
+    }
+    if (!isAllowedHttpHeader(header)) {
+      console.warn("Refused to set unsafe header \"" + header + "\"");
+      return;
+    }
+    if (sendFlag) {
+      throw new Error("INVALID_STATE_ERR: send flag is true");
+    }
+    header = headersCase[header.toLowerCase()] || header;
+    headersCase[header.toLowerCase()] = header;
+    headers[header] = headers[header] ? headers[header] + ', ' + value : value;
+  };
+
+  /**
+   * Gets a header from the server response.
+   *
+   * @param string header Name of header to get.
+   * @return string Text of the header or null if it doesn't exist.
+   */
+  this.getResponseHeader = function(header) {
+    if (typeof header === "string"
+      && this.readyState > this.OPENED
+      && response
+      && response.headers
+      && response.headers[header.toLowerCase()]
+      && !errorFlag
+    ) {
+      return response.headers[header.toLowerCase()];
+    }
+
+    return null;
+  };
+
+  /**
+   * Gets all the response headers.
+   *
+   * @return string A string with all response headers separated by CR+LF
+   */
+  this.getAllResponseHeaders = function() {
+    if (this.readyState < this.HEADERS_RECEIVED || errorFlag) {
+      return "";
+    }
+    var result = "";
+
+    for (var i in response.headers) {
+      // Cookie headers are excluded
+      if (i !== "set-cookie" && i !== "set-cookie2") {
+        result += i + ": " + response.headers[i] + "\r\n";
+      }
+    }
+    return result.substr(0, result.length - 2);
+  };
+
+  /**
+   * Gets a request header
+   *
+   * @param string name Name of header to get
+   * @return string Returns the request header or empty string if not set
+   */
+  this.getRequestHeader = function(name) {
+    if (typeof name === "string" && headersCase[name.toLowerCase()]) {
+      return headers[headersCase[name.toLowerCase()]];
+    }
+
+    return "";
+  };
+
+  /**
+   * Sends the request to the server.
+   *
+   * @param string data Optional data to send as request body.
+   */
+  this.send = function(data) {
+    if (this.readyState !== this.OPENED) {
+      throw new Error("INVALID_STATE_ERR: connection must be opened before send() is called");
+    }
+
+    if (sendFlag) {
+      throw new Error("INVALID_STATE_ERR: send has already been called");
+    }
+
+    var ssl = false, local = false;
+    var url = Url$2.parse(settings.url);
+    var host;
+    // Determine the server
+    switch (url.protocol) {
+      case "https:":
+        ssl = true;
+        // SSL & non-SSL both need host, no break here.
+      case "http:":
+        host = url.hostname;
+        break;
+
+      case "file:":
+        local = true;
+        break;
+
+      case undefined:
+      case null:
+      case "":
+        host = "localhost";
+        break;
+
+      default:
+        throw new Error("Protocol not supported.");
+    }
+
+    // Load files off the local filesystem (file://)
+    if (local) {
+      if (settings.method !== "GET") {
+        throw new Error("XMLHttpRequest: Only GET method is supported");
+      }
+
+      if (settings.async) {
+        fs.readFile(url.pathname, "utf8", function(error, data) {
+          if (error) {
+            self.handleError(error);
+          } else {
+            self.status = 200;
+            self.responseText = data;
+            setState(self.DONE);
+          }
+        });
+      } else {
+        try {
+          this.responseText = fs.readFileSync(url.pathname, "utf8");
+          this.status = 200;
+          setState(self.DONE);
+        } catch(e) {
+          this.handleError(e);
+        }
+      }
+
+      return;
+    }
+
+    // Default to port 80. If accessing localhost on another port be sure
+    // to use http://localhost:port/path
+    var port = url.port || (ssl ? 443 : 80);
+    // Add query string if one is used
+    var uri = url.pathname + (url.search ? url.search : "");
+
+    // Set the defaults if they haven't been set
+    for (var name in defaultHeaders) {
+      if (!headersCase[name.toLowerCase()]) {
+        headers[name] = defaultHeaders[name];
+      }
+    }
+
+    // Set the Host header or the server may reject the request
+    headers.Host = host;
+    if (!((ssl && port === 443) || port === 80)) {
+      headers.Host += ":" + url.port;
+    }
+
+    // Set Basic Auth if necessary
+    if (settings.user) {
+      if (typeof settings.password === "undefined") {
+        settings.password = "";
+      }
+      var authBuf = new Buffer(settings.user + ":" + settings.password);
+      headers.Authorization = "Basic " + authBuf.toString("base64");
+    }
+
+    // Set content length header
+    if (settings.method === "GET" || settings.method === "HEAD") {
+      data = null;
+    } else if (data) {
+      headers["Content-Length"] = isBuffer(data) ? data.length : Buffer.byteLength(data);
+
+      if (!headers["Content-Type"]) {
+        headers["Content-Type"] = "text/plain;charset=UTF-8";
+      }
+    } else if (settings.method === "POST") {
+      // For a post with no data set Content-Length: 0.
+      // This is required by buggy servers that don't meet the specs.
+      headers["Content-Length"] = 0;
+    }
+
+    var options = {
+      host: host,
+      port: port,
+      path: uri,
+      method: settings.method,
+      headers: headers,
+      agent: false,
+      withCredentials: self.withCredentials
+    };
+
+    // Reset error flag
+    errorFlag = false;
+
+    // Handle async requests
+    if (settings.async) {
+      // Use the proper protocol
+      var doRequest = ssl ? https.request : http.request;
+
+      // Request is being sent, set send flag
+      sendFlag = true;
+
+      // As per spec, this is called here for historical reasons.
+      self.dispatchEvent("readystatechange");
+
+      // Handler for the response
+      var responseHandler = function responseHandler(resp) {
+        // Set response var to the response we got back
+        // This is so it remains accessable outside this scope
+        response = resp;
+        // Check for redirect
+        // @TODO Prevent looped redirects
+        if (response.statusCode === 301 || response.statusCode === 302 || response.statusCode === 303 || response.statusCode === 307) {
+          // Change URL to the redirect location
+          settings.url = response.headers.location;
+          var url = Url$2.parse(settings.url);
+          // Set host var in case it's used later
+          host = url.hostname;
+          // Options for the new request
+          var newOptions = {
+            hostname: url.hostname,
+            port: url.port,
+            path: url.path,
+            method: response.statusCode === 303 ? "GET" : settings.method,
+            headers: headers,
+            withCredentials: self.withCredentials
+          };
+
+          // Issue the new request
+          request = doRequest(newOptions, responseHandler).on("error", errorHandler);
+          request.end();
+          // @TODO Check if an XHR event needs to be fired here
+          return;
+        }
+
+        response.setEncoding("utf8");
+
+        setState(self.HEADERS_RECEIVED);
+        self.status = response.statusCode;
+
+        response.on("data", function(chunk) {
+          // Make sure there's some data
+          if (chunk) {
+            self.responseText += chunk;
+          }
+          // Don't emit state changes if the connection has been aborted.
+          if (sendFlag) {
+            setState(self.LOADING);
+          }
+        });
+
+        response.on("end", function() {
+          if (sendFlag) {
+            // Discard the end event if the connection has been aborted
+            setState(self.DONE);
+            sendFlag = false;
+          }
+        });
+
+        response.on("error", function(error) {
+          self.handleError(error);
+        });
+      };
+
+      // Error handler for the request
+      var errorHandler = function errorHandler(error) {
+        self.handleError(error);
+      };
+
+      // Create the request
+      request = doRequest(options, responseHandler).on("error", errorHandler);
+
+      // Node 0.4 and later won't accept empty data. Make sure it's needed.
+      if (data) {
+        request.write(data);
+      }
+
+      request.end();
+
+      self.dispatchEvent("loadstart");
+    } else { // Synchronous
+      // Create a temporary file for communication with the other Node process
+      var contentFile = ".node-xmlhttprequest-content-" + process$4.pid;
+      var syncFile = ".node-xmlhttprequest-sync-" + process$4.pid;
+      fs.writeFileSync(syncFile, "", "utf8");
+      // The async request the other Node process executes
+      var execString = "var http = require('http'), https = require('https'), fs = require('fs');"
+        + "var doRequest = http" + (ssl ? "s" : "") + ".request;"
+        + "var options = " + JSON.stringify(options) + ";"
+        + "var responseText = '';"
+        + "var req = doRequest(options, function(response) {"
+        + "response.setEncoding('utf8');"
+        + "response.on('data', function(chunk) {"
+        + "  responseText += chunk;"
+        + "});"
+        + "response.on('end', function() {"
+        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: null, data: {statusCode: response.statusCode, headers: response.headers, text: responseText}}), 'utf8');"
+        + "fs.unlinkSync('" + syncFile + "');"
+        + "});"
+        + "response.on('error', function(error) {"
+        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: error}), 'utf8');"
+        + "fs.unlinkSync('" + syncFile + "');"
+        + "});"
+        + "}).on('error', function(error) {"
+        + "fs.writeFileSync('" + contentFile + "', JSON.stringify({err: error}), 'utf8');"
+        + "fs.unlinkSync('" + syncFile + "');"
+        + "});"
+        + (data ? "req.write('" + JSON.stringify(data).slice(1,-1).replace(/'/g, "\\'") + "');":"")
+        + "req.end();";
+      // Start the other Node Process, executing this string
+      var syncProc = spawn(process$4.argv[0], ["-e", execString]);
+      while(fs.existsSync(syncFile)) {
+        // Wait while the sync file is empty
+      }
+      var resp = JSON.parse(fs.readFileSync(contentFile, 'utf8'));
+      // Kill the child process once the file has data
+      syncProc.stdin.end();
+      // Remove the temporary file
+      fs.unlinkSync(contentFile);
+
+      if (resp.err) {
+        self.handleError(resp.err);
+      } else {
+        response = resp.data;
+        self.status = resp.data.statusCode;
+        self.responseText = resp.data.text;
+        setState(self.DONE);
+      }
+    }
+  };
+
+  /**
+   * Called when an error is encountered to deal with it.
+   */
+  this.handleError = function(error) {
+    this.status = 0;
+    this.statusText = error;
+    this.responseText = error.stack;
+    errorFlag = true;
+    setState(this.DONE);
+    this.dispatchEvent('error');
+  };
+
+  /**
+   * Aborts a request.
+   */
+  this.abort = function() {
+    if (request) {
+      request.abort();
+      request = null;
+    }
+
+    headers = defaultHeaders;
+    this.status = 0;
+    this.responseText = "";
+    this.responseXML = "";
+
+    errorFlag = true;
+
+    if (this.readyState !== this.UNSENT
+        && (this.readyState !== this.OPENED || sendFlag)
+        && this.readyState !== this.DONE) {
+      sendFlag = false;
+      setState(this.DONE);
+    }
+    this.readyState = this.UNSENT;
+    this.dispatchEvent('abort');
+  };
+
+  /**
+   * Adds an event listener. Preferred method of binding to events.
+   */
+  this.addEventListener = function(event, callback) {
+    if (!(event in listeners)) {
+      listeners[event] = [];
+    }
+    // Currently allows duplicate callbacks. Should it?
+    listeners[event].push(callback);
+  };
+
+  /**
+   * Remove an event callback that has already been bound.
+   * Only works on the matching funciton, cannot be a copy.
+   */
+  this.removeEventListener = function(event, callback) {
+    if (event in listeners) {
+      // Filter will return a new array with the callback removed
+      listeners[event] = listeners[event].filter(function(ev) {
+        return ev !== callback;
+      });
+    }
+  };
+
+  /**
+   * Dispatch any events, including both "on" methods and events attached using addEventListener.
+   */
+  this.dispatchEvent = function(event) {
+    if (typeof self["on" + event] === "function") {
+      self["on" + event]();
+    }
+    if (event in listeners) {
+      for (var i = 0, len = listeners[event].length; i < len; i++) {
+        listeners[event][i].call(self);
+      }
+    }
+  };
+
+  /**
+   * Changes readyState and calls onreadystatechange.
+   *
+   * @param int state New state
+   */
+  var setState = function(state) {
+    if (state == self.LOADING || self.readyState !== state) {
+      self.readyState = state;
+
+      if (settings.async || self.readyState < self.OPENED || self.readyState === self.DONE) {
+        self.dispatchEvent("readystatechange");
+      }
+
+      if (self.readyState === self.DONE && !errorFlag) {
+        self.dispatchEvent("load");
+        // @TODO figure out InspectorInstrumentation::didLoadXHR(cookie)
+        self.dispatchEvent("loadend");
+      }
+    }
+  };
+};
+
 const log$2 = browser$1('promisifiedRequests');
 
-function request(obj) {
+function request$1(obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
-    let request = new XMLHttpRequest();
+    let request = new XMLHttpRequest_1();
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {
@@ -30131,7 +32597,7 @@ function parseRevocationKey(issuerProfileJson) {
 
 function getIssuerProfile(issuerId) {
   let issuerProfileFetcher = new Promise((resolve, reject) => {
-    return request({ url: issuerId })
+    return request$1({ url: issuerId })
       .then(response => {
         try {
           let issuerProfileJson = JSON.parse(response);
@@ -30170,7 +32636,7 @@ function getRevokedAssertions(revocationListUrl) {
     return Promise.resolve([]);
   }
   let revocationListFetcher = new Promise((resolve, reject) => {
-    return request({ url: revocationListUrl })
+    return request$1({ url: revocationListUrl })
       .then(function(response) {
         try {
           let issuerRevocationJson = JSON.parse(response);
@@ -30199,7 +32665,7 @@ function getEtherScanFetcher(transactionId, chain) {
   }
 
   let etherScanFetcher = new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request$1({url: etherScanUrl})
       .then(function (response) {
         const responseTxData = JSON.parse(response);
         try {
@@ -30247,7 +32713,7 @@ function getEtherScanBlock(jsonResponse, chain) {
   }
 
   return new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request$1({url: etherScanUrl})
       .then(function (response) {
         const responseData = JSON.parse(response);
         const blockData = responseData.result;
@@ -30279,7 +32745,7 @@ function checkEtherScanConfirmations(chain, blockNumber){
   }
 
   return new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request$1({url: etherScanUrl})
       .then(function (response) {
         const responseData = JSON.parse(response);
         const currentBlockCount = responseData.result;
@@ -30314,7 +32780,7 @@ function getBlockcypherFetcher(transactionId, chain) {
     blockCypherUrl = Url.blockCypherTestUrl + transactionId + '?limit=500';
   }
   let blockcypherFetcher = new Promise((resolve, reject) => {
-    return request({ url: blockCypherUrl })
+    return request$1({ url: blockCypherUrl })
       .then(function(response) {
         const responseData = JSON.parse(response);
         try {
@@ -30341,7 +32807,7 @@ function getChainSoFetcher(transactionId, chain) {
   }
 
   let chainSoFetcher = new Promise((resolve, reject) => {
-    return request({ url: chainSoUrl })
+    return request$1({ url: chainSoUrl })
       .then(function(response) {
         const responseData = JSON.parse(response);
         try {
@@ -30405,7 +32871,7 @@ function cleanupRemoteHash$1(remoteHash) {
   let prefixes = ['6a20', 'OP_RETURN '];
   for (var i = 0; i < prefixes.length; i++) {
     let prefix = prefixes[i];
-    if (startsWith$1(remoteHash, prefix)) {
+    if (startsWith(remoteHash, prefix)) {
       return remoteHash.slice(prefix.length);
     }
   }

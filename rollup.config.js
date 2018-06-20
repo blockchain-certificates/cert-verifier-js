@@ -28,28 +28,30 @@ export default {
     replace({
       patterns: [
         {
-          // regexp match with resolved path
           match: /jsonld.js/,
-          // string or regexp
           test: 'global = window;',
-          // string or function to replaced with
           replace: '',
         },
         {
-          // regexp match with resolved path
           match: /jsonld.js/,
-          // string or regexp
           test: 'global = self;',
-          // string or function to replaced with
           replace: '',
         },
         {
-          // regexp match with resolved path
           match: /jsonld.js/,
-          // string or regexp
           test: 'global = $;',
-          // string or function to replaced with
           replace: '',
+        },
+        // fix jsonld|jsonldjs is not defined
+        {
+          match: /jsonld.js/,
+          test: 'if(typeof jsonld === \'undefined\') {',
+          replace: 'if(typeof window.jsonld === \'undefined\') {',
+        },
+        {
+          match: /jsonld.js/,
+          test: 'jsonld = jsonldjs = factory;',
+          replace: 'window.jsonld = window.jsonldjs = factory;',
         }
       ]
 

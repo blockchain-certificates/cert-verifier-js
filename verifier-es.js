@@ -21300,7 +21300,7 @@ var ignore = /*#__PURE__*/Object.freeze({
 
 });
 
-var jsonld_1 = createCommonjsModule(function (module) {
+var jsonld = createCommonjsModule(function (module) {
 /**
  * A JavaScript implementation of the JSON-LD API.
  *
@@ -29470,8 +29470,8 @@ if(!_nodejs && (typeof undefined === 'function' && undefined.amd)) {
 
   if(_browser) {
     // export simple browser API
-    if(typeof jsonld === 'undefined') {
-      jsonld = jsonldjs = factory;
+    if(typeof window.jsonld === 'undefined') {
+      window.jsonld = window.jsonldjs = factory;
     } else {
       jsonldjs = factory;
     }
@@ -29482,7 +29482,7 @@ return factory;
 
 })();
 });
-var jsonld_2 = jsonld_1.jsonld;
+var jsonld_1 = jsonld.jsonld;
 
 var convertHex = createCommonjsModule(function (module) {
 !function(globals) {
@@ -29898,7 +29898,7 @@ function computeLocalHash(document, version) {
       expandContext.push({ '@vocab': 'http://fallback.org/' });
     }
   }
-  var nodeDocumentLoader = jsonld_1.documentLoaders.node();
+  var nodeDocumentLoader = jsonld.documentLoaders.node();
   var customLoader = function(url, callback) {
     if (url in CONTEXTS) {
       return callback(null, {
@@ -29909,7 +29909,7 @@ function computeLocalHash(document, version) {
     }
     return nodeDocumentLoader(url, callback);
   };
-  jsonld_1.documentLoader = customLoader;
+  jsonld.documentLoader = customLoader;
   var normalizeArgs = {
     algorithm: 'URDNA2015',
     format: 'application/nquads',
@@ -29919,7 +29919,7 @@ function computeLocalHash(document, version) {
   }
 
   return new Promise((resolve, reject) => {
-    jsonld_1.normalize(theDocument, normalizeArgs, (err, normalized) => {
+    jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
       if (!!err) {
         reject(
           new VerifierError(

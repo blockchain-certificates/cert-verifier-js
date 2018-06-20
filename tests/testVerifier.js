@@ -4,7 +4,7 @@ import 'babel-polyfill';
 import { assert, expect } from 'chai';
 import { Status } from '../config/default';
 import { CertificateVerifier } from '../lib/index';
-import { readFileAsync } from '../lib/promisifiedRequests';
+import { readFileAsync } from './utils/readFile';
 
 describe('Certificate verifier', async () => {
   // Disabling this test; issuer profile call is hanging -- need to allow redirect?

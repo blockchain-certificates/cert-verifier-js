@@ -28,7 +28,6 @@
     "jsonld": "^0.4.11",
     "mocha": "^3.5.3",
     "sha256": "^0.2.0",
-    "string.prototype.startswith": "^0.2.0",
     "tsify": "^3.0.4",
     "xmlhttprequest": "^1.8.0"
   },

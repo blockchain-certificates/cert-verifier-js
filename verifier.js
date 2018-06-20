@@ -30028,14 +30028,12 @@ function getCaseInsensitiveKey(obj, value) {
   return obj[key];
 }
 
-var XMLHttpRequest$1 = require('xmlhttprequest').XMLHttpRequest;
-
 const log$2 = browser$1('promisifiedRequests');
 
 function request(obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
-    let request = new XMLHttpRequest$1();
+    let request = new XMLHttpRequest();
 
     request.addEventListener('load', () => {
       if (request.status >= 200 && request.status < 300) {

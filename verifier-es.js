@@ -1,15 +1,9 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-require('bitcoinjs-lib');
-var jsonld = _interopDefault(require('jsonld'));
-var debug = _interopDefault(require('debug'));
-var sha256 = _interopDefault(require('sha256'));
-require('fs');
-require('babel-polyfill');
+import 'bitcoinjs-lib';
+import jsonld from 'jsonld';
+import debug from 'debug';
+import sha256 from 'sha256';
+import 'fs';
+import 'babel-polyfill';
 
 let Status = {
   getTransactionId: 'getTransactionId',
@@ -2127,9 +2121,4 @@ async function test() {
 test();
 */
 
-exports.Blockchain = Blockchain;
-exports.CertificateVersion = CertificateVersion;
-exports.Status = Status;
-exports.Certificate = Certificate;
-exports.SignatureImage = SignatureImage;
-exports.CertificateVerifier = CertificateVerifier;
+export { Blockchain, CertificateVersion, Status, Certificate, SignatureImage, CertificateVerifier };

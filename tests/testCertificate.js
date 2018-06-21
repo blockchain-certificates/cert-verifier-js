@@ -3,7 +3,7 @@
 import 'babel-polyfill';
 import { assert, expect } from 'chai';
 import { Blockchain, Certificate } from '../lib/index';
-import { readFileAsync } from '../lib/promisifiedRequests';
+import { readFileAsync } from './utils/readFile';
 
 describe('Certificate parsing', () => {
   describe('parse v2', () => {

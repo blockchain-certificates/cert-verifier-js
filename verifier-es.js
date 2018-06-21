@@ -1,7 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function commonjsRequire () {
@@ -33420,9 +33416,4 @@ async function test() {
 test();
 */
 
-exports.Blockchain = Blockchain;
-exports.CertificateVersion = CertificateVersion;
-exports.Status = Status;
-exports.Certificate = Certificate;
-exports.SignatureImage = SignatureImage;
-exports.CertificateVerifier = CertificateVerifier;
+export { Blockchain, CertificateVersion, Status, Certificate, SignatureImage, CertificateVerifier };

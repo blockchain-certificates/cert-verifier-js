@@ -2,6 +2,42 @@
 
 A library to enable parsing and verifying a Blockcert. This can be used as a node package or in a browser. The browserified script is available as `verifier.js`.
 
+# usage
+
+## install
+
+#### via github
+```javascript
+npm i git+https://github.com/blockchain-certificates/cert-verifier-js.git
+```
+
+## importing in your project
+
+#### commonjs
+exposed by default
+
+```
+var Verifier - require('cert-verifier-js')
+
+var verifier = new Verifier()
+```
+
+#### es module
+```
+import Verifier from 'cert-verifier-js'
+
+var verifier = new Verifier()
+```
+
+#### script tag (iife)
+```
+<script src='node_modules/cert-verifier-js/verifier-iife.js'></script>
+
+<script>
+  var verifier = new Verifier()
+</script>
+```
+
 ## Sample code
 
 ### Parsing a Blockcert

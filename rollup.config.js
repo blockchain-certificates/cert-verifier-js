@@ -16,6 +16,11 @@ export default {
     {
       file: 'verifier-es.js',
       format: 'es'
+    },
+    {
+      file: 'verifier-iife.js',
+      format: 'iife',
+      name: 'Verifier'
     }
   ],
   plugins: [

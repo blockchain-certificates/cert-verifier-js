@@ -4,17 +4,9 @@ A library to enable parsing and verifying a Blockcert. This can be used as a nod
 
 ## Add to your project
 ```
-yarn add git@github.com:blockchain-certificates/cert-verifier-js.git
-```
-or
-```
-npm install git@github.com:blockchain-certificates/cert-verifier-js.git
-```
-or (non-official NPM package)
-```
 yarn add cert-verifier-js
 ```
-or (non-official NPM package)
+or
 ```
 npm install cert-verifier-js
 ```
@@ -25,7 +17,7 @@ const BlockcertsVerifier = require('cert-verifier-js');
 ```
 or
 ```javascript
-import * as BlockcertsVerifier from 'cert-verifier-js';
+import { Certificate, CertificateVerifier } from 'cert-verifier-js';
 ```
 
 ## Sample code
@@ -40,7 +32,7 @@ fs.readFile('./tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data)
     console.log(err);
   }
 
-  let cert = BlockcertsVerifier.Certificate.parseJson(JSON.parse(data));
+  let cert = Certificate.parseJson(JSON.parse(data));
   console.log(cert.name);
 });
 ```
@@ -58,7 +50,7 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
   if (err) {
     console.log(err);
   }
-  let certVerifier = new BlockcertsVerifier.CertificateVerifier(data, statusCallback);
+  let certVerifier = new CertificateVerifier(data, statusCallback);
 
   certVerifier.verify()
     .then(x => console.log(`final result: ${x}`))
@@ -69,7 +61,7 @@ fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) 
 ### Certificate Blockchain transaction info
 You can access some blockchain information about the certificate such as the transaction ID and the links to the transactions:
 ```javascript
-let cert = BlockcertsVerifier.Certificate.parseJson(JSON.parse(data));
+let cert = Certificate.parseJson(JSON.parse(data));
 // Transaction ID
 const transactionId = cert.transactionId;
 // Transaction link

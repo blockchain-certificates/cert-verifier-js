@@ -21,7 +21,7 @@ describe('Certificate verifier', async () => {
     });
   });
 
-  describe('should', () => {
+  describe.only('should', () => {
     it('verify an ethereum mainnet v2 certificate', async () => {
       const data = await readFileAsync('tests/data/sample_ethereum_cert-mainnet-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {

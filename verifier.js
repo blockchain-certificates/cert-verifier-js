@@ -32499,30 +32499,35 @@ const log$2 = browser$1('promisifiedRequests');
 function request$1(obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
-    let request = new XMLHttpRequest_1();
 
-    request.addEventListener('load', () => {
+    // server
+    const xhr = typeof XMLHttpRequest === 'undefined' ? XMLHttpRequest_1 : XMLHttpRequest;
+    let request = new xhr();
+
+    request.onload = () => {
       if (request.status >= 200 && request.status < 300) {
         resolve(request.responseText);
       } else {
         let failureMessage = `Error fetching url:${url}; status code:${request.status}`;
         reject(new Error(failureMessage));
       }
-    });
+    };
+
     request.ontimeout = (e) => {
       console.log('ontimeout', e);
     };
+
     request.onreadystatechange = () => {
       if (request.status === 404) {
         reject(new Error(`Error fetching url:${url}; status code:${request.status}`));
       }
     };
-    request.addEventListener('error', () => {
+
+    request.onerror = () => {
       log$2(`Request failed with error ${request.responseText}`);
       reject(new Error(request.responseText));
-    });
+    };
 
-    request.responseType = 'json';
     request.open(obj.method || 'GET', url);
 
     if (obj.body) {

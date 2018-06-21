@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Javascript library for verifying Blockcerts",
   "main": "verifier.js",
+  "module": "verifier-es.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
     "build": "browserify lib/index.js --s Verifier -o verifier.js -t [ babelify --presets [es2015] --plugins transform-regenerator ]",

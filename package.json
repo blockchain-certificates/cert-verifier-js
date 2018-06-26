@@ -13,12 +13,14 @@
   },
   "babel": {
     "presets": [
-      "env",
-      {
-        "targets": {
-          "browsers": ["> 1%", "dead"]
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": ["> 1%", "dead"]
+          }
         }
-      }
+      ]
     ]
   },
   "author": "Kim Duffy",

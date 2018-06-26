@@ -4,18 +4,16 @@ import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import babel from 'rollup-plugin-babel';
 
 export default {
   input: 'lib/index.js',
   name: 'Verifier',
   output: [
     {
-      file: 'verifier.js',
-      format: 'cjs'
-    },
-    {
-      file: 'verifier-es.js',
-      format: 'es'
+      file: 'verifier-iife.js',
+      format: 'iife',
+      name: 'Verifier'
     }
   ],
   plugins: [
@@ -65,6 +63,11 @@ export default {
     }),
     json(),
     builtins(),
-    globals()
+    globals(),
+    babel({
+      exclude: 'node_modules/**',
+      babelrc: false,
+      presets: [['env', { modules: false }]]
+    })
   ]
 };

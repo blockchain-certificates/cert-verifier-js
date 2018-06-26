@@ -6643,7 +6643,17 @@ var Verifier = (function (exports) {
 	  [][key] && define$1(Array, key, Function.call.bind([][key]));
 	});
 
-	let Status = {
+	var _ref;
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Status = {
 	  getTransactionId: 'getTransactionId',
 	  computingLocalHash: 'computingLocalHash',
 	  fetchingRemoteHash: 'fetchingRemoteHash',
@@ -6663,7 +6673,7 @@ var Verifier = (function (exports) {
 	  final: 'final'
 	};
 
-	const BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
+	var BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
 
 	var verboseMessageMap = {};
 	verboseMessageMap[Status.getTransactionId] = 'Getting transaction ID';
@@ -6684,24 +6694,32 @@ var Verifier = (function (exports) {
 	verboseMessageMap[Status.mockSuccess] = 'mockSuccess';
 	verboseMessageMap[Status.final] = 'Final';
 
-	let getVerboseMessage = function (status) {
+	var getVerboseMessage = function getVerboseMessage(status) {
 	  return verboseMessageMap[status];
 	};
 
-	class VerifierError extends Error {
-	  constructor (stepCode, message) {
-	    super(message);
-	    this.stepCode = stepCode;
-	  }
-	}
+	var VerifierError = function (_Error) {
+	  _inherits(VerifierError, _Error);
 
-	const CertificateVersion = {
+	  function VerifierError(stepCode, message) {
+	    _classCallCheck(this, VerifierError);
+
+	    var _this = _possibleConstructorReturn(this, (VerifierError.__proto__ || Object.getPrototypeOf(VerifierError)).call(this, message));
+
+	    _this.stepCode = stepCode;
+	    return _this;
+	  }
+
+	  return VerifierError;
+	}(Error);
+
+	var CertificateVersion = {
 	  v1_1: '1.1',
 	  v1_2: '1.2',
 	  v2_0: '2.0'
 	};
 
-	const Blockchain = {
+	var Blockchain = {
 	  bitcoin: 'bitcoin',
 	  testnet: 'testnet',
 	  regtest: 'regtest',
@@ -6715,31 +6733,31 @@ var Verifier = (function (exports) {
 	 * These are the templates of the raw transaction url
 	 * Use the values of Blockchain (above) as key when adding one
 	 */
-	const BlockchainRawTransactionUrl = {
-	  bitcoin: `https://blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
-	  testnet: `https://testnet.blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
-	  regtest: ``,
-	  mocknet: ``,
-	  ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-	  ethropst: `https://ropsten.etherscan.io/getRawTx?tx=${BlockchainRawTransactionIdPlaceholder}`,
-	  ethtest: ``
+	var BlockchainRawTransactionUrl = {
+	  bitcoin: 'https://blockchain.info/rawtx/' + BlockchainRawTransactionIdPlaceholder,
+	  testnet: 'https://testnet.blockchain.info/rawtx/' + BlockchainRawTransactionIdPlaceholder,
+	  regtest: '',
+	  mocknet: '',
+	  ethmain: 'https://etherscan.io/tx/' + BlockchainRawTransactionIdPlaceholder,
+	  ethropst: 'https://ropsten.etherscan.io/getRawTx?tx=' + BlockchainRawTransactionIdPlaceholder,
+	  ethtest: ''
 	};
 
 	/**
 	 * These are the templates of the transaction url
 	 * Use the values of Blockchain (above) as key when adding one
 	 */
-	const BlockchainTransactionUrl = {
-	  bitcoin: `https://blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
-	  testnet: `https://testnet.blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
-	  regtest: ``,
-	  mocknet: ``,
-	  ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-	  ethropst: `https://ropsten.etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-	  ethtest: ``
+	var BlockchainTransactionUrl = {
+	  bitcoin: 'https://blockchain.info/tx/' + BlockchainRawTransactionIdPlaceholder,
+	  testnet: 'https://testnet.blockchain.info/tx/' + BlockchainRawTransactionIdPlaceholder,
+	  regtest: '',
+	  mocknet: '',
+	  ethmain: 'https://etherscan.io/tx/' + BlockchainRawTransactionIdPlaceholder,
+	  ethropst: 'https://ropsten.etherscan.io/tx/' + BlockchainRawTransactionIdPlaceholder,
+	  ethtest: ''
 	};
 
-	const ChainSignatureValue = {
+	var ChainSignatureValue = {
 	  /*
 	  These are the external display of `chain` in the signature suite. Adding a new type since `Blockchain` is
 	  used by the web component and so we need to remain compatible.
@@ -6753,7 +6771,7 @@ var Verifier = (function (exports) {
 	  mocknet: 'mockchain'
 	};
 
-	const Url = {
+	var Url = {
 	  blockCypherUrl: 'https://api.blockcypher.com/v1/btc/main/txs/',
 	  blockCypherTestUrl: 'https://api.blockcypher.com/v1/btc/test3/txs/',
 	  chainSoUrl: 'https://chain.so/api/v2/get_tx/BTC/',
@@ -6764,23 +6782,23 @@ var Verifier = (function (exports) {
 	  etherScanRopstenUrl: 'https://api-ropsten.etherscan.io/api?module=proxy'
 	};
 
-	const generateRevocationReason = function (reason) {
+	var generateRevocationReason = function generateRevocationReason(reason) {
 	  reason = reason.trim();
-	  reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
-	  return `This certificate has been revoked by the issuer.${reason}`;
+	  reason = reason.length > 0 ? ' Reason given: ' + reason + (reason.slice(-1) !== '.' ? '.' : '') : '';
+	  return 'This certificate has been revoked by the issuer.' + reason;
 	};
 
 	// Minimum number of confirmations to consider a transaction valid. Recommended setting = 10
-	const MininumConfirmations = 1;
+	var MininumConfirmations = 1;
 	// Minimum number of blockchain APIs to consult to compare transaction data consistency
-	const MinimumBlockchainExplorers = 1;
+	var MinimumBlockchainExplorers = 1;
 
-	const CheckForUnmappedFields = true;
+	var CheckForUnmappedFields = true;
 
-	const PublicKey = 'ecdsa-koblitz-pubkey:1';
+	var PublicKey = 'ecdsa-koblitz-pubkey:1';
 
 	// TODO Fixes or read direct in files??
-	const Contexts = {
+	var Contexts = {
 	  obi: {
 	    '@context': {
 	      'id': '@id',
@@ -6818,57 +6836,57 @@ var Verifier = (function (exports) {
 	      'TypeValidation': 'obi:TypeValidation',
 	      'VerificationObject': 'obi:VerificationObject',
 
-	      'author': {'@id': 'schema:author', '@type': '@id'},
-	      'caption': {'@id': 'schema:caption'},
-	      'claim': {'@id': 'cred:claim', '@type': '@id'},
-	      'created': {'@id': 'dc:created', '@type': 'xsd:dateTime'},
-	      'creator': {'@id': 'dc:creator', '@type': '@id'},
-	      'description': {'@id': 'schema:description'},
-	      'email': {'@id': 'schema:email'},
-	      'endorsement': {'@id': 'cred:credential', '@type': '@id'},
-	      'expires': {'@id': 'sec:expiration', '@type': 'xsd:dateTime'},
-	      'genre': {'@id': 'schema:genre'},
-	      'image': {'@id': 'schema:image', '@type': '@id'},
-	      'name': {'@id': 'schema:name'},
-	      'owner': {'@id': 'sec:owner', '@type': '@id'},
-	      'publicKey': {'@id': 'sec:publicKey', '@type': '@id'},
-	      'publicKeyPem': {'@id': 'sec:publicKeyPem'},
-	      'related': {'@id': 'dc:relation', '@type': '@id'},
-	      'startsWith': {'@id': 'http://purl.org/dqm-vocabulary/v1/dqm#startsWith'},
-	      'tags': {'@id': 'schema:keywords'},
-	      'targetDescription': {'@id': 'schema:targetDescription'},
-	      'targetFramework': {'@id': 'schema:targetFramework'},
-	      'targetName': {'@id': 'schema:targetName'},
-	      'targetUrl': {'@id': 'schema:targetUrl'},
-	      'telephone': {'@id': 'schema:telephone'},
-	      'url': {'@id': 'schema:url', '@type': '@id'},
-	      'version': {'@id': 'schema:version'},
+	      'author': { '@id': 'schema:author', '@type': '@id' },
+	      'caption': { '@id': 'schema:caption' },
+	      'claim': { '@id': 'cred:claim', '@type': '@id' },
+	      'created': { '@id': 'dc:created', '@type': 'xsd:dateTime' },
+	      'creator': { '@id': 'dc:creator', '@type': '@id' },
+	      'description': { '@id': 'schema:description' },
+	      'email': { '@id': 'schema:email' },
+	      'endorsement': { '@id': 'cred:credential', '@type': '@id' },
+	      'expires': { '@id': 'sec:expiration', '@type': 'xsd:dateTime' },
+	      'genre': { '@id': 'schema:genre' },
+	      'image': { '@id': 'schema:image', '@type': '@id' },
+	      'name': { '@id': 'schema:name' },
+	      'owner': { '@id': 'sec:owner', '@type': '@id' },
+	      'publicKey': { '@id': 'sec:publicKey', '@type': '@id' },
+	      'publicKeyPem': { '@id': 'sec:publicKeyPem' },
+	      'related': { '@id': 'dc:relation', '@type': '@id' },
+	      'startsWith': { '@id': 'http://purl.org/dqm-vocabulary/v1/dqm#startsWith' },
+	      'tags': { '@id': 'schema:keywords' },
+	      'targetDescription': { '@id': 'schema:targetDescription' },
+	      'targetFramework': { '@id': 'schema:targetFramework' },
+	      'targetName': { '@id': 'schema:targetName' },
+	      'targetUrl': { '@id': 'schema:targetUrl' },
+	      'telephone': { '@id': 'schema:telephone' },
+	      'url': { '@id': 'schema:url', '@type': '@id' },
+	      'version': { '@id': 'schema:version' },
 
-	      'alignment': {'@id': 'obi:alignment', '@type': '@id'},
-	      'allowedOrigins': {'@id': 'obi:allowedOrigins'},
-	      'audience': {'@id': 'obi:audience'},
-	      'badge': {'@id': 'obi:badge', '@type': '@id'},
-	      'criteria': {'@id': 'obi:criteria', '@type': '@id'},
-	      'endorsementComment': {'@id': 'obi:endorsementComment'},
-	      'evidence': {'@id': 'obi:evidence', '@type': '@id'},
-	      'hashed': {'@id': 'obi:hashed', '@type': 'xsd:boolean'},
-	      'identity': {'@id': 'obi:identityHash'},
-	      'issuedOn': {'@id': 'obi:issueDate', '@type': 'xsd:dateTime'},
-	      'issuer': {'@id': 'obi:issuer', '@type': '@id'},
-	      'narrative': {'@id': 'obi:narrative'},
-	      'recipient': {'@id': 'obi:recipient', '@type': '@id'},
-	      'revocationList': {'@id': 'obi:revocationList', '@type': '@id'},
-	      'revocationReason': {'@id': 'obi:revocationReason'},
-	      'revoked': {'@id': 'obi:revoked', '@type': 'xsd:boolean'},
-	      'revokedAssertions': {'@id': 'obi:revoked'},
-	      'salt': {'@id': 'obi:salt'},
-	      'targetCode': {'@id': 'obi:targetCode'},
-	      'uid': {'@id': 'obi:uid'},
+	      'alignment': { '@id': 'obi:alignment', '@type': '@id' },
+	      'allowedOrigins': { '@id': 'obi:allowedOrigins' },
+	      'audience': { '@id': 'obi:audience' },
+	      'badge': { '@id': 'obi:badge', '@type': '@id' },
+	      'criteria': { '@id': 'obi:criteria', '@type': '@id' },
+	      'endorsementComment': { '@id': 'obi:endorsementComment' },
+	      'evidence': { '@id': 'obi:evidence', '@type': '@id' },
+	      'hashed': { '@id': 'obi:hashed', '@type': 'xsd:boolean' },
+	      'identity': { '@id': 'obi:identityHash' },
+	      'issuedOn': { '@id': 'obi:issueDate', '@type': 'xsd:dateTime' },
+	      'issuer': { '@id': 'obi:issuer', '@type': '@id' },
+	      'narrative': { '@id': 'obi:narrative' },
+	      'recipient': { '@id': 'obi:recipient', '@type': '@id' },
+	      'revocationList': { '@id': 'obi:revocationList', '@type': '@id' },
+	      'revocationReason': { '@id': 'obi:revocationReason' },
+	      'revoked': { '@id': 'obi:revoked', '@type': 'xsd:boolean' },
+	      'revokedAssertions': { '@id': 'obi:revoked' },
+	      'salt': { '@id': 'obi:salt' },
+	      'targetCode': { '@id': 'obi:targetCode' },
+	      'uid': { '@id': 'obi:uid' },
 	      'validatesType': 'obi:validatesType',
 	      'validationFrame': 'obi:validationFrame',
 	      'validationSchema': 'obi:validationSchema',
-	      'verification': {'@id': 'obi:verify', '@type': '@id'},
-	      'verificationProperty': {'@id': 'obi:verificationProperty'},
+	      'verification': { '@id': 'obi:verify', '@type': '@id' },
+	      'verificationProperty': { '@id': 'obi:verificationProperty' },
 	      'verify': 'verification'
 	    }
 	  },
@@ -6891,13 +6909,13 @@ var Verifier = (function (exports) {
 
 	      'recipientProfile': 'bc:recipientProfile',
 	      'signatureLines': 'bc:signatureLines',
-	      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
+	      'introductionUrl': { '@id': 'bc:introductionUrl', '@type': '@id' },
 
 	      'subtitle': 'bc:subtitle',
 
 	      'jobTitle': 'schema:jobTitle',
 
-	      'creator': {'@id': 'dc:creator', '@type': '@id'},
+	      'creator': { '@id': 'dc:creator', '@type': '@id' },
 	      'expires': {
 	        '@id': 'sec:expiration',
 	        '@type': 'xsd:dateTime'
@@ -6922,221 +6940,155 @@ var Verifier = (function (exports) {
 	      'right': 'cp:right',
 	      'left': 'cp:left'
 	    },
-	    'obi:validation': [
-	      {
-	        'obi:validatesType': 'RecipientProfile',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/recipientSchema.json'
-	      },
-	      {
-	        'obi:validatesType': 'SignatureLine',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/signatureLineSchema.json'
-	      },
-	      {
-	        'obi:validatesType': 'MerkleProof2017',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/merkleProof2017Schema.json'
-	      }
-	    ]
+	    'obi:validation': [{
+	      'obi:validatesType': 'RecipientProfile',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/recipientSchema.json'
+	    }, {
+	      'obi:validatesType': 'SignatureLine',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/signatureLineSchema.json'
+	    }, {
+	      'obi:validatesType': 'MerkleProof2017',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/merkleProof2017Schema.json'
+	    }]
 	  },
-	  blockcertsv1_2:
-
-	    {
-	      '@context': [
-	        {
-	          'id': '@id',
-	          'type': '@type',
-	          'bc': 'https://w3id.org/blockcerts#',
-	          'obi': 'https://w3id.org/openbadges#',
-	          'cp': 'https://w3id.org/chainpoint#',
-	          'extensions': 'https://w3id.org/openbadges/extensions#',
-	          'validation': 'obi:validation',
-	          'xsd': 'http://www.w3.org/2001/XMLSchema#',
-	          'schema': 'http://schema.org/',
-	          'sec': 'https://w3id.org/security#',
-	          'Assertion': 'bc:Assertion',
-	          'Certificate': 'bc:Certificate',
-	          'Issuer': 'bc:Issuer',
-	          'BlockchainCertificate': 'bc:BlockchainCertificate',
-	          'CertificateDocument': 'bc:CertificateDocument',
-	          'issuer': {
-	            '@id': 'bc:issuer',
-	            '@type': '@id'
-	          },
-	          'recipient': {
-	            '@id': 'bc:recipient',
-	            '@type': '@id'
-	          },
-	          'blockchaincertificate': {
-	            '@id': 'bc:blockchaincertificate',
-	            '@type': '@id'
-	          },
-	          'certificate': {
-	            '@id': 'bc:certificate',
-	            '@type': '@id'
-	          },
-	          'document': {
-	            '@id': 'bc:document',
-	            '@type': '@id'
-	          },
-	          'assertion': {
-	            '@id': 'bc:assertion',
-	            '@type': '@id'
-	          },
-	          'verify': {
-	            '@id': 'bc:verify',
-	            '@type': '@id'
-	          },
-	          'recipient': {
-	            '@id': 'bc:recipient',
-	            '@type': '@id'
-	          },
-	          'receipt': {
-	            '@id': 'bc:receipt',
-	            '@type': '@id'
-	          },
-	          'publicKey': {
-	            '@id': 'bc:publicKey'
-	          },
-	          'revocationKey': {
-	            '@id': 'bc:revocationKey'
-	          },
-	          'image:signature': {
-	            '@id': 'bc:image:signature'
-	          },
-	          'signature': {
-	            '@id': 'bc:signature'
-	          },
-	          'familyName': {
-	            '@id': 'schema:familyName'
-	          },
-	          'givenName': {
-	            '@id': 'schema:givenName'
-	          },
-	          'jobTitle': {
-	            '@id': 'schema:jobTitle'
-	          },
-	          'signer': {
-	            '@id': 'bc:signer',
-	            '@type': '@id'
-	          },
-	          'attribute-signed': {
-	            '@id': 'bc:attribute-signed'
-	          },
-	          'ECDSA(secp256k1)': 'bc:SignedBadge',
-	          'subtitle': {
-	            '@id': 'bc:subtitle'
-	          },
-	          'email': 'schema:email',
-	          'hashed': {
-	            '@id': 'obi:hashed',
-	            '@type': 'xsd:boolean'
-	          },
-	          'image': {
-	            '@id': 'schema:image',
-	            '@type': '@id'
-	          },
-	          'salt': {
-	            '@id': 'obi:salt'
-	          },
-	          'identity': {
-	            '@id': 'obi:identityHash'
-	          },
-	          'issuedOn': {
-	            '@id': 'obi:issueDate',
-	            '@type': 'xsd:dateTime'
-	          },
-	          'expires': {
-	            '@id': 'sec:expiration',
-	            '@type': 'xsd:dateTime'
-	          },
-	          'evidence': {
-	            '@id': 'obi:evidence',
-	            '@type': '@id'
-	          },
-	          'criteria': {
-	            '@id': 'obi:criteria',
-	            '@type': '@id'
-	          },
-	          'tags': {
-	            '@id': 'schema:keywords'
-	          },
-	          'alignment': {
-	            '@id': 'obi:alignment',
-	            '@type': '@id'
-	          },
-	          'revocationList': {
-	            '@id': 'obi:revocationList',
-	            '@type': '@id'
-	          },
-	          'name': {
-	            '@id': 'schema:name'
-	          },
-	          'description': {
-	            '@id': 'schema:description'
-	          },
-	          'url': {
-	            '@id': 'schema:url',
-	            '@type': '@id'
-	          },
-	          'uid': {
-	            '@id': 'obi:uid'
-	          },
-	          'revocationList': 'obi:revocationList',
-	          'TypeValidation': 'obi:TypeValidation',
-	          'FrameValidation': 'obi:FrameValidation',
-	          'validatesType': 'obi:validatesType',
-	          'validationSchema': 'obi:validationSchema',
-	          'validationFrame': 'obi:validationFrame',
-	          'ChainpointSHA224v2': 'cp:ChainpointSHA224v2',
-	          'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
-	          'ChainpointSHA384v2': 'cp:ChainpointSHA384v2',
-	          'ChainpointSHA512v2': 'cp:ChainpointSHA512v2',
-	          'ChainpointSHA3-224v2': 'cp:ChainpointSHA3-224v2',
-	          'ChainpointSHA3-256v2': 'cp:ChainpointSHA3-256v2',
-	          'ChainpointSHA3-384v2': 'cp:ChainpointSHA3-384v2',
-	          'ChainpointSHA3-512v2': 'cp:ChainpointSHA3-512v2',
-	          'BTCOpReturn': 'cp:BTCOpReturn',
-	          'targetHash': 'cp:targetHash',
-	          'merkleRoot': 'cp:merkleRoot',
-	          'proof': 'cp:proof',
-	          'anchors': 'cp:anchors',
-	          'sourceId': 'cp:sourceId',
-	          'right': 'cp:right',
-	          'left': 'cp:left'
-	        }
-	      ],
-	      'validation': [
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'Assertion',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/assertion-1.2.json'
-	        },
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'Certificate',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-1.2.json'
-	        },
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'Issuer',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/issuer-1.2.json'
-	        },
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'CertificateDocument',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-document-1.2.json'
-	        },
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'BlockchainCertificate',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-certificate-1.2.json'
-	        },
-	        {
-	          'type': 'TypeValidation',
-	          'validatesType': 'BlockchainReceipt',
-	          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-receipt-1.2.json'
-	        }
-	      ]
-	    },
+	  blockcertsv1_2: {
+	    '@context': [(_ref = {
+	      'id': '@id',
+	      'type': '@type',
+	      'bc': 'https://w3id.org/blockcerts#',
+	      'obi': 'https://w3id.org/openbadges#',
+	      'cp': 'https://w3id.org/chainpoint#',
+	      'extensions': 'https://w3id.org/openbadges/extensions#',
+	      'validation': 'obi:validation',
+	      'xsd': 'http://www.w3.org/2001/XMLSchema#',
+	      'schema': 'http://schema.org/',
+	      'sec': 'https://w3id.org/security#',
+	      'Assertion': 'bc:Assertion',
+	      'Certificate': 'bc:Certificate',
+	      'Issuer': 'bc:Issuer',
+	      'BlockchainCertificate': 'bc:BlockchainCertificate',
+	      'CertificateDocument': 'bc:CertificateDocument',
+	      'issuer': {
+	        '@id': 'bc:issuer',
+	        '@type': '@id'
+	      },
+	      'recipient': {
+	        '@id': 'bc:recipient',
+	        '@type': '@id'
+	      },
+	      'blockchaincertificate': {
+	        '@id': 'bc:blockchaincertificate',
+	        '@type': '@id'
+	      },
+	      'certificate': {
+	        '@id': 'bc:certificate',
+	        '@type': '@id'
+	      },
+	      'document': {
+	        '@id': 'bc:document',
+	        '@type': '@id'
+	      },
+	      'assertion': {
+	        '@id': 'bc:assertion',
+	        '@type': '@id'
+	      },
+	      'verify': {
+	        '@id': 'bc:verify',
+	        '@type': '@id'
+	      }
+	    }, _defineProperty(_ref, 'recipient', {
+	      '@id': 'bc:recipient',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'receipt', {
+	      '@id': 'bc:receipt',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'publicKey', {
+	      '@id': 'bc:publicKey'
+	    }), _defineProperty(_ref, 'revocationKey', {
+	      '@id': 'bc:revocationKey'
+	    }), _defineProperty(_ref, 'image:signature', {
+	      '@id': 'bc:image:signature'
+	    }), _defineProperty(_ref, 'signature', {
+	      '@id': 'bc:signature'
+	    }), _defineProperty(_ref, 'familyName', {
+	      '@id': 'schema:familyName'
+	    }), _defineProperty(_ref, 'givenName', {
+	      '@id': 'schema:givenName'
+	    }), _defineProperty(_ref, 'jobTitle', {
+	      '@id': 'schema:jobTitle'
+	    }), _defineProperty(_ref, 'signer', {
+	      '@id': 'bc:signer',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'attribute-signed', {
+	      '@id': 'bc:attribute-signed'
+	    }), _defineProperty(_ref, 'ECDSA(secp256k1)', 'bc:SignedBadge'), _defineProperty(_ref, 'subtitle', {
+	      '@id': 'bc:subtitle'
+	    }), _defineProperty(_ref, 'email', 'schema:email'), _defineProperty(_ref, 'hashed', {
+	      '@id': 'obi:hashed',
+	      '@type': 'xsd:boolean'
+	    }), _defineProperty(_ref, 'image', {
+	      '@id': 'schema:image',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'salt', {
+	      '@id': 'obi:salt'
+	    }), _defineProperty(_ref, 'identity', {
+	      '@id': 'obi:identityHash'
+	    }), _defineProperty(_ref, 'issuedOn', {
+	      '@id': 'obi:issueDate',
+	      '@type': 'xsd:dateTime'
+	    }), _defineProperty(_ref, 'expires', {
+	      '@id': 'sec:expiration',
+	      '@type': 'xsd:dateTime'
+	    }), _defineProperty(_ref, 'evidence', {
+	      '@id': 'obi:evidence',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'criteria', {
+	      '@id': 'obi:criteria',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'tags', {
+	      '@id': 'schema:keywords'
+	    }), _defineProperty(_ref, 'alignment', {
+	      '@id': 'obi:alignment',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'revocationList', {
+	      '@id': 'obi:revocationList',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'name', {
+	      '@id': 'schema:name'
+	    }), _defineProperty(_ref, 'description', {
+	      '@id': 'schema:description'
+	    }), _defineProperty(_ref, 'url', {
+	      '@id': 'schema:url',
+	      '@type': '@id'
+	    }), _defineProperty(_ref, 'uid', {
+	      '@id': 'obi:uid'
+	    }), _defineProperty(_ref, 'revocationList', 'obi:revocationList'), _defineProperty(_ref, 'TypeValidation', 'obi:TypeValidation'), _defineProperty(_ref, 'FrameValidation', 'obi:FrameValidation'), _defineProperty(_ref, 'validatesType', 'obi:validatesType'), _defineProperty(_ref, 'validationSchema', 'obi:validationSchema'), _defineProperty(_ref, 'validationFrame', 'obi:validationFrame'), _defineProperty(_ref, 'ChainpointSHA224v2', 'cp:ChainpointSHA224v2'), _defineProperty(_ref, 'ChainpointSHA256v2', 'cp:ChainpointSHA256v2'), _defineProperty(_ref, 'ChainpointSHA384v2', 'cp:ChainpointSHA384v2'), _defineProperty(_ref, 'ChainpointSHA512v2', 'cp:ChainpointSHA512v2'), _defineProperty(_ref, 'ChainpointSHA3-224v2', 'cp:ChainpointSHA3-224v2'), _defineProperty(_ref, 'ChainpointSHA3-256v2', 'cp:ChainpointSHA3-256v2'), _defineProperty(_ref, 'ChainpointSHA3-384v2', 'cp:ChainpointSHA3-384v2'), _defineProperty(_ref, 'ChainpointSHA3-512v2', 'cp:ChainpointSHA3-512v2'), _defineProperty(_ref, 'BTCOpReturn', 'cp:BTCOpReturn'), _defineProperty(_ref, 'targetHash', 'cp:targetHash'), _defineProperty(_ref, 'merkleRoot', 'cp:merkleRoot'), _defineProperty(_ref, 'proof', 'cp:proof'), _defineProperty(_ref, 'anchors', 'cp:anchors'), _defineProperty(_ref, 'sourceId', 'cp:sourceId'), _defineProperty(_ref, 'right', 'cp:right'), _defineProperty(_ref, 'left', 'cp:left'), _ref)],
+	    'validation': [{
+	      'type': 'TypeValidation',
+	      'validatesType': 'Assertion',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/assertion-1.2.json'
+	    }, {
+	      'type': 'TypeValidation',
+	      'validatesType': 'Certificate',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-1.2.json'
+	    }, {
+	      'type': 'TypeValidation',
+	      'validatesType': 'Issuer',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/issuer-1.2.json'
+	    }, {
+	      'type': 'TypeValidation',
+	      'validatesType': 'CertificateDocument',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-document-1.2.json'
+	    }, {
+	      'type': 'TypeValidation',
+	      'validatesType': 'BlockchainCertificate',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-certificate-1.2.json'
+	    }, {
+	      'type': 'TypeValidation',
+	      'validatesType': 'BlockchainReceipt',
+	      'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-receipt-1.2.json'
+	    }]
+	  },
 	  blockcertsv2: {
 	    '@context': {
 	      'id': '@id',
@@ -7156,7 +7108,7 @@ var Verifier = (function (exports) {
 
 	      'recipientProfile': 'bc:recipientProfile',
 	      'signatureLines': 'bc:signatureLines',
-	      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
+	      'introductionUrl': { '@id': 'bc:introductionUrl', '@type': '@id' },
 
 	      'subtitle': 'bc:subtitle',
 
@@ -7191,43 +7143,39 @@ var Verifier = (function (exports) {
 	      'right': 'cp:right',
 	      'left': 'cp:left'
 	    },
-	    'obi:validation': [
-	      {
-	        'obi:validatesType': 'RecipientProfile',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/recipientSchema.json'
-	      },
-	      {
-	        'obi:validatesType': 'SignatureLine',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/signatureLineSchema.json'
-	      },
-	      {
-	        'obi:validatesType': 'MerkleProof2017',
-	        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/merkleProof2017Schema.json'
-	      }
-	    ]
+	    'obi:validation': [{
+	      'obi:validatesType': 'RecipientProfile',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/recipientSchema.json'
+	    }, {
+	      'obi:validatesType': 'SignatureLine',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/signatureLineSchema.json'
+	    }, {
+	      'obi:validatesType': 'MerkleProof2017',
+	      'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/merkleProof2017Schema.json'
+	    }]
 	  }
 	};
 
 	function noOffset(s) {
-	  let day = s.slice(0, -5).split(/\D/).map(function(itm) {
+	  var day = s.slice(0, -5).split(/\D/).map(function (itm) {
 	    return parseInt(itm, 10) || 0;
 	  });
 	  day[1] -= 1;
 	  day = new Date(Date.UTC.apply(Date, day));
-	  let offsetString = s.slice(-5);
-	  let offset = parseInt(offsetString, 10) / 100;
+	  var offsetString = s.slice(-5);
+	  var offset = parseInt(offsetString, 10) / 100;
 	  if (offsetString.slice(0, 1) === '+') offset *= -1;
 	  day.setHours(day.getHours() + offset);
 	  return day.getTime();
 	}
 
 	function dateFromRegex(s) {
-	  let day;
-	  let tz;
-	  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/,
-	    p = rx.exec(s) || [];
+	  var day = void 0;
+	  var tz = void 0;
+	  var rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/,
+	      p = rx.exec(s) || [];
 	  if (p[1]) {
-	    day = p[1].split(/\D/).map(function(itm) {
+	    day = p[1].split(/\D/).map(function (itm) {
 	      return parseInt(itm, 10) || 0;
 	    });
 	    day[1] -= 1;
@@ -7246,13 +7194,13 @@ var Verifier = (function (exports) {
 
 	function dateFromIso(isoDate) {
 	  // Chrome
-	  let diso = Date.parse(isoDate);
+	  var diso = Date.parse(isoDate);
 	  if (diso) {
 	    return new Date(diso);
 	  }
 
 	  // JS 1.8 gecko
-	  let offsetDate = noOffset(isoDate);
+	  var offsetDate = noOffset(isoDate);
 	  if (offsetDate) {
 	    return offsetDate;
 	  }
@@ -7264,7 +7212,7 @@ var Verifier = (function (exports) {
 	  return dateFromIso(date);
 	}
 
-	function startsWith (string, pattern) {
+	function startsWith(string, pattern) {
 	  if (typeof string !== 'string') {
 	    console.warn('Trying to test a non string variable');
 	    return false;
@@ -7272,17 +7220,23 @@ var Verifier = (function (exports) {
 	  return string.indexOf(pattern) === 0;
 	}
 
-	var isBitcoinMainnetAddress = function (bitcoinAddress) {
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var isBitcoinMainnetAddress = function isBitcoinMainnetAddress(bitcoinAddress) {
 	  if (startsWith(bitcoinAddress, "1") || startsWith(bitcoinAddress, PublicKey)) {
 	    return true;
 	  }
 	  return false;
 	};
 
-	var getChain = function (signature, bitcoinAddress) {
-	  let anchor = signature.anchors[0];
+	var getChain = function getChain(signature, bitcoinAddress) {
+	  var anchor = signature.anchors[0];
 	  if (anchor.chain) {
-	    let chain = anchor.chain;
+	    var chain = anchor.chain;
 	    if (chain == ChainSignatureValue.bitcoin) {
 	      return Blockchain.bitcoin;
 	    } else if (chain == ChainSignatureValue.testnet) {
@@ -7291,12 +7245,12 @@ var Verifier = (function (exports) {
 	      return Blockchain.regtest;
 	    } else if (chain == ChainSignatureValue.mocknet) {
 	      return Blockchain.mocknet;
-	    }  else if (chain == ChainSignatureValue.ethmain) {
+	    } else if (chain == ChainSignatureValue.ethmain) {
 	      return Blockchain.ethmain;
 	    } else if (chain == ChainSignatureValue.ethropst) {
 	      return Blockchain.ethropst;
 	    } else {
-	      throw new Error("Didn't recognize chain value")
+	      throw new Error("Didn't recognize chain value");
 	    }
 	  }
 	  // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
@@ -7307,7 +7261,7 @@ var Verifier = (function (exports) {
 	  return Blockchain.testnet;
 	};
 
-	var getNameForChain = function (chain) {
+	var getNameForChain = function getNameForChain(chain) {
 	  return chain.toString();
 	};
 
@@ -7316,13 +7270,11 @@ var Verifier = (function (exports) {
 	 *
 	 * @returns {string|*}
 	 */
-	const getTransactionId = certificateReceipt => {
+	var getTransactionId = function getTransactionId(certificateReceipt) {
 	  try {
 	    return certificateReceipt.anchors[0].sourceId;
 	  } catch (e) {
-	    throw new VerifierError(
-	      "Can't verify this certificate without a transaction ID to compare against.",
-	    );
+	    throw new VerifierError("Can't verify this certificate without a transaction ID to compare against.");
 	  }
 	};
 
@@ -7331,7 +7283,7 @@ var Verifier = (function (exports) {
 	 *
 	 * Exposes the raw transaction link (empty string if does not exist)
 	 */
-	const getRawTransactionLink = (transactionId, chain) => {
+	var getRawTransactionLink = function getRawTransactionLink(transactionId, chain) {
 	  try {
 	    return BlockchainRawTransactionUrl[chain].replace(BlockchainRawTransactionIdPlaceholder, transactionId);
 	  } catch (e) {
@@ -7344,7 +7296,7 @@ var Verifier = (function (exports) {
 	 *
 	 * Exposes the transaction link (empty string if does not exist)
 	 */
-	const getTransactionLink = (transactionId, chain) => {
+	var getTransactionLink = function getTransactionLink(transactionId, chain) {
 	  try {
 	    return BlockchainTransactionUrl[chain].replace(BlockchainRawTransactionIdPlaceholder, transactionId);
 	  } catch (e) {
@@ -7352,9 +7304,10 @@ var Verifier = (function (exports) {
 	  }
 	};
 
-	class Certificate {
-	  constructor(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id,
-	    issuer, receipt, signature, publicKey, revocationKey, chain, expires) {
+	var Certificate = function () {
+	  function Certificate(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires) {
+	    _classCallCheck$1(this, Certificate);
+
 	    this.version = version;
 	    this.name = name;
 	    this.title = title;
@@ -7377,101 +7330,113 @@ var Verifier = (function (exports) {
 	    this.transactionLink = getTransactionLink(this.transactionId, this.chain);
 	  }
 
-	  static parseV1(certificateJson) {
-	    const certificate = certificateJson.certificate || certificateJson.document.certificate;
-	    const recipient = certificateJson.recipient || certificateJson.document.recipient;
-	    const assertion = certificateJson.document.assertion;
-	    const certificateImage = certificate.image;
-	    const name = `${recipient.givenName} ${recipient.familyName}`;
-	    const title = certificate.title || certificate.name;
-	    const description = certificate.description;
-	    const signatureImage = certificateJson.document
-	      && certificateJson.document.assertion
-	      && certificateJson.document.assertion["image:signature"];
-	    const expires = assertion.expires;
+	  _createClass(Certificate, null, [{
+	    key: 'parseV1',
+	    value: function parseV1(certificateJson) {
+	      var certificate = certificateJson.certificate || certificateJson.document.certificate;
+	      var recipient = certificateJson.recipient || certificateJson.document.recipient;
+	      var assertion = certificateJson.document.assertion;
+	      var certificateImage = certificate.image;
+	      var name = recipient.givenName + ' ' + recipient.familyName;
+	      var title = certificate.title || certificate.name;
+	      var description = certificate.description;
+	      var signatureImage = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion["image:signature"];
+	      var expires = assertion.expires;
 
-	    var signatureImageObjects = [];
-	    if (signatureImage.constructor === Array) {
-	      for (var index in signatureImage) {
-	        var signatureLine = signatureImage[index];
-	        var jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-	        var signerName = 'name' in signatureLine ? signatureLine.name : null;
-	        var signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+	      var signatureImageObjects = [];
+	      if (signatureImage.constructor === Array) {
+	        for (var index in signatureImage) {
+	          var signatureLine = signatureImage[index];
+	          var jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+	          var signerName = 'name' in signatureLine ? signatureLine.name : null;
+	          var signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+	          signatureImageObjects.push(signatureObject);
+	        }
+	      } else {
+	        var signatureObject = new SignatureImage(signatureImage, null, null);
 	        signatureImageObjects.push(signatureObject);
 	      }
-	    } else {
-	      var signatureObject = new SignatureImage(signatureImage, null, null);
-	      signatureImageObjects.push(signatureObject);
+
+	      var sealImage = certificate.issuer.image;
+	      var subtitle = certificate.subtitle;
+	      if ((typeof subtitle === 'undefined' ? 'undefined' : _typeof(subtitle)) == "object") {
+	        subtitle = subtitle.display ? subtitle.content : "";
+	      }
+	      var id = assertion.uid;
+	      var issuer = certificate.issuer;
+	      var receipt = certificateJson.receipt;
+	      var signature = certificateJson.document.signature;
+	      var publicKey = recipient.publicKey;
+	      var revocationKey = recipient.revocationKey || null;
+
+	      var version = void 0;
+	      if (typeof receipt === "undefined") {
+	        version = CertificateVersion.v1_1;
+	      } else {
+	        version = CertificateVersion.v1_2;
+	      }
+
+	      var chain;
+	      if (isBitcoinMainnetAddress(publicKey)) {
+	        chain = Blockchain.bitcoin;
+	      } else {
+	        chain = Blockchain.testnet;
+	      }
+
+	      return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires);
 	    }
+	  }, {
+	    key: 'parseV2',
+	    value: function parseV2(certificateJson) {
+	      var id = certificateJson.id,
+	          recipient = certificateJson.recipient,
+	          expires = certificateJson.expires,
+	          receipt = certificateJson.signature,
+	          badge = certificateJson.badge;
+	      var certificateImage = badge.image,
+	          title = badge.name,
+	          description = badge.description,
+	          subtitle = badge.subtitle,
+	          issuer = badge.issuer;
 
-	    const sealImage = certificate.issuer.image;
-	    let subtitle = certificate.subtitle;
-	    if (typeof subtitle == "object") {
-	      subtitle = subtitle.display ? subtitle.content : "";
+	      var issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
+	      var recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+	      var sealImage = issuer.image;
+	      var publicKey = recipientProfile.publicKey;
+	      var name = recipientProfile.name;
+
+	      var signatureImageObjects = [];
+	      for (var index in badge.signatureLines) {
+	        var signatureLine = badge.signatureLines[index];
+	        var signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+	        signatureImageObjects.push(signatureObject);
+	      }
+
+	      var chain = getChain(certificateJson.signature, issuerKey);
+	      return new Certificate(CertificateVersion.v2_0, name, title, subtitle, description, certificateImage, signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chain, expires);
 	    }
-	    const id = assertion.uid;
-	    const issuer = certificate.issuer;
-	    const receipt = certificateJson.receipt;
-	    const signature = certificateJson.document.signature;
-	    const publicKey = recipient.publicKey;
-	    const revocationKey = recipient.revocationKey || null;
-
-	    let version;
-	    if (typeof receipt === "undefined") {
-	      version = CertificateVersion.v1_1;
-	    } else {
-	      version = CertificateVersion.v1_2;
+	  }, {
+	    key: 'parseJson',
+	    value: function parseJson(certificateJson) {
+	      var version = certificateJson["@context"];
+	      if (version instanceof Array) {
+	        return this.parseV2(certificateJson);
+	      } else {
+	        return this.parseV1(certificateJson);
+	      }
 	    }
+	  }]);
 
-	    var chain;
-	    if (isBitcoinMainnetAddress(publicKey)) {
-	      chain = Blockchain.bitcoin;
-	    } else {
-	      chain = Blockchain.testnet;
-	    }
+	  return Certificate;
+	}();
 
-	    return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects,
-	      sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires);
-	  }
+	var SignatureImage = function SignatureImage(image, jobTitle, name) {
+	  _classCallCheck$1(this, SignatureImage);
 
-	  static parseV2(certificateJson) {
-	    const { id, recipient, expires, signature: receipt, badge } = certificateJson;
-	    const { image: certificateImage, name: title, description, subtitle, issuer } = badge;
-	    const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
-	    const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
-	    const sealImage = issuer.image;
-	    const publicKey = recipientProfile.publicKey;
-	    const name = recipientProfile.name;
-
-	    var signatureImageObjects = [];
-	    for (var index in badge.signatureLines) {
-	      var signatureLine = badge.signatureLines[index];
-	      var signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
-	      signatureImageObjects.push(signatureObject);
-	    }
-
-	    const chain = getChain(certificateJson.signature, issuerKey);
-	    return new Certificate(CertificateVersion.v2_0, name, title, subtitle, description, certificateImage,
-	      signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chain, expires);
-	  }
-
-	  static parseJson(certificateJson) {
-	    const version = certificateJson["@context"];
-	    if (version instanceof Array) {
-	      return this.parseV2(certificateJson);
-	    } else {
-	      return this.parseV1(certificateJson);
-	    }
-	  }
-	}
-
-	class SignatureImage {
-	  constructor(image, jobTitle, name) {
-	    this.image = image;
-	    this.jobTitle = jobTitle;
-	    this.name = name;
-	  }
-	}
+	  this.image = image;
+	  this.jobTitle = jobTitle;
+	  this.name = name;
+	};
 
 	var global$1 = (typeof global !== "undefined" ? global :
 	            typeof self !== "undefined" ? self :
@@ -20329,7 +20294,7 @@ var Verifier = (function (exports) {
 
 	HDNode.prototype.toString = HDNode.prototype.toBase58;
 
-	var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js'
+	var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js';
 
 	var es6Promise = createCommonjsModule(function (module) {
 	/*!
@@ -29725,59 +29690,38 @@ var Verifier = (function (exports) {
 	}(commonjsGlobal);
 	});
 
-	const {
-	  obi: OBI_CONTEXT,
-	  blockcerts: BLOCKCERTS_CONTEXT,
-	  blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
-	  blockcertsv2: BLOCKCERTSV2_CONTEXT,
-	} = Contexts;
-	const CONTEXTS = {};
+	var OBI_CONTEXT = Contexts.obi,
+	    BLOCKCERTS_CONTEXT = Contexts.blockcerts,
+	    BLOCKCERTSV1_2_CONTEXT = Contexts.blockcertsv1_2,
+	    BLOCKCERTSV2_CONTEXT = Contexts.blockcertsv2;
+
+	var CONTEXTS = {};
 	// Preload contexts
-	CONTEXTS[
-	  'https://w3id.org/blockcerts/schema/2.0-alpha/context.json'
-	] = BLOCKCERTS_CONTEXT;
-	CONTEXTS[
-	  'https://www.blockcerts.org/schema/2.0-alpha/context.json'
-	] = BLOCKCERTS_CONTEXT;
+	CONTEXTS['https://w3id.org/blockcerts/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
+	CONTEXTS['https://www.blockcerts.org/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
 	CONTEXTS['https://w3id.org/openbadges/v2'] = OBI_CONTEXT;
 	CONTEXTS['https://openbadgespec.org/v2/context.json'] = OBI_CONTEXT;
 	CONTEXTS['https://w3id.org/blockcerts/v2'] = BLOCKCERTSV2_CONTEXT;
-	CONTEXTS[
-	  'https://www.w3id.org/blockcerts/schema/2.0/context.json'
-	] = BLOCKCERTSV2_CONTEXT;
+	CONTEXTS['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = BLOCKCERTSV2_CONTEXT;
 	CONTEXTS['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
 
-	function ensureNotRevokedBySpentOutput(
-	  revokedAddresses,
-	  issuerRevocationKey,
-	  recipientRevocationKey,
-	) {
+	function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, recipientRevocationKey) {
 	  if (issuerRevocationKey) {
-	    const revokedAssertionId = revokedAddresses.findIndex(
-	      address => address === issuerRevocationKey,
-	    );
-	    const isRevokedByIssuer = revokedAssertionId !== -1;
+	    var revokedAssertionId = revokedAddresses.findIndex(function (address) {
+	      return address === issuerRevocationKey;
+	    });
+	    var isRevokedByIssuer = revokedAssertionId !== -1;
 	    if (isRevokedByIssuer) {
-	      throw new VerifierError(
-	        Status.checkingRevokedStatus,
-	        generateRevocationReason(
-	          revokedAddresses[revokedAssertionId].revocationReason,
-	        ),
-	      );
+	      throw new VerifierError(Status.checkingRevokedStatus, generateRevocationReason(revokedAddresses[revokedAssertionId].revocationReason));
 	    }
 	  }
 	  if (recipientRevocationKey) {
-	    const revokedAssertionId = revokedAddresses.findIndex(
-	      address => address === recipientRevocationKey,
-	    );
-	    const isRevokedByRecipient = revokedAssertionId !== -1;
+	    var _revokedAssertionId = revokedAddresses.findIndex(function (address) {
+	      return address === recipientRevocationKey;
+	    });
+	    var isRevokedByRecipient = _revokedAssertionId !== -1;
 	    if (isRevokedByRecipient) {
-	      throw new VerifierError(
-	        Status.checkingRevokedStatus,
-	        generateRevocationReason(
-	          revokedAddresses[revokedAssertionId].revocationReason,
-	        ),
-	      );
+	      throw new VerifierError(Status.checkingRevokedStatus, generateRevocationReason(revokedAddresses[_revokedAssertionId].revocationReason));
 	    }
 	  }
 	}
@@ -29787,37 +29731,28 @@ var Verifier = (function (exports) {
 	    // nothing to do
 	    return;
 	  }
-	  const revokedAddresses = revokedAssertions.map(output => output.id);
-	  const revokedAssertionId = revokedAddresses.findIndex(
-	    id => id === assertionUid,
-	  );
-	  const isRevokedByIssuer = revokedAssertionId !== -1;
+	  var revokedAddresses = revokedAssertions.map(function (output) {
+	    return output.id;
+	  });
+	  var revokedAssertionId = revokedAddresses.findIndex(function (id) {
+	    return id === assertionUid;
+	  });
+	  var isRevokedByIssuer = revokedAssertionId !== -1;
 
 	  if (isRevokedByIssuer) {
-	    throw new VerifierError(
-	      Status.checkingRevokedStatus,
-	      generateRevocationReason(
-	        revokedAssertions[revokedAssertionId].revocationReason,
-	      ),
-	    );
+	    throw new VerifierError(Status.checkingRevokedStatus, generateRevocationReason(revokedAssertions[revokedAssertionId].revocationReason));
 	  }
 	}
 
 	function ensureHashesEqual(actual, expected) {
 	  if (actual !== expected) {
-	    throw new VerifierError(
-	      Status.comparingHashes,
-	      'Computed hash does not match remote hash',
-	    );
+	    throw new VerifierError(Status.comparingHashes, 'Computed hash does not match remote hash');
 	  }
 	}
 
 	function ensureMerkleRootEqual(merkleRoot, remoteHash) {
 	  if (merkleRoot !== remoteHash) {
-	    throw new VerifierError(
-	      Status.checkingMerkleRoot,
-	      'Merkle root does not match remote hash.',
-	    );
+	    throw new VerifierError(Status.checkingMerkleRoot, 'Merkle root does not match remote hash.');
 	  }
 	}
 
@@ -29838,10 +29773,7 @@ var Verifier = (function (exports) {
 	    }
 	  }
 	  if (!validKey) {
-	    throw new VerifierError(
-	      Status.checkingAuthenticity,
-	      'Transaction occurred at time when issuing address was not considered valid.',
-	    );
+	    throw new VerifierError(Status.checkingAuthenticity, 'Transaction occurred at time when issuing address was not considered valid.');
 	  }
 	}
 
@@ -29852,46 +29784,34 @@ var Verifier = (function (exports) {
 	    var proof = receipt.proof;
 	    if (!!proof) {
 	      for (var index in proof) {
-	        const node = proof[index];
+	        var node = proof[index];
 	        if (typeof node.left !== 'undefined') {
-	          var appendedBuffer = _toByteArray(`${node.left}${proofHash}`);
+	          var appendedBuffer = _toByteArray('' + node.left + proofHash);
 	          proofHash = sha256$2(appendedBuffer);
 	        } else if (typeof node.right !== 'undefined') {
-	          var appendedBuffer = _toByteArray(`${proofHash}${node.right}`);
+	          var appendedBuffer = _toByteArray('' + proofHash + node.right);
 	          proofHash = sha256$2(appendedBuffer);
 	        } else {
-	          throw new VerifierError(
-	            Status.checkingReceipt,
-	            'We should never get here.',
-	          );
+	          throw new VerifierError(Status.checkingReceipt, 'We should never get here.');
 	        }
 	      }
 	    }
 	  } catch (e) {
-	    throw new VerifierError(
-	      Status.checkingReceipt,
-	      'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.',
-	    );
+	    throw new VerifierError(Status.checkingReceipt, 'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.');
 	  }
 
 	  if (proofHash !== merkleRoot) {
-	    throw new VerifierError(
-	      Status.checkingReceipt,
-	      "Invalid Merkle Receipt. Proof hash didn't match Merkle root",
-	    );
+	    throw new VerifierError(Status.checkingReceipt, "Invalid Merkle Receipt. Proof hash didn't match Merkle root");
 	  }
 	}
 
 	function getTransactionId$1(certificate) {
-	  let transactionId;
+	  var transactionId = void 0;
 	  try {
 	    transactionId = certificate.receipt.anchors[0].sourceId;
 	    return transactionId;
 	  } catch (e) {
-	    throw new VerifierError(
-	      Status.getTransactionId,
-	      "Can't verify this certificate without a transaction ID to compare against.",
-	    );
+	    throw new VerifierError(Status.getTransactionId, "Can't verify this certificate without a transaction ID to compare against.");
 	  }
 	}
 
@@ -29899,19 +29819,21 @@ var Verifier = (function (exports) {
 	  var expandContext = document['@context'];
 	  var theDocument = document;
 	  if (version === CertificateVersion.v2_0 && CheckForUnmappedFields) {
-	    if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
+	    if (expandContext.find(function (x) {
+	      return x === Object(x) && '@vocab' in x;
+	    })) {
 	      expandContext = null;
 	    } else {
 	      expandContext.push({ '@vocab': 'http://fallback.org/' });
 	    }
 	  }
 	  var nodeDocumentLoader = jsonld.documentLoaders.node();
-	  var customLoader = function(url, callback) {
+	  var customLoader = function customLoader(url, callback) {
 	    if (url in CONTEXTS) {
 	      return callback(null, {
 	        contextUrl: null,
 	        document: CONTEXTS[url],
-	        documentUrl: url,
+	        documentUrl: url
 	      });
 	    }
 	    return nodeDocumentLoader(url, callback);
@@ -29919,30 +29841,20 @@ var Verifier = (function (exports) {
 	  jsonld.documentLoader = customLoader;
 	  var normalizeArgs = {
 	    algorithm: 'URDNA2015',
-	    format: 'application/nquads',
+	    format: 'application/nquads'
 	  };
 	  if (expandContext) {
 	    normalizeArgs.expandContext = expandContext;
 	  }
 
-	  return new Promise((resolve, reject) => {
-	    jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
+	  return new Promise(function (resolve, reject) {
+	    jsonld.normalize(theDocument, normalizeArgs, function (err, normalized) {
 	      if (!!err) {
-	        reject(
-	          new VerifierError(
-	            Status.computingLocalHash,
-	            'Failed JSON-LD normalization',
-	          ),
-	        );
+	        reject(new VerifierError(Status.computingLocalHash, 'Failed JSON-LD normalization'));
 	      } else {
-	        let unmappedFields = getUnmappedFields(normalized);
+	        var unmappedFields = getUnmappedFields(normalized);
 	        if (unmappedFields) {
-	          reject(
-	            new VerifierError(
-	              Status.computingLocalHash,
-	              'Found unmapped fields during JSON-LD normalization',
-	            ),
-	          ); // + unmappedFields.join(",")
+	          reject(new VerifierError(Status.computingLocalHash, 'Found unmapped fields during JSON-LD normalization')); // + unmappedFields.join(",")
 	        } else {
 	          resolve(sha256$2(_toUTF8Data(normalized)));
 	        }
@@ -29970,10 +29882,7 @@ var Verifier = (function (exports) {
 	  }
 	  var expiryDate = dateToUnixTimestamp(expires);
 	  if (new Date() >= expiryDate) {
-	    throw new VerifierError(
-	      Status.checkingExpiresDate,
-	      'This certificate has expired.',
-	    );
+	    throw new VerifierError(Status.checkingExpiresDate, 'This certificate has expired.');
 	  }
 	  // otherwise, it's fine
 	}
@@ -29991,29 +29900,18 @@ var Verifier = (function (exports) {
 	  var utf8 = [];
 	  for (var i = 0; i < string.length; i++) {
 	    var charcode = string.charCodeAt(i);
-	    if (charcode < 0x80) utf8.push(charcode);
-	    else if (charcode < 0x800) {
-	      utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
+	    if (charcode < 0x80) utf8.push(charcode);else if (charcode < 0x800) {
+	      utf8.push(0xc0 | charcode >> 6, 0x80 | charcode & 0x3f);
 	    } else if (charcode < 0xd800 || charcode >= 0xe000) {
-	      utf8.push(
-	        0xe0 | (charcode >> 12),
-	        0x80 | ((charcode >> 6) & 0x3f),
-	        0x80 | (charcode & 0x3f),
-	      );
+	      utf8.push(0xe0 | charcode >> 12, 0x80 | charcode >> 6 & 0x3f, 0x80 | charcode & 0x3f);
 	    } else {
 	      // surrogate pair
 	      i++;
 	      // UTF-16 encodes 0x10000-0x10FFFF by
 	      // subtracting 0x10000 and splitting the
 	      // 20 bits of 0x0-0xFFFFF into two halves
-	      charcode =
-	        0x10000 + (((charcode & 0x3ff) << 10) | (string.charCodeAt(i) & 0x3ff));
-	      utf8.push(
-	        0xf0 | (charcode >> 18),
-	        0x80 | ((charcode >> 12) & 0x3f),
-	        0x80 | ((charcode >> 6) & 0x3f),
-	        0x80 | (charcode & 0x3f),
-	      );
+	      charcode = 0x10000 + ((charcode & 0x3ff) << 10 | string.charCodeAt(i) & 0x3ff);
+	      utf8.push(0xf0 | charcode >> 18, 0x80 | charcode >> 12 & 0x3f, 0x80 | charcode >> 6 & 0x3f, 0x80 | charcode & 0x3f);
 	    }
 	  }
 	  return utf8;
@@ -32493,37 +32391,37 @@ var Verifier = (function (exports) {
 	  };
 	};
 
-	const log$2 = browser$1('promisifiedRequests');
+	var log$2 = browser$1('promisifiedRequests');
 
 	function request$1(obj) {
-	  return new Promise((resolve, reject) => {
-	    let url = obj.url;
+	  return new Promise(function (resolve, reject) {
+	    var url = obj.url;
 
 	    // server
-	    const xhr = typeof XMLHttpRequest === 'undefined' ? XMLHttpRequest_1 : XMLHttpRequest;
-	    let request = new xhr();
+	    var xhr = typeof XMLHttpRequest === 'undefined' ? XMLHttpRequest_1 : XMLHttpRequest;
+	    var request = new xhr();
 
-	    request.onload = () => {
+	    request.onload = function () {
 	      if (request.status >= 200 && request.status < 300) {
 	        resolve(request.responseText);
 	      } else {
-	        let failureMessage = `Error fetching url:${url}; status code:${request.status}`;
+	        var failureMessage = 'Error fetching url:' + url + '; status code:' + request.status;
 	        reject(new Error(failureMessage));
 	      }
 	    };
 
-	    request.ontimeout = (e) => {
+	    request.ontimeout = function (e) {
 	      console.log('ontimeout', e);
 	    };
 
-	    request.onreadystatechange = () => {
+	    request.onreadystatechange = function () {
 	      if (request.status === 404) {
-	        reject(new Error(`Error fetching url:${url}; status code:${request.status}`));
+	        reject(new Error('Error fetching url:' + url + '; status code:' + request.status));
 	      }
 	    };
 
-	    request.onerror = () => {
-	      log$2(`Request failed with error ${request.responseText}`);
+	    request.onerror = function () {
+	      log$2('Request failed with error ' + request.responseText);
 	      reject(new Error(request.responseText));
 	    };
 
@@ -32537,31 +32435,32 @@ var Verifier = (function (exports) {
 	  });
 	}
 
-	class TransactionData {
-	  constructor(remoteHash, issuingAddress, time, revokedAddresses) {
-	    this.remoteHash = remoteHash;
-	    this.issuingAddress = issuingAddress;
-	    this.time = time;
-	    this.revokedAddresses = revokedAddresses;
-	  }
-	}
+	function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	class Key {
-	  constructor(publicKey, created, revoked, expires) {
-	    this.publicKey = publicKey;
-	    this.created = created;
-	    this.revoked = revoked;
-	    this.expires = expires;
-	  }
-	}
+	var TransactionData = function TransactionData(remoteHash, issuingAddress, time, revokedAddresses) {
+	  _classCallCheck$2(this, TransactionData);
+
+	  this.remoteHash = remoteHash;
+	  this.issuingAddress = issuingAddress;
+	  this.time = time;
+	  this.revokedAddresses = revokedAddresses;
+	};
+
+	var Key = function Key(publicKey, created, revoked, expires) {
+	  _classCallCheck$2(this, Key);
+
+	  this.publicKey = publicKey;
+	  this.created = created;
+	  this.revoked = revoked;
+	  this.expires = expires;
+	};
 
 	function parseIssuerKeys(issuerProfileJson) {
 	  try {
 	    var keyMap = {};
 	    if ('@context' in issuerProfileJson) {
 	      // backcompat for v2 alpha
-	      var responseKeys =
-	        issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
+	      var responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
 	      for (var i = 0; i < responseKeys.length; i++) {
 	        var key = responseKeys[i];
 	        var created = key.created ? dateToUnixTimestamp(key.created) : null;
@@ -32575,62 +32474,52 @@ var Verifier = (function (exports) {
 	      }
 	    } else {
 	      // This is a v2 certificate with a v1 issuer
-	      const issuerKeys = issuerProfileJson.issuerKeys || [];
+	      var issuerKeys = issuerProfileJson.issuerKeys || [];
 	      var issuerKey = issuerKeys[0].key;
 	      var k = new Key(issuerKey, null, null, null);
 	      keyMap[k.publicKey] = k;
 	    }
 	    return keyMap;
 	  } catch (e) {
-	    throw new VerifierError(
-	      Status.parsingIssuerKeys,
-	      'Unable to parse JSON out of issuer identification data.',
-	    );
+	    throw new VerifierError(Status.parsingIssuerKeys, 'Unable to parse JSON out of issuer identification data.');
 	  }
 	}
 
 	function parseRevocationKey(issuerProfileJson) {
-	  if (
-	    issuerProfileJson.revocationKeys &&
-	    issuerProfileJson.revocationKeys.length > 0
-	  ) {
+	  if (issuerProfileJson.revocationKeys && issuerProfileJson.revocationKeys.length > 0) {
 	    return issuerProfileJson.revocationKeys[0].key;
 	  }
 	  return null;
 	}
 
 	function getIssuerProfile(issuerId) {
-	  let issuerProfileFetcher = new Promise((resolve, reject) => {
-	    return request$1({ url: issuerId })
-	      .then(response => {
-	        try {
-	          let issuerProfileJson = JSON.parse(response);
-	          resolve(issuerProfileJson);
-	        } catch (err) {
-	          reject(new VerifierError(Status.gettingIssuerProfile, err));
-	        }
-	      })
-	      .catch(err => {
-	        reject(new VerifierError(Status.gettingIssuerProfile, `Unable to get issuer profile`));
-	      });
+	  var issuerProfileFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: issuerId }).then(function (response) {
+	      try {
+	        var issuerProfileJson = JSON.parse(response);
+	        resolve(issuerProfileJson);
+	      } catch (err) {
+	        reject(new VerifierError(Status.gettingIssuerProfile, err));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.gettingIssuerProfile, 'Unable to get issuer profile'));
+	    });
 	  });
 	  return issuerProfileFetcher;
 	}
 
 	function getIssuerKeys(issuerId) {
-	  let issuerKeyFetcher = new Promise((resolve, reject) => {
-	    return getIssuerProfile(issuerId)
-	      .then(function(issuerProfileJson) {
-	        try {
-	          let issuerKeyMap = parseIssuerKeys(issuerProfileJson);
-	          resolve(issuerKeyMap);
-	        } catch (err) {
-	          reject(new VerifierError(Status.parsingIssuerKeys, err));
-	        }
-	      })
-	      .catch(function(err) {
+	  var issuerKeyFetcher = new Promise(function (resolve, reject) {
+	    return getIssuerProfile(issuerId).then(function (issuerProfileJson) {
+	      try {
+	        var issuerKeyMap = parseIssuerKeys(issuerProfileJson);
+	        resolve(issuerKeyMap);
+	      } catch (err) {
 	        reject(new VerifierError(Status.parsingIssuerKeys, err));
-	      });
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.parsingIssuerKeys, err));
+	    });
 	  });
 	  return issuerKeyFetcher;
 	}
@@ -32639,66 +32528,59 @@ var Verifier = (function (exports) {
 	  if (!revocationListUrl) {
 	    return Promise.resolve([]);
 	  }
-	  let revocationListFetcher = new Promise((resolve, reject) => {
-	    return request$1({ url: revocationListUrl })
-	      .then(function(response) {
-	        try {
-	          let issuerRevocationJson = JSON.parse(response);
-	          let revokedAssertions = issuerRevocationJson.revokedAssertions
-	            ? issuerRevocationJson.revokedAssertions
-	            : [];
-	          resolve(revokedAssertions);
-	        } catch (err) {
-	          reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
-	        }
-	      })
-	      .catch(function(err) {
-	        reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
-	      });
+	  var revocationListFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: revocationListUrl }).then(function (response) {
+	      try {
+	        var issuerRevocationJson = JSON.parse(response);
+	        var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
+	        resolve(revokedAssertions);
+	      } catch (err) {
+	        reject(new VerifierError(Status.parsingIssuerKeys, 'Unable to get revocation assertion'));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.parsingIssuerKeys, 'Unable to get revocation assertion'));
+	    });
 	  });
 	  return revocationListFetcher;
 	}
 
 	function getEtherScanFetcher(transactionId, chain) {
-	  const action = "&action=eth_getTransactionByHash&txhash=";
-	  let etherScanUrl;
+	  var action = "&action=eth_getTransactionByHash&txhash=";
+	  var etherScanUrl = void 0;
 	  if (chain === Blockchain.ethmain) {
 	    etherScanUrl = Url.etherScanMainUrl + action + transactionId;
 	  } else {
 	    etherScanUrl = Url.etherScanRopstenUrl + action + transactionId;
 	  }
 
-	  let etherScanFetcher = new Promise((resolve, reject) => {
-	    return request$1({url: etherScanUrl})
-	      .then(function (response) {
-	        const responseTxData = JSON.parse(response);
-	        try {
-	          // Parse block to get timestamp first, then create TransactionData
-	          let blockFetcher = getEtherScanBlock(responseTxData, chain);
-	          blockFetcher
-	            .then(function (blockResponse) {
-	              const txData = parseEtherScanResponse(responseTxData, blockResponse);
-	              resolve(txData);
-	            })
-	            .catch(function (err) {
-	              reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	            });
-	        } catch (err) {
-	          // don't need to wrap this exception
-	          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	        }
-	      }).catch(function (err) {
-	        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	      });
+	  var etherScanFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseTxData = JSON.parse(response);
+	      try {
+	        // Parse block to get timestamp first, then create TransactionData
+	        var blockFetcher = getEtherScanBlock(responseTxData, chain);
+	        blockFetcher.then(function (blockResponse) {
+	          var txData = parseEtherScanResponse(responseTxData, blockResponse);
+	          resolve(txData);
+	        }).catch(function (err) {
+	          reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	        });
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	    });
 	  });
 	  return etherScanFetcher;
 	}
 
 	function parseEtherScanResponse(jsonResponse, block) {
-	  const data = jsonResponse.result;
-	  const date = new Date(parseInt(block.timestamp, 16) * 1000);
-	  const issuingAddress = data.from;
-	  const opReturnScript = cleanupRemoteHash(data.input); // remove '0x'
+	  var data = jsonResponse.result;
+	  var date = new Date(parseInt(block.timestamp, 16) * 1000);
+	  var issuingAddress = data.from;
+	  var opReturnScript = cleanupRemoteHash(data.input); // remove '0x'
 
 	  // The method of checking revocations by output spent do not work with Ethereum.
 	  // There are no input/outputs, only balances.
@@ -32706,70 +32588,67 @@ var Verifier = (function (exports) {
 	}
 
 	function getEtherScanBlock(jsonResponse, chain) {
-	  const data = jsonResponse.result;
-	  const blockNumber = data.blockNumber;
-	  const action = "&action=eth_getBlockByNumber&boolean=true&tag=";
-	  let etherScanUrl;
+	  var data = jsonResponse.result;
+	  var blockNumber = data.blockNumber;
+	  var action = "&action=eth_getBlockByNumber&boolean=true&tag=";
+	  var etherScanUrl = void 0;
 	  if (chain === Blockchain.ethmain) {
 	    etherScanUrl = Url.etherScanMainUrl + action + blockNumber;
 	  } else {
 	    etherScanUrl = Url.etherScanRopstenUrl + action + blockNumber;
 	  }
 
-	  return new Promise((resolve, reject) => {
-	    return request$1({url: etherScanUrl})
-	      .then(function (response) {
-	        const responseData = JSON.parse(response);
-	        const blockData = responseData.result;
-	        try {
-	          let checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
-	          checkConfirmationsFetcher
-	            .then(function () {
-	              resolve(blockData);
-	            }).catch(function (err) {
-	              reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	          });
-	        } catch (err) {
-	          // don't need to wrap this exception
-	          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	        }
-	      }).catch(function (err) {
-	        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	      });
+	  return new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      var blockData = responseData.result;
+	      try {
+	        var checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
+	        checkConfirmationsFetcher.then(function () {
+	          resolve(blockData);
+	        }).catch(function (err) {
+	          reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	        });
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	    });
 	  });
 	}
 
-	function checkEtherScanConfirmations(chain, blockNumber){
-	  const action = "&action=eth_blockNumber";
-	  let etherScanUrl;
+	function checkEtherScanConfirmations(chain, blockNumber) {
+	  var action = "&action=eth_blockNumber";
+	  var etherScanUrl = void 0;
 	  if (chain === Blockchain.ethmain) {
 	    etherScanUrl = Url.etherScanMainUrl + action;
 	  } else {
 	    etherScanUrl = Url.etherScanRopstenUrl + action;
 	  }
 
-	  return new Promise((resolve, reject) => {
-	    return request$1({url: etherScanUrl})
-	      .then(function (response) {
-	        const responseData = JSON.parse(response);
-	        const currentBlockCount = responseData.result;
-	        try {
-	          if (currentBlockCount - blockNumber < MininumConfirmations) {
-	            reject(new VerifierError(Status.fetchingRemoteHash, `Number of transaction confirmations were less than the minimum required, according to EtherScan API`));
-	          }
-	          resolve(currentBlockCount);
-	        } catch (err) {
-	          // don't need to wrap this exception
-	          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+	  return new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      var currentBlockCount = responseData.result;
+	      try {
+	        if (currentBlockCount - blockNumber < MininumConfirmations) {
+	          reject(new VerifierError(Status.fetchingRemoteHash, "Number of transaction confirmations were less than the minimum required, according to EtherScan API"));
 	        }
-	      }).catch(function (err) {
-	        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	      });
+	        resolve(currentBlockCount);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.fetchingRemoteHash, "Unable to get remote hash"));
+	    });
 	  });
 	}
 
 	function cleanupRemoteHash(remoteHash) {
-	  let prefix = "0x";
+	  var prefix = "0x";
 	  if (startsWith(remoteHash, prefix)) {
 	    return remoteHash.slice(prefix.length);
 	  }
@@ -32777,91 +32656,80 @@ var Verifier = (function (exports) {
 	}
 
 	function getBlockcypherFetcher(transactionId, chain) {
-	  let blockCypherUrl;
+	  var blockCypherUrl = void 0;
 	  if (chain === Blockchain.bitcoin) {
 	    blockCypherUrl = Url.blockCypherUrl + transactionId + '?limit=500';
 	  } else {
 	    blockCypherUrl = Url.blockCypherTestUrl + transactionId + '?limit=500';
 	  }
-	  let blockcypherFetcher = new Promise((resolve, reject) => {
-	    return request$1({ url: blockCypherUrl })
-	      .then(function(response) {
-	        const responseData = JSON.parse(response);
-	        try {
-	          const txData = parseBlockCypherResponse(responseData);
-	          resolve(txData);
-	        } catch (err) {
-	          // don't need to wrap this exception
-	          reject(err.message);
-	        }
-	      })
-	      .catch(function(err) {
-	        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	      });
+	  var blockcypherFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: blockCypherUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      try {
+	        var txData = parseBlockCypherResponse(responseData);
+	        resolve(txData);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(err.message);
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.fetchingRemoteHash, 'Unable to get remote hash'));
+	    });
 	  });
 	  return blockcypherFetcher;
 	}
 
 	function getChainSoFetcher(transactionId, chain) {
-	  let chainSoUrl;
+	  var chainSoUrl = void 0;
 	  if (chain === Blockchain.bitcoin) {
 	    chainSoUrl = Url.chainSoUrl + transactionId;
 	  } else {
 	    chainSoUrl = Url.chainSoTestUrl + transactionId;
 	  }
 
-	  let chainSoFetcher = new Promise((resolve, reject) => {
-	    return request$1({ url: chainSoUrl })
-	      .then(function(response) {
-	        const responseData = JSON.parse(response);
-	        try {
-	          const txData = parseChainSoResponse(responseData);
-	          resolve(txData);
-	        } catch (err) {
-	          // don't need to wrap this exception
-	          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	        }
-	      })
-	      .catch(function(err) {
-	        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-	      });
+	  var chainSoFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: chainSoUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      try {
+	        var txData = parseChainSoResponse(responseData);
+	        resolve(txData);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(Status.fetchingRemoteHash, 'Unable to get remote hash'));
+	      }
+	    }).catch(function (err) {
+	      reject(new VerifierError(Status.fetchingRemoteHash, 'Unable to get remote hash'));
+	    });
 	  });
 	  return chainSoFetcher;
 	}
 
 	function parseBlockCypherResponse(jsonResponse) {
 	  if (jsonResponse.confirmations < MininumConfirmations) {
-	    throw new VerifierError(
-	      'Number of transaction confirmations were less than the minimum required, according to Blockcypher API',
-	    );
+	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Blockcypher API');
 	  }
-	  const time = dateToUnixTimestamp(jsonResponse.received);
-	  const outputs = jsonResponse.outputs;
+	  var time = dateToUnixTimestamp(jsonResponse.received);
+	  var outputs = jsonResponse.outputs;
 	  var lastOutput = outputs[outputs.length - 1];
 	  var issuingAddress = jsonResponse.inputs[0].addresses[0];
-	  const opReturnScript = cleanupRemoteHash$1(lastOutput.script);
-	  var revokedAddresses = outputs
-	    .filter(output => !!output.spent_by)
-	    .map(output => output.addresses[0]);
-	  return new TransactionData(
-	    opReturnScript,
-	    issuingAddress,
-	    time,
-	    revokedAddresses,
-	  );
+	  var opReturnScript = cleanupRemoteHash$1(lastOutput.script);
+	  var revokedAddresses = outputs.filter(function (output) {
+	    return !!output.spent_by;
+	  }).map(function (output) {
+	    return output.addresses[0];
+	  });
+	  return new TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
 	}
 
 	function parseChainSoResponse(jsonResponse) {
 	  if (jsonResponse.data.confirmations < MininumConfirmations) {
-	    throw new VerifierError(
-	      'Number of transaction confirmations were less than the minimum required, according to Chain.so API',
-	    );
+	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Chain.so API');
 	  }
-	  const time = new Date(jsonResponse.data.time * 1000);
-	  const outputs = jsonResponse.data.outputs;
+	  var time = new Date(jsonResponse.data.time * 1000);
+	  var outputs = jsonResponse.data.outputs;
 	  var lastOutput = outputs[outputs.length - 1];
 	  var issuingAddress = jsonResponse.data.inputs[0].address;
-	  const opReturnScript = cleanupRemoteHash$1(lastOutput.script);
+	  var opReturnScript = cleanupRemoteHash$1(lastOutput.script);
 	  // Legacy v1.2 verification notes:
 	  // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
 	  // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
@@ -32872,9 +32740,9 @@ var Verifier = (function (exports) {
 	}
 
 	function cleanupRemoteHash$1(remoteHash) {
-	  let prefixes = ['6a20', 'OP_RETURN '];
+	  var prefixes = ['6a20', 'OP_RETURN '];
 	  for (var i = 0; i < prefixes.length; i++) {
-	    let prefix = prefixes[i];
+	    var prefix = prefixes[i];
 	    if (startsWith(remoteHash, prefix)) {
 	      return remoteHash.slice(prefix.length);
 	    }
@@ -32882,22 +32750,22 @@ var Verifier = (function (exports) {
 	  return remoteHash;
 	}
 
-	const log$3 = browser$1("blockchainConnectors");
+	var log$3 = browser$1("blockchainConnectors");
 
-	const BitcoinExplorers = [
-	  (transactionId, chain) => getChainSoFetcher(transactionId, chain),
-	  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain),
-	];
+	var BitcoinExplorers = [function (transactionId, chain) {
+	  return getChainSoFetcher(transactionId, chain);
+	}, function (transactionId, chain) {
+	  return getBlockcypherFetcher(transactionId, chain);
+	}];
 
-	const EthereumExplorers = [
-	  (transactionId, chain) => getEtherScanFetcher(transactionId, chain)
-	];
+	var EthereumExplorers = [function (transactionId, chain) {
+	  return getEtherScanFetcher(transactionId, chain);
+	}];
 
 	// for legacy (pre-v2) Blockcerts
-	const BlockchainExplorersWithSpentOutputInfo = [
-	  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
-	];
-
+	var BlockchainExplorersWithSpentOutputInfo = [function (transactionId, chain) {
+	  return getBlockcypherFetcher(transactionId, chain);
+	}];
 
 	function lookForTx(transactionId, chain, certificateVersion) {
 	  var BlockchainExplorers;
@@ -32913,20 +32781,19 @@ var Verifier = (function (exports) {
 	      BlockchainExplorers = EthereumExplorers;
 	      break;
 	    default:
-	      return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid chain; does not map to known BlockchainExplorers.`));
+	      return Promise.reject(new VerifierError(Status.fetchingRemoteHash, 'Invalid chain; does not map to known BlockchainExplorers.'));
 	  }
 
 	  // First ensure we can satisfy the MinimumBlockchainExplorers setting
 	  if (MinimumBlockchainExplorers > BlockchainExplorers.length) {
-	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
+	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, 'Invalid application configuration; check the MinimumBlockchainExplorers configuration value'));
 	  }
-	  if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
-	      (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2)) {
-	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
+	  if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2)) {
+	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, 'Invalid application configuration; check the MinimumBlockchainExplorers configuration value'));
 	  }
 
 	  // Queue up blockchain explorer APIs
-	  let promises = Array();
+	  var promises = Array();
 	  if (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2) {
 	    var limit = MinimumBlockchainExplorers;
 	    for (var i = 0; i < limit; i++) {
@@ -32939,10 +32806,10 @@ var Verifier = (function (exports) {
 	    }
 	  }
 
-	  return new Promise((resolve, reject) => {
-	    return PromiseProperRace(promises, MinimumBlockchainExplorers).then(winners => {
+	  return new Promise(function (resolve, reject) {
+	    return PromiseProperRace(promises, MinimumBlockchainExplorers).then(function (winners) {
 	      if (!winners || winners.length == 0) {
-	        return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.`));
+	        return Promise.reject(new VerifierError(Status.fetchingRemoteHash, 'Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.'));
 	      }
 
 	      // Compare results returned by different blockchain apis. We pick off the first result and compare the others
@@ -32958,53 +32825,69 @@ var Verifier = (function (exports) {
 	      for (var i = 1; i < winners.length; i++) {
 	        var thisResponse = winners[i];
 	        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-	          throw new VerifierError(Status.fetchingRemoteHash, `Issuing addresses returned by the blockchain APIs were different`);
+	          throw new VerifierError(Status.fetchingRemoteHash, 'Issuing addresses returned by the blockchain APIs were different');
 	        }
 	        if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-	          throw new VerifierError(Status.fetchingRemoteHash, `Remote hashes returned by the blockchain APIs were different`);
+	          throw new VerifierError(Status.fetchingRemoteHash, 'Remote hashes returned by the blockchain APIs were different');
 	        }
 	      }
 	      resolve(firstResponse);
-	    }).catch(err => {
+	    }).catch(function (err) {
 	      reject(new VerifierError(Status.fetchingRemoteHash, err.message));
 	    });
 	  });
 	}
 
-	var PromiseProperRace = function (promises, count, results = []) {
+	var PromiseProperRace = function PromiseProperRace(promises, count) {
+	  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
 	  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
 	  promises = Array.from(promises);
 	  if (promises.length < count) {
-	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction`));
+	    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, 'Could not confirm the transaction'));
 	  }
 
-	  let indexPromises = promises.map((p, index) => p.then(() => index).catch((err) => {
-	    log$3(err);
-	    throw index;
-	  }));
+	  var indexPromises = promises.map(function (p, index) {
+	    return p.then(function () {
+	      return index;
+	    }).catch(function (err) {
+	      log$3(err);
+	      throw index;
+	    });
+	  });
 
-	  return Promise.race(indexPromises).then(index => {
-	    let p = promises.splice(index, 1)[0];
-	    p.then(e => results.push(e));
+	  return Promise.race(indexPromises).then(function (index) {
+	    var p = promises.splice(index, 1)[0];
+	    p.then(function (e) {
+	      return results.push(e);
+	    });
 	    if (count === 1) {
 	      return results;
 	    }
 	    return PromiseProperRace(promises, count - 1, results);
-	  }).catch(index => {
+	  }).catch(function (index) {
 	    promises.splice(index, 1);
 	    return PromiseProperRace(promises, count, results);
 	  });
 	};
 
-	const log$4 = browser$1('verifier');
+	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var noop$1 = function() {};
+	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-	class CertificateVerifier {
-	  constructor(certificateString, statusCallback) {
-	    const certificateJson = JSON.parse(certificateString);
+	function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var log$4 = browser$1('verifier');
+
+	var noop$1 = function noop() {};
+
+	var CertificateVerifier = function () {
+	  function CertificateVerifier(certificateString, statusCallback) {
+	    _classCallCheck$3(this, CertificateVerifier);
+
+	    var certificateJson = JSON.parse(certificateString);
 	    this.certificate = Certificate.parseJson(certificateJson);
-	    let document = certificateJson.document;
+	    var document = certificateJson.document;
 	    if (!document) {
 	      var certCopy = JSON.parse(certificateString);
 	      delete certCopy['signature'];
@@ -33013,7 +32896,7 @@ var Verifier = (function (exports) {
 	    this.document = document;
 	    this.statusCallback = statusCallback || noop$1;
 	    this.completionCallback = null;
-	    
+
 	    // v1.1 only
 	    this.certificateString = certificateString;
 
@@ -33031,366 +32914,616 @@ var Verifier = (function (exports) {
 	   * @param {*} message 
 	   * @param {*} status 
 	   */
-	  _updateCallback(stepCode, message, status) {
-	    if (stepCode != null) {
-	      this.statusCallback(stepCode, message, status);
-	    }
-	  }
 
-	  /**
-	   * _succeed
-	   * 
-	   * @param {*} completionCallback 
-	   */
-	  _succeed(completionCallback) {
-	    let status;
-	    if (
-	      this.certificate.chain === Blockchain.mocknet ||
-	      this.certificate.chain === Blockchain.regtest
-	    ) {
-	      log$4(
-	        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.',
-	      );
-	      status = Status.mockSuccess;
-	    } else {
-	      log$4('success');
-	      status = Status.success;
-	    }
-	  
-	    this.completionCallback(Status.final, '', status);
-	    return status;
-	  }
 
-	  /**
-	   * _failed
-	   * 
-	   * @param {*} stepCode 
-	   * @param {*} completionCallback 
-	   * @param {*} err 
-	   */
-	  _failed(stepCode, message) {
-	    stepCode = stepCode || '';
-	    message = message || '';
-	    log$4(`failure:${message}`);
-	    
-	    this.completionCallback(stepCode, message, Status.failure);
-	    return Status.failure;
-	  }
-
-	  /**
-	   * _isFailing
-	   *
-	   * whether or not the current verification is failing
-	   *
-	   * @returns {boolean}
-	   * @private
-	   */
-	  _isFailing() {
-	    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(Status.failure) > -1;
-	  }
-
-	  /**
-	   * doAction
-	   *
-	   * @param stepCode
-	   * @param action
-	   * @returns {*}
-	   */
-	  doAction(stepCode, action) {
-	    // If not failing already
-	    if (this._isFailing()) {
-	      return;
+	  _createClass$1(CertificateVerifier, [{
+	    key: '_updateCallback',
+	    value: function _updateCallback(stepCode, message, status) {
+	      if (stepCode != null) {
+	        this.statusCallback(stepCode, message, status);
+	      }
 	    }
 
-		  let message = getVerboseMessage(stepCode);
-	    log$4(message);
-	    this._updateCallback(stepCode, message, Status.starting);
+	    /**
+	     * _succeed
+	     * 
+	     * @param {*} completionCallback 
+	     */
 
-	    try {
-	      let res = action();
-	      this._updateCallback(stepCode, message, Status.success);
-	      this._stepsStatuses.push(Status.success);
-	      return res;
-	    } catch(err) {
-	      this._updateCallback(stepCode, err.message, Status.failure);
-	      this._stepsStatuses.push(Status.failure);
-	    }
-	  }
+	  }, {
+	    key: '_succeed',
+	    value: function _succeed(completionCallback) {
+	      var status = void 0;
+	      if (this.certificate.chain === Blockchain.mocknet || this.certificate.chain === Blockchain.regtest) {
+	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
+	        status = Status.mockSuccess;
+	      } else {
+	        log$4('success');
+	        status = Status.success;
+	      }
 
-	  /**
-	   * doAsyncAction
-	   *
-	   * @param stepCode
-	   * @param action
-	   * @returns {Promise<*>}
-	   */
-	  async doAsyncAction(stepCode, action) {
-	    // If not failing already
-	    if (this._isFailing()) {
-	      return;
+	      this.completionCallback(Status.final, '', status);
+	      return status;
 	    }
 
-	    let message;
-	    if (stepCode != null) {
-	      message = getVerboseMessage(stepCode);
+	    /**
+	     * _failed
+	     * 
+	     * @param {*} stepCode 
+	     * @param {*} completionCallback 
+	     * @param {*} err 
+	     */
+
+	  }, {
+	    key: '_failed',
+	    value: function _failed(stepCode, message) {
+	      stepCode = stepCode || '';
+	      message = message || '';
+	      log$4('failure:' + message);
+
+	      this.completionCallback(stepCode, message, Status.failure);
+	      return Status.failure;
+	    }
+
+	    /**
+	     * _isFailing
+	     *
+	     * whether or not the current verification is failing
+	     *
+	     * @returns {boolean}
+	     * @private
+	     */
+
+	  }, {
+	    key: '_isFailing',
+	    value: function _isFailing() {
+	      return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(Status.failure) > -1;
+	    }
+
+	    /**
+	     * doAction
+	     *
+	     * @param stepCode
+	     * @param action
+	     * @returns {*}
+	     */
+
+	  }, {
+	    key: 'doAction',
+	    value: function doAction(stepCode, action) {
+	      // If not failing already
+	      if (this._isFailing()) {
+	        return;
+	      }
+
+	      var message = getVerboseMessage(stepCode);
 	      log$4(message);
 	      this._updateCallback(stepCode, message, Status.starting);
+
+	      try {
+	        var res = action();
+	        this._updateCallback(stepCode, message, Status.success);
+	        this._stepsStatuses.push(Status.success);
+	        return res;
+	      } catch (err) {
+	        this._updateCallback(stepCode, err.message, Status.failure);
+	        this._stepsStatuses.push(Status.failure);
+	      }
 	    }
 
-	    try {
-	      let res = await action();
-	      this._updateCallback(stepCode, message, Status.success);
-	      this._stepsStatuses.push(Status.success);
-	      return res;
-	    } catch(err) {
-	      this._updateCallback(stepCode, err.message, Status.failure);
-	      this._stepsStatuses.push(Status.failure);
-	    }
-	  }
+	    /**
+	     * doAsyncAction
+	     *
+	     * @param stepCode
+	     * @param action
+	     * @returns {Promise<*>}
+	     */
 
-	  /**
-	   * verifyV1_2
-	   *
-	   * Verified certificate v1.2
-	   *
-	   * @returns {Promise<void>}
-	   */
-	  async verifyV1_2() {
-	    // Get transaction
-	    let transactionId = this.doAction(
-	      Status.getTransactionId,
-	      () => getTransactionId$1(this.certificate)
-	    );
+	  }, {
+	    key: 'doAsyncAction',
+	    value: function () {
+	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(stepCode, action) {
+	        var message, res;
+	        return regeneratorRuntime.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                if (!this._isFailing()) {
+	                  _context.next = 2;
+	                  break;
+	                }
 
-	    let docToVerify = this.document;
+	                return _context.abrupt('return');
 
-	    // Compute local hash
-	    let localHash = await this.doAsyncAction(
-	      Status.computingLocalHash,
-	      async () =>
-	        computeLocalHash(docToVerify, this.certificate.version),
-	    );
+	              case 2:
+	                message = void 0;
 
-	    // Get remote hash
-	    let txData = await this.doAsyncAction(Status.fetchingRemoteHash, async () =>
-	      lookForTx(
-	        transactionId,
-	        this.certificate.chain,
-	        this.certificate.version,
-	      ),
-	    );
+	                if (stepCode != null) {
+	                  message = getVerboseMessage(stepCode);
+	                  log$4(message);
+	                  this._updateCallback(stepCode, message, Status.starting);
+	                }
 
-	    // Get issuer profile
-	    let issuerProfileJson = await this.doAsyncAction(
-	      Status.gettingIssuerProfile,
-	      async () => getIssuerProfile(this.certificate.issuer.id),
-	    );
+	                _context.prev = 4;
+	                _context.next = 7;
+	                return action();
 
-	    // Parse issuer keys
-	    let issuerKeyMap = await this.doAsyncAction(
-	      Status.parsingIssuerKeys,
-	      () => parseIssuerKeys(issuerProfileJson),
-	    );
+	              case 7:
+	                res = _context.sent;
 
-	    // Compare hashes
-	    this.doAction(Status.comparingHashes, () => {
-	        ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
-	      }
-	    );
+	                this._updateCallback(stepCode, message, Status.success);
+	                this._stepsStatuses.push(Status.success);
+	                return _context.abrupt('return', res);
 
-	    // Check merkle root
-	    this.doAction(Status.checkingMerkleRoot, () =>
-	      ensureMerkleRootEqual(
-	        this.certificate.receipt.merkleRoot,
-	        txData.remoteHash,
-	      ),
-	    );
+	              case 13:
+	                _context.prev = 13;
+	                _context.t0 = _context['catch'](4);
 
-	    // Check receipt
-	    this.doAction(Status.checkingReceipt, () =>
-	      ensureValidReceipt(this.certificate.receipt),
-	    );
+	                this._updateCallback(stepCode, _context.t0.message, Status.failure);
+	                this._stepsStatuses.push(Status.failure);
 
-	    // Check revoke status
-	    this.doAction(Status.checkingRevokedStatus, () =>
-	      ensureNotRevokedBySpentOutput(
-	        txData.revokedAddresses,
-	        parseRevocationKey(issuerProfileJson),
-	        this.certificate.revocationKey,
-	      ),
-	    );
+	              case 17:
+	              case 'end':
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this, [[4, 13]]);
+	      }));
 
-	    // Check authenticity
-	    this.doAction(Status.checkingAuthenticity, () =>
-	      ensureValidIssuingKey(
-	        issuerKeyMap,
-	        txData.issuingAddress,
-	        txData.time,
-	      ),
-	    );
-
-	    // Check expiration
-	    this.doAction(Status.checkingExpiresDate, () =>
-	      ensureNotExpired(this.certificate.expires),
-	    );
-	  }
-
-	  /**
-	   * verifyV2
-	   *
-	   * Verified certificate v2
-	   *
-	   * @returns {Promise<void>}
-	   */
-	  async verifyV2() {
-	    // Get transaction
-	    let transactionId = this.doAction(
-	      Status.getTransactionId,
-	      () => getTransactionId$1(this.certificate)
-	    );
-	    
-	    let docToVerify = this.document;
-
-	    // Compute local hash
-	    let localHash = await this.doAsyncAction(
-	      Status.computingLocalHash,
-	      async () =>
-	        computeLocalHash(docToVerify, this.certificate.version),
-	    );
-
-	    // Fetch remote hash
-	    let txData = await this.doAsyncAction(
-	      Status.fetchingRemoteHash,
-	      async () => {
-	        return lookForTx(transactionId, this.certificate.chain);
-	      }
-	    );
-
-	    // Get issuer keys
-	    let issuerKeyMap = await this.doAsyncAction(
-	      Status.parsingIssuerKeys,
-	      async () => {
-	        return getIssuerKeys(this.certificate.issuer.id);
-	      }
-	    );
-
-	    // Get issuer keys
-	    let revokedAssertions = await this.doAsyncAction(
-	      null,
-	      async () => {
-	        return getRevokedAssertions(this.certificate.issuer.revocationList);
-	      }
-	    );
-
-	    // Compare hashes
-	    this.doAction(Status.comparingHashes, () =>
-	      ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
-	    );
-
-	    // Check merkle root
-	    this.doAction(Status.checkingMerkleRoot, () =>
-	      ensureMerkleRootEqual(
-	        this.certificate.receipt.merkleRoot,
-	        txData.remoteHash,
-	      ),
-	    );
-
-	    // Check receipt
-	    this.doAction(Status.checkingReceipt, () =>
-	      ensureValidReceipt(this.certificate.receipt),
-	    );
-
-	    // Check revoked status
-	    this.doAction(Status.checkingRevokedStatus, () =>
-	      ensureNotRevokedByList(revokedAssertions, this.certificate.id),
-	    );
-
-	    // Check authenticity
-	    this.doAction(Status.checkingAuthenticity, () =>
-	      ensureValidIssuingKey(
-	        issuerKeyMap,
-	        txData.issuingAddress,
-	        txData.time,
-	      ),
-	    );
-
-	    // Check expiration date
-	    this.doAction(Status.checkingExpiresDate, () =>
-	      ensureNotExpired(this.certificate.expires),
-	    );
-	  }
-
-	  /**
-	   * verifyV2Mock
-	   *
-	   * Verify a v2 mock certificate
-	   *
-	   * @returns {Promise<void>}
-	   */
-	  async verifyV2Mock() {
-	    let docToVerify = this.document;
-	    // Compute local hash
-	    let localHash = await this.doAsyncAction(
-	      Status.computingLocalHash,
-	      async () =>
-	        computeLocalHash(docToVerify, this.certificate.version),
-	    );
-
-	    // Compare hashes
-	    this.doAction(Status.comparingHashes, () =>
-	      ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
-	    );
-
-	    // Check receipt
-	    this.doAction(Status.checkingReceipt, () =>
-	      ensureValidReceipt(this.certificate.receipt),
-	    );
-
-	    // Check expiration date
-	    this.doAction(Status.checkingExpiresDate, () =>
-	      ensureNotExpired(this.certificate.expires),
-	    );
-	  }
-
-	  /**
-	   * verify
-	   *
-	   * @param completionCallback
-	   * @returns {Promise<*>}
-	   */
-	  async verify(completionCallback) {
-	    if (this.certificate.version === CertificateVersion.v1_1) {
-	      throw new VerifierError(
-	        '',
-	        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification',
-	      );
-	    }
-
-	    // Save completion callback
-	    this.completionCallback = completionCallback || noop$1;
-	    try {
-	      if (this.certificate.version === CertificateVersion.v1_2) {
-	        await this.verifyV1_2();
-	      } else if (
-	        this.certificate.chain === Blockchain.mocknet ||
-	        this.certificate.chain === Blockchain.regtest
-	      ) {
-	        await this.verifyV2Mock();
-	      } else {
-	        await this.verifyV2();
+	      function doAsyncAction(_x, _x2) {
+	        return _ref.apply(this, arguments);
 	      }
 
-	      // Send final callback update for global verification status
-	      if (this._stepsStatuses.indexOf(Status.failure) > -1) {
-	        return this._failed(Status.final);
-	      } else {
-	        return this._succeed();
+	      return doAsyncAction;
+	    }()
+
+	    /**
+	     * verifyV1_2
+	     *
+	     * Verified certificate v1.2
+	     *
+	     * @returns {Promise<void>}
+	     */
+
+	  }, {
+	    key: 'verifyV1_2',
+	    value: function () {
+	      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+	        var _this = this;
+
+	        var transactionId, docToVerify, localHash, txData, issuerProfileJson, issuerKeyMap;
+	        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+	          while (1) {
+	            switch (_context5.prev = _context5.next) {
+	              case 0:
+	                // Get transaction
+	                transactionId = this.doAction(Status.getTransactionId, function () {
+	                  return getTransactionId$1(_this.certificate);
+	                });
+	                docToVerify = this.document;
+
+	                // Compute local hash
+
+	                _context5.next = 4;
+	                return this.doAsyncAction(Status.computingLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+	                  return regeneratorRuntime.wrap(function _callee2$(_context2) {
+	                    while (1) {
+	                      switch (_context2.prev = _context2.next) {
+	                        case 0:
+	                          return _context2.abrupt('return', computeLocalHash(docToVerify, _this.certificate.version));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context2.stop();
+	                      }
+	                    }
+	                  }, _callee2, _this);
+	                })));
+
+	              case 4:
+	                localHash = _context5.sent;
+	                _context5.next = 7;
+	                return this.doAsyncAction(Status.fetchingRemoteHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+	                  return regeneratorRuntime.wrap(function _callee3$(_context3) {
+	                    while (1) {
+	                      switch (_context3.prev = _context3.next) {
+	                        case 0:
+	                          return _context3.abrupt('return', lookForTx(transactionId, _this.certificate.chain, _this.certificate.version));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context3.stop();
+	                      }
+	                    }
+	                  }, _callee3, _this);
+	                })));
+
+	              case 7:
+	                txData = _context5.sent;
+	                _context5.next = 10;
+	                return this.doAsyncAction(Status.gettingIssuerProfile, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+	                  return regeneratorRuntime.wrap(function _callee4$(_context4) {
+	                    while (1) {
+	                      switch (_context4.prev = _context4.next) {
+	                        case 0:
+	                          return _context4.abrupt('return', getIssuerProfile(_this.certificate.issuer.id));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context4.stop();
+	                      }
+	                    }
+	                  }, _callee4, _this);
+	                })));
+
+	              case 10:
+	                issuerProfileJson = _context5.sent;
+	                _context5.next = 13;
+	                return this.doAsyncAction(Status.parsingIssuerKeys, function () {
+	                  return parseIssuerKeys(issuerProfileJson);
+	                });
+
+	              case 13:
+	                issuerKeyMap = _context5.sent;
+
+
+	                // Compare hashes
+	                this.doAction(Status.comparingHashes, function () {
+	                  ensureHashesEqual(localHash, _this.certificate.receipt.targetHash);
+	                });
+
+	                // Check merkle root
+	                this.doAction(Status.checkingMerkleRoot, function () {
+	                  return ensureMerkleRootEqual(_this.certificate.receipt.merkleRoot, txData.remoteHash);
+	                });
+
+	                // Check receipt
+	                this.doAction(Status.checkingReceipt, function () {
+	                  return ensureValidReceipt(_this.certificate.receipt);
+	                });
+
+	                // Check revoke status
+	                this.doAction(Status.checkingRevokedStatus, function () {
+	                  return ensureNotRevokedBySpentOutput(txData.revokedAddresses, parseRevocationKey(issuerProfileJson), _this.certificate.revocationKey);
+	                });
+
+	                // Check authenticity
+	                this.doAction(Status.checkingAuthenticity, function () {
+	                  return ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
+	                });
+
+	                // Check expiration
+	                this.doAction(Status.checkingExpiresDate, function () {
+	                  return ensureNotExpired(_this.certificate.expires);
+	                });
+
+	              case 20:
+	              case 'end':
+	                return _context5.stop();
+	            }
+	          }
+	        }, _callee5, this);
+	      }));
+
+	      function verifyV1_2() {
+	        return _ref2.apply(this, arguments);
 	      }
-	    } catch (e) {
-	      //return this._failed(e.stepCode, e.message);
-	    }
-	  }
-	}
+
+	      return verifyV1_2;
+	    }()
+
+	    /**
+	     * verifyV2
+	     *
+	     * Verified certificate v2
+	     *
+	     * @returns {Promise<void>}
+	     */
+
+	  }, {
+	    key: 'verifyV2',
+	    value: function () {
+	      var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
+	        var _this2 = this;
+
+	        var transactionId, docToVerify, localHash, txData, issuerKeyMap, revokedAssertions;
+	        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+	          while (1) {
+	            switch (_context10.prev = _context10.next) {
+	              case 0:
+	                // Get transaction
+	                transactionId = this.doAction(Status.getTransactionId, function () {
+	                  return getTransactionId$1(_this2.certificate);
+	                });
+	                docToVerify = this.document;
+
+	                // Compute local hash
+
+	                _context10.next = 4;
+	                return this.doAsyncAction(Status.computingLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+	                  return regeneratorRuntime.wrap(function _callee6$(_context6) {
+	                    while (1) {
+	                      switch (_context6.prev = _context6.next) {
+	                        case 0:
+	                          return _context6.abrupt('return', computeLocalHash(docToVerify, _this2.certificate.version));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context6.stop();
+	                      }
+	                    }
+	                  }, _callee6, _this2);
+	                })));
+
+	              case 4:
+	                localHash = _context10.sent;
+	                _context10.next = 7;
+	                return this.doAsyncAction(Status.fetchingRemoteHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
+	                  return regeneratorRuntime.wrap(function _callee7$(_context7) {
+	                    while (1) {
+	                      switch (_context7.prev = _context7.next) {
+	                        case 0:
+	                          return _context7.abrupt('return', lookForTx(transactionId, _this2.certificate.chain));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context7.stop();
+	                      }
+	                    }
+	                  }, _callee7, _this2);
+	                })));
+
+	              case 7:
+	                txData = _context10.sent;
+	                _context10.next = 10;
+	                return this.doAsyncAction(Status.parsingIssuerKeys, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+	                  return regeneratorRuntime.wrap(function _callee8$(_context8) {
+	                    while (1) {
+	                      switch (_context8.prev = _context8.next) {
+	                        case 0:
+	                          return _context8.abrupt('return', getIssuerKeys(_this2.certificate.issuer.id));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context8.stop();
+	                      }
+	                    }
+	                  }, _callee8, _this2);
+	                })));
+
+	              case 10:
+	                issuerKeyMap = _context10.sent;
+	                _context10.next = 13;
+	                return this.doAsyncAction(null, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
+	                  return regeneratorRuntime.wrap(function _callee9$(_context9) {
+	                    while (1) {
+	                      switch (_context9.prev = _context9.next) {
+	                        case 0:
+	                          return _context9.abrupt('return', getRevokedAssertions(_this2.certificate.issuer.revocationList));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context9.stop();
+	                      }
+	                    }
+	                  }, _callee9, _this2);
+	                })));
+
+	              case 13:
+	                revokedAssertions = _context10.sent;
+
+
+	                // Compare hashes
+	                this.doAction(Status.comparingHashes, function () {
+	                  return ensureHashesEqual(localHash, _this2.certificate.receipt.targetHash);
+	                });
+
+	                // Check merkle root
+	                this.doAction(Status.checkingMerkleRoot, function () {
+	                  return ensureMerkleRootEqual(_this2.certificate.receipt.merkleRoot, txData.remoteHash);
+	                });
+
+	                // Check receipt
+	                this.doAction(Status.checkingReceipt, function () {
+	                  return ensureValidReceipt(_this2.certificate.receipt);
+	                });
+
+	                // Check revoked status
+	                this.doAction(Status.checkingRevokedStatus, function () {
+	                  return ensureNotRevokedByList(revokedAssertions, _this2.certificate.id);
+	                });
+
+	                // Check authenticity
+	                this.doAction(Status.checkingAuthenticity, function () {
+	                  return ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
+	                });
+
+	                // Check expiration date
+	                this.doAction(Status.checkingExpiresDate, function () {
+	                  return ensureNotExpired(_this2.certificate.expires);
+	                });
+
+	              case 20:
+	              case 'end':
+	                return _context10.stop();
+	            }
+	          }
+	        }, _callee10, this);
+	      }));
+
+	      function verifyV2() {
+	        return _ref6.apply(this, arguments);
+	      }
+
+	      return verifyV2;
+	    }()
+
+	    /**
+	     * verifyV2Mock
+	     *
+	     * Verify a v2 mock certificate
+	     *
+	     * @returns {Promise<void>}
+	     */
+
+	  }, {
+	    key: 'verifyV2Mock',
+	    value: function () {
+	      var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
+	        var _this3 = this;
+
+	        var docToVerify, localHash;
+	        return regeneratorRuntime.wrap(function _callee12$(_context12) {
+	          while (1) {
+	            switch (_context12.prev = _context12.next) {
+	              case 0:
+	                docToVerify = this.document;
+	                // Compute local hash
+
+	                _context12.next = 3;
+	                return this.doAsyncAction(Status.computingLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+	                  return regeneratorRuntime.wrap(function _callee11$(_context11) {
+	                    while (1) {
+	                      switch (_context11.prev = _context11.next) {
+	                        case 0:
+	                          return _context11.abrupt('return', computeLocalHash(docToVerify, _this3.certificate.version));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context11.stop();
+	                      }
+	                    }
+	                  }, _callee11, _this3);
+	                })));
+
+	              case 3:
+	                localHash = _context12.sent;
+
+
+	                // Compare hashes
+	                this.doAction(Status.comparingHashes, function () {
+	                  return ensureHashesEqual(localHash, _this3.certificate.receipt.targetHash);
+	                });
+
+	                // Check receipt
+	                this.doAction(Status.checkingReceipt, function () {
+	                  return ensureValidReceipt(_this3.certificate.receipt);
+	                });
+
+	                // Check expiration date
+	                this.doAction(Status.checkingExpiresDate, function () {
+	                  return ensureNotExpired(_this3.certificate.expires);
+	                });
+
+	              case 7:
+	              case 'end':
+	                return _context12.stop();
+	            }
+	          }
+	        }, _callee12, this);
+	      }));
+
+	      function verifyV2Mock() {
+	        return _ref11.apply(this, arguments);
+	      }
+
+	      return verifyV2Mock;
+	    }()
+
+	    /**
+	     * verify
+	     *
+	     * @param completionCallback
+	     * @returns {Promise<*>}
+	     */
+
+	  }, {
+	    key: 'verify',
+	    value: function () {
+	      var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13(completionCallback) {
+	        return regeneratorRuntime.wrap(function _callee13$(_context13) {
+	          while (1) {
+	            switch (_context13.prev = _context13.next) {
+	              case 0:
+	                if (!(this.certificate.version === CertificateVersion.v1_1)) {
+	                  _context13.next = 2;
+	                  break;
+	                }
+
+	                throw new VerifierError('', 'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
+
+	              case 2:
+
+	                // Save completion callback
+	                this.completionCallback = completionCallback || noop$1;
+	                _context13.prev = 3;
+
+	                if (!(this.certificate.version === CertificateVersion.v1_2)) {
+	                  _context13.next = 9;
+	                  break;
+	                }
+
+	                _context13.next = 7;
+	                return this.verifyV1_2();
+
+	              case 7:
+	                _context13.next = 16;
+	                break;
+
+	              case 9:
+	                if (!(this.certificate.chain === Blockchain.mocknet || this.certificate.chain === Blockchain.regtest)) {
+	                  _context13.next = 14;
+	                  break;
+	                }
+
+	                _context13.next = 12;
+	                return this.verifyV2Mock();
+
+	              case 12:
+	                _context13.next = 16;
+	                break;
+
+	              case 14:
+	                _context13.next = 16;
+	                return this.verifyV2();
+
+	              case 16:
+	                if (!(this._stepsStatuses.indexOf(Status.failure) > -1)) {
+	                  _context13.next = 20;
+	                  break;
+	                }
+
+	                return _context13.abrupt('return', this._failed(Status.final));
+
+	              case 20:
+	                return _context13.abrupt('return', this._succeed());
+
+	              case 21:
+	                _context13.next = 25;
+	                break;
+
+	              case 23:
+	                _context13.prev = 23;
+	                _context13.t0 = _context13['catch'](3);
+
+	              case 25:
+	              case 'end':
+	                return _context13.stop();
+	            }
+	          }
+	        }, _callee13, this, [[3, 23]]);
+	      }));
+
+	      function verify(_x3) {
+	        return _ref13.apply(this, arguments);
+	      }
+
+	      return verify;
+	    }()
+	  }]);
+
+	  return CertificateVerifier;
+	}();
 
 	/*
 	import {readFileAsync} from './promisifiedRequests'

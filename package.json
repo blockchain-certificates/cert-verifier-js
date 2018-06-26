@@ -6,7 +6,8 @@
   "module": "verifier-es.js",
   "scripts": {
     "test": "mocha --compilers js:babel-core/register tests/test*.js",
-    "build": "rollup -c",
+    "build": "npm run build:esm && npm run build:es5",
+    "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
     "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js"
   },

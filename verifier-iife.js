@@ -32918,9 +32918,9 @@ var Verifier = (function (exports) {
 
 	  _createClass$1(CertificateVerifier, [{
 	    key: '_updateCallback',
-	    value: function _updateCallback(stepCode, message, status) {
+	    value: function _updateCallback(stepCode, message, status, errorMessage) {
 	      if (stepCode != null) {
-	        this.statusCallback(stepCode, message, status);
+	        this.statusCallback(stepCode, message, status, errorMessage);
 	      }
 	    }
 
@@ -33023,7 +33023,7 @@ var Verifier = (function (exports) {
 	    key: 'doAsyncAction',
 	    value: function () {
 	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(stepCode, action) {
-	        var message, res;
+	        var stepName, res;
 	        return regeneratorRuntime.wrap(function _callee$(_context) {
 	          while (1) {
 	            switch (_context.prev = _context.next) {
@@ -33036,12 +33036,12 @@ var Verifier = (function (exports) {
 	                return _context.abrupt('return');
 
 	              case 2:
-	                message = void 0;
+	                stepName = void 0;
 
 	                if (stepCode != null) {
-	                  message = getVerboseMessage(stepCode);
-	                  log$4(message);
-	                  this._updateCallback(stepCode, message, Status.starting);
+	                  stepName = getVerboseMessage(stepCode);
+	                  log$4(stepName);
+	                  this._updateCallback(stepCode, stepName, Status.starting);
 	                }
 
 	                _context.prev = 4;
@@ -33051,7 +33051,7 @@ var Verifier = (function (exports) {
 	              case 7:
 	                res = _context.sent;
 
-	                this._updateCallback(stepCode, message, Status.success);
+	                this._updateCallback(stepCode, stepName, Status.success);
 	                this._stepsStatuses.push(Status.success);
 	                return _context.abrupt('return', res);
 
@@ -33059,7 +33059,7 @@ var Verifier = (function (exports) {
 	                _context.prev = 13;
 	                _context.t0 = _context['catch'](4);
 
-	                this._updateCallback(stepCode, _context.t0.message, Status.failure);
+	                this._updateCallback(stepCode, stepName, Status.failure, _context.t0.message);
 	                this._stepsStatuses.push(Status.failure);
 
 	              case 17:

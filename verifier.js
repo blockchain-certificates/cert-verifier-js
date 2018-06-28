@@ -33032,9 +33032,9 @@ class CertificateVerifier {
    * @param {*} message 
    * @param {*} status 
    */
-  _updateCallback(stepCode, message, status) {
+  _updateCallback(stepCode, message, status, errorMessage) {
     if (stepCode != null) {
-      this.statusCallback(stepCode, message, status);
+      this.statusCallback(stepCode, message, status, errorMessage);
     }
   }
 
@@ -33131,20 +33131,20 @@ class CertificateVerifier {
       return;
     }
 
-    let message;
+    let stepName;
     if (stepCode != null) {
-      message = getVerboseMessage(stepCode);
-      log$4(message);
-      this._updateCallback(stepCode, message, Status.starting);
+      stepName = getVerboseMessage(stepCode);
+      log$4(stepName);
+      this._updateCallback(stepCode, stepName, Status.starting);
     }
 
     try {
       let res = await action();
-      this._updateCallback(stepCode, message, Status.success);
+      this._updateCallback(stepCode, stepName, Status.success);
       this._stepsStatuses.push(Status.success);
       return res;
     } catch(err) {
-      this._updateCallback(stepCode, err.message, Status.failure);
+      this._updateCallback(stepCode, stepName, Status.failure, err.message);
       this._stepsStatuses.push(Status.failure);
     }
   }

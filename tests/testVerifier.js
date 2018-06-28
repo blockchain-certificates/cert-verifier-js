@@ -342,15 +342,32 @@ describe('Certificate verifier', async () => {
   });
 
   describe('the step callback function', function () {
+    let data;
+    let callbackSpy;
+    let verifierInstance;
+    let testCode;
+    let expectedName;
+
+    beforeEach(async function () {
+      data = await readFileAsync('tests/data/mocknet-2.0.json');
+      callbackSpy = sinon.spy();
+      verifierInstance = new CertificateVerifier(data, callbackSpy);
+
+      testCode = 'getTransactionId';
+      expectedName = getVerboseMessage(testCode);
+    });
+
+    afterEach(function () {
+      data = null;
+      callbackSpy = null;
+      verifierInstance = null;
+
+      testCode = null;
+      expectedName = null;
+    });
+
     describe('when there is no failure', function () {
-      it('should be called with the code, the name and the status of the step', async function () {
-        const data = await readFileAsync('tests/data/mocknet-2.0.json');
-        const callbackSpy = sinon.spy();
-        const verifierInstance = new CertificateVerifier(data, callbackSpy);
-
-        const testCode = 'getTransactionId';
-        const expectedName = getVerboseMessage(testCode);
-
+      it('should be called with the code, the name and the status of the step', function () {
         verifierInstance.doAction(testCode, () => {});
 
         expect(callbackSpy.calledWithExactly(testCode, expectedName, Status.success, undefined)).to.equal(true);
@@ -358,16 +375,8 @@ describe('Certificate verifier', async () => {
     });
 
     describe('when there is a failure', function () {
-      it('should be called with the code, the name, the status and the error message', async function () {
-        const data = await readFileAsync('tests/data/mocknet-2.0.json');
-        const callbackSpy = sinon.spy();
-        const verifierInstance = new CertificateVerifier(data, callbackSpy);
-
-        const testCode = 'getTransactionId';
-        const expectedName = getVerboseMessage(testCode);
-
+      it('should be called with the code, the name, the status and the error message', function () {
         const errorMessage = 'Testing the test';
-
         verifierInstance.doAction(testCode, () => { throw new Error(errorMessage) });
 
         expect(callbackSpy.calledWithExactly(testCode, expectedName, Status.failure, errorMessage)).to.equal(true);

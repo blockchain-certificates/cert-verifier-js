@@ -2,7 +2,8 @@
 
 import 'babel-polyfill';
 import { assert, expect } from 'chai';
-import { Status } from '../config/default';
+import sinon from 'sinon';
+import { Status, getVerboseMessage } from '../config/default';
 import { CertificateVerifier } from '../lib/index';
 import { readFileAsync } from './utils/readFile';
 
@@ -338,5 +339,48 @@ describe('Certificate verifier', async () => {
         assert.fail(err, null, 'This should not fail');
       }
     });*/
+  });
+
+  describe('the step callback function', function () {
+    let data;
+    let callbackSpy;
+    let verifierInstance;
+    let testCode;
+    let expectedName;
+
+    beforeEach(async function () {
+      data = await readFileAsync('tests/data/mocknet-2.0.json');
+      callbackSpy = sinon.spy();
+      verifierInstance = new CertificateVerifier(data, callbackSpy);
+
+      testCode = 'getTransactionId';
+      expectedName = getVerboseMessage(testCode);
+    });
+
+    afterEach(function () {
+      data = null;
+      callbackSpy = null;
+      verifierInstance = null;
+
+      testCode = null;
+      expectedName = null;
+    });
+
+    describe('when there is no failure', function () {
+      it('should be called with the code, the name and the status of the step', function () {
+        verifierInstance.doAction(testCode, () => {});
+
+        expect(callbackSpy.calledWithExactly(testCode, expectedName, Status.success, undefined)).to.equal(true);
+      });
+    });
+
+    describe('when there is a failure', function () {
+      it('should be called with the code, the name, the status and the error message', function () {
+        const errorMessage = 'Testing the test';
+        verifierInstance.doAction(testCode, () => { throw new Error(errorMessage) });
+
+        expect(callbackSpy.calledWithExactly(testCode, expectedName, Status.failure, errorMessage)).to.equal(true);
+      });
+    });
   });
 });

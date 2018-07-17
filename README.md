@@ -2,6 +2,24 @@
 
 A library to enable parsing and verifying a Blockcert. This can be used as a node package or in a browser. The browserified script is available as `verifier.js`.
 
+## Add to your project
+```
+yarn add cert-verifier-js
+```
+or
+```
+npm install cert-verifier-js
+```
+
+## Include it
+```javascript
+const BlockcertsVerifier = require('cert-verifier-js');
+```
+or
+```javascript
+import { Certificate, CertificateVerifier } from 'cert-verifier-js';
+```
+
 ## Sample code
 
 ### Parsing a Blockcert
@@ -54,9 +72,9 @@ const rawTransactionLink = cert.rawTransactionLink;
 
 ### Using in a browser
 
-`npm run build` generates the browserified script `verifier.js`. 
+`npm run build` generates the browserified script `verifier.js`.
 
-The following shows how you can use it: 
+The following shows how you can use it:
 
 ```javascript
 <script src="./verifier.js"></script>
@@ -92,18 +110,18 @@ The Blockchain Certificate contains:
 
 ### Blockchain Transaction
 
-A Blockchain Certificate must have a `certificate.signature.anchors` field, which must contain at least one anchor to a blockchain transaction. 
+A Blockchain Certificate must have a `certificate.signature.anchors` field, which must contain at least one anchor to a blockchain transaction.
 
 #### Bitcoin
 
 The `anchors` entry below says that the transaction was performed on the Bitcoin blockchain, and the field needed to verify  integrity of the certificate is `OP_RETURN` (because `type` is `BTCOpReturn`). This also says the transaction id is `8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d` (via the `sourceId`) field.
- 
+
 ```
 "type": "BTCOpReturn",
 "sourceId": "8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d"
 ```
 
-Supplied with the blockchain identifier and transaction id, the transaction can be obtained from a service like [blockchain.info](http://blockchain.info/). [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is: 
+Supplied with the blockchain identifier and transaction id, the transaction can be obtained from a service like [blockchain.info](http://blockchain.info/). [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is:
 
 ```
 http://blockchain.info/rawtx/<transaction_id>
@@ -120,7 +138,7 @@ The `anchors` entry for Ethereum works just like the Bitcoin anchor like above, 
 "sourceId": "0xc952833ba9c1b630282df24b3ca56e30963e75a70005ca95190a050492298f51"
 ```
 
-The Ethereum transaction can be obtained from a service like [etherscan.io](https://etherscan.io) [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is: 
+The Ethereum transaction can be obtained from a service like [etherscan.io](https://etherscan.io) [See important security notes in "Securely looking up a Blockchain transaction".] The general query format is:
 
 ```
 https://etherscan.io/tx/<transaction_id>
@@ -170,7 +188,7 @@ The `badge.issuer.revocationList` field in the Blockchain Certificate says where
 }
 ```
 
-The Blockcerts schema allows other implementations of revocation, depending on the implementations allowed by the blockchain, and domain/issuer appropriateness. 
+The Blockcerts schema allows other implementations of revocation, depending on the implementations allowed by the blockchain, and domain/issuer appropriateness.
 
 ### Check certificate integrity
 
@@ -196,7 +214,7 @@ Note that Blockcerts performs an additional test during JSON-LD canonicalization
 
 3\. Compare the merkleRoot value in the certificate with the value in the blockchain transaction.
 
-The transaction information in the "Blockchain Transaction" input step obtains the blockchain record of the content. This step compares the value in the transaction with the value in the certificate. 
+The transaction information in the "Blockchain Transaction" input step obtains the blockchain record of the content. This step compares the value in the transaction with the value in the certificate.
 
 #### Bitcoin
 The transaction details at https://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d has entries in the `out` array. The entry with the `OP_RETURN` value has a `script` starting with `6a20`. Specifically:
@@ -230,9 +248,9 @@ Removing the `0x` prefix, the input `4f48e91f0397a49a5b56718a78d681c51932c8bd924
 
 This step verifies that the certificate was authored by the issuer. This is verified by ensuring the signing key for the blockchain transaction is indeed claimed by the issuer, and the key was valid at the time the transaction was issued.
 
-This uses the timestamp and input address from the blockchain transaction details obtained in "TBD", and the issuer identification provided in "Issuer Identity". 
+This uses the timestamp and input address from the blockchain transaction details obtained in "TBD", and the issuer identification provided in "Issuer Identity".
 
-From blockchain transaction information, obtain the timestamp and input address. This will vary depending on which service you use. For Blockchain.info, we need the `addr` field from the `inputs` array and the `time` field. 
+From blockchain transaction information, obtain the timestamp and input address. This will vary depending on which service you use. For Blockchain.info, we need the `addr` field from the `inputs` array and the `time` field.
 
 
 ```
@@ -249,7 +267,7 @@ From blockchain transaction information, obtain the timestamp and input address.
 "time":1475524375,
 ```
 
-This is a Unix epoch time format, and a tool like https://www.epochconverter.com/ can convert it to a human readable format. This example yields `03 Oct 2016 19:52:55 GMT`. 
+This is a Unix epoch time format, and a tool like https://www.epochconverter.com/ can convert it to a human readable format. This example yields `03 Oct 2016 19:52:55 GMT`.
 
 This public key is valid:
 
@@ -279,14 +297,14 @@ This rules out exceptional (and possibly fraudulent) cases, such as:
 - the public key is not claimed by the issuer
 - the transaction was issued after the public key was revoked or expires
 
-A critical distinction in this example is that the transaction is considered valid even though the key expired. This is ok -- all that matters is that the transaction was performed when the key was active. 
- 
+A critical distinction in this example is that the transaction is considered valid even though the key expired. This is ok -- all that matters is that the transaction was performed when the key was active.
+
 A key expiration is different from a certificate expiration; expiring keys is a good security practice for issuers. The next step will check certificate expiration.
 
 
 ### Check not revoked by issuer
 
-The input obtained from "Issuer revocation information" contains the list of revoked certificates (or "assertions"). 
+The input obtained from "Issuer revocation information" contains the list of revoked certificates (or "assertions").
 
 For Open Badges-compliant Blockcerts, a certificate is considered revoked if any `id` entry in the `revokedAssertions` array contains the id of the certificate. The certificate id is available in the (`id`) field of the Blockchain Certificate.
 
@@ -318,10 +336,10 @@ MinimumBlockchainExplorers: 2,
 - `MinimumBlockchainExplorers` sets the minimum number of Blockchain APIs that need to be consulted and compared for a transaction to be considered valid. For example, if the setting is 2, then at least 2 blockchain explorers must return transaction details, and the details must agree on the following values:
   - remoteHash
   - issuingAddress
-  
+
 `cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
-  
-See `lib\blockchainConnectors.js` for details on how they are used. 
+
+See `lib\blockchainConnectors.js` for details on how they are used.
 
 The defaults for these settings are low (set at 1) to allow users to experiment with these libraries more easily (to help avoid problems with blockchain API rate limits, wait times, etc), but these should be carefully considered for deployed systems.
 

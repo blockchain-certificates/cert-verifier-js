@@ -30,5 +30,29 @@ describe('Certificate verifier', () => {
         assert.isOk(err);
       }
     });
+    describe('merkle root comparison', () => {
+      it('ensures identical hashes pass check', () => {
+        try {
+          helpers.ensureMerkleRootEqual("hash", "hash");
+        } catch (err) {
+          assert.fail('This should not fail');
+        }
+      });
+      it('ensures similar hashes pass check', () => {
+        try {
+          helpers.ensureMerkleRootEqual("hash", "somedata-hash");
+        } catch (err) {
+          assert.fail('This should not fail');
+        }
+      });
+      it('ensures unsimilar hashes fail check', () => {
+        try {
+          helpers.ensureMerkleRootEqual("hash", "1234");
+        } catch (err) {
+          assert.isOk(err);
+        }
+      });
+    });
+
   });
 });

@@ -16812,7 +16812,7 @@ var Verifier = (function (exports) {
 	var _args = [
 		[
 			"bigi@1.4.2",
-			"/Users/julien/work/cert-verifier-js"
+			"/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code"
 		]
 	];
 	var _from = "bigi@1.4.2";
@@ -16839,7 +16839,7 @@ var Verifier = (function (exports) {
 	];
 	var _resolved = "https://registry.npmjs.org/bigi/-/bigi-1.4.2.tgz";
 	var _spec = "1.4.2";
-	var _where = "/Users/julien/work/cert-verifier-js";
+	var _where = "/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code";
 	var bugs = {
 		url: "https://github.com/cryptocoinjs/bigi/issues"
 	};
@@ -20294,7 +20294,7 @@ var Verifier = (function (exports) {
 
 	HDNode.prototype.toString = HDNode.prototype.toBase58;
 
-	var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js';
+	var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js';
 
 	var es6Promise = createCommonjsModule(function (module) {
 	/*!

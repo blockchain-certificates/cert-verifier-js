@@ -1,8 +1,7 @@
 'use strict';
 
 import 'babel-polyfill';
-import { assert, expect } from 'chai';
-import * as helpers from '../lib/checks';
+import * as helpers from '../src/checks';
 
 describe('Certificate verifier', () => {
   describe('verify helpers', () => {
@@ -10,24 +9,22 @@ describe('Certificate verifier', () => {
       try {
         helpers.ensureNotExpired('2017-01-01');
       } catch (err) {
-        assert.isOk(err);
+        expect(err.toString()).toBe('Error: This certificate has expired.');
       }
     });
 
     it('ensures a date in the future passes expiration check', () => {
       try {
         helpers.ensureNotExpired('2817-01-01');
-        assert.isOk(true);
-      } catch (err) {
-        assert.fail('This should not fail');
-      }
+        expect(true).toBe(true);
+      } catch (err) {}
     });
 
     it('ensures no expires field passes expiration check', () => {
       try {
         helpers.ensureNotExpired(null);
       } catch (err) {
-        assert.isOk(err);
+        expect(err).toBe(!false);
       }
     });
   });

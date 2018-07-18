@@ -7,7 +7,7 @@ import globals from 'rollup-plugin-node-globals';
 import babel from 'rollup-plugin-babel';
 
 export default {
-  input: 'lib/index.js',
+  input: 'src/index.js',
   name: 'Verifier',
   output: [
     {

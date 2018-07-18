@@ -6,7 +6,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 
 export default {
-  input: 'lib/index.js',
+  input: 'src/index.js',
   name: 'Verifier',
   output: [
     {

@@ -1,16 +1,15 @@
-'use strict';
-
 import { XMLHttpRequest as xhrPolyfill } from 'xmlhttprequest';
 import debug from 'debug';
 
 const log = debug('promisifiedRequests');
 
-export function request(obj) {
+export function request (obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
 
     // server
     const xhr = typeof XMLHttpRequest === 'undefined' ? xhrPolyfill : XMLHttpRequest;
+    /* eslint new-cap: "off" */
     let request = new xhr();
 
     request.onload = () => {

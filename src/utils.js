@@ -1,5 +1,7 @@
-function noOffset(s) {
-  let day = s.slice(0, -5).split(/\D/).map(function(itm) {
+/* eslint no-useless-escape: "off" */
+
+function noOffset (s) {
+  let day = s.slice(0, -5).split(/\D/).map(function (itm) {
     return parseInt(itm, 10) || 0;
   });
   day[1] -= 1;
@@ -11,13 +13,13 @@ function noOffset(s) {
   return day.getTime();
 }
 
-function dateFromRegex(s) {
+function dateFromRegex (s) {
   let day;
   let tz;
-  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/,
-    p = rx.exec(s) || [];
+  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
+  let p = rx.exec(s) || [];
   if (p[1]) {
-    day = p[1].split(/\D/).map(function(itm) {
+    day = p[1].split(/\D/).map(function (itm) {
       return parseInt(itm, 10) || 0;
     });
     day[1] -= 1;
@@ -34,7 +36,7 @@ function dateFromRegex(s) {
   return NaN;
 }
 
-function dateFromIso(isoDate) {
+function dateFromIso (isoDate) {
   // Chrome
   let diso = Date.parse(isoDate);
   if (diso) {
@@ -50,7 +52,7 @@ function dateFromIso(isoDate) {
   return dateFromRegex(isoDate);
 }
 
-export function dateToUnixTimestamp(date) {
+export function dateToUnixTimestamp (date) {
   return dateFromIso(date);
 }
 

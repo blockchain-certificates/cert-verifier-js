@@ -27,7 +27,7 @@ describe('Certificate parsing', () => {
       let cert = Certificate.parseJson(JSON.parse(data));
       expect(cert.name).toBe('Arya Stark');
       expect(cert.signature).toBe(
-        'H0osFKllW8LrBhNMc4gC0TbRU0OK9Qgpebji1PgmNsgtSKCLXHL217cEG3FoHkaF/G2woGaoKDV/MrmpROvD860=',
+        'H0osFKllW8LrBhNMc4gC0TbRU0OK9Qgpebji1PgmNsgtSKCLXHL217cEG3FoHkaF/G2woGaoKDV/MrmpROvD860='
       );
     });
   });
@@ -82,7 +82,7 @@ describe('Certificate.transactionLink property', () => {
     });
   });
 
-  describe('when the certificate transaction is on ethereum ropsten',  () => {
+  describe('when the certificate transaction is on ethereum ropsten', () => {
     it('should return a link to ropsten.etherscan.io/tx/', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       let cert = Certificate.parseJson(JSON.parse(data));
@@ -132,7 +132,7 @@ describe('Certificate.rawTransactionLink property', () => {
     });
   });
 
-  describe('when the certificate transaction is on ethereum ropsten',  () => {
+  describe('when the certificate transaction is on ethereum ropsten', () => {
     it('should return a link to ropsten.etherscan.io/getRawTx', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       let cert = Certificate.parseJson(JSON.parse(data));

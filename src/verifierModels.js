@@ -1,11 +1,9 @@
-'use strict';
-
 import { request } from './promisifiedRequests';
 import { Status, VerifierError } from '../config/default';
 import { dateToUnixTimestamp } from './utils';
 
 export class TransactionData {
-  constructor(remoteHash, issuingAddress, time, revokedAddresses) {
+  constructor (remoteHash, issuingAddress, time, revokedAddresses) {
     this.remoteHash = remoteHash;
     this.issuingAddress = issuingAddress;
     this.time = time;
@@ -14,7 +12,7 @@ export class TransactionData {
 }
 
 export class Key {
-  constructor(publicKey, created, revoked, expires) {
+  constructor (publicKey, created, revoked, expires) {
     this.publicKey = publicKey;
     this.created = created;
     this.revoked = revoked;
@@ -22,9 +20,10 @@ export class Key {
   }
 }
 
-export function parseIssuerKeys(issuerProfileJson) {
+export function parseIssuerKeys (issuerProfileJson) {
   try {
     var keyMap = {};
+    var k;
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
       var responseKeys =
@@ -37,26 +36,26 @@ export function parseIssuerKeys(issuerProfileJson) {
         // backcompat for v2 alpha
         var publicKeyTemp = key.id || key.publicKey;
         var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
-        var k = new Key(publicKey, created, revoked, expires);
+        k = new Key(publicKey, created, revoked, expires);
         keyMap[k.publicKey] = k;
       }
     } else {
       // This is a v2 certificate with a v1 issuer
       const issuerKeys = issuerProfileJson.issuerKeys || [];
       var issuerKey = issuerKeys[0].key;
-      var k = new Key(issuerKey, null, null, null);
+      k = new Key(issuerKey, null, null, null);
       keyMap[k.publicKey] = k;
     }
     return keyMap;
   } catch (e) {
     throw new VerifierError(
       Status.parsingIssuerKeys,
-      'Unable to parse JSON out of issuer identification data.',
+      'Unable to parse JSON out of issuer identification data.'
     );
   }
 }
 
-export function parseRevocationKey(issuerProfileJson) {
+export function parseRevocationKey (issuerProfileJson) {
   if (
     issuerProfileJson.revocationKeys &&
     issuerProfileJson.revocationKeys.length > 0
@@ -66,9 +65,9 @@ export function parseRevocationKey(issuerProfileJson) {
   return null;
 }
 
-export function getIssuerProfile(issuerId) {
+export function getIssuerProfile (issuerId) {
   let issuerProfileFetcher = new Promise((resolve, reject) => {
-    return request({ url: issuerId })
+    return request({url: issuerId})
       .then(response => {
         try {
           let issuerProfileJson = JSON.parse(response);
@@ -77,17 +76,17 @@ export function getIssuerProfile(issuerId) {
           reject(new VerifierError(Status.gettingIssuerProfile, err));
         }
       })
-      .catch(err => {
+      .catch(() => {
         reject(new VerifierError(Status.gettingIssuerProfile, `Unable to get issuer profile`));
       });
   });
   return issuerProfileFetcher;
 }
 
-export function getIssuerKeys(issuerId) {
+export function getIssuerKeys (issuerId) {
   let issuerKeyFetcher = new Promise((resolve, reject) => {
     return getIssuerProfile(issuerId)
-      .then(function(issuerProfileJson) {
+      .then(function (issuerProfileJson) {
         try {
           let issuerKeyMap = parseIssuerKeys(issuerProfileJson);
           resolve(issuerKeyMap);
@@ -95,20 +94,20 @@ export function getIssuerKeys(issuerId) {
           reject(new VerifierError(Status.parsingIssuerKeys, err));
         }
       })
-      .catch(function(err) {
+      .catch(function (err) {
         reject(new VerifierError(Status.parsingIssuerKeys, err));
       });
   });
   return issuerKeyFetcher;
 }
 
-export function getRevokedAssertions(revocationListUrl) {
+export function getRevokedAssertions (revocationListUrl) {
   if (!revocationListUrl) {
     return Promise.resolve([]);
   }
   let revocationListFetcher = new Promise((resolve, reject) => {
-    return request({ url: revocationListUrl })
-      .then(function(response) {
+    return request({url: revocationListUrl})
+      .then(function (response) {
         try {
           let issuerRevocationJson = JSON.parse(response);
           let revokedAssertions = issuerRevocationJson.revokedAssertions
@@ -119,7 +118,7 @@ export function getRevokedAssertions(revocationListUrl) {
           reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
       });
   });

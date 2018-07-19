@@ -50,13 +50,6 @@ class VerifierError extends Error {
   }
 }
 
-class ActionResult {
-  constructor (status, data) {
-    this.status = status;
-    this.data = data;
-  }
-}
-
 const CertificateVersion = {
   v1_1: '1.1',
   v1_2: '1.2',
@@ -304,7 +297,6 @@ const Contexts = {
     ]
   },
   blockcertsv1_2:
-
     {
       '@context': [
         {
@@ -325,10 +317,6 @@ const Contexts = {
           'CertificateDocument': 'bc:CertificateDocument',
           'issuer': {
             '@id': 'bc:issuer',
-            '@type': '@id'
-          },
-          'recipient': {
-            '@id': 'bc:recipient',
             '@type': '@id'
           },
           'blockchaincertificate': {
@@ -446,7 +434,6 @@ const Contexts = {
           'uid': {
             '@id': 'obi:uid'
           },
-          'revocationList': 'obi:revocationList',
           'TypeValidation': 'obi:TypeValidation',
           'FrameValidation': 'obi:FrameValidation',
           'validatesType': 'obi:validatesType',

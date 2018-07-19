@@ -1,15 +1,9 @@
 import { request } from './promisifiedRequests';
 import { TransactionData } from './verifierModels';
-import {
-  Blockchain,
-  MininumConfirmations,
-  Status,
-  VerifierError,
-  Url,
-} from '../config/default';
+import { Blockchain, MininumConfirmations, Status, Url, VerifierError } from '../config/default';
 import { dateToUnixTimestamp, startsWith } from './utils';
 
-export function getBlockcypherFetcher(transactionId, chain) {
+export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;
   if (chain === Blockchain.bitcoin) {
     blockCypherUrl = Url.blockCypherUrl + transactionId + '?limit=500';
@@ -17,8 +11,8 @@ export function getBlockcypherFetcher(transactionId, chain) {
     blockCypherUrl = Url.blockCypherTestUrl + transactionId + '?limit=500';
   }
   let blockcypherFetcher = new Promise((resolve, reject) => {
-    return request({ url: blockCypherUrl })
-      .then(function(response) {
+    return request({url: blockCypherUrl})
+      .then(function (response) {
         const responseData = JSON.parse(response);
         try {
           const txData = parseBlockCypherResponse(responseData);
@@ -28,14 +22,14 @@ export function getBlockcypherFetcher(transactionId, chain) {
           reject(err.message);
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
   return blockcypherFetcher;
 }
 
-export function getChainSoFetcher(transactionId, chain) {
+export function getChainSoFetcher (transactionId, chain) {
   let chainSoUrl;
   if (chain === Blockchain.bitcoin) {
     chainSoUrl = Url.chainSoUrl + transactionId;
@@ -44,8 +38,8 @@ export function getChainSoFetcher(transactionId, chain) {
   }
 
   let chainSoFetcher = new Promise((resolve, reject) => {
-    return request({ url: chainSoUrl })
-      .then(function(response) {
+    return request({url: chainSoUrl})
+      .then(function (response) {
         const responseData = JSON.parse(response);
         try {
           const txData = parseChainSoResponse(responseData);
@@ -55,17 +49,17 @@ export function getChainSoFetcher(transactionId, chain) {
           reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
   return chainSoFetcher;
 }
 
-function parseBlockCypherResponse(jsonResponse) {
+function parseBlockCypherResponse (jsonResponse) {
   if (jsonResponse.confirmations < MininumConfirmations) {
     throw new VerifierError(
-      'Number of transaction confirmations were less than the minimum required, according to Blockcypher API',
+      'Number of transaction confirmations were less than the minimum required, according to Blockcypher API'
     );
   }
   const time = dateToUnixTimestamp(jsonResponse.received);
@@ -80,14 +74,14 @@ function parseBlockCypherResponse(jsonResponse) {
     opReturnScript,
     issuingAddress,
     time,
-    revokedAddresses,
+    revokedAddresses
   );
 }
 
-function parseChainSoResponse(jsonResponse) {
+function parseChainSoResponse (jsonResponse) {
   if (jsonResponse.data.confirmations < MininumConfirmations) {
     throw new VerifierError(
-      'Number of transaction confirmations were less than the minimum required, according to Chain.so API',
+      'Number of transaction confirmations were less than the minimum required, according to Chain.so API'
     );
   }
   const time = new Date(jsonResponse.data.time * 1000);
@@ -104,7 +98,7 @@ function parseChainSoResponse(jsonResponse) {
   return new TransactionData(opReturnScript, issuingAddress, time, undefined);
 }
 
-function cleanupRemoteHash(remoteHash) {
+function cleanupRemoteHash (remoteHash) {
   let prefixes = ['6a20', 'OP_RETURN '];
   for (var i = 0; i < prefixes.length; i++) {
     let prefix = prefixes[i];

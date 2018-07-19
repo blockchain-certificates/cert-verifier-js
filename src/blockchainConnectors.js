@@ -1,15 +1,20 @@
-'use strict';
-
 import debug from 'debug';
-import {Blockchain, CertificateVersion, MinimumBlockchainExplorers, Race, Status, VerifierError} from '../config/default';
-import {getEtherScanFetcher} from './ethereumExplorers'
-import {getBlockcypherFetcher, getChainSoFetcher} from './bitcoinExplorers'
+import {
+  Blockchain,
+  CertificateVersion,
+  MinimumBlockchainExplorers,
+  Race,
+  Status,
+  VerifierError
+} from '../config/default';
+import { getEtherScanFetcher } from './ethereumExplorers';
+import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoinExplorers';
 
-const log = debug("blockchainConnectors");
+const log = debug('blockchainConnectors');
 
 const BitcoinExplorers = [
   (transactionId, chain) => getChainSoFetcher(transactionId, chain),
-  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain),
+  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 
 const EthereumExplorers = [
@@ -21,8 +26,7 @@ const BlockchainExplorersWithSpentOutputInfo = [
   (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 
-
-export function lookForTx(transactionId, chain, certificateVersion) {
+export function lookForTx (transactionId, chain, certificateVersion) {
   var BlockchainExplorers;
   switch (chain) {
     case Blockchain.bitcoin:
@@ -44,19 +48,20 @@ export function lookForTx(transactionId, chain, certificateVersion) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
   if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
-      (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2)) {
+    (certificateVersion === CertificateVersion.v1_1 || certificateVersion === CertificateVersion.v1_2)) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
 
   // Queue up blockchain explorer APIs
-  let promises = Array();
-  if (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2) {
-    var limit = Race ? BlockchainExplorersWithSpentOutputInfo.length : MinimumBlockchainExplorers;
+  let promises = [];
+  let limit;
+  if (certificateVersion === CertificateVersion.v1_1 || certificateVersion === CertificateVersion.v1_2) {
+    limit = Race ? BlockchainExplorersWithSpentOutputInfo.length : MinimumBlockchainExplorers;
     for (var i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
-    var limit = Race ? BlockchainExplorers.length : MinimumBlockchainExplorers;
+    limit = Race ? BlockchainExplorers.length : MinimumBlockchainExplorers;
     for (var j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
@@ -64,7 +69,7 @@ export function lookForTx(transactionId, chain, certificateVersion) {
 
   return new Promise((resolve, reject) => {
     return PromiseProperRace(promises, MinimumBlockchainExplorers).then(winners => {
-      if (!winners || winners.length == 0) {
+      if (!winners || winners.length === 0) {
         return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.`));
       }
 

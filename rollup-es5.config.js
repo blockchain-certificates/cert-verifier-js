@@ -28,28 +28,28 @@ export default {
         {
           match: /jsonld.js/,
           test: 'global = window;',
-          replace: '',
+          replace: ''
         },
         {
           match: /jsonld.js/,
           test: 'global = self;',
-          replace: '',
+          replace: ''
         },
         {
           match: /jsonld.js/,
           test: 'global = $;',
-          replace: '',
+          replace: ''
         },
         // fix jsonld|jsonldjs is not defined
         {
           match: /jsonld.js/,
           test: 'if(typeof jsonld === \'undefined\') {',
-          replace: 'if(typeof window.jsonld === \'undefined\') {',
+          replace: 'if(typeof window.jsonld === \'undefined\') {'
         },
         {
           match: /jsonld.js/,
           test: 'jsonld = jsonldjs = factory;',
-          replace: 'window.jsonld = window.jsonldjs = factory;',
+          replace: 'window.jsonld = window.jsonldjs = factory;'
         }
       ]
 

@@ -77,7 +77,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'computingLocalHash' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((stepCode, message, status) => {
@@ -96,7 +96,7 @@ describe('Certificate verifier', async () => {
           ) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((stepCode, message, status) => {
@@ -115,7 +115,7 @@ describe('Certificate verifier', async () => {
           ) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((status, message) => {
@@ -136,7 +136,7 @@ describe('Certificate verifier', async () => {
           ) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((stepCode, message, status) => {
@@ -152,7 +152,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'checkingReceipt' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((stepCode, message, status) => {
@@ -161,7 +161,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it("ensures a v2 certificate that's been tampered with fails", async () => {
+    it('ensures a v2 certificate that\'s been tampered with fails', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-tampered-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -169,7 +169,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'comparingHashes' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
 
       await certVerifier.verify((stepCode, message, status) => {
@@ -178,7 +178,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it("ensures a v2 ethereum certificate that's been tampered with fails", async () => {
+    it('ensures a v2 ethereum certificate that\'s been tampered with fails', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-tampered-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -186,7 +186,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'comparingHashes' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
       await certVerifier.verify((stepCode, message, status) => {
         expect(status).toBe(Status.failure);
@@ -194,7 +194,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it("ensures a v2 certificate that doesn't match blockchain value fails", async () => {
+    it('ensures a v2 certificate that doesn\'t match blockchain value fails', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-root-does-not-match-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -202,7 +202,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'fetchingRemoteHash' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
       await certVerifier.verify((stepCode, message, status) => {
         expect(status).toBe(Status.failure);
@@ -210,9 +210,9 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it("ensures a v2 ethereum certificate that doesn't match blockchain value fails", async () => {
+    it('ensures a v2 ethereum certificate that doesn\'t match blockchain value fails', async () => {
       const data = await readFileAsync(
-        'test/fixtures/sample_ethereum_cert-root-does-not-match-2.0.json',
+        'test/fixtures/sample_ethereum_cert-root-does-not-match-2.0.json'
       );
       const certVerifier = new CertificateVerifier(
         data,
@@ -220,7 +220,7 @@ describe('Certificate verifier', async () => {
           if (stepCode === 'fetchingRemoteHash' && status !== Status.starting) {
             expect(status).toBe(Status.failure);
           }
-        },
+        }
       );
       await certVerifier.verify((stepCode, message, status) => {
         expect(status).toBe(Status.failure);
@@ -230,7 +230,7 @@ describe('Certificate verifier', async () => {
 
     it('ensures a v2 certificate with a v1 issuer passes', async () => {
       const data = await readFileAsync(
-        'test/fixtures/sample_cert-with_v1_issuer-2.0.json',
+        'test/fixtures/sample_cert-with_v1_issuer-2.0.json'
       );
       const certVerifier = new CertificateVerifier(data);
       await certVerifier.verify((stepCode, message, status) => {
@@ -299,7 +299,7 @@ describe('Certificate verifier', async () => {
     describe('when there is a failure', function () {
       it('should be called with the code, the name, the status and the error message', function () {
         const errorMessage = 'Testing the test';
-        verifierInstance.doAction(testCode, () => { throw new Error(errorMessage) });
+        verifierInstance.doAction(testCode, () => { throw new Error(errorMessage); });
 
         expect(callbackSpy.calledWithExactly(testCode, expectedName, Status.failure, errorMessage)).toBe(true);
       });

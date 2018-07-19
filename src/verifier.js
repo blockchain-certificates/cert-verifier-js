@@ -1,5 +1,3 @@
-'use strict';
-
 import debug from 'debug';
 import { Certificate } from './certificate';
 import {
@@ -21,10 +19,10 @@ import {
 
 const log = debug('verifier');
 
-var noop = function() {};
+var noop = function () {};
 
 export class CertificateVerifier {
-  constructor(certificateString, statusCallback) {
+  constructor (certificateString, statusCallback) {
     const certificateJson = JSON.parse(certificateString);
     this.certificate = Certificate.parseJson(certificateJson);
     let document = certificateJson.document;
@@ -36,7 +34,7 @@ export class CertificateVerifier {
     this.document = document;
     this.statusCallback = statusCallback || noop;
     this.completionCallback = null;
-    
+
     // v1.1 only
     this.certificateString = certificateString;
 
@@ -47,14 +45,14 @@ export class CertificateVerifier {
 
   /**
    * _updateCallback
-   * 
+   *
    * calls the origin callback to update on a step status
-   * 
-   * @param {*} stepCode 
-   * @param {*} message 
-   * @param {*} status 
+   *
+   * @param {*} stepCode
+   * @param {*} message
+   * @param {*} status
    */
-  _updateCallback(stepCode, message, status, errorMessage) {
+  _updateCallback (stepCode, message, status, errorMessage) {
     if (stepCode != null) {
       this.statusCallback(stepCode, message, status, errorMessage);
     }
@@ -62,10 +60,10 @@ export class CertificateVerifier {
 
   /**
    * _succeed
-   * 
-   * @param {*} completionCallback 
+   *
+   * @param {*} completionCallback
    */
-  _succeed(completionCallback) {
+  _succeed (completionCallback) {
     let status;
     if (
       this.certificate.chain === Blockchain.mocknet ||
@@ -79,23 +77,23 @@ export class CertificateVerifier {
       log('success');
       status = Status.success;
     }
-  
+
     this.completionCallback(Status.final, '', status);
     return status;
   }
 
   /**
    * _failed
-   * 
-   * @param {*} stepCode 
-   * @param {*} completionCallback 
-   * @param {*} err 
+   *
+   * @param {*} stepCode
+   * @param {*} completionCallback
+   * @param {*} err
    */
-  _failed(stepCode, message) {
+  _failed (stepCode, message) {
     stepCode = stepCode || '';
     message = message || '';
     log(`failure:${message}`);
-    
+
     this.completionCallback(stepCode, message, Status.failure);
     return Status.failure;
   }
@@ -108,7 +106,7 @@ export class CertificateVerifier {
    * @returns {boolean}
    * @private
    */
-  _isFailing() {
+  _isFailing () {
     return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(Status.failure) > -1;
   }
 
@@ -119,13 +117,13 @@ export class CertificateVerifier {
    * @param action
    * @returns {*}
    */
-  doAction(stepCode, action) {
+  doAction (stepCode, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
     }
 
-	  let stepName = getVerboseMessage(stepCode);
+    let stepName = getVerboseMessage(stepCode);
     log(stepName);
     this._updateCallback(stepCode, stepName, Status.starting);
 
@@ -134,7 +132,7 @@ export class CertificateVerifier {
       this._updateCallback(stepCode, stepName, Status.success);
       this._stepsStatuses.push(Status.success);
       return res;
-    } catch(err) {
+    } catch (err) {
       this._updateCallback(stepCode, stepName, Status.failure, err.message);
       this._stepsStatuses.push(Status.failure);
     }
@@ -147,7 +145,7 @@ export class CertificateVerifier {
    * @param action
    * @returns {Promise<*>}
    */
-  async doAsyncAction(stepCode, action) {
+  async doAsyncAction (stepCode, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
@@ -165,7 +163,7 @@ export class CertificateVerifier {
       this._updateCallback(stepCode, stepName, Status.success);
       this._stepsStatuses.push(Status.success);
       return res;
-    } catch(err) {
+    } catch (err) {
       this._updateCallback(stepCode, stepName, Status.failure, err.message);
       this._stepsStatuses.push(Status.failure);
     }
@@ -178,7 +176,7 @@ export class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV1_2() {
+  async verifyV1_2 () {
     // Get transaction
     let transactionId = this.doAction(
       Status.getTransactionId,
@@ -217,7 +215,7 @@ export class CertificateVerifier {
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () => {
-        checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash)
+        checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
       }
     );
 
@@ -265,13 +263,13 @@ export class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV2() {
+  async verifyV2 () {
     // Get transaction
     let transactionId = this.doAction(
       Status.getTransactionId,
       () => checks.getTransactionId(this.certificate)
     );
-    
+
     let docToVerify = this.document;
 
     // Compute local hash
@@ -350,7 +348,7 @@ export class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV2Mock() {
+  async verifyV2Mock () {
     let docToVerify = this.document;
     // Compute local hash
     let localHash = await this.doAsyncAction(
@@ -381,7 +379,7 @@ export class CertificateVerifier {
    * @param completionCallback
    * @returns {Promise<*>}
    */
-  async verify(completionCallback) {
+  async verify (completionCallback) {
     if (this.certificate.version === CertificateVersion.v1_1) {
       throw new VerifierError(
         '',

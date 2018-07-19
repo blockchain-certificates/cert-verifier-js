@@ -4,7 +4,7 @@ import { getVerboseMessage } from '../config/default';
 import { CertificateVerifier, VERIFICATION_STATUSES } from '../src/index';
 import { readFileAsync } from './utils/readFile';
 
-describe('Certificate verifier',function () {
+describe('Certificate verifier', function () {
   // Disabling this test; issuer profile call is hanging -- need to allow redirect?
   describe('should', function () {
     it('verify a v1 certificate', async function () {

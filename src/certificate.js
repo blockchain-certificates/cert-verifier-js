@@ -8,7 +8,7 @@ import {
   PublicKey,
   VerifierError
 } from '../config/default';
-import { startsWith } from './utils';
+import { startsWith } from './helpers/string';
 
 var isBitcoinMainnetAddress = function (bitcoinAddress) {
   if (startsWith(bitcoinAddress, '1') || startsWith(bitcoinAddress, PublicKey)) {

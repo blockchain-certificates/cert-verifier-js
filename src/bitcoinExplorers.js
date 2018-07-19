@@ -1,7 +1,8 @@
 import { request } from './promisifiedRequests';
 import { TransactionData } from './verifierModels';
 import { Blockchain, MininumConfirmations, Status, Url, VerifierError } from '../config/default';
-import { dateToUnixTimestamp, startsWith } from './utils';
+import { dateToUnixTimestamp } from './helpers/date';
+import { startsWith } from './helpers/string';
 
 export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;

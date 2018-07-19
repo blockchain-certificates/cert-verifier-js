@@ -52,14 +52,15 @@ function dateFromIso (isoDate) {
   return dateFromRegex(isoDate);
 }
 
+/**
+ * dateToUnixTimestamp
+ *
+ * @param date
+ * @returns {string}
+ */
 export function dateToUnixTimestamp (date) {
-  return dateFromIso(date);
-}
-
-export function startsWith (string, pattern) {
-  if (typeof string !== 'string') {
-    console.warn('Trying to test a non string variable');
-    return false;
+  if (date === '') {
+    return '';
   }
-  return string.indexOf(pattern) === 0;
+  return dateFromIso(date);
 }

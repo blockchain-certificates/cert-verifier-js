@@ -1,7 +1,7 @@
 import { request } from './promisifiedRequests';
 import { Blockchain, MininumConfirmations, Status, Url, VerifierError } from '../config/default';
 import { TransactionData } from './verifierModels';
-import { startsWith } from './utils';
+import { startsWith } from './helpers/string';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';

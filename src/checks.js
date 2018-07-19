@@ -11,7 +11,7 @@ import {
   VerifierError
 } from '../config/default';
 import sha256 from 'sha256';
-import { dateToUnixTimestamp } from './utils';
+import { dateToUnixTimestamp } from './helpers/date';
 
 const {
   obi: OBI_CONTEXT,

@@ -25,9 +25,9 @@ describe('Certificate parsing', () => {
     it('parses a v1 certificate', async () => {
       var data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
       let cert = Certificate.parseJson(JSON.parse(data));
-      expect(cert.name).toBe('Arya Stark');
+      expect(cert.name).toBe('Certs_Test Auto_Recipient');
       expect(cert.signature).toBe(
-        'H0osFKllW8LrBhNMc4gC0TbRU0OK9Qgpebji1PgmNsgtSKCLXHL217cEG3FoHkaF/G2woGaoKDV/MrmpROvD860='
+        'H8o5mPXUHgXp/umCRZeqCZmVUsu8hbv0NchB+hnJWGszL7V8zBuuAcLQzeeRjhCv9TO5cOu/m5zAhJnDfbRHHcE='
       );
     });
   });
@@ -37,7 +37,7 @@ describe('Certificate.getTransactionId method', () => {
   it('should return the raw transaction ID of a certificate', async () => {
     const data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
     let cert = Certificate.parseJson(JSON.parse(data));
-    expect(cert.transactionId).toBe('8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d');
+    expect(cert.transactionId).toBe('00dbc2c28a6d84653687c7ee2521fb73af1a907c8fcce93ac2c413a1298cd69d');
   });
 });
 

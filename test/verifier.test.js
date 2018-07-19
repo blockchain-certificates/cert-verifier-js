@@ -4,18 +4,18 @@ import { getVerboseMessage } from '../config/default';
 import { CertificateVerifier, VERIFICATION_STATUSES } from '../src/index';
 import { readFileAsync } from './utils/readFile';
 
-describe('Certificate verifier', async () => {
+describe('Certificate verifier',function () {
   // Disabling this test; issuer profile call is hanging -- need to allow redirect?
-  xdescribe('should', async () => {
-    it('verify a v1 certificate', async () => {
+  describe('should', function () {
+    it('verify a v1 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
-      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {});
-      const result = await certVerifier.verify((stepCode, message, status) => {});
+      const certVerifier = new CertificateVerifier(data);
+      const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 
-  describe('should', () => {
+  describe('should', function () {
     it('verify an ethereum mainnet v2 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-mainnet-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
@@ -23,49 +23,49 @@ describe('Certificate verifier', async () => {
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('verify a v2 certificate', async () => {
+    it('verify a v2 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('verify an ethereum v2 certificate', async () => {
+    it('verify an ethereum v2 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('verify an ethereum ropsten v2 certificate', async () => {
+    it('verify an ethereum ropsten v2 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
+    it('verify an ethereum v2 certificate uppercase issuing address', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-uppercase-address-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('verify v2 alpha certificate', async () => {
+    it('verify v2 alpha certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0-alpha.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    it('return a failure when issuer profile URL does not exist (404)', async () => {
+    it('return a failure when issuer profile URL does not exist (404)', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-invalid-issuer-url.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.FAILURE);
     });
 
-    it('ensure a tampered v2 certificate fails', async () => {
+    it('ensure a tampered v2 certificate fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-unmapped-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -81,7 +81,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a revoked v2 certificate fails', async () => {
+    it('ensure a revoked v2 certificate fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-revoked-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -100,7 +100,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a revoked ethereum v2 certificate fails', async () => {
+    it('ensure a revoked ethereum v2 certificate fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-revoked-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -120,7 +120,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a v2 certificate with a revoked issuing key fails', async () => {
+    it('ensure a v2 certificate with a revoked issuing key fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-with-revoked-key-2.0.json');
 
       const certVerifier = new CertificateVerifier(
@@ -140,7 +140,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 certificate with an invalid merkle proof fails', async () => {
+    it('ensures a v2 certificate with an invalid merkle proof fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-merkle-proof-fail-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -157,7 +157,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 certificate that\'s been tampered with fails', async () => {
+    it('ensures a v2 certificate that\'s been tampered with fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-tampered-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -174,7 +174,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 ethereum certificate that\'s been tampered with fails', async () => {
+    it('ensures a v2 ethereum certificate that\'s been tampered with fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-tampered-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -190,7 +190,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 certificate that doesn\'t match blockchain value fails', async () => {
+    it('ensures a v2 certificate that doesn\'t match blockchain value fails', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-root-does-not-match-2.0.json');
       const certVerifier = new CertificateVerifier(
         data,
@@ -206,7 +206,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 ethereum certificate that doesn\'t match blockchain value fails', async () => {
+    it('ensures a v2 ethereum certificate that doesn\'t match blockchain value fails', async function () {
       const data = await readFileAsync(
         'test/fixtures/sample_ethereum_cert-root-does-not-match-2.0.json'
       );
@@ -224,7 +224,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensures a v2 certificate with a v1 issuer passes', async () => {
+    it('ensures a v2 certificate with a v1 issuer passes', async function () {
       const data = await readFileAsync(
         'test/fixtures/sample_cert-with_v1_issuer-2.0.json'
       );
@@ -234,7 +234,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a v2 mocknet passes', async () => {
+    it('ensure a v2 mocknet passes', async function () {
       const data = await readFileAsync('test/fixtures/mocknet-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       await certVerifier.verify((stepCode, message, status) => {
@@ -242,7 +242,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a v2 regtest passes', async () => {
+    it('ensure a v2 regtest passes', async function () {
       const data = await readFileAsync('test/fixtures/regtest-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       await certVerifier.verify((stepCode, message, status) => {
@@ -250,7 +250,7 @@ describe('Certificate verifier', async () => {
       });
     });
 
-    it('ensure a v2 certificate\' dates get transformed to right timezone', async () => {
+    it('ensure a v2 certificate\' dates get transformed to right timezone', async function () {
       const data = await readFileAsync('test/fixtures/sample_cert-breaking-timezone.json');
       const certVerifier = new CertificateVerifier(data);
       await certVerifier.verify((stepCode, message, status) => {
@@ -286,7 +286,7 @@ describe('Certificate verifier', async () => {
 
     xdescribe('when there is no failure', function () {
       it('should be called with the code, the name and the status of the step', function () {
-        verifierInstance.doAction(testCode, () => {});
+        verifierInstance.doAction(testCode, function () {});
 
         expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.SUCCESS, undefined)).toBe(true);
       });
@@ -295,7 +295,7 @@ describe('Certificate verifier', async () => {
     xdescribe('when there is a failure', function () {
       it('should be called with the code, the name, the status and the error message', function () {
         const errorMessage = 'Testing the test';
-        verifierInstance.doAction(testCode, () => { throw new Error(errorMessage); });
+        verifierInstance.doAction(testCode, function () { throw new Error(errorMessage); });
 
         expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.FAILURE, errorMessage)).toBe(true);
       });

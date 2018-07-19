@@ -124,6 +124,7 @@ export class CertificateVerifier {
     log(stepName);
     this._updateCallback(stepCode, stepName, Status.starting);
 
+
     try {
       let res = action();
       this._updateCallback(stepCode, stepName, Status.success);

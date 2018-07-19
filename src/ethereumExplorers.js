@@ -92,9 +92,9 @@ function checkEtherScanConfirmations (chain, blockNumber) {
   const action = '&action=eth_blockNumber';
   let etherScanUrl;
   if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = Url.etherScanMainUrl + action;
+    etherScanUrl = API_URLS.etherScanMainUrl + action;
   } else {
-    etherScanUrl = Url.etherScanRopstenUrl + action;
+    etherScanUrl = API_URLS.etherScanRopstenUrl + action;
   }
 
   return new Promise((resolve, reject) => {

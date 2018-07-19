@@ -48,6 +48,7 @@
       "beforeEach",
       "expect",
       "it",
+      "xit",
       "xdescribe",
       "XMLHttpRequest"
     ],

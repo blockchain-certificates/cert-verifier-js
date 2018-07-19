@@ -16,55 +16,51 @@ describe('Certificate verifier', async () => {
   });
 
   describe('should', () => {
-    xit('verify an ethereum mainnet v2 certificate', async () => {
+    it('verify an ethereum mainnet v2 certificate', async function () {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-mainnet-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('verify a v2 certificate', async () => {
+    it('verify a v2 certificate', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('verify an ethereum v2 certificate', async () => {
+    it('verify an ethereum v2 certificate', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('verify an ethereum ropsten v2 certificate', async () => {
+    it('verify an ethereum ropsten v2 certificate', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('verify an ethereum v2 certificate uppercase issuing address', async () => {
+    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
       const data = await readFileAsync('test/fixtures/sample_ethereum_cert-uppercase-address-valid-2.0.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('verify v2 alpha certificate', async () => {
+    it('verify v2 alpha certificate', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0-alpha.json');
       const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
 
-    xit('return a failure when issuer profile URL does not exist (404)', async () => {
+    it('return a failure when issuer profile URL does not exist (404)', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-invalid-issuer-url.json');
-      const certVerifier = new CertificateVerifier(data, (stepCode, message, status) => {
-        if (stepCode === 'gettingIssuerProfile' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
+      const certVerifier = new CertificateVerifier(data);
       const result = await certVerifier.verify();
       expect(result).toBe(VERIFICATION_STATUSES.FAILURE);
     });

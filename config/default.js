@@ -11,7 +11,11 @@ let Status = {
   checkingAuthenticity: 'checkingAuthenticity',
   checkingRevokedStatus: 'checkingRevokedStatus',
   checkingExpiresDate: 'checkingExpiresDate',
-  mockSuccess: 'mockSuccess'
+  success: 'success',
+  failure: 'failure',
+  starting: 'starting',
+  mockSuccess: 'mockSuccess',
+  final: 'final'
 };
 
 var verboseMessageMap = {};

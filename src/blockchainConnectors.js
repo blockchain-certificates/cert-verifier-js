@@ -1,14 +1,11 @@
 import debug from 'debug';
-import {
-  Blockchain,
-  CertificateVersion,
-  MinimumBlockchainExplorers,
-  Race,
-  Status,
-  VerifierError
-} from '../config/default';
+import { Status } from '../config/default';
 import { getEtherScanFetcher } from './ethereumExplorers';
 import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoinExplorers';
+import { BLOCKCHAINS } from './constants/blockchains';
+import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
+import { MinimumBlockchainExplorers, Race } from './constants/config';
+import { VerifierError } from './models/verifierError';
 
 const log = debug('blockchainConnectors');
 
@@ -29,14 +26,14 @@ const BlockchainExplorersWithSpentOutputInfo = [
 export function lookForTx (transactionId, chain, certificateVersion) {
   var BlockchainExplorers;
   switch (chain) {
-    case Blockchain.bitcoin:
-    case Blockchain.regtest:
-    case Blockchain.testnet:
-    case Blockchain.mocknet:
+    case BLOCKCHAINS.bitcoin.code:
+    case BLOCKCHAINS.regtest.code:
+    case BLOCKCHAINS.testnet.code:
+    case BLOCKCHAINS.mocknet.code:
       BlockchainExplorers = BitcoinExplorers;
       break;
-    case Blockchain.ethmain:
-    case Blockchain.ethropst:
+    case BLOCKCHAINS.ethmain.code:
+    case BLOCKCHAINS.ethropst.code:
       BlockchainExplorers = EthereumExplorers;
       break;
     default:
@@ -48,14 +45,14 @@ export function lookForTx (transactionId, chain, certificateVersion) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
   if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
-    (certificateVersion === CertificateVersion.v1_1 || certificateVersion === CertificateVersion.v1_2)) {
+    (certificateVersion === CERTIFICATE_VERSIONS.v1dot1 || certificateVersion === CERTIFICATE_VERSIONS.v1dot2)) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
 
   // Queue up blockchain explorer APIs
   let promises = [];
   let limit;
-  if (certificateVersion === CertificateVersion.v1_1 || certificateVersion === CertificateVersion.v1_2) {
+  if (certificateVersion === CERTIFICATE_VERSIONS.v1dot1 || certificateVersion === CERTIFICATE_VERSIONS.v1dot2) {
     limit = Race ? BlockchainExplorersWithSpentOutputInfo.length : MinimumBlockchainExplorers;
     for (var i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));

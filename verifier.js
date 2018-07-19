@@ -6657,14 +6657,8 @@ let Status = {
   checkingAuthenticity: 'checkingAuthenticity',
   checkingRevokedStatus: 'checkingRevokedStatus',
   checkingExpiresDate: 'checkingExpiresDate',
-  success: 'success',
-  failure: 'failure',
-  starting: 'starting',
-  mockSuccess: 'mockSuccess',
-  final: 'final'
+  mockSuccess: 'mockSuccess'
 };
-
-const BlockchainRawTransactionIdPlaceholder = '{TRANSACTION_ID}';
 
 var verboseMessageMap = {};
 verboseMessageMap[Status.getTransactionId] = 'Getting transaction ID';
@@ -6689,90 +6683,109 @@ let getVerboseMessage = function (status) {
   return verboseMessageMap[status];
 };
 
-class VerifierError extends Error {
-  constructor (stepCode, message) {
-    super(message);
-    this.stepCode = stepCode;
+const v1dot1 = '1.1';
+const v1dot2 = '1.2';
+const v2dot0 = '2.0';
+
+var certificateVersions = /*#__PURE__*/Object.freeze({
+	v1dot1: v1dot1,
+	v1dot2: v1dot2,
+	v2dot0: v2dot0
+});
+
+const TRANSACTION_TEMPLATE_ID_PLACEHOLDER = '{TRANSACTION_ID}';
+
+const BLOCKCHAINS = {
+  bitcoin: {
+    code: 'bitcoin',
+    name: 'Bitcoin',
+    signatureValue: 'bitcoinMainnet',
+    transactionTemplates: {
+      full: `https://blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
+      raw: `https://blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+    }
+  },
+  ethmain: {
+    code: 'ethmain',
+    name: 'Ethereum',
+    signatureValue: 'ethereumMainnet',
+    transactionTemplates: {
+      full: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
+      raw: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+    }
+  },
+  ethropst: {
+    code: 'ethropst',
+    name: 'Ethereum',
+    signatureValue: 'ethereumRopsten',
+    transactionTemplates: {
+      full: `https://ropsten.etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
+      raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+    }
+  },
+  ethtest: {
+    code: 'ethtest',
+    name: 'Mocknet',
+    signatureValue: 'ethereumTestnet',
+    transactionTemplates: {
+      full: '',
+      raw: ''
+    }
+  },
+  mocknet: {
+    code: 'mocknet',
+    name: 'Mocknet',
+    signatureValue: 'mockchain',
+    transactionTemplates: {
+      full: '',
+      raw: ''
+    }
+  },
+  regtest: {
+    code: 'regtest',
+    name: 'Mocknet',
+    signatureValue: 'bitcoinRegtest',
+    transactionTemplates: {
+      full: '',
+      raw: ''
+    }
+  },
+  testnet: {
+    code: 'testnet',
+    name: 'Mocknet',
+    signatureValue: 'bitcoinTestnet',
+    transactionTemplates: {
+      full: `https://testnet.blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
+      raw: `https://testnet.blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+    }
   }
+};
+
+const FAILURE = 'failure';
+const FINAL = 'final';
+const MOCK_SUCCESS = 'mockSuccess';
+const STARTING = 'started';
+const SUCCESS = 'success';
+
+var verificationStatuses = /*#__PURE__*/Object.freeze({
+	FAILURE: FAILURE,
+	FINAL: FINAL,
+	MOCK_SUCCESS: MOCK_SUCCESS,
+	STARTING: STARTING,
+	SUCCESS: SUCCESS
+});
+
+function startsWith (stringContent, pattern) {
+  if (typeof stringContent !== 'string') {
+    console.warn('Trying to test a non string variable');
+    return false;
+  }
+  return stringContent.indexOf(pattern) === 0;
 }
-
-const CertificateVersion = {
-  v1_1: '1.1',
-  v1_2: '1.2',
-  v2_0: '2.0'
-};
-
-const Blockchain = {
-  bitcoin: 'bitcoin',
-  testnet: 'testnet',
-  regtest: 'regtest',
-  mocknet: 'mocknet',
-  ethmain: 'ethmain',
-  ethropst: 'ethropst',
-  ethtest: 'ethtest'
-};
-
-/**
- * These are the templates of the raw transaction url
- * Use the values of Blockchain (above) as key when adding one
- */
-const BlockchainRawTransactionUrl = {
-  bitcoin: `https://blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
-  testnet: `https://testnet.blockchain.info/rawtx/${BlockchainRawTransactionIdPlaceholder}`,
-  regtest: ``,
-  mocknet: ``,
-  ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-  ethropst: `https://ropsten.etherscan.io/getRawTx?tx=${BlockchainRawTransactionIdPlaceholder}`,
-  ethtest: ``
-};
-
-/**
- * These are the templates of the transaction url
- * Use the values of Blockchain (above) as key when adding one
- */
-const BlockchainTransactionUrl = {
-  bitcoin: `https://blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
-  testnet: `https://testnet.blockchain.info/tx/${BlockchainRawTransactionIdPlaceholder}`,
-  regtest: ``,
-  mocknet: ``,
-  ethmain: `https://etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-  ethropst: `https://ropsten.etherscan.io/tx/${BlockchainRawTransactionIdPlaceholder}`,
-  ethtest: ``
-};
-
-const ChainSignatureValue = {
-  /*
-  These are the external display of `chain` in the signature suite. Adding a new type since `Blockchain` is
-  used by the web component and so we need to remain compatible.
-  */
-  bitcoin: 'bitcoinMainnet',
-  testnet: 'bitcoinTestnet',
-  regtest: 'bitcoinRegtest',
-  ethmain: 'ethereumMainnet',
-  ethropst: 'ethereumRopsten',
-  ethtest: 'ethereumTestnet',
-  mocknet: 'mockchain'
-};
-
-const Url = {
-  blockCypherUrl: 'https://api.blockcypher.com/v1/btc/main/txs/',
-  blockCypherTestUrl: 'https://api.blockcypher.com/v1/btc/test3/txs/',
-  chainSoUrl: 'https://chain.so/api/v2/get_tx/BTC/',
-  chainSoTestUrl: 'https://chain.so/api/v2/get_tx/BTCTEST/',
-
-  // Add &apikey={key} to EtherScan URL's if getting rate limited
-  etherScanMainUrl: 'https://api.etherscan.io/api?module=proxy',
-  etherScanRopstenUrl: 'https://api-ropsten.etherscan.io/api?module=proxy'
-};
-
-const generateRevocationReason = function (reason) {
-  reason = reason.trim();
-  reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
-  return `This certificate has been revoked by the issuer.${reason}`;
-};
 
 // Minimum number of confirmations to consider a transaction valid. Recommended setting = 10
 const MininumConfirmations = 1;
+
 // Minimum number of blockchain APIs to consult to compare transaction data consistency
 const MinimumBlockchainExplorers = 1;
 
@@ -6780,582 +6793,96 @@ const CheckForUnmappedFields = true;
 
 const PublicKey = 'ecdsa-koblitz-pubkey:1';
 
-// TODO Fixes or read direct in files??
-const Contexts = {
-  obi: {
-    '@context': {
-      'id': '@id',
-      'type': '@type',
-
-      'extensions': 'https://w3id.org/openbadges/extensions#',
-      'obi': 'https://w3id.org/openbadges#',
-      'validation': 'obi:validation',
-
-      'cred': 'https://w3id.org/credentials#',
-      'dc': 'http://purl.org/dc/terms/',
-      'schema': 'http://schema.org/',
-      'sec': 'https://w3id.org/security#',
-      'xsd': 'http://www.w3.org/2001/XMLSchema#',
-
-      'AlignmentObject': 'schema:AlignmentObject',
-      'CryptographicKey': 'sec:Key',
-      'Endorsement': 'cred:Credential',
-
-      'Assertion': 'obi:Assertion',
-      'BadgeClass': 'obi:BadgeClass',
-      'Criteria': 'obi:Criteria',
-      'Evidence': 'obi:Evidence',
-      'Extension': 'obi:Extension',
-      'FrameValidation': 'obi:FrameValidation',
-      'IdentityObject': 'obi:IdentityObject',
-      'Image': 'obi:Image',
-      'HostedBadge': 'obi:HostedBadge',
-      'hosted': 'obi:HostedBadge',
-      'Issuer': 'obi:Issuer',
-      'Profile': 'obi:Profile',
-      'RevocationList': 'obi:RevocationList',
-      'SignedBadge': 'obi:SignedBadge',
-      'signed': 'obi:SignedBadge',
-      'TypeValidation': 'obi:TypeValidation',
-      'VerificationObject': 'obi:VerificationObject',
-
-      'author': {'@id': 'schema:author', '@type': '@id'},
-      'caption': {'@id': 'schema:caption'},
-      'claim': {'@id': 'cred:claim', '@type': '@id'},
-      'created': {'@id': 'dc:created', '@type': 'xsd:dateTime'},
-      'creator': {'@id': 'dc:creator', '@type': '@id'},
-      'description': {'@id': 'schema:description'},
-      'email': {'@id': 'schema:email'},
-      'endorsement': {'@id': 'cred:credential', '@type': '@id'},
-      'expires': {'@id': 'sec:expiration', '@type': 'xsd:dateTime'},
-      'genre': {'@id': 'schema:genre'},
-      'image': {'@id': 'schema:image', '@type': '@id'},
-      'name': {'@id': 'schema:name'},
-      'owner': {'@id': 'sec:owner', '@type': '@id'},
-      'publicKey': {'@id': 'sec:publicKey', '@type': '@id'},
-      'publicKeyPem': {'@id': 'sec:publicKeyPem'},
-      'related': {'@id': 'dc:relation', '@type': '@id'},
-      'startsWith': {'@id': 'http://purl.org/dqm-vocabulary/v1/dqm#startsWith'},
-      'tags': {'@id': 'schema:keywords'},
-      'targetDescription': {'@id': 'schema:targetDescription'},
-      'targetFramework': {'@id': 'schema:targetFramework'},
-      'targetName': {'@id': 'schema:targetName'},
-      'targetUrl': {'@id': 'schema:targetUrl'},
-      'telephone': {'@id': 'schema:telephone'},
-      'url': {'@id': 'schema:url', '@type': '@id'},
-      'version': {'@id': 'schema:version'},
-
-      'alignment': {'@id': 'obi:alignment', '@type': '@id'},
-      'allowedOrigins': {'@id': 'obi:allowedOrigins'},
-      'audience': {'@id': 'obi:audience'},
-      'badge': {'@id': 'obi:badge', '@type': '@id'},
-      'criteria': {'@id': 'obi:criteria', '@type': '@id'},
-      'endorsementComment': {'@id': 'obi:endorsementComment'},
-      'evidence': {'@id': 'obi:evidence', '@type': '@id'},
-      'hashed': {'@id': 'obi:hashed', '@type': 'xsd:boolean'},
-      'identity': {'@id': 'obi:identityHash'},
-      'issuedOn': {'@id': 'obi:issueDate', '@type': 'xsd:dateTime'},
-      'issuer': {'@id': 'obi:issuer', '@type': '@id'},
-      'narrative': {'@id': 'obi:narrative'},
-      'recipient': {'@id': 'obi:recipient', '@type': '@id'},
-      'revocationList': {'@id': 'obi:revocationList', '@type': '@id'},
-      'revocationReason': {'@id': 'obi:revocationReason'},
-      'revoked': {'@id': 'obi:revoked', '@type': 'xsd:boolean'},
-      'revokedAssertions': {'@id': 'obi:revoked'},
-      'salt': {'@id': 'obi:salt'},
-      'targetCode': {'@id': 'obi:targetCode'},
-      'uid': {'@id': 'obi:uid'},
-      'validatesType': 'obi:validatesType',
-      'validationFrame': 'obi:validationFrame',
-      'validationSchema': 'obi:validationSchema',
-      'verification': {'@id': 'obi:verify', '@type': '@id'},
-      'verificationProperty': {'@id': 'obi:verificationProperty'},
-      'verify': 'verification'
-    }
-  },
-  blockcerts: {
-    '@context': {
-      'id': '@id',
-      'type': '@type',
-      'bc': 'https://w3id.org/blockcerts#',
-      'obi': 'https://w3id.org/openbadges#',
-      'cp': 'https://w3id.org/chainpoint#',
-      'schema': 'http://schema.org/',
-      'sec': 'https://w3id.org/security#',
-      'xsd': 'http://www.w3.org/2001/XMLSchema#',
-
-      'MerkleProof2017': 'sec:MerkleProof2017',
-
-      'RecipientProfile': 'bc:RecipientProfile',
-      'SignatureLine': 'bc:SignatureLine',
-      'MerkleProofVerification2017': 'bc:MerkleProofVerification2017',
-
-      'recipientProfile': 'bc:recipientProfile',
-      'signatureLines': 'bc:signatureLines',
-      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
-
-      'subtitle': 'bc:subtitle',
-
-      'jobTitle': 'schema:jobTitle',
-
-      'creator': {'@id': 'dc:creator', '@type': '@id'},
-      'expires': {
-        '@id': 'sec:expiration',
-        '@type': 'xsd:dateTime'
-      },
-      'revoked': {
-        '@id': 'sec:expiration',
-        '@type': 'xsd:dateTime'
-      },
-      'CryptographicKey': 'sec:Key',
-      'signature': 'sec:signature',
-
-      'verification': 'bc:verification',
-      'publicKeys': 'bc:publicKeys',
-
-      'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
-      'BTCOpReturn': 'cp:BTCOpReturn',
-      'targetHash': 'cp:targetHash',
-      'merkleRoot': 'cp:merkleRoot',
-      'proof': 'cp:proof',
-      'anchors': 'cp:anchors',
-      'sourceId': 'cp:sourceId',
-      'right': 'cp:right',
-      'left': 'cp:left'
-    },
-    'obi:validation': [
-      {
-        'obi:validatesType': 'RecipientProfile',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/recipientSchema.json'
-      },
-      {
-        'obi:validatesType': 'SignatureLine',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/signatureLineSchema.json'
-      },
-      {
-        'obi:validatesType': 'MerkleProof2017',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/merkleProof2017Schema.json'
-      }
-    ]
-  },
-  blockcertsv1_2:
-
-    {
-      '@context': [
-        {
-          'id': '@id',
-          'type': '@type',
-          'bc': 'https://w3id.org/blockcerts#',
-          'obi': 'https://w3id.org/openbadges#',
-          'cp': 'https://w3id.org/chainpoint#',
-          'extensions': 'https://w3id.org/openbadges/extensions#',
-          'validation': 'obi:validation',
-          'xsd': 'http://www.w3.org/2001/XMLSchema#',
-          'schema': 'http://schema.org/',
-          'sec': 'https://w3id.org/security#',
-          'Assertion': 'bc:Assertion',
-          'Certificate': 'bc:Certificate',
-          'Issuer': 'bc:Issuer',
-          'BlockchainCertificate': 'bc:BlockchainCertificate',
-          'CertificateDocument': 'bc:CertificateDocument',
-          'issuer': {
-            '@id': 'bc:issuer',
-            '@type': '@id'
-          },
-          'recipient': {
-            '@id': 'bc:recipient',
-            '@type': '@id'
-          },
-          'blockchaincertificate': {
-            '@id': 'bc:blockchaincertificate',
-            '@type': '@id'
-          },
-          'certificate': {
-            '@id': 'bc:certificate',
-            '@type': '@id'
-          },
-          'document': {
-            '@id': 'bc:document',
-            '@type': '@id'
-          },
-          'assertion': {
-            '@id': 'bc:assertion',
-            '@type': '@id'
-          },
-          'verify': {
-            '@id': 'bc:verify',
-            '@type': '@id'
-          },
-          'recipient': {
-            '@id': 'bc:recipient',
-            '@type': '@id'
-          },
-          'receipt': {
-            '@id': 'bc:receipt',
-            '@type': '@id'
-          },
-          'publicKey': {
-            '@id': 'bc:publicKey'
-          },
-          'revocationKey': {
-            '@id': 'bc:revocationKey'
-          },
-          'image:signature': {
-            '@id': 'bc:image:signature'
-          },
-          'signature': {
-            '@id': 'bc:signature'
-          },
-          'familyName': {
-            '@id': 'schema:familyName'
-          },
-          'givenName': {
-            '@id': 'schema:givenName'
-          },
-          'jobTitle': {
-            '@id': 'schema:jobTitle'
-          },
-          'signer': {
-            '@id': 'bc:signer',
-            '@type': '@id'
-          },
-          'attribute-signed': {
-            '@id': 'bc:attribute-signed'
-          },
-          'ECDSA(secp256k1)': 'bc:SignedBadge',
-          'subtitle': {
-            '@id': 'bc:subtitle'
-          },
-          'email': 'schema:email',
-          'hashed': {
-            '@id': 'obi:hashed',
-            '@type': 'xsd:boolean'
-          },
-          'image': {
-            '@id': 'schema:image',
-            '@type': '@id'
-          },
-          'salt': {
-            '@id': 'obi:salt'
-          },
-          'identity': {
-            '@id': 'obi:identityHash'
-          },
-          'issuedOn': {
-            '@id': 'obi:issueDate',
-            '@type': 'xsd:dateTime'
-          },
-          'expires': {
-            '@id': 'sec:expiration',
-            '@type': 'xsd:dateTime'
-          },
-          'evidence': {
-            '@id': 'obi:evidence',
-            '@type': '@id'
-          },
-          'criteria': {
-            '@id': 'obi:criteria',
-            '@type': '@id'
-          },
-          'tags': {
-            '@id': 'schema:keywords'
-          },
-          'alignment': {
-            '@id': 'obi:alignment',
-            '@type': '@id'
-          },
-          'revocationList': {
-            '@id': 'obi:revocationList',
-            '@type': '@id'
-          },
-          'name': {
-            '@id': 'schema:name'
-          },
-          'description': {
-            '@id': 'schema:description'
-          },
-          'url': {
-            '@id': 'schema:url',
-            '@type': '@id'
-          },
-          'uid': {
-            '@id': 'obi:uid'
-          },
-          'revocationList': 'obi:revocationList',
-          'TypeValidation': 'obi:TypeValidation',
-          'FrameValidation': 'obi:FrameValidation',
-          'validatesType': 'obi:validatesType',
-          'validationSchema': 'obi:validationSchema',
-          'validationFrame': 'obi:validationFrame',
-          'ChainpointSHA224v2': 'cp:ChainpointSHA224v2',
-          'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
-          'ChainpointSHA384v2': 'cp:ChainpointSHA384v2',
-          'ChainpointSHA512v2': 'cp:ChainpointSHA512v2',
-          'ChainpointSHA3-224v2': 'cp:ChainpointSHA3-224v2',
-          'ChainpointSHA3-256v2': 'cp:ChainpointSHA3-256v2',
-          'ChainpointSHA3-384v2': 'cp:ChainpointSHA3-384v2',
-          'ChainpointSHA3-512v2': 'cp:ChainpointSHA3-512v2',
-          'BTCOpReturn': 'cp:BTCOpReturn',
-          'targetHash': 'cp:targetHash',
-          'merkleRoot': 'cp:merkleRoot',
-          'proof': 'cp:proof',
-          'anchors': 'cp:anchors',
-          'sourceId': 'cp:sourceId',
-          'right': 'cp:right',
-          'left': 'cp:left'
-        }
-      ],
-      'validation': [
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'Assertion',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/assertion-1.2.json'
-        },
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'Certificate',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-1.2.json'
-        },
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'Issuer',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/issuer-1.2.json'
-        },
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'CertificateDocument',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-document-1.2.json'
-        },
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'BlockchainCertificate',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-certificate-1.2.json'
-        },
-        {
-          'type': 'TypeValidation',
-          'validatesType': 'BlockchainReceipt',
-          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-receipt-1.2.json'
-        }
-      ]
-    },
-  blockcertsv2: {
-    '@context': {
-      'id': '@id',
-      'type': '@type',
-      'bc': 'https://w3id.org/blockcerts#',
-      'obi': 'https://w3id.org/openbadges#',
-      'cp': 'https://w3id.org/chainpoint#',
-      'schema': 'http://schema.org/',
-      'sec': 'https://w3id.org/security#',
-      'xsd': 'http://www.w3.org/2001/XMLSchema#',
-
-      'MerkleProof2017': 'sec:MerkleProof2017',
-
-      'RecipientProfile': 'bc:RecipientProfile',
-      'SignatureLine': 'bc:SignatureLine',
-      'MerkleProofVerification2017': 'bc:MerkleProofVerification2017',
-
-      'recipientProfile': 'bc:recipientProfile',
-      'signatureLines': 'bc:signatureLines',
-      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
-
-      'subtitle': 'bc:subtitle',
-
-      'jobTitle': 'schema:jobTitle',
-
-      'expires': {
-        '@id': 'sec:expiration',
-        '@type': 'xsd:dateTime'
-      },
-      'revoked': {
-        '@id': 'obi:revoked',
-        '@type': 'xsd:boolean'
-      },
-      'CryptographicKey': 'sec:Key',
-      'signature': 'sec:signature',
-      'verification': {
-        '@id': 'obi:verify',
-        '@type': '@id'
-      },
-      'publicKey': {
-        '@id': 'sec:publicKey',
-        '@type': '@id'
-      },
-
-      'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
-      'BTCOpReturn': 'cp:BTCOpReturn',
-      'targetHash': 'cp:targetHash',
-      'merkleRoot': 'cp:merkleRoot',
-      'proof': 'cp:proof',
-      'anchors': 'cp:anchors',
-      'sourceId': 'cp:sourceId',
-      'right': 'cp:right',
-      'left': 'cp:left'
-    },
-    'obi:validation': [
-      {
-        'obi:validatesType': 'RecipientProfile',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/recipientSchema.json'
-      },
-      {
-        'obi:validatesType': 'SignatureLine',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/signatureLineSchema.json'
-      },
-      {
-        'obi:validatesType': 'MerkleProof2017',
-        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/merkleProof2017Schema.json'
-      }
-    ]
-  }
-};
-
-function noOffset(s) {
-  let day = s.slice(0, -5).split(/\D/).map(function(itm) {
-    return parseInt(itm, 10) || 0;
-  });
-  day[1] -= 1;
-  day = new Date(Date.UTC.apply(Date, day));
-  let offsetString = s.slice(-5);
-  let offset = parseInt(offsetString, 10) / 100;
-  if (offsetString.slice(0, 1) === '+') offset *= -1;
-  day.setHours(day.getHours() + offset);
-  return day.getTime();
+function isMainnet (bitcoinAddress) {
+  return startsWith(bitcoinAddress, '1') || startsWith(bitcoinAddress, PublicKey);
 }
 
-function dateFromRegex(s) {
-  let day;
-  let tz;
-  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/,
-    p = rx.exec(s) || [];
-  if (p[1]) {
-    day = p[1].split(/\D/).map(function(itm) {
-      return parseInt(itm, 10) || 0;
-    });
-    day[1] -= 1;
-    day = new Date(Date.UTC.apply(Date, day));
-    if (!day.getDate()) return NaN;
-    if (p[5]) {
-      tz = parseInt(p[5], 10) / 100 * 60;
-      if (p[6]) tz += parseInt(p[6], 10);
-      if (p[4] === '+') tz *= -1;
-      if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
-    }
-    return day;
-  }
-  return NaN;
-}
 
-function dateFromIso(isoDate) {
-  // Chrome
-  let diso = Date.parse(isoDate);
-  if (diso) {
-    return new Date(diso);
-  }
 
-  // JS 1.8 gecko
-  let offsetDate = noOffset(isoDate);
-  if (offsetDate) {
-    return offsetDate;
-  }
+var addresses = /*#__PURE__*/Object.freeze({
+	isMainnet: isMainnet
+});
 
-  return dateFromRegex(isoDate);
-}
-
-function dateToUnixTimestamp(date) {
-  return dateFromIso(date);
-}
-
-function startsWith (string, pattern) {
-  if (typeof string !== 'string') {
-    console.warn('Trying to test a non string variable');
-    return false;
-  }
-  return string.indexOf(pattern) === 0;
-}
-
-var isBitcoinMainnetAddress = function (bitcoinAddress) {
-  if (startsWith(bitcoinAddress, "1") || startsWith(bitcoinAddress, PublicKey)) {
-    return true;
-  }
-  return false;
-};
-
-var getChain = function (signature, bitcoinAddress) {
+/**
+ * getChain
+ *
+ * Returns a chain object by looking at the signature value or the bitcoin address (legacy)
+ *
+ * @param signature
+ * @param bitcoinAddress
+ * @returns {*}
+ */
+function getChain (signature, bitcoinAddress) {
   let anchor = signature.anchors[0];
   if (anchor.chain) {
-    let chain = anchor.chain;
-    if (chain == ChainSignatureValue.bitcoin) {
-      return Blockchain.bitcoin;
-    } else if (chain == ChainSignatureValue.testnet) {
-      return Blockchain.testnet;
-    } else if (chain == ChainSignatureValue.regtest) {
-      return Blockchain.regtest;
-    } else if (chain == ChainSignatureValue.mocknet) {
-      return Blockchain.mocknet;
-    }  else if (chain == ChainSignatureValue.ethmain) {
-      return Blockchain.ethmain;
-    } else if (chain == ChainSignatureValue.ethropst) {
-      return Blockchain.ethropst;
-    } else {
-      throw new Error("Didn't recognize chain value")
+    let signature = anchor.chain;
+    // TODO put in a separate function (did this way for now since I couldn't find a way to test a private function with Jest, and it's getting late)
+    let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === signature);
+    if (typeof chainObject === 'undefined') {
+      throw new Error('Didn\'t recognize chain value');
     }
+    return chainObject[1];
   }
   // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
   // otherwise try to determine the chain from a bitcoin address
-  if (isBitcoinMainnetAddress(bitcoinAddress)) {
-    return Blockchain.bitcoin; // mainnet
+  return addresses.isMainnet(bitcoinAddress) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+}
+
+function generateRevocationReason (reason) {
+  reason = reason.trim();
+  // TODO take strings out to constants
+  reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
+  return `This certificate has been revoked by the issuer.${reason}`;
+}
+
+class VerifierError extends Error {
+  constructor (stepCode, message) {
+    super(message);
+    this.stepCode = stepCode;
   }
-  return Blockchain.testnet;
-};
+}
 
-var getNameForChain = function (chain) {
-  return chain.toString();
-};
-
-/**
- * getTransactionId
- *
- * @returns {string|*}
- */
-const getTransactionId = certificateReceipt => {
+function getTransactionId (certificateReceipt) {
   try {
     return certificateReceipt.anchors[0].sourceId;
   } catch (e) {
     throw new VerifierError(
-      "Can't verify this certificate without a transaction ID to compare against.",
+      'Can\'t verify this certificate without a transaction ID to compare against.'
     );
   }
-};
+}
 
 /**
  * getRawTransactionLink
  *
- * Exposes the raw transaction link (empty string if does not exist)
- */
-const getRawTransactionLink = (transactionId, chain) => {
-  try {
-    return BlockchainRawTransactionUrl[chain].replace(BlockchainRawTransactionIdPlaceholder, transactionId);
-  } catch (e) {
-    throw new VerifierError("Can't get the raw transaction link.");
-  }
-};
-
-/**
- * getTransactionLink
+ * Builds and returns the raw transaction link
  *
- * Exposes the transaction link (empty string if does not exist)
+ * @param transactionId
+ * @param chainObject
+ * @param getRawVersion
+ * @returns {*}
  */
-const getTransactionLink = (transactionId, chain) => {
-  try {
-    return BlockchainTransactionUrl[chain].replace(BlockchainRawTransactionIdPlaceholder, transactionId);
-  } catch (e) {
-    throw new VerifierError("Can't get the raw transaction link.");
-  }
+function getTransactionLink (transactionId, chainObject, getRawVersion = false) {
+  const rawTransactionLinkTemplate = chainObject.transactionTemplates[getRawVersion ? 'raw' : 'full'];
+  return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
+}
+
+
+
+var certificates = /*#__PURE__*/Object.freeze({
+	getChain: getChain,
+	generateRevocationReason: generateRevocationReason,
+	getTransactionId: getTransactionId,
+	getTransactionLink: getTransactionLink
+});
+
+var domain = {
+  addresses,
+  certificates
 };
 
 class Certificate {
-  constructor(version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id,
-    issuer, receipt, signature, publicKey, revocationKey, chain, expires) {
+  constructor (version, name, title, subtitle, description, certificateImage, signatureImage, sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chainObject, expires) {
     this.version = version;
     this.name = name;
     this.title = title;
@@ -7370,15 +6897,15 @@ class Certificate {
     this.signature = signature;
     this.publicKey = publicKey;
     this.revocationKey = revocationKey;
-    this.chain = chain;
-    this.chainAsString = getNameForChain(chain);
+    this.chainCode = chainObject.code;
+    this.chainName = chainObject.name;
     this.expires = expires;
-    this.transactionId = getTransactionId(this.receipt);
-    this.rawTransactionLink = getRawTransactionLink(this.transactionId, this.chain);
-    this.transactionLink = getTransactionLink(this.transactionId, this.chain);
+    this.transactionId = domain.certificates.getTransactionId(this.receipt);
+    this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, chainObject, true);
+    this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, chainObject);
   }
 
-  static parseV1(certificateJson) {
+  static parseV1 (certificateJson) {
     const certificate = certificateJson.certificate || certificateJson.document.certificate;
     const recipient = certificateJson.recipient || certificateJson.document.recipient;
     const assertion = certificateJson.document.assertion;
@@ -7386,9 +6913,7 @@ class Certificate {
     const name = `${recipient.givenName} ${recipient.familyName}`;
     const title = certificate.title || certificate.name;
     const description = certificate.description;
-    const signatureImage = certificateJson.document
-      && certificateJson.document.assertion
-      && certificateJson.document.assertion["image:signature"];
+    const signatureImage = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
     const expires = assertion.expires;
 
     var signatureImageObjects = [];
@@ -7397,18 +6922,18 @@ class Certificate {
         var signatureLine = signatureImage[index];
         var jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
         var signerName = 'name' in signatureLine ? signatureLine.name : null;
-        var signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+        let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
         signatureImageObjects.push(signatureObject);
       }
     } else {
-      var signatureObject = new SignatureImage(signatureImage, null, null);
+      let signatureObject = new SignatureImage(signatureImage, null, null);
       signatureImageObjects.push(signatureObject);
     }
 
     const sealImage = certificate.issuer.image;
     let subtitle = certificate.subtitle;
-    if (typeof subtitle == "object") {
-      subtitle = subtitle.display ? subtitle.content : "";
+    if (typeof subtitle === 'object') {
+      subtitle = subtitle.display ? subtitle.content : '';
     }
     const id = assertion.uid;
     const issuer = certificate.issuer;
@@ -7418,26 +6943,22 @@ class Certificate {
     const revocationKey = recipient.revocationKey || null;
 
     let version;
-    if (typeof receipt === "undefined") {
-      version = CertificateVersion.v1_1;
+    if (typeof receipt === 'undefined') {
+      version = v1dot1;
     } else {
-      version = CertificateVersion.v1_2;
+      version = v1dot2;
     }
 
-    var chain;
-    if (isBitcoinMainnetAddress(publicKey)) {
-      chain = Blockchain.bitcoin;
-    } else {
-      chain = Blockchain.testnet;
-    }
+    // Get chain object
+    let chainObject = domain.addresses.isMainnet(publicKey) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
 
     return new Certificate(version, name, title, subtitle, description, certificateImage, signatureImageObjects,
-      sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chain, expires);
+      sealImage, id, issuer, receipt, signature, publicKey, revocationKey, chainObject, expires);
   }
 
-  static parseV2(certificateJson) {
-    const { id, recipient, expires, signature: receipt, badge } = certificateJson;
-    const { image: certificateImage, name: title, description, subtitle, issuer } = badge;
+  static parseV2 (certificateJson) {
+    const {id, expires, signature: receipt, badge} = certificateJson;
+    const {image: certificateImage, name: title, description, subtitle, issuer} = badge;
     const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
     const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
     const sealImage = issuer.image;
@@ -7451,13 +6972,13 @@ class Certificate {
       signatureImageObjects.push(signatureObject);
     }
 
-    const chain = getChain(certificateJson.signature, issuerKey);
-    return new Certificate(CertificateVersion.v2_0, name, title, subtitle, description, certificateImage,
-      signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chain, expires);
+    const chainObject = domain.certificates.getChain(certificateJson.signature, issuerKey);
+    return new Certificate(v2dot0, name, title, subtitle, description, certificateImage,
+      signatureImageObjects, sealImage, id, issuer, receipt, null, publicKey, null, chainObject, expires);
   }
 
-  static parseJson(certificateJson) {
-    const version = certificateJson["@context"];
+  static parseJson (certificateJson) {
+    const version = certificateJson['@context'];
     if (version instanceof Array) {
       return this.parseV2(certificateJson);
     } else {
@@ -7467,7 +6988,7 @@ class Certificate {
 }
 
 class SignatureImage {
-  constructor(image, jobTitle, name) {
+  constructor (image, jobTitle, name) {
     this.image = image;
     this.jobTitle = jobTitle;
     this.name = name;
@@ -10482,7 +10003,7 @@ var md5 = function md5 (buf) {
   return makeHash(buf, core_md5)
 };
 
-var domain;
+var domain$1;
 
 // This constructor is used to store event handlers. Instantiating this is
 // faster than explicitly calling `Object.create(null)` to get a "clean" empty
@@ -10512,8 +10033,8 @@ EventEmitter.init = function() {
   this.domain = null;
   if (EventEmitter.usingDomains) {
     // if there is an active domain, then attach to it.
-    if (domain.active && !(this instanceof domain.Domain)) {
-      this.domain = domain.active;
+    if (domain$1.active && !(this instanceof domain$1.Domain)) {
+      this.domain = domain$1.active;
     }
   }
 
@@ -29492,6 +29013,428 @@ return factory;
 });
 var jsonld_1 = jsonld.jsonld;
 
+const CONTEXTS = {
+  obi: {
+    '@context': {
+      'id': '@id',
+      'type': '@type',
+
+      'extensions': 'https://w3id.org/openbadges/extensions#',
+      'obi': 'https://w3id.org/openbadges#',
+      'validation': 'obi:validation',
+
+      'cred': 'https://w3id.org/credentials#',
+      'dc': 'http://purl.org/dc/terms/',
+      'schema': 'http://schema.org/',
+      'sec': 'https://w3id.org/security#',
+      'xsd': 'http://www.w3.org/2001/XMLSchema#',
+
+      'AlignmentObject': 'schema:AlignmentObject',
+      'CryptographicKey': 'sec:Key',
+      'Endorsement': 'cred:Credential',
+
+      'Assertion': 'obi:Assertion',
+      'BadgeClass': 'obi:BadgeClass',
+      'Criteria': 'obi:Criteria',
+      'Evidence': 'obi:Evidence',
+      'Extension': 'obi:Extension',
+      'FrameValidation': 'obi:FrameValidation',
+      'IdentityObject': 'obi:IdentityObject',
+      'Image': 'obi:Image',
+      'HostedBadge': 'obi:HostedBadge',
+      'hosted': 'obi:HostedBadge',
+      'Issuer': 'obi:Issuer',
+      'Profile': 'obi:Profile',
+      'RevocationList': 'obi:RevocationList',
+      'SignedBadge': 'obi:SignedBadge',
+      'signed': 'obi:SignedBadge',
+      'TypeValidation': 'obi:TypeValidation',
+      'VerificationObject': 'obi:VerificationObject',
+
+      'author': {'@id': 'schema:author', '@type': '@id'},
+      'caption': {'@id': 'schema:caption'},
+      'claim': {'@id': 'cred:claim', '@type': '@id'},
+      'created': {'@id': 'dc:created', '@type': 'xsd:dateTime'},
+      'creator': {'@id': 'dc:creator', '@type': '@id'},
+      'description': {'@id': 'schema:description'},
+      'email': {'@id': 'schema:email'},
+      'endorsement': {'@id': 'cred:credential', '@type': '@id'},
+      'expires': {'@id': 'sec:expiration', '@type': 'xsd:dateTime'},
+      'genre': {'@id': 'schema:genre'},
+      'image': {'@id': 'schema:image', '@type': '@id'},
+      'name': {'@id': 'schema:name'},
+      'owner': {'@id': 'sec:owner', '@type': '@id'},
+      'publicKey': {'@id': 'sec:publicKey', '@type': '@id'},
+      'publicKeyPem': {'@id': 'sec:publicKeyPem'},
+      'related': {'@id': 'dc:relation', '@type': '@id'},
+      'startsWith': {'@id': 'http://purl.org/dqm-vocabulary/v1/dqm#startsWith'},
+      'tags': {'@id': 'schema:keywords'},
+      'targetDescription': {'@id': 'schema:targetDescription'},
+      'targetFramework': {'@id': 'schema:targetFramework'},
+      'targetName': {'@id': 'schema:targetName'},
+      'targetUrl': {'@id': 'schema:targetUrl'},
+      'telephone': {'@id': 'schema:telephone'},
+      'url': {'@id': 'schema:url', '@type': '@id'},
+      'version': {'@id': 'schema:version'},
+
+      'alignment': {'@id': 'obi:alignment', '@type': '@id'},
+      'allowedOrigins': {'@id': 'obi:allowedOrigins'},
+      'audience': {'@id': 'obi:audience'},
+      'badge': {'@id': 'obi:badge', '@type': '@id'},
+      'criteria': {'@id': 'obi:criteria', '@type': '@id'},
+      'endorsementComment': {'@id': 'obi:endorsementComment'},
+      'evidence': {'@id': 'obi:evidence', '@type': '@id'},
+      'hashed': {'@id': 'obi:hashed', '@type': 'xsd:boolean'},
+      'identity': {'@id': 'obi:identityHash'},
+      'issuedOn': {'@id': 'obi:issueDate', '@type': 'xsd:dateTime'},
+      'issuer': {'@id': 'obi:issuer', '@type': '@id'},
+      'narrative': {'@id': 'obi:narrative'},
+      'recipient': {'@id': 'obi:recipient', '@type': '@id'},
+      'revocationList': {'@id': 'obi:revocationList', '@type': '@id'},
+      'revocationReason': {'@id': 'obi:revocationReason'},
+      'revoked': {'@id': 'obi:revoked', '@type': 'xsd:boolean'},
+      'revokedAssertions': {'@id': 'obi:revoked'},
+      'salt': {'@id': 'obi:salt'},
+      'targetCode': {'@id': 'obi:targetCode'},
+      'uid': {'@id': 'obi:uid'},
+      'validatesType': 'obi:validatesType',
+      'validationFrame': 'obi:validationFrame',
+      'validationSchema': 'obi:validationSchema',
+      'verification': {'@id': 'obi:verify', '@type': '@id'},
+      'verificationProperty': {'@id': 'obi:verificationProperty'},
+      'verify': 'verification'
+    }
+  },
+  blockcerts: {
+    '@context': {
+      'id': '@id',
+      'type': '@type',
+      'bc': 'https://w3id.org/blockcerts#',
+      'obi': 'https://w3id.org/openbadges#',
+      'cp': 'https://w3id.org/chainpoint#',
+      'schema': 'http://schema.org/',
+      'sec': 'https://w3id.org/security#',
+      'xsd': 'http://www.w3.org/2001/XMLSchema#',
+
+      'MerkleProof2017': 'sec:MerkleProof2017',
+
+      'RecipientProfile': 'bc:RecipientProfile',
+      'SignatureLine': 'bc:SignatureLine',
+      'MerkleProofVerification2017': 'bc:MerkleProofVerification2017',
+
+      'recipientProfile': 'bc:recipientProfile',
+      'signatureLines': 'bc:signatureLines',
+      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
+
+      'subtitle': 'bc:subtitle',
+
+      'jobTitle': 'schema:jobTitle',
+
+      'creator': {'@id': 'dc:creator', '@type': '@id'},
+      'expires': {
+        '@id': 'sec:expiration',
+        '@type': 'xsd:dateTime'
+      },
+      'revoked': {
+        '@id': 'sec:expiration',
+        '@type': 'xsd:dateTime'
+      },
+      'CryptographicKey': 'sec:Key',
+      'signature': 'sec:signature',
+
+      'verification': 'bc:verification',
+      'publicKeys': 'bc:publicKeys',
+
+      'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
+      'BTCOpReturn': 'cp:BTCOpReturn',
+      'targetHash': 'cp:targetHash',
+      'merkleRoot': 'cp:merkleRoot',
+      'proof': 'cp:proof',
+      'anchors': 'cp:anchors',
+      'sourceId': 'cp:sourceId',
+      'right': 'cp:right',
+      'left': 'cp:left'
+    },
+    'obi:validation': [
+      {
+        'obi:validatesType': 'RecipientProfile',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/recipientSchema.json'
+      },
+      {
+        'obi:validatesType': 'SignatureLine',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/signatureLineSchema.json'
+      },
+      {
+        'obi:validatesType': 'MerkleProof2017',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0-alpha/merkleProof2017Schema.json'
+      }
+    ]
+  },
+  blockcertsv1_2:
+    {
+      '@context': [
+        {
+          'id': '@id',
+          'type': '@type',
+          'bc': 'https://w3id.org/blockcerts#',
+          'obi': 'https://w3id.org/openbadges#',
+          'cp': 'https://w3id.org/chainpoint#',
+          'extensions': 'https://w3id.org/openbadges/extensions#',
+          'validation': 'obi:validation',
+          'xsd': 'http://www.w3.org/2001/XMLSchema#',
+          'schema': 'http://schema.org/',
+          'sec': 'https://w3id.org/security#',
+          'Assertion': 'bc:Assertion',
+          'Certificate': 'bc:Certificate',
+          'Issuer': 'bc:Issuer',
+          'BlockchainCertificate': 'bc:BlockchainCertificate',
+          'CertificateDocument': 'bc:CertificateDocument',
+          'issuer': {
+            '@id': 'bc:issuer',
+            '@type': '@id'
+          },
+          'blockchaincertificate': {
+            '@id': 'bc:blockchaincertificate',
+            '@type': '@id'
+          },
+          'certificate': {
+            '@id': 'bc:certificate',
+            '@type': '@id'
+          },
+          'document': {
+            '@id': 'bc:document',
+            '@type': '@id'
+          },
+          'assertion': {
+            '@id': 'bc:assertion',
+            '@type': '@id'
+          },
+          'verify': {
+            '@id': 'bc:verify',
+            '@type': '@id'
+          },
+          'recipient': {
+            '@id': 'bc:recipient',
+            '@type': '@id'
+          },
+          'receipt': {
+            '@id': 'bc:receipt',
+            '@type': '@id'
+          },
+          'publicKey': {
+            '@id': 'bc:publicKey'
+          },
+          'revocationKey': {
+            '@id': 'bc:revocationKey'
+          },
+          'image:signature': {
+            '@id': 'bc:image:signature'
+          },
+          'signature': {
+            '@id': 'bc:signature'
+          },
+          'familyName': {
+            '@id': 'schema:familyName'
+          },
+          'givenName': {
+            '@id': 'schema:givenName'
+          },
+          'jobTitle': {
+            '@id': 'schema:jobTitle'
+          },
+          'signer': {
+            '@id': 'bc:signer',
+            '@type': '@id'
+          },
+          'attribute-signed': {
+            '@id': 'bc:attribute-signed'
+          },
+          'ECDSA(secp256k1)': 'bc:SignedBadge',
+          'subtitle': {
+            '@id': 'bc:subtitle'
+          },
+          'email': 'schema:email',
+          'hashed': {
+            '@id': 'obi:hashed',
+            '@type': 'xsd:boolean'
+          },
+          'image': {
+            '@id': 'schema:image',
+            '@type': '@id'
+          },
+          'salt': {
+            '@id': 'obi:salt'
+          },
+          'identity': {
+            '@id': 'obi:identityHash'
+          },
+          'issuedOn': {
+            '@id': 'obi:issueDate',
+            '@type': 'xsd:dateTime'
+          },
+          'expires': {
+            '@id': 'sec:expiration',
+            '@type': 'xsd:dateTime'
+          },
+          'evidence': {
+            '@id': 'obi:evidence',
+            '@type': '@id'
+          },
+          'criteria': {
+            '@id': 'obi:criteria',
+            '@type': '@id'
+          },
+          'tags': {
+            '@id': 'schema:keywords'
+          },
+          'alignment': {
+            '@id': 'obi:alignment',
+            '@type': '@id'
+          },
+          'revocationList': {
+            '@id': 'obi:revocationList',
+            '@type': '@id'
+          },
+          'name': {
+            '@id': 'schema:name'
+          },
+          'description': {
+            '@id': 'schema:description'
+          },
+          'url': {
+            '@id': 'schema:url',
+            '@type': '@id'
+          },
+          'uid': {
+            '@id': 'obi:uid'
+          },
+          'TypeValidation': 'obi:TypeValidation',
+          'FrameValidation': 'obi:FrameValidation',
+          'validatesType': 'obi:validatesType',
+          'validationSchema': 'obi:validationSchema',
+          'validationFrame': 'obi:validationFrame',
+          'ChainpointSHA224v2': 'cp:ChainpointSHA224v2',
+          'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
+          'ChainpointSHA384v2': 'cp:ChainpointSHA384v2',
+          'ChainpointSHA512v2': 'cp:ChainpointSHA512v2',
+          'ChainpointSHA3-224v2': 'cp:ChainpointSHA3-224v2',
+          'ChainpointSHA3-256v2': 'cp:ChainpointSHA3-256v2',
+          'ChainpointSHA3-384v2': 'cp:ChainpointSHA3-384v2',
+          'ChainpointSHA3-512v2': 'cp:ChainpointSHA3-512v2',
+          'BTCOpReturn': 'cp:BTCOpReturn',
+          'targetHash': 'cp:targetHash',
+          'merkleRoot': 'cp:merkleRoot',
+          'proof': 'cp:proof',
+          'anchors': 'cp:anchors',
+          'sourceId': 'cp:sourceId',
+          'right': 'cp:right',
+          'left': 'cp:left'
+        }
+      ],
+      'validation': [
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'Assertion',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/assertion-1.2.json'
+        },
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'Certificate',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-1.2.json'
+        },
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'Issuer',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/issuer-1.2.json'
+        },
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'CertificateDocument',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/certificate-document-1.2.json'
+        },
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'BlockchainCertificate',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-certificate-1.2.json'
+        },
+        {
+          'type': 'TypeValidation',
+          'validatesType': 'BlockchainReceipt',
+          'validationSchema': 'https://w3id.org/blockcerts/schema/1.2/blockchain-receipt-1.2.json'
+        }
+      ]
+    },
+  blockcertsv2: {
+    '@context': {
+      'id': '@id',
+      'type': '@type',
+      'bc': 'https://w3id.org/blockcerts#',
+      'obi': 'https://w3id.org/openbadges#',
+      'cp': 'https://w3id.org/chainpoint#',
+      'schema': 'http://schema.org/',
+      'sec': 'https://w3id.org/security#',
+      'xsd': 'http://www.w3.org/2001/XMLSchema#',
+
+      'MerkleProof2017': 'sec:MerkleProof2017',
+
+      'RecipientProfile': 'bc:RecipientProfile',
+      'SignatureLine': 'bc:SignatureLine',
+      'MerkleProofVerification2017': 'bc:MerkleProofVerification2017',
+
+      'recipientProfile': 'bc:recipientProfile',
+      'signatureLines': 'bc:signatureLines',
+      'introductionUrl': {'@id': 'bc:introductionUrl', '@type': '@id'},
+
+      'subtitle': 'bc:subtitle',
+
+      'jobTitle': 'schema:jobTitle',
+
+      'expires': {
+        '@id': 'sec:expiration',
+        '@type': 'xsd:dateTime'
+      },
+      'revoked': {
+        '@id': 'obi:revoked',
+        '@type': 'xsd:boolean'
+      },
+      'CryptographicKey': 'sec:Key',
+      'signature': 'sec:signature',
+      'verification': {
+        '@id': 'obi:verify',
+        '@type': '@id'
+      },
+      'publicKey': {
+        '@id': 'sec:publicKey',
+        '@type': '@id'
+      },
+
+      'ChainpointSHA256v2': 'cp:ChainpointSHA256v2',
+      'BTCOpReturn': 'cp:BTCOpReturn',
+      'targetHash': 'cp:targetHash',
+      'merkleRoot': 'cp:merkleRoot',
+      'proof': 'cp:proof',
+      'anchors': 'cp:anchors',
+      'sourceId': 'cp:sourceId',
+      'right': 'cp:right',
+      'left': 'cp:left'
+    },
+    'obi:validation': [
+      {
+        'obi:validatesType': 'RecipientProfile',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/recipientSchema.json'
+      },
+      {
+        'obi:validatesType': 'SignatureLine',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/signatureLineSchema.json'
+      },
+      {
+        'obi:validatesType': 'MerkleProof2017',
+        'obi:validationSchema': 'https://w3id.org/blockcerts/schema/2.0/merkleProof2017Schema.json'
+      }
+    ]
+  }
+};
+
 var convertHex = createCommonjsModule(function (module) {
 !function(globals) {
 
@@ -29726,103 +29669,164 @@ sha256.x2 = function(message, options) {
 }(commonjsGlobal);
 });
 
+/* eslint no-useless-escape: "off" */
+
+function noOffset (s) {
+  let day = s.slice(0, -5).split(/\D/).map(function (itm) {
+    return parseInt(itm, 10) || 0;
+  });
+  day[1] -= 1;
+  day = new Date(Date.UTC.apply(Date, day));
+  let offsetString = s.slice(-5);
+  let offset = parseInt(offsetString, 10) / 100;
+  if (offsetString.slice(0, 1) === '+') offset *= -1;
+  day.setHours(day.getHours() + offset);
+  return day.getTime();
+}
+
+function dateFromRegex (s) {
+  let day;
+  let tz;
+  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
+  let p = rx.exec(s) || [];
+  if (p[1]) {
+    day = p[1].split(/\D/).map(function (itm) {
+      return parseInt(itm, 10) || 0;
+    });
+    day[1] -= 1;
+    day = new Date(Date.UTC.apply(Date, day));
+    if (!day.getDate()) return NaN;
+    if (p[5]) {
+      tz = parseInt(p[5], 10) / 100 * 60;
+      if (p[6]) tz += parseInt(p[6], 10);
+      if (p[4] === '+') tz *= -1;
+      if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
+    }
+    return day;
+  }
+  return NaN;
+}
+
+function dateFromIso (isoDate) {
+  // Chrome
+  let diso = Date.parse(isoDate);
+  if (diso) {
+    return new Date(diso);
+  }
+
+  // JS 1.8 gecko
+  let offsetDate = noOffset(isoDate);
+  if (offsetDate) {
+    return offsetDate;
+  }
+
+  return dateFromRegex(isoDate);
+}
+
+/**
+ * dateToUnixTimestamp
+ *
+ * @param date
+ * @returns {string}
+ */
+function dateToUnixTimestamp (date) {
+  if (date === '') {
+    return '';
+  }
+  return dateFromIso(date);
+}
+
 const {
   obi: OBI_CONTEXT,
   blockcerts: BLOCKCERTS_CONTEXT,
   blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
-  blockcertsv2: BLOCKCERTSV2_CONTEXT,
-} = Contexts;
-const CONTEXTS = {};
+  blockcertsv2: BLOCKCERTSV2_CONTEXT
+} = CONTEXTS;
+const CONTEXTS$1 = {};
 // Preload contexts
-CONTEXTS[
-  'https://w3id.org/blockcerts/schema/2.0-alpha/context.json'
-] = BLOCKCERTS_CONTEXT;
-CONTEXTS[
-  'https://www.blockcerts.org/schema/2.0-alpha/context.json'
-] = BLOCKCERTS_CONTEXT;
-CONTEXTS['https://w3id.org/openbadges/v2'] = OBI_CONTEXT;
-CONTEXTS['https://openbadgespec.org/v2/context.json'] = OBI_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/v2'] = BLOCKCERTSV2_CONTEXT;
-CONTEXTS[
-  'https://www.w3id.org/blockcerts/schema/2.0/context.json'
-] = BLOCKCERTSV2_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
+CONTEXTS$1['https://w3id.org/blockcerts/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
+CONTEXTS$1['https://www.blockcerts.org/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
+CONTEXTS$1['https://w3id.org/openbadges/v2'] = OBI_CONTEXT;
+CONTEXTS$1['https://openbadgespec.org/v2/context.json'] = OBI_CONTEXT;
+CONTEXTS$1['https://w3id.org/blockcerts/v2'] = BLOCKCERTSV2_CONTEXT;
+CONTEXTS$1['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = BLOCKCERTSV2_CONTEXT;
+CONTEXTS$1['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
 
-function ensureNotRevokedBySpentOutput(
+function ensureNotRevokedBySpentOutput (
   revokedAddresses,
   issuerRevocationKey,
-  recipientRevocationKey,
+  recipientRevocationKey
 ) {
   if (issuerRevocationKey) {
     const revokedAssertionId = revokedAddresses.findIndex(
-      address => address === issuerRevocationKey,
+      address => address === issuerRevocationKey
     );
     const isRevokedByIssuer = revokedAssertionId !== -1;
     if (isRevokedByIssuer) {
       throw new VerifierError(
         Status.checkingRevokedStatus,
-        generateRevocationReason(
-          revokedAddresses[revokedAssertionId].revocationReason,
-        ),
+        domain.certificates.generateRevocationReason(
+          revokedAddresses[revokedAssertionId].revocationReason
+        )
       );
     }
   }
   if (recipientRevocationKey) {
     const revokedAssertionId = revokedAddresses.findIndex(
-      address => address === recipientRevocationKey,
+      address => address === recipientRevocationKey
     );
     const isRevokedByRecipient = revokedAssertionId !== -1;
     if (isRevokedByRecipient) {
       throw new VerifierError(
         Status.checkingRevokedStatus,
-        generateRevocationReason(
-          revokedAddresses[revokedAssertionId].revocationReason,
-        ),
+        domain.certificates.generateRevocationReason(
+          revokedAddresses[revokedAssertionId].revocationReason
+        )
       );
     }
   }
 }
 
-function ensureNotRevokedByList(revokedAssertions, assertionUid) {
+function ensureNotRevokedByList (revokedAssertions, assertionUid) {
   if (!revokedAssertions) {
     // nothing to do
     return;
   }
   const revokedAddresses = revokedAssertions.map(output => output.id);
   const revokedAssertionId = revokedAddresses.findIndex(
-    id => id === assertionUid,
+    id => id === assertionUid
   );
   const isRevokedByIssuer = revokedAssertionId !== -1;
 
   if (isRevokedByIssuer) {
     throw new VerifierError(
       Status.checkingRevokedStatus,
-      generateRevocationReason(
-        revokedAssertions[revokedAssertionId].revocationReason,
-      ),
+      domain.certificates.generateRevocationReason(
+        revokedAssertions[revokedAssertionId].revocationReason
+      )
     );
   }
 }
 
-function ensureHashesEqual(actual, expected) {
+function ensureHashesEqual (actual, expected) {
   if (actual !== expected) {
     throw new VerifierError(
       Status.comparingHashes,
-      'Computed hash does not match remote hash',
+      'Computed hash does not match remote hash'
     );
   }
 }
 
-function ensureMerkleRootEqual(merkleRoot, remoteHash) {
+function ensureMerkleRootEqual (merkleRoot, remoteHash) {
   if (merkleRoot !== remoteHash) {
     throw new VerifierError(
       Status.checkingMerkleRoot,
-      'Merkle root does not match remote hash.',
+      'Merkle root does not match remote hash.'
     );
   }
 }
 
-function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
+function ensureValidIssuingKey (keyMap, txIssuingAddress, txTime) {
   var validKey = false;
   var theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
   txTime = dateToUnixTimestamp(txTime);
@@ -29841,29 +29845,31 @@ function ensureValidIssuingKey(keyMap, txIssuingAddress, txTime) {
   if (!validKey) {
     throw new VerifierError(
       Status.checkingAuthenticity,
-      'Transaction occurred at time when issuing address was not considered valid.',
+      'Transaction occurred at time when issuing address was not considered valid.'
     );
   }
 }
 
-function ensureValidReceipt(receipt) {
+function ensureValidReceipt (receipt) {
   var proofHash = receipt.targetHash;
   var merkleRoot = receipt.merkleRoot;
   try {
     var proof = receipt.proof;
-    if (!!proof) {
+    var isProof = !!proof;
+    if (isProof) {
       for (var index in proof) {
         const node = proof[index];
+        var appendedBuffer;
         if (typeof node.left !== 'undefined') {
-          var appendedBuffer = _toByteArray(`${node.left}${proofHash}`);
+          appendedBuffer = _toByteArray(`${node.left}${proofHash}`);
           proofHash = sha256$2(appendedBuffer);
         } else if (typeof node.right !== 'undefined') {
-          var appendedBuffer = _toByteArray(`${proofHash}${node.right}`);
+          appendedBuffer = _toByteArray(`${proofHash}${node.right}`);
           proofHash = sha256$2(appendedBuffer);
         } else {
           throw new VerifierError(
             Status.checkingReceipt,
-            'We should never get here.',
+            'We should never get here.'
           );
         }
       }
@@ -29871,19 +29877,19 @@ function ensureValidReceipt(receipt) {
   } catch (e) {
     throw new VerifierError(
       Status.checkingReceipt,
-      'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.',
+      'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.'
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       Status.checkingReceipt,
-      "Invalid Merkle Receipt. Proof hash didn't match Merkle root",
+      'Invalid Merkle Receipt. Proof hash didn\'t match Merkle root'
     );
   }
 }
 
-function getTransactionId$1(certificate) {
+function getTransactionId$1 (certificate) {
   let transactionId;
   try {
     transactionId = certificate.receipt.anchors[0].sourceId;
@@ -29891,28 +29897,28 @@ function getTransactionId$1(certificate) {
   } catch (e) {
     throw new VerifierError(
       Status.getTransactionId,
-      "Can't verify this certificate without a transaction ID to compare against.",
+      'Can\'t verify this certificate without a transaction ID to compare against.'
     );
   }
 }
 
-function computeLocalHash(document, version) {
+function computeLocalHash (document, version) {
   var expandContext = document['@context'];
   var theDocument = document;
-  if (version === CertificateVersion.v2_0 && CheckForUnmappedFields) {
+  if (version === v2dot0 && CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {
-      expandContext.push({ '@vocab': 'http://fallback.org/' });
+      expandContext.push({'@vocab': 'http://fallback.org/'});
     }
   }
   var nodeDocumentLoader = jsonld.documentLoaders.node();
-  var customLoader = function(url, callback) {
-    if (url in CONTEXTS) {
+  var customLoader = function (url, callback) {
+    if (url in CONTEXTS$1) {
       return callback(null, {
         contextUrl: null,
-        document: CONTEXTS[url],
-        documentUrl: url,
+        document: CONTEXTS$1[url],
+        documentUrl: url
       });
     }
     return nodeDocumentLoader(url, callback);
@@ -29920,7 +29926,7 @@ function computeLocalHash(document, version) {
   jsonld.documentLoader = customLoader;
   var normalizeArgs = {
     algorithm: 'URDNA2015',
-    format: 'application/nquads',
+    format: 'application/nquads'
   };
   if (expandContext) {
     normalizeArgs.expandContext = expandContext;
@@ -29928,12 +29934,13 @@ function computeLocalHash(document, version) {
 
   return new Promise((resolve, reject) => {
     jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
-      if (!!err) {
+      var isErr = !!err;
+      if (isErr) {
         reject(
           new VerifierError(
             Status.computingLocalHash,
-            'Failed JSON-LD normalization',
-          ),
+            'Failed JSON-LD normalization'
+          )
         );
       } else {
         let unmappedFields = getUnmappedFields(normalized);
@@ -29941,8 +29948,8 @@ function computeLocalHash(document, version) {
           reject(
             new VerifierError(
               Status.computingLocalHash,
-              'Found unmapped fields during JSON-LD normalization',
-            ),
+              'Found unmapped fields during JSON-LD normalization'
+            )
           ); // + unmappedFields.join(",")
         } else {
           resolve(sha256$2(_toUTF8Data(normalized)));
@@ -29952,11 +29959,11 @@ function computeLocalHash(document, version) {
   });
 }
 
-function getUnmappedFields(normalized) {
+function getUnmappedFields (normalized) {
   var myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
   var matches = myRegexp.exec(normalized);
   if (matches) {
-    var unmappedFields = Array();
+    var unmappedFields = [];
     for (var i = 0; i < matches.length; i++) {
       unmappedFields.push(matches[i]);
     }
@@ -29965,7 +29972,7 @@ function getUnmappedFields(normalized) {
   return null;
 }
 
-function ensureNotExpired(expires) {
+function ensureNotExpired (expires) {
   if (!expires) {
     return;
   }
@@ -29973,13 +29980,13 @@ function ensureNotExpired(expires) {
   if (new Date() >= expiryDate) {
     throw new VerifierError(
       Status.checkingExpiresDate,
-      'This certificate has expired.',
+      'This certificate has expired.'
     );
   }
   // otherwise, it's fine
 }
 
-function _toByteArray(hexString) {
+function _toByteArray (hexString) {
   var outArray = [];
   var byteSize = 2;
   for (var i = 0; i < hexString.length; i += byteSize) {
@@ -29988,7 +29995,7 @@ function _toByteArray(hexString) {
   return outArray;
 }
 
-function _toUTF8Data(string) {
+function _toUTF8Data (string) {
   var utf8 = [];
   for (var i = 0; i < string.length; i++) {
     var charcode = string.charCodeAt(i);
@@ -29999,7 +30006,7 @@ function _toUTF8Data(string) {
       utf8.push(
         0xe0 | (charcode >> 12),
         0x80 | ((charcode >> 6) & 0x3f),
-        0x80 | (charcode & 0x3f),
+        0x80 | (charcode & 0x3f)
       );
     } else {
       // surrogate pair
@@ -30013,14 +30020,14 @@ function _toUTF8Data(string) {
         0xf0 | (charcode >> 18),
         0x80 | ((charcode >> 12) & 0x3f),
         0x80 | ((charcode >> 6) & 0x3f),
-        0x80 | (charcode & 0x3f),
+        0x80 | (charcode & 0x3f)
       );
     }
   }
   return utf8;
 }
 
-function getCaseInsensitiveKey(obj, value) {
+function getCaseInsensitiveKey (obj, value) {
   var key = null;
   for (var prop in obj) {
     if (obj.hasOwnProperty(prop)) {
@@ -32496,12 +32503,13 @@ var XMLHttpRequest_1 = function() {
 
 const log$2 = browser$1('promisifiedRequests');
 
-function request$1(obj) {
+function request$1 (obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
 
     // server
     const xhr = typeof XMLHttpRequest === 'undefined' ? XMLHttpRequest_1 : XMLHttpRequest;
+    /* eslint new-cap: "off" */
     let request = new xhr();
 
     request.onload = () => {
@@ -32539,7 +32547,7 @@ function request$1(obj) {
 }
 
 class TransactionData {
-  constructor(remoteHash, issuingAddress, time, revokedAddresses) {
+  constructor (remoteHash, issuingAddress, time, revokedAddresses) {
     this.remoteHash = remoteHash;
     this.issuingAddress = issuingAddress;
     this.time = time;
@@ -32548,7 +32556,7 @@ class TransactionData {
 }
 
 class Key {
-  constructor(publicKey, created, revoked, expires) {
+  constructor (publicKey, created, revoked, expires) {
     this.publicKey = publicKey;
     this.created = created;
     this.revoked = revoked;
@@ -32556,9 +32564,10 @@ class Key {
   }
 }
 
-function parseIssuerKeys(issuerProfileJson) {
+function parseIssuerKeys (issuerProfileJson) {
   try {
     var keyMap = {};
+    var k;
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
       var responseKeys =
@@ -32571,26 +32580,26 @@ function parseIssuerKeys(issuerProfileJson) {
         // backcompat for v2 alpha
         var publicKeyTemp = key.id || key.publicKey;
         var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
-        var k = new Key(publicKey, created, revoked, expires);
+        k = new Key(publicKey, created, revoked, expires);
         keyMap[k.publicKey] = k;
       }
     } else {
       // This is a v2 certificate with a v1 issuer
       const issuerKeys = issuerProfileJson.issuerKeys || [];
       var issuerKey = issuerKeys[0].key;
-      var k = new Key(issuerKey, null, null, null);
+      k = new Key(issuerKey, null, null, null);
       keyMap[k.publicKey] = k;
     }
     return keyMap;
   } catch (e) {
     throw new VerifierError(
       Status.parsingIssuerKeys,
-      'Unable to parse JSON out of issuer identification data.',
+      'Unable to parse JSON out of issuer identification data.'
     );
   }
 }
 
-function parseRevocationKey(issuerProfileJson) {
+function parseRevocationKey (issuerProfileJson) {
   if (
     issuerProfileJson.revocationKeys &&
     issuerProfileJson.revocationKeys.length > 0
@@ -32600,9 +32609,9 @@ function parseRevocationKey(issuerProfileJson) {
   return null;
 }
 
-function getIssuerProfile(issuerId) {
+function getIssuerProfile (issuerId) {
   let issuerProfileFetcher = new Promise((resolve, reject) => {
-    return request$1({ url: issuerId })
+    return request$1({url: issuerId})
       .then(response => {
         try {
           let issuerProfileJson = JSON.parse(response);
@@ -32611,17 +32620,17 @@ function getIssuerProfile(issuerId) {
           reject(new VerifierError(Status.gettingIssuerProfile, err));
         }
       })
-      .catch(err => {
+      .catch(() => {
         reject(new VerifierError(Status.gettingIssuerProfile, `Unable to get issuer profile`));
       });
   });
   return issuerProfileFetcher;
 }
 
-function getIssuerKeys(issuerId) {
+function getIssuerKeys (issuerId) {
   let issuerKeyFetcher = new Promise((resolve, reject) => {
     return getIssuerProfile(issuerId)
-      .then(function(issuerProfileJson) {
+      .then(function (issuerProfileJson) {
         try {
           let issuerKeyMap = parseIssuerKeys(issuerProfileJson);
           resolve(issuerKeyMap);
@@ -32629,20 +32638,20 @@ function getIssuerKeys(issuerId) {
           reject(new VerifierError(Status.parsingIssuerKeys, err));
         }
       })
-      .catch(function(err) {
+      .catch(function (err) {
         reject(new VerifierError(Status.parsingIssuerKeys, err));
       });
   });
   return issuerKeyFetcher;
 }
 
-function getRevokedAssertions(revocationListUrl) {
+function getRevokedAssertions (revocationListUrl) {
   if (!revocationListUrl) {
     return Promise.resolve([]);
   }
   let revocationListFetcher = new Promise((resolve, reject) => {
-    return request$1({ url: revocationListUrl })
-      .then(function(response) {
+    return request$1({url: revocationListUrl})
+      .then(function (response) {
         try {
           let issuerRevocationJson = JSON.parse(response);
           let revokedAssertions = issuerRevocationJson.revokedAssertions
@@ -32653,20 +32662,29 @@ function getRevokedAssertions(revocationListUrl) {
           reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
       });
   });
   return revocationListFetcher;
 }
 
-function getEtherScanFetcher(transactionId, chain) {
-  const action = "&action=eth_getTransactionByHash&txhash=";
+const blockCypherUrl = 'https://api.blockcypher.com/v1/btc/main/txs/';
+const blockCypherTestUrl = 'https://api.blockcypher.com/v1/btc/test3/txs/';
+const chainSoUrl = 'https://chain.so/api/v2/get_tx/BTC/';
+const chainSoTestUrl = 'https://chain.so/api/v2/get_tx/BTCTEST/';
+
+// Add &apikey={key} to EtherScan URL's if getting rate limited
+const etherScanMainUrl = 'https://api.etherscan.io/api?module=proxy';
+const etherScanRopstenUrl = 'https://api-ropsten.etherscan.io/api?module=proxy';
+
+function getEtherScanFetcher (transactionId, chain) {
+  const action = '&action=eth_getTransactionByHash&txhash=';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
-    etherScanUrl = Url.etherScanMainUrl + action + transactionId;
+  if (chain === BLOCKCHAINS.ethmain.code) {
+    etherScanUrl = etherScanMainUrl + action + transactionId;
   } else {
-    etherScanUrl = Url.etherScanRopstenUrl + action + transactionId;
+    etherScanUrl = etherScanRopstenUrl + action + transactionId;
   }
 
   let etherScanFetcher = new Promise((resolve, reject) => {
@@ -32681,21 +32699,21 @@ function getEtherScanFetcher(transactionId, chain) {
               const txData = parseEtherScanResponse(responseTxData, blockResponse);
               resolve(txData);
             })
-            .catch(function (err) {
+            .catch(function () {
               reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
             });
         } catch (err) {
           // don't need to wrap this exception
           reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
         }
-      }).catch(function (err) {
+      }).catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
   return etherScanFetcher;
 }
 
-function parseEtherScanResponse(jsonResponse, block) {
+function parseEtherScanResponse (jsonResponse, block) {
   const data = jsonResponse.result;
   const date = new Date(parseInt(block.timestamp, 16) * 1000);
   const issuingAddress = data.from;
@@ -32706,15 +32724,15 @@ function parseEtherScanResponse(jsonResponse, block) {
   return new TransactionData(opReturnScript, issuingAddress, date, undefined);
 }
 
-function getEtherScanBlock(jsonResponse, chain) {
+function getEtherScanBlock (jsonResponse, chain) {
   const data = jsonResponse.result;
   const blockNumber = data.blockNumber;
-  const action = "&action=eth_getBlockByNumber&boolean=true&tag=";
+  const action = '&action=eth_getBlockByNumber&boolean=true&tag=';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
-    etherScanUrl = Url.etherScanMainUrl + action + blockNumber;
+  if (chain === BLOCKCHAINS.ethmain.code) {
+    etherScanUrl = etherScanMainUrl + action + blockNumber;
   } else {
-    etherScanUrl = Url.etherScanRopstenUrl + action + blockNumber;
+    etherScanUrl = etherScanRopstenUrl + action + blockNumber;
   }
 
   return new Promise((resolve, reject) => {
@@ -32727,23 +32745,24 @@ function getEtherScanBlock(jsonResponse, chain) {
           checkConfirmationsFetcher
             .then(function () {
               resolve(blockData);
-            }).catch(function (err) {
+            })
+            .catch(function () {
               reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
-          });
+            });
         } catch (err) {
           // don't need to wrap this exception
           reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
         }
-      }).catch(function (err) {
+      }).catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
 }
 
-function checkEtherScanConfirmations(chain, blockNumber){
-  const action = "&action=eth_blockNumber";
+function checkEtherScanConfirmations (chain, blockNumber) {
+  const action = '&action=eth_blockNumber';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
+  if (chain === BLOCKCHAINS.ethmain.code) {
     etherScanUrl = Url.etherScanMainUrl + action;
   } else {
     etherScanUrl = Url.etherScanRopstenUrl + action;
@@ -32763,30 +32782,30 @@ function checkEtherScanConfirmations(chain, blockNumber){
           // don't need to wrap this exception
           reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
         }
-      }).catch(function (err) {
+      }).catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
 }
 
-function cleanupRemoteHash(remoteHash) {
-  let prefix = "0x";
+function cleanupRemoteHash (remoteHash) {
+  let prefix = '0x';
   if (startsWith(remoteHash, prefix)) {
     return remoteHash.slice(prefix.length);
   }
   return remoteHash;
 }
 
-function getBlockcypherFetcher(transactionId, chain) {
-  let blockCypherUrl;
-  if (chain === Blockchain.bitcoin) {
-    blockCypherUrl = Url.blockCypherUrl + transactionId + '?limit=500';
+function getBlockcypherFetcher (transactionId, chain) {
+  let blockCypherUrl$$1;
+  if (chain === BLOCKCHAINS.bitcoin.code) {
+    blockCypherUrl$$1 = blockCypherUrl + transactionId + '?limit=500';
   } else {
-    blockCypherUrl = Url.blockCypherTestUrl + transactionId + '?limit=500';
+    blockCypherUrl$$1 = blockCypherTestUrl + transactionId + '?limit=500';
   }
   let blockcypherFetcher = new Promise((resolve, reject) => {
-    return request$1({ url: blockCypherUrl })
-      .then(function(response) {
+    return request$1({url: blockCypherUrl$$1})
+      .then(function (response) {
         const responseData = JSON.parse(response);
         try {
           const txData = parseBlockCypherResponse(responseData);
@@ -32796,24 +32815,24 @@ function getBlockcypherFetcher(transactionId, chain) {
           reject(err.message);
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
   return blockcypherFetcher;
 }
 
-function getChainSoFetcher(transactionId, chain) {
-  let chainSoUrl;
-  if (chain === Blockchain.bitcoin) {
-    chainSoUrl = Url.chainSoUrl + transactionId;
+function getChainSoFetcher (transactionId, chain) {
+  let chainSoUrl$$1;
+  if (chain === BLOCKCHAINS.bitcoin.code) {
+    chainSoUrl$$1 = chainSoUrl + transactionId;
   } else {
-    chainSoUrl = Url.chainSoTestUrl + transactionId;
+    chainSoUrl$$1 = chainSoTestUrl + transactionId;
   }
 
   let chainSoFetcher = new Promise((resolve, reject) => {
-    return request$1({ url: chainSoUrl })
-      .then(function(response) {
+    return request$1({url: chainSoUrl$$1})
+      .then(function (response) {
         const responseData = JSON.parse(response);
         try {
           const txData = parseChainSoResponse(responseData);
@@ -32823,17 +32842,17 @@ function getChainSoFetcher(transactionId, chain) {
           reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
         }
       })
-      .catch(function(err) {
+      .catch(function () {
         reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
       });
   });
   return chainSoFetcher;
 }
 
-function parseBlockCypherResponse(jsonResponse) {
+function parseBlockCypherResponse (jsonResponse) {
   if (jsonResponse.confirmations < MininumConfirmations) {
     throw new VerifierError(
-      'Number of transaction confirmations were less than the minimum required, according to Blockcypher API',
+      'Number of transaction confirmations were less than the minimum required, according to Blockcypher API'
     );
   }
   const time = dateToUnixTimestamp(jsonResponse.received);
@@ -32848,14 +32867,14 @@ function parseBlockCypherResponse(jsonResponse) {
     opReturnScript,
     issuingAddress,
     time,
-    revokedAddresses,
+    revokedAddresses
   );
 }
 
-function parseChainSoResponse(jsonResponse) {
+function parseChainSoResponse (jsonResponse) {
   if (jsonResponse.data.confirmations < MininumConfirmations) {
     throw new VerifierError(
-      'Number of transaction confirmations were less than the minimum required, according to Chain.so API',
+      'Number of transaction confirmations were less than the minimum required, according to Chain.so API'
     );
   }
   const time = new Date(jsonResponse.data.time * 1000);
@@ -32872,7 +32891,7 @@ function parseChainSoResponse(jsonResponse) {
   return new TransactionData(opReturnScript, issuingAddress, time, undefined);
 }
 
-function cleanupRemoteHash$1(remoteHash) {
+function cleanupRemoteHash$1 (remoteHash) {
   let prefixes = ['6a20', 'OP_RETURN '];
   for (var i = 0; i < prefixes.length; i++) {
     let prefix = prefixes[i];
@@ -32883,11 +32902,11 @@ function cleanupRemoteHash$1(remoteHash) {
   return remoteHash;
 }
 
-const log$3 = browser$1("blockchainConnectors");
+const log$3 = browser$1('blockchainConnectors');
 
 const BitcoinExplorers = [
   (transactionId, chain) => getChainSoFetcher(transactionId, chain),
-  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain),
+  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 
 const EthereumExplorers = [
@@ -32899,18 +32918,17 @@ const BlockchainExplorersWithSpentOutputInfo = [
   (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 
-
-function lookForTx(transactionId, chain, certificateVersion) {
+function lookForTx (transactionId, chain, certificateVersion) {
   var BlockchainExplorers;
   switch (chain) {
-    case Blockchain.bitcoin:
-    case Blockchain.regtest:
-    case Blockchain.testnet:
-    case Blockchain.mocknet:
+    case BLOCKCHAINS.bitcoin.code:
+    case BLOCKCHAINS.regtest.code:
+    case BLOCKCHAINS.testnet.code:
+    case BLOCKCHAINS.mocknet.code:
       BlockchainExplorers = BitcoinExplorers;
       break;
-    case Blockchain.ethmain:
-    case Blockchain.ethropst:
+    case BLOCKCHAINS.ethmain.code:
+    case BLOCKCHAINS.ethropst.code:
       BlockchainExplorers = EthereumExplorers;
       break;
     default:
@@ -32922,19 +32940,20 @@ function lookForTx(transactionId, chain, certificateVersion) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
   if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
-      (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2)) {
+    (certificateVersion === v1dot1 || certificateVersion === v1dot2)) {
     return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
   }
 
   // Queue up blockchain explorer APIs
-  let promises = Array();
-  if (certificateVersion == CertificateVersion.v1_1 || certificateVersion == CertificateVersion.v1_2) {
-    var limit = MinimumBlockchainExplorers;
+  let promises = [];
+  let limit;
+  if (certificateVersion === v1dot1 || certificateVersion === v1dot2) {
+    limit = MinimumBlockchainExplorers;
     for (var i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
-    var limit = MinimumBlockchainExplorers;
+    limit = MinimumBlockchainExplorers;
     for (var j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
@@ -32942,7 +32961,7 @@ function lookForTx(transactionId, chain, certificateVersion) {
 
   return new Promise((resolve, reject) => {
     return PromiseProperRace(promises, MinimumBlockchainExplorers).then(winners => {
-      if (!winners || winners.length == 0) {
+      if (!winners || winners.length === 0) {
         return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.`));
       }
 
@@ -32999,10 +33018,10 @@ var PromiseProperRace = function (promises, count, results = []) {
 
 const log$4 = browser$1('verifier');
 
-var noop$1 = function() {};
+var noop$1 = function () {};
 
 class CertificateVerifier {
-  constructor(certificateString, statusCallback) {
+  constructor (certificateString, statusCallback) {
     const certificateJson = JSON.parse(certificateString);
     this.certificate = Certificate.parseJson(certificateJson);
     let document = certificateJson.document;
@@ -33014,7 +33033,7 @@ class CertificateVerifier {
     this.document = document;
     this.statusCallback = statusCallback || noop$1;
     this.completionCallback = null;
-    
+
     // v1.1 only
     this.certificateString = certificateString;
 
@@ -33025,14 +33044,14 @@ class CertificateVerifier {
 
   /**
    * _updateCallback
-   * 
+   *
    * calls the origin callback to update on a step status
-   * 
-   * @param {*} stepCode 
-   * @param {*} message 
-   * @param {*} status 
+   *
+   * @param {*} stepCode
+   * @param {*} message
+   * @param {*} status
    */
-  _updateCallback(stepCode, message, status, errorMessage) {
+  _updateCallback (stepCode, message, status, errorMessage) {
     if (stepCode != null) {
       this.statusCallback(stepCode, message, status, errorMessage);
     }
@@ -33040,40 +33059,40 @@ class CertificateVerifier {
 
   /**
    * _succeed
-   * 
-   * @param {*} completionCallback 
+   *
+   * @param {*} completionCallback
    */
-  _succeed(completionCallback) {
+  _succeed (completionCallback) {
     let status;
     if (
-      this.certificate.chain === Blockchain.mocknet ||
-      this.certificate.chain === Blockchain.regtest
+      this.certificate.chainCode === BLOCKCHAINS.mocknet.code ||
+      this.certificate.chainCode === BLOCKCHAINS.regtest.code
     ) {
       log$4(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.',
+        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       );
       status = Status.mockSuccess;
     } else {
       log$4('success');
       status = Status.success;
     }
-  
+
     this.completionCallback(Status.final, '', status);
     return status;
   }
 
   /**
    * _failed
-   * 
-   * @param {*} stepCode 
-   * @param {*} completionCallback 
-   * @param {*} err 
+   *
+   * @param {*} stepCode
+   * @param {*} completionCallback
+   * @param {*} err
    */
-  _failed(stepCode, message) {
+  _failed (stepCode, message) {
     stepCode = stepCode || '';
     message = message || '';
     log$4(`failure:${message}`);
-    
+
     this.completionCallback(stepCode, message, Status.failure);
     return Status.failure;
   }
@@ -33086,7 +33105,7 @@ class CertificateVerifier {
    * @returns {boolean}
    * @private
    */
-  _isFailing() {
+  _isFailing () {
     return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(Status.failure) > -1;
   }
 
@@ -33097,13 +33116,13 @@ class CertificateVerifier {
    * @param action
    * @returns {*}
    */
-  doAction(stepCode, action) {
+  doAction (stepCode, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
     }
 
-	  let stepName = getVerboseMessage(stepCode);
+    let stepName = getVerboseMessage(stepCode);
     log$4(stepName);
     this._updateCallback(stepCode, stepName, Status.starting);
 
@@ -33112,7 +33131,7 @@ class CertificateVerifier {
       this._updateCallback(stepCode, stepName, Status.success);
       this._stepsStatuses.push(Status.success);
       return res;
-    } catch(err) {
+    } catch (err) {
       this._updateCallback(stepCode, stepName, Status.failure, err.message);
       this._stepsStatuses.push(Status.failure);
     }
@@ -33125,7 +33144,7 @@ class CertificateVerifier {
    * @param action
    * @returns {Promise<*>}
    */
-  async doAsyncAction(stepCode, action) {
+  async doAsyncAction (stepCode, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
@@ -33143,7 +33162,7 @@ class CertificateVerifier {
       this._updateCallback(stepCode, stepName, Status.success);
       this._stepsStatuses.push(Status.success);
       return res;
-    } catch(err) {
+    } catch (err) {
       this._updateCallback(stepCode, stepName, Status.failure, err.message);
       this._stepsStatuses.push(Status.failure);
     }
@@ -33156,7 +33175,7 @@ class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV1_2() {
+  async verifyV1dot2 () {
     // Get transaction
     let transactionId = this.doAction(
       Status.getTransactionId,
@@ -33169,47 +33188,46 @@ class CertificateVerifier {
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        computeLocalHash(docToVerify, this.certificate.version),
+        computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Get remote hash
     let txData = await this.doAsyncAction(Status.fetchingRemoteHash, async () =>
       lookForTx(
         transactionId,
-        this.certificate.chain,
-        this.certificate.version,
-      ),
+        this.certificate.chainCode,
+        this.certificate.version
+      )
     );
 
     // Get issuer profile
     let issuerProfileJson = await this.doAsyncAction(
       Status.gettingIssuerProfile,
-      async () => getIssuerProfile(this.certificate.issuer.id),
+      async () => getIssuerProfile(this.certificate.issuer.id)
     );
 
     // Parse issuer keys
     let issuerKeyMap = await this.doAsyncAction(
       Status.parsingIssuerKeys,
-      () => parseIssuerKeys(issuerProfileJson),
+      () => parseIssuerKeys(issuerProfileJson)
     );
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () => {
-        ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
-      }
-    );
+      ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
+    });
 
     // Check merkle root
     this.doAction(Status.checkingMerkleRoot, () =>
       ensureMerkleRootEqual(
         this.certificate.receipt.merkleRoot,
-        txData.remoteHash,
-      ),
+        txData.remoteHash
+      )
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      ensureValidReceipt(this.certificate.receipt),
+      ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check revoke status
@@ -33217,8 +33235,8 @@ class CertificateVerifier {
       ensureNotRevokedBySpentOutput(
         txData.revokedAddresses,
         parseRevocationKey(issuerProfileJson),
-        this.certificate.revocationKey,
-      ),
+        this.certificate.revocationKey
+      )
     );
 
     // Check authenticity
@@ -33226,13 +33244,13 @@ class CertificateVerifier {
       ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
-        txData.time,
-      ),
+        txData.time
+      )
     );
 
     // Check expiration
     this.doAction(Status.checkingExpiresDate, () =>
-      ensureNotExpired(this.certificate.expires),
+      ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -33243,27 +33261,27 @@ class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV2() {
+  async verifyV2 () {
     // Get transaction
     let transactionId = this.doAction(
       Status.getTransactionId,
       () => getTransactionId$1(this.certificate)
     );
-    
+
     let docToVerify = this.document;
 
     // Compute local hash
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        computeLocalHash(docToVerify, this.certificate.version),
+        computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Fetch remote hash
     let txData = await this.doAsyncAction(
       Status.fetchingRemoteHash,
       async () => {
-        return lookForTx(transactionId, this.certificate.chain);
+        return lookForTx(transactionId, this.certificate.chainCode);
       }
     );
 
@@ -33285,25 +33303,25 @@ class CertificateVerifier {
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () =>
-      ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
+      ensureHashesEqual(localHash, this.certificate.receipt.targetHash)
     );
 
     // Check merkle root
     this.doAction(Status.checkingMerkleRoot, () =>
       ensureMerkleRootEqual(
         this.certificate.receipt.merkleRoot,
-        txData.remoteHash,
-      ),
+        txData.remoteHash
+      )
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      ensureValidReceipt(this.certificate.receipt),
+      ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check revoked status
     this.doAction(Status.checkingRevokedStatus, () =>
-      ensureNotRevokedByList(revokedAssertions, this.certificate.id),
+      ensureNotRevokedByList(revokedAssertions, this.certificate.id)
     );
 
     // Check authenticity
@@ -33311,13 +33329,13 @@ class CertificateVerifier {
       ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
-        txData.time,
-      ),
+        txData.time
+      )
     );
 
     // Check expiration date
     this.doAction(Status.checkingExpiresDate, () =>
-      ensureNotExpired(this.certificate.expires),
+      ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -33328,28 +33346,28 @@ class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV2Mock() {
+  async verifyV2Mock () {
     let docToVerify = this.document;
     // Compute local hash
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        computeLocalHash(docToVerify, this.certificate.version),
+        computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () =>
-      ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
+      ensureHashesEqual(localHash, this.certificate.receipt.targetHash)
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      ensureValidReceipt(this.certificate.receipt),
+      ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check expiration date
     this.doAction(Status.checkingExpiresDate, () =>
-      ensureNotExpired(this.certificate.expires),
+      ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -33359,22 +33377,22 @@ class CertificateVerifier {
    * @param completionCallback
    * @returns {Promise<*>}
    */
-  async verify(completionCallback) {
-    if (this.certificate.version === CertificateVersion.v1_1) {
+  async verify (completionCallback) {
+    if (this.certificate.version === v1dot1) {
       throw new VerifierError(
         '',
-        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification',
+        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification'
       );
     }
 
     // Save completion callback
     this.completionCallback = completionCallback || noop$1;
     try {
-      if (this.certificate.version === CertificateVersion.v1_2) {
-        await this.verifyV1_2();
+      if (this.certificate.version === v1dot2) {
+        await this.verifyV1dot2();
       } else if (
-        this.certificate.chain === Blockchain.mocknet ||
-        this.certificate.chain === Blockchain.regtest
+        this.certificate.chainCode === BLOCKCHAINS.mocknet.code ||
+        this.certificate.chainCode === BLOCKCHAINS.regtest.code
       ) {
         await this.verifyV2Mock();
       } else {
@@ -33388,41 +33406,15 @@ class CertificateVerifier {
         return this._succeed();
       }
     } catch (e) {
-      //return this._failed(e.stepCode, e.message);
+      // return this._failed(e.stepCode, e.message);
     }
   }
 }
 
-/*
-import {readFileAsync} from './promisifiedRequests'
-
-function statusCallback(arg1) {
-  console.log(`callback status: ${arg1}`);
-}
-
-async function test() {
-  try {
-    //var data = await readFileAsync('../tests/data/sample_cert-revoked-2.0.json');
-    var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json')
-    var certVerifier = new CertificateVerifier(data, statusCallback);
-    certVerifier.verify((status, message) => {
-      console.log("completion status: " + status);
-      if (message) {
-        console.error("completion message: " + message);
-      }
-    }).catch((err) => {console.error("Unexpected error: " + err)})
-  } catch (err) {
-    console.error('Failed!');
-    console.error(err);
-  }
-}
-
-test();
-*/
-
-exports.Blockchain = Blockchain;
-exports.CertificateVersion = CertificateVersion;
+exports.BLOCKCHAINS = BLOCKCHAINS;
+exports.CERTIFICATE_VERSIONS = certificateVersions;
 exports.Status = Status;
+exports.VERIFICATION_STATUSES = verificationStatuses;
 exports.Certificate = Certificate;
 exports.SignatureImage = SignatureImage;
 exports.CertificateVerifier = CertificateVerifier;

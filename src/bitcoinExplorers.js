@@ -1,15 +1,19 @@
 import { request } from './promisifiedRequests';
 import { TransactionData } from './verifierModels';
-import { Blockchain, MininumConfirmations, Status, Url, VerifierError } from '../config/default';
+import { Status } from '../config/default';
 import { dateToUnixTimestamp } from './helpers/date';
 import { startsWith } from './helpers/string';
+import { BLOCKCHAINS } from './constants/blockchains';
+import { MininumConfirmations } from './constants/config';
+import { VerifierError } from './models/verifierError';
+import * as API_URLS from './constants/api';
 
 export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;
-  if (chain === Blockchain.bitcoin) {
-    blockCypherUrl = Url.blockCypherUrl + transactionId + '?limit=500';
+  if (chain === BLOCKCHAINS.bitcoin.code) {
+    blockCypherUrl = API_URLS.blockCypherUrl + transactionId + '?limit=500';
   } else {
-    blockCypherUrl = Url.blockCypherTestUrl + transactionId + '?limit=500';
+    blockCypherUrl = API_URLS.blockCypherTestUrl + transactionId + '?limit=500';
   }
   let blockcypherFetcher = new Promise((resolve, reject) => {
     return request({url: blockCypherUrl})
@@ -32,10 +36,10 @@ export function getBlockcypherFetcher (transactionId, chain) {
 
 export function getChainSoFetcher (transactionId, chain) {
   let chainSoUrl;
-  if (chain === Blockchain.bitcoin) {
-    chainSoUrl = Url.chainSoUrl + transactionId;
+  if (chain === BLOCKCHAINS.bitcoin.code) {
+    chainSoUrl = API_URLS.chainSoUrl + transactionId;
   } else {
-    chainSoUrl = Url.chainSoTestUrl + transactionId;
+    chainSoUrl = API_URLS.chainSoTestUrl + transactionId;
   }
 
   let chainSoFetcher = new Promise((resolve, reject) => {

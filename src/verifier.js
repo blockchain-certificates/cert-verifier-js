@@ -1,21 +1,18 @@
 import debug from 'debug';
 import { Certificate } from './certificate';
-import {
-  Blockchain,
-  Status,
-  CertificateVersion,
-  getVerboseMessage,
-  VerifierError,
-} from '../config/default';
+import { getVerboseMessage, Status } from '../config/default';
 import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import {
-  parseIssuerKeys,
-  parseRevocationKey,
   getIssuerKeys,
   getIssuerProfile,
   getRevokedAssertions,
+  parseIssuerKeys,
+  parseRevocationKey
 } from './verifierModels';
+import { BLOCKCHAINS } from './constants/blockchains';
+import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
+import { VerifierError } from './models/verifierError';
 
 const log = debug('verifier');
 
@@ -66,11 +63,11 @@ export class CertificateVerifier {
   _succeed (completionCallback) {
     let status;
     if (
-      this.certificate.chain === Blockchain.mocknet ||
-      this.certificate.chain === Blockchain.regtest
+      this.certificate.chainCode === BLOCKCHAINS.mocknet.code ||
+      this.certificate.chainCode === BLOCKCHAINS.regtest.code
     ) {
       log(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.',
+        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       );
       status = Status.mockSuccess;
     } else {
@@ -176,7 +173,7 @@ export class CertificateVerifier {
    *
    * @returns {Promise<void>}
    */
-  async verifyV1_2 () {
+  async verifyV1dot2 () {
     // Get transaction
     let transactionId = this.doAction(
       Status.getTransactionId,
@@ -189,47 +186,46 @@ export class CertificateVerifier {
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(docToVerify, this.certificate.version),
+        checks.computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Get remote hash
     let txData = await this.doAsyncAction(Status.fetchingRemoteHash, async () =>
       blockchainConnectors.lookForTx(
         transactionId,
-        this.certificate.chain,
-        this.certificate.version,
-      ),
+        this.certificate.chainCode,
+        this.certificate.version
+      )
     );
 
     // Get issuer profile
     let issuerProfileJson = await this.doAsyncAction(
       Status.gettingIssuerProfile,
-      async () => getIssuerProfile(this.certificate.issuer.id),
+      async () => getIssuerProfile(this.certificate.issuer.id)
     );
 
     // Parse issuer keys
     let issuerKeyMap = await this.doAsyncAction(
       Status.parsingIssuerKeys,
-      () => parseIssuerKeys(issuerProfileJson),
+      () => parseIssuerKeys(issuerProfileJson)
     );
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () => {
-        checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
-      }
-    );
+      checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash);
+    });
 
     // Check merkle root
     this.doAction(Status.checkingMerkleRoot, () =>
       checks.ensureMerkleRootEqual(
         this.certificate.receipt.merkleRoot,
-        txData.remoteHash,
-      ),
+        txData.remoteHash
+      )
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      checks.ensureValidReceipt(this.certificate.receipt),
+      checks.ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check revoke status
@@ -237,8 +233,8 @@ export class CertificateVerifier {
       checks.ensureNotRevokedBySpentOutput(
         txData.revokedAddresses,
         parseRevocationKey(issuerProfileJson),
-        this.certificate.revocationKey,
-      ),
+        this.certificate.revocationKey
+      )
     );
 
     // Check authenticity
@@ -246,13 +242,13 @@ export class CertificateVerifier {
       checks.ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
-        txData.time,
-      ),
+        txData.time
+      )
     );
 
     // Check expiration
     this.doAction(Status.checkingExpiresDate, () =>
-      checks.ensureNotExpired(this.certificate.expires),
+      checks.ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -276,14 +272,14 @@ export class CertificateVerifier {
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(docToVerify, this.certificate.version),
+        checks.computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Fetch remote hash
     let txData = await this.doAsyncAction(
       Status.fetchingRemoteHash,
       async () => {
-        return blockchainConnectors.lookForTx(transactionId, this.certificate.chain);
+        return blockchainConnectors.lookForTx(transactionId, this.certificate.chainCode);
       }
     );
 
@@ -305,25 +301,25 @@ export class CertificateVerifier {
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () =>
-      checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
+      checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash)
     );
 
     // Check merkle root
     this.doAction(Status.checkingMerkleRoot, () =>
       checks.ensureMerkleRootEqual(
         this.certificate.receipt.merkleRoot,
-        txData.remoteHash,
-      ),
+        txData.remoteHash
+      )
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      checks.ensureValidReceipt(this.certificate.receipt),
+      checks.ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check revoked status
     this.doAction(Status.checkingRevokedStatus, () =>
-      checks.ensureNotRevokedByList(revokedAssertions, this.certificate.id),
+      checks.ensureNotRevokedByList(revokedAssertions, this.certificate.id)
     );
 
     // Check authenticity
@@ -331,13 +327,13 @@ export class CertificateVerifier {
       checks.ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
-        txData.time,
-      ),
+        txData.time
+      )
     );
 
     // Check expiration date
     this.doAction(Status.checkingExpiresDate, () =>
-      checks.ensureNotExpired(this.certificate.expires),
+      checks.ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -354,22 +350,22 @@ export class CertificateVerifier {
     let localHash = await this.doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(docToVerify, this.certificate.version),
+        checks.computeLocalHash(docToVerify, this.certificate.version)
     );
 
     // Compare hashes
     this.doAction(Status.comparingHashes, () =>
-      checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash),
+      checks.ensureHashesEqual(localHash, this.certificate.receipt.targetHash)
     );
 
     // Check receipt
     this.doAction(Status.checkingReceipt, () =>
-      checks.ensureValidReceipt(this.certificate.receipt),
+      checks.ensureValidReceipt(this.certificate.receipt)
     );
 
     // Check expiration date
     this.doAction(Status.checkingExpiresDate, () =>
-      checks.ensureNotExpired(this.certificate.expires),
+      checks.ensureNotExpired(this.certificate.expires)
     );
   }
 
@@ -380,21 +376,21 @@ export class CertificateVerifier {
    * @returns {Promise<*>}
    */
   async verify (completionCallback) {
-    if (this.certificate.version === CertificateVersion.v1_1) {
+    if (this.certificate.version === CERTIFICATE_VERSIONS.v1dot1) {
       throw new VerifierError(
         '',
-        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification',
+        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification'
       );
     }
 
     // Save completion callback
     this.completionCallback = completionCallback || noop;
     try {
-      if (this.certificate.version === CertificateVersion.v1_2) {
-        await this.verifyV1_2();
+      if (this.certificate.version === CERTIFICATE_VERSIONS.v1dot2) {
+        await this.verifyV1dot2();
       } else if (
-        this.certificate.chain === Blockchain.mocknet ||
-        this.certificate.chain === Blockchain.regtest
+        this.certificate.chainCode === BLOCKCHAINS.mocknet.code ||
+        this.certificate.chainCode === BLOCKCHAINS.regtest.code
       ) {
         await this.verifyV2Mock();
       } else {
@@ -408,34 +404,7 @@ export class CertificateVerifier {
         return this._succeed();
       }
     } catch (e) {
-      //return this._failed(e.stepCode, e.message);
+      // return this._failed(e.stepCode, e.message);
     }
   }
 }
-
-/*
-import {readFileAsync} from './promisifiedRequests'
-
-function statusCallback(arg1) {
-  console.log(`callback status: ${arg1}`);
-}
-
-async function test() {
-  try {
-    //var data = await readFileAsync('../tests/data/sample_cert-revoked-2.0.json');
-    var data = await readFileAsync('../tests/data/sample_cert-valid-1.2.0.json')
-    var certVerifier = new CertificateVerifier(data, statusCallback);
-    certVerifier.verify((status, message) => {
-      console.log("completion status: " + status);
-      if (message) {
-        console.error("completion message: " + message);
-      }
-    }).catch((err) => {console.error("Unexpected error: " + err)})
-  } catch (err) {
-    console.error('Failed!');
-    console.error(err);
-  }
-}
-
-test();
-*/

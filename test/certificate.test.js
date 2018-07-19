@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import { Blockchain, Certificate } from '../src/index';
+import { BLOCKCHAINS, Certificate } from '../src/index';
 import { readFileAsync } from './utils/readFile';
 
 describe('Certificate parsing', () => {
@@ -8,7 +8,7 @@ describe('Certificate parsing', () => {
       var data = await readFileAsync('test/fixtures/sample_cert-valid-2.0.json');
       let cert = Certificate.parseJson(JSON.parse(data));
       expect(cert.name).toBe('Eularia Landroth');
-      expect(cert.chain).toBe(Blockchain.testnet);
+      expect(cert.chainCode).toBe(BLOCKCHAINS.testnet.code);
     });
   });
 
@@ -17,7 +17,7 @@ describe('Certificate parsing', () => {
       var data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
       let cert = Certificate.parseJson(JSON.parse(data));
       expect(cert.name).toBe('Eularia Landroth');
-      expect(cert.chain).toBe(Blockchain.ethropst);
+      expect(cert.chainCode).toBe(BLOCKCHAINS.ethropst.code);
     });
   });
 

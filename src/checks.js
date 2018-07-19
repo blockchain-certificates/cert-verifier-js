@@ -1,24 +1,21 @@
 import bitcoin from 'bitcoinjs-lib';
 import jsonld from 'jsonld';
-
-import {
-  Blockchain,
-  CertificateVersion,
-  CheckForUnmappedFields,
-  Contexts,
-  generateRevocationReason,
-  Status,
-  VerifierError
-} from '../config/default';
+import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
+import { CheckForUnmappedFields } from './constants/config';
+import { CONTEXTS as ContextsMap } from './constants/contexts';
+import { Status } from '../config/default';
+import domain from './domain';
 import sha256 from 'sha256';
 import { dateToUnixTimestamp } from './helpers/date';
+import { BLOCKCHAINS } from './constants/blockchains';
+import { VerifierError } from './models/verifierError';
 
 const {
   obi: OBI_CONTEXT,
   blockcerts: BLOCKCERTS_CONTEXT,
   blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
   blockcertsv2: BLOCKCERTSV2_CONTEXT
-} = Contexts;
+} = ContextsMap;
 const CONTEXTS = {};
 // Preload contexts
 CONTEXTS['https://w3id.org/blockcerts/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
@@ -42,7 +39,7 @@ export function ensureNotRevokedBySpentOutput (
     if (isRevokedByIssuer) {
       throw new VerifierError(
         Status.checkingRevokedStatus,
-        generateRevocationReason(
+        domain.certificates.generateRevocationReason(
           revokedAddresses[revokedAssertionId].revocationReason
         )
       );
@@ -56,7 +53,7 @@ export function ensureNotRevokedBySpentOutput (
     if (isRevokedByRecipient) {
       throw new VerifierError(
         Status.checkingRevokedStatus,
-        generateRevocationReason(
+        domain.certificates.generateRevocationReason(
           revokedAddresses[revokedAssertionId].revocationReason
         )
       );
@@ -78,7 +75,7 @@ export function ensureNotRevokedByList (revokedAssertions, assertionUid) {
   if (isRevokedByIssuer) {
     throw new VerifierError(
       Status.checkingRevokedStatus,
-      generateRevocationReason(
+      domain.certificates.generateRevocationReason(
         revokedAssertions[revokedAssertionId].revocationReason
       )
     );
@@ -92,7 +89,7 @@ export function ensureIssuerSignature (
   chain
 ) {
   let bitcoinChain =
-    chain === Blockchain.bitcoin
+    chain === BLOCKCHAINS.bitcoin.code
       ? bitcoin.networks.bitcoin
       : bitcoin.networks.testnet;
   if (
@@ -204,7 +201,7 @@ export function getTransactionId (certificate) {
 export function computeLocalHash (document, version) {
   var expandContext = document['@context'];
   var theDocument = document;
-  if (version === CertificateVersion.v2_0 && CheckForUnmappedFields) {
+  if (version === CERTIFICATE_VERSIONS.v2dot0 && CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {

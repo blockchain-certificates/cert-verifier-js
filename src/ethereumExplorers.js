@@ -1,15 +1,19 @@
 import { request } from './promisifiedRequests';
-import { Blockchain, MininumConfirmations, Status, Url, VerifierError } from '../config/default';
+import { Status } from '../config/default';
 import { TransactionData } from './verifierModels';
 import { startsWith } from './helpers/string';
+import { BLOCKCHAINS } from './constants/blockchains';
+import { MininumConfirmations } from './constants/config';
+import * as API_URLS from './constants/api';
+import { VerifierError } from './models/verifierError';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
-    etherScanUrl = Url.etherScanMainUrl + action + transactionId;
+  if (chain === BLOCKCHAINS.ethmain.code) {
+    etherScanUrl = API_URLS.etherScanMainUrl + action + transactionId;
   } else {
-    etherScanUrl = Url.etherScanRopstenUrl + action + transactionId;
+    etherScanUrl = API_URLS.etherScanRopstenUrl + action + transactionId;
   }
 
   let etherScanFetcher = new Promise((resolve, reject) => {
@@ -54,10 +58,10 @@ function getEtherScanBlock (jsonResponse, chain) {
   const blockNumber = data.blockNumber;
   const action = '&action=eth_getBlockByNumber&boolean=true&tag=';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
-    etherScanUrl = Url.etherScanMainUrl + action + blockNumber;
+  if (chain === BLOCKCHAINS.ethmain.code) {
+    etherScanUrl = API_URLS.etherScanMainUrl + action + blockNumber;
   } else {
-    etherScanUrl = Url.etherScanRopstenUrl + action + blockNumber;
+    etherScanUrl = API_URLS.etherScanRopstenUrl + action + blockNumber;
   }
 
   return new Promise((resolve, reject) => {
@@ -87,7 +91,7 @@ function getEtherScanBlock (jsonResponse, chain) {
 function checkEtherScanConfirmations (chain, blockNumber) {
   const action = '&action=eth_blockNumber';
   let etherScanUrl;
-  if (chain === Blockchain.ethmain) {
+  if (chain === BLOCKCHAINS.ethmain.code) {
     etherScanUrl = Url.etherScanMainUrl + action;
   } else {
     etherScanUrl = Url.etherScanRopstenUrl + action;

@@ -284,7 +284,7 @@ describe('Certificate verifier',function () {
       expectedName = null;
     });
 
-    xdescribe('when there is no failure', function () {
+    describe('when there is no failure', function () {
       it('should be called with the code, the name and the status of the step', function () {
         verifierInstance.doAction(testCode, function () {});
 
@@ -292,7 +292,7 @@ describe('Certificate verifier',function () {
       });
     });
 
-    xdescribe('when there is a failure', function () {
+    describe('when there is a failure', function () {
       it('should be called with the code, the name, the status and the error message', function () {
         const errorMessage = 'Testing the test';
         verifierInstance.doAction(testCode, function () { throw new Error(errorMessage); });

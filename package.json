@@ -5,11 +5,14 @@
   "main": "verifier.js",
   "module": "verifier-es.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register tests/test*.js",
+    "test": "jest --maxWorkers=4",
+    "test:watch": "jest --watch",
     "build": "npm run build:esm && npm run build:es5",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
-    "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js"
+    "lint": "semistandard --verbose | snazzy",
+    "uglify": "uglifyjs bundle.js --compress --mangle --output verifier.js",
+    "prepush": "npm run test && npm run lint"
   },
   "babel": {
     "presets": [
@@ -28,18 +31,44 @@
   },
   "author": "Kim Duffy",
   "license": "MIT",
+  "jest": {
+    "modulePaths": [
+      "<rootDir>/src/",
+      "<rootDir>/node_modules"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ]
+  },
+  "semistandard": {
+    "globals": [
+      "afterEach",
+      "describe",
+      "beforeEach",
+      "expect",
+      "it",
+      "xit",
+      "xdescribe",
+      "XMLHttpRequest"
+    ],
+    "ignore": [
+      "verifier.js",
+      "verifier-es.js",
+      "verifier-iife.js"
+    ]
+  },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^2.3.0",
     "bs58": "^3.0.0",
     "buffer": "^5.1.0",
-    "chai": "^3.5.0",
     "debug": "^3.1.0",
     "ecurve": "^1.0.4",
+    "eslint-config-semistandard": "^12.0.1",
+    "eslint-plugin-import": "^2.13.0",
     "jsonld": "^0.4.11",
-    "mocha": "^3.5.3",
-    "rollup-plugin-babel": "^3.0.5",
     "sha256": "^0.2.0",
     "tsify": "^3.0.4",
     "xmlhttprequest": "^1.8.0"
@@ -50,14 +79,19 @@
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.6.1",
     "brfs": "^1.4.3",
+    "husky": "^0.14.3",
+    "jest": "^23.4.1",
     "rollup": "^0.59.4",
+    "rollup-plugin-babel": "^3.0.5",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-json": "^3.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.2.1",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-re": "^1.0.7",
+    "semistandard": "^12.0.1",
     "sinon": "^6.0.1",
+    "snazzy": "^7.1.1",
     "uglify-js": "^3.3.14"
   }
 }

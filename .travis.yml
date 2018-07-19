@@ -5,6 +5,7 @@ cache:
 branches:
   only:
     - master
+    - v2-wip
 before_install:
   - npm i -g npm@6
 before_script:

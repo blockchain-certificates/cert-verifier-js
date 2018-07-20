@@ -1,31 +1,34 @@
-'use strict';
-
 import 'babel-polyfill';
 import * as helpers from '../src/checks';
 
-describe('Certificate verifier', () => {
-  describe('verify helpers', () => {
-    it('ensures a date in the past fails expiration check', () => {
-      try {
-        helpers.ensureNotExpired('2017-01-01');
-      } catch (err) {
-        expect(err.toString()).toBe('Error: This certificate has expired.');
-      }
+describe('Checks test suite', () => {
+  describe('ensureNotExpired method', () => {
+    const errorMessage = 'This certificate has expired.';
+
+    describe('given it is called with no parameter', () => {
+      it('should return false', () => {
+        expect(() => {
+          helpers.ensureNotExpired();
+        }).not.toThrow();
+      });
     });
 
-    it('ensures a date in the future passes expiration check', () => {
-      try {
-        helpers.ensureNotExpired('2817-01-01');
-        expect(true).toBe(true);
-      } catch (err) {}
+    describe('given it is called with a past date', () => {
+      it('should throw an error', () => {
+        const assertionDate = '2017-01-01';
+        expect(() => {
+          helpers.ensureNotExpired(assertionDate);
+        }).toThrow(errorMessage);
+      });
     });
 
-    it('ensures no expires field passes expiration check', () => {
-      try {
-        helpers.ensureNotExpired(null);
-      } catch (err) {
-        expect(err).toBe(!false);
-      }
+    describe('given it is called with a future date', () => {
+      it('should not throw an error ', () => {
+        const fixtureDate = '2817-01-01';
+        expect(() => {
+          helpers.ensureNotExpired(fixtureDate);
+        }).not.toThrow();
+      });
     });
   });
 });

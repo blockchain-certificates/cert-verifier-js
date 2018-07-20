@@ -89,11 +89,11 @@ export default class Certificate {
   _initVerifier () {
     let document = this.certificateJson.document;
     if (!document) {
-      const certificateCopy = this.certificateJson;
+      const certificateCopy = Object.assign({}, this.certificateJson);
       delete certificateCopy['signature'];
       document = certificateCopy;
     }
-    this.document = document;
+    this.documentToVerify = document;
 
     // Final verification result
     // Init status as success, we will update the final status at the end
@@ -432,13 +432,11 @@ export default class Certificate {
       () => checks.isTransactionIdValid(this.transactionId)
     );
 
-    let docToVerify = this.document;
-
     // Compute local hash
     let localHash = await this._doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(docToVerify, this.version)
+        checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Get remote hash
@@ -518,13 +516,11 @@ export default class Certificate {
       () => checks.isTransactionIdValid(this.transactionId)
     );
 
-    let docToVerify = this.document;
-
     // Compute local hash
     let localHash = await this._doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(docToVerify, this.version)
+        checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash

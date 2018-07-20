@@ -93,7 +93,8 @@ export default class Certificate {
       delete certificateCopy['signature'];
       document = certificateCopy;
     }
-    this.documentToVerify = document;
+
+    this.documentToVerify = Object.assign({}, document);
 
     // Final verification result
     // Init status as success, we will update the final status at the end
@@ -118,9 +119,10 @@ export default class Certificate {
    * @param signatureImage
    * @param subtitle
    * @param title
+   * @param version
    * @private
    */
-  _setProperties ({ certificateImage, chain, description, expires, id, issuer, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, title, version }) {
+  _setProperties ({ certificateImage, chain, description, expires, id, issuer, name, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
     this.certificateImage = certificateImage;
     this.chain = chain;
     this.description = description;
@@ -135,7 +137,7 @@ export default class Certificate {
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-    this.title = title;
+    this.name = name;
     this.version = version;
 
     // Transaction ID, link & raw link
@@ -157,14 +159,13 @@ export default class Certificate {
     const recipient = certificateJson.recipient || certificateJson.document.recipient;
     const assertion = certificateJson.document.assertion;
 
-    // NEW
     const receipt = certificateJson.receipt;
     const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.v1dot1 : CERTIFICATE_VERSIONS.v1dot2;
 
     let {image: certificateImage, description, issuer, subtitle} = this.fullCertificateObject;
 
     const publicKey = recipient.publicKey;
-    const chain = domain.addresses.isMainnet(publicKey) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+    const chain = domain.certificates.getChain(publicKey);
     const expires = assertion.expires;
     const id = assertion.uid;
     const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
@@ -176,7 +177,7 @@ export default class Certificate {
     if (typeof subtitle === 'object') {
       subtitle = subtitle.display ? subtitle.content : '';
     }
-    let title = this.fullCertificateObject.title || this.fullCertificateObject.name;
+    let name = this.fullCertificateObject.title || this.fullCertificateObject.name;
 
     this._setProperties({
       certificateImage,
@@ -185,6 +186,7 @@ export default class Certificate {
       expires,
       id,
       issuer,
+      name,
       publicKey,
       receipt,
       recipientFullName,
@@ -193,7 +195,6 @@ export default class Certificate {
       signature,
       signatureImage,
       subtitle,
-      title,
       version
     });
 
@@ -209,13 +210,12 @@ export default class Certificate {
    */
   _parseV2 (certificateJson) {
     const {id, expires, signature: receipt, badge} = certificateJson;
-    const {image: certificateImage, name: title, description, subtitle, issuer} = badge;
+    const {image: certificateImage, name, description, subtitle, issuer} = badge;
     const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
     const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 
-    // NEW
     const version = CERTIFICATE_VERSIONS.v2dot0;
-    const chain = domain.certificates.getChain(certificateJson.signature, issuerKey);
+    const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
     const publicKey = recipientProfile.publicKey;
     const recipientFullName = recipientProfile.name;
     const revocationKey = null;
@@ -229,6 +229,7 @@ export default class Certificate {
       expires,
       id,
       issuer,
+      name,
       publicKey,
       receipt,
       recipientFullName,
@@ -237,7 +238,6 @@ export default class Certificate {
       signature: null,
       signatureImage,
       subtitle,
-      title,
       version
     });
 
@@ -519,8 +519,9 @@ export default class Certificate {
     // Compute local hash
     let localHash = await this._doAsyncAction(
       Status.computingLocalHash,
-      async () =>
-        checks.computeLocalHash(this.documentToVerify, this.version)
+      async () => {
+        return checks.computeLocalHash(this.documentToVerify, this.version);
+      }
     );
 
     // Fetch remote hash
@@ -597,7 +598,7 @@ export default class Certificate {
     let localHash = await this._doAsyncAction(
       Status.computingLocalHash,
       async () =>
-        checks.computeLocalHash(this.document, this.version)
+        checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Compare hashes

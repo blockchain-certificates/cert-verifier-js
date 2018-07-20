@@ -1,11 +1,11 @@
 import 'babel-polyfill';
 
-import TestnetV1Valid from './fixtures/testnet-valid-1.2';
-import MainnetV2Valid from './fixtures/mainnet-valid-2.0';
-import EthereumV2Valid from './fixtures/ethereum-main-valid-2.0';
+import TestnetV1Valid from '../fixtures/testnet-valid-1.2';
+import MainnetV2Valid from '../fixtures/mainnet-valid-2.0';
+import EthereumV2Valid from '../fixtures/ethereum-main-valid-2.0';
 
-import { BLOCKCHAINS, Certificate } from '../src/index';
-import { readFileAsync } from './application/utils/readFile';
+import { BLOCKCHAINS, Certificate } from '../../src/index';
+import { readFileAsync } from '../application/utils/readFile';
 
 describe('Certificate parsing', () => {
   describe('parse v1', () => {
@@ -21,7 +21,7 @@ describe('Certificate parsing', () => {
   describe('parse v2', () => {
     it('parses a v2 certificate', () => {
       const cert = new Certificate(MainnetV2Valid);
-      expect(cert.name).toBe('Certified Security Expert');
+      expect(cert.name).toBe(MainnetV2Valid.badge.name);
       expect(cert.chain.code).toBe(BLOCKCHAINS.bitcoin.code);
     });
   });
@@ -29,19 +29,19 @@ describe('Certificate parsing', () => {
   describe('parse ethereum', () => {
     it('parses an ethereum v2 certificate', () => {
       const cert = new Certificate(EthereumV2Valid);
-      expect(cert.name).toBe('Certificate of Accomplishment');
-      expect(cert.chain.code).toBe(BLOCKCHAINS.ethropst.code);
+      expect(cert.name).toBe(EthereumV2Valid.badge.name);
+      expect(cert.chain.code).toBe(BLOCKCHAINS.ethmain.code);
     });
   });
 });
 
-xdescribe('Certificate.getTransactionId method', () => {
+/* xdescribe('Certificate.getTransactionId method', () => {
   it('should return the raw transaction ID of a certificate', async () => {
     const data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
     let cert = new Certificate(JSON.parse(data));
     expect(cert.transactionId).toBe('00dbc2c28a6d84653687c7ee2521fb73af1a907c8fcce93ac2c413a1298cd69d');
   });
-});
+}); */
 
 xdescribe('Certificate.transactionLink property', () => {
   describe('when the certificate transaction is on mainnet', () => {

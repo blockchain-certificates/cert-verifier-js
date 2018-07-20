@@ -1,6 +1,8 @@
 import 'babel-polyfill';
 import * as helpers from '../src/checks';
 
+// TODO write all tests
+
 describe('Checks test suite', () => {
   describe('ensureNotExpired method', () => {
     const errorMessage = 'This certificate has expired.';

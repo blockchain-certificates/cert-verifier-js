@@ -1,34 +1,36 @@
 import 'babel-polyfill';
+
+import TestnetV1Valid from './fixtures/testnet-valid-1.2';
+import MainnetV2Valid from './fixtures/mainnet-valid-2.0';
+import EthereumV2Valid from './fixtures/ethereum-main-valid-2.0';
+
 import { BLOCKCHAINS, Certificate } from '../src/index';
 import { readFileAsync } from './application/utils/readFile';
 
-xdescribe('Certificate parsing', () => {
+describe('Certificate parsing', () => {
+  describe('parse v1', () => {
+    it('parses a v1 certificate', () => {
+      const cert = new Certificate(TestnetV1Valid);
+      expect(cert.name).toBe(TestnetV1Valid.document.certificate.name);
+      expect(cert.signature).toBe(
+        'H8o5mPXUHgXp/umCRZeqCZmVUsu8hbv0NchB+hnJWGszL7V8zBuuAcLQzeeRjhCv9TO5cOu/m5zAhJnDfbRHHcE='
+      );
+    });
+  });
+
   describe('parse v2', () => {
-    it('parses a v2 certificate', async () => {
-      var data = await readFileAsync('test/fixtures/sample_cert-valid-2.0.json');
-      let cert = new Certificate(JSON.parse(data));
-      expect(cert.name).toBe('Eularia Landroth');
-      expect(cert.chainCode).toBe(BLOCKCHAINS.testnet.code);
+    it('parses a v2 certificate', () => {
+      const cert = new Certificate(MainnetV2Valid);
+      expect(cert.name).toBe('Certified Security Expert');
+      expect(cert.chain.code).toBe(BLOCKCHAINS.bitcoin.code);
     });
   });
 
   describe('parse ethereum', () => {
-    it('parses an ethereum v2 certificate', async () => {
-      var data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
-      let cert = new Certificate(JSON.parse(data));
-      expect(cert.name).toBe('Eularia Landroth');
-      expect(cert.chainCode).toBe(BLOCKCHAINS.ethropst.code);
-    });
-  });
-
-  describe('parse v1', () => {
-    it('parses a v1 certificate', async () => {
-      var data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
-      let cert = new Certificate(JSON.parse(data));
-      expect(cert.name).toBe('Certs_Test Auto_Recipient');
-      expect(cert.signature).toBe(
-        'H8o5mPXUHgXp/umCRZeqCZmVUsu8hbv0NchB+hnJWGszL7V8zBuuAcLQzeeRjhCv9TO5cOu/m5zAhJnDfbRHHcE='
-      );
+    it('parses an ethereum v2 certificate', () => {
+      const cert = new Certificate(EthereumV2Valid);
+      expect(cert.name).toBe('Certificate of Accomplishment');
+      expect(cert.chain.code).toBe(BLOCKCHAINS.ethropst.code);
     });
   });
 });

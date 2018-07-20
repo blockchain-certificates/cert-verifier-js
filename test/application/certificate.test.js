@@ -1,4 +1,4 @@
-import SampleValidCertificate from '../fixtures/sample-cert-mainnet-valid-2.0.json';
+import MainnetV2Certificate from '../fixtures/mainnet-valid-2.0.json';
 import Certificate from '../../src/certificate';
 import { BLOCKCHAINS } from '../../src';
 
@@ -8,7 +8,7 @@ describe('Certificate entity test suite', () => {
       let certificate;
 
       beforeEach(() => {
-        certificate = new Certificate(JSON.stringify(SampleValidCertificate));
+        certificate = new Certificate(JSON.stringify(MainnetV2Certificate));
       });
 
       afterEach(() => {
@@ -16,7 +16,7 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should coerce certificateJson to an object', () => {
-        expect(certificate.certificateJson).toEqual(SampleValidCertificate);
+        expect(certificate.certificateJson).toEqual(MainnetV2Certificate);
       });
     });
 
@@ -24,7 +24,7 @@ describe('Certificate entity test suite', () => {
       let certificate;
 
       beforeEach(() => {
-        certificate = new Certificate(SampleValidCertificate);
+        certificate = new Certificate(MainnetV2Certificate);
       });
 
       afterEach(() => {
@@ -32,11 +32,11 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set the certificateJson of the certificate object', () => {
-        expect(certificate.certificateJson).toEqual(SampleValidCertificate);
+        expect(certificate.certificateJson).toEqual(MainnetV2Certificate);
       });
 
       it('should set certificateImage of the certificate object', () => {
-        expect(certificate.certificateImage).toEqual(SampleValidCertificate.badge.image);
+        expect(certificate.certificateImage).toEqual(MainnetV2Certificate.badge.image);
       });
 
       it('should set chain of the certificate object', () => {
@@ -44,35 +44,35 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set description of the certificate object', () => {
-        expect(certificate.description).toEqual(SampleValidCertificate.badge.description);
+        expect(certificate.description).toEqual(MainnetV2Certificate.badge.description);
       });
 
       it('should set expires of the certificate object', () => {
-        expect(certificate.expires).toEqual(SampleValidCertificate.expires);
+        expect(certificate.expires).toEqual(MainnetV2Certificate.expires);
       });
 
       it('should set expires of the certificate object', () => {
-        expect(certificate.expires).toEqual(SampleValidCertificate.expires);
+        expect(certificate.expires).toEqual(MainnetV2Certificate.expires);
       });
 
       it('should set id of the certificate object', () => {
-        expect(certificate.id).toEqual(SampleValidCertificate.id);
+        expect(certificate.id).toEqual(MainnetV2Certificate.id);
       });
 
       it('should set issuer of the certificate object', () => {
-        expect(certificate.issuer).toEqual(SampleValidCertificate.badge.issuer);
+        expect(certificate.issuer).toEqual(MainnetV2Certificate.badge.issuer);
       });
 
       it('should set publicKey of the certificate object', () => {
-        expect(certificate.publicKey).toEqual(SampleValidCertificate.recipientProfile.publicKey);
+        expect(certificate.publicKey).toEqual(MainnetV2Certificate.recipientProfile.publicKey);
       });
 
       it('should set receipt of the certificate object', () => {
-        expect(certificate.receipt).toEqual(SampleValidCertificate.signature);
+        expect(certificate.receipt).toEqual(MainnetV2Certificate.signature);
       });
 
       it('should set recipientFullName of the certificate object', () => {
-        const fullNameAssertion = SampleValidCertificate.recipientProfile.name;
+        const fullNameAssertion = MainnetV2Certificate.recipientProfile.name;
         expect(certificate.recipientFullName).toEqual(fullNameAssertion);
       });
 
@@ -81,7 +81,7 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set sealImage of the certificate object', () => {
-        expect(certificate.sealImage).toEqual(SampleValidCertificate.badge.issuer.image);
+        expect(certificate.sealImage).toEqual(MainnetV2Certificate.badge.issuer.image);
       });
 
       it('should set signature of the certificate object', () => {
@@ -93,24 +93,24 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set subtitle to the certificate object', () => {
-        expect(certificate.subtitle).toEqual(SampleValidCertificate.badge.subtitle);
+        expect(certificate.subtitle).toEqual(MainnetV2Certificate.badge.subtitle);
       });
 
-      it('should set title to the certificate object', () => {
-        expect(certificate.title).toEqual(SampleValidCertificate.badge.name);
+      it('should set name to the certificate object', () => {
+        expect(certificate.name).toEqual(MainnetV2Certificate.badge.name);
       });
 
       it('should set transactionId to the certificate object', () => {
-        expect(certificate.transactionId).toEqual(SampleValidCertificate.signature.anchors[0].sourceId);
+        expect(certificate.transactionId).toEqual(MainnetV2Certificate.signature.anchors[0].sourceId);
       });
 
       it('should set rawTransactionLink to the certificate object', () => {
-        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${SampleValidCertificate.signature.anchors[0].sourceId}`;
+        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${MainnetV2Certificate.signature.anchors[0].sourceId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
       });
 
       it('should set transactionLink to the certificate object', () => {
-        const transactionLinkAssertion = `https://blockchain.info/tx/${SampleValidCertificate.signature.anchors[0].sourceId}`;
+        const transactionLinkAssertion = `https://blockchain.info/tx/${MainnetV2Certificate.signature.anchors[0].sourceId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
 
@@ -123,7 +123,7 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set documentToVerify accordingly', () => {
-        const assertion = Object.assign({}, SampleValidCertificate);
+        const assertion = Object.assign({}, MainnetV2Certificate);
         delete assertion['signature'];
         expect(certificate.documentToVerify).toEqual(assertion);
       });

@@ -1,4 +1,4 @@
-import { startsWith } from '../../src/helpers/string';
+import { startsWith } from '../../../src/helpers/string';
 
 describe('startsWith method', () => {
   describe('when given a invalid stringContent', () => {

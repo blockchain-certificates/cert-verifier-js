@@ -180,17 +180,21 @@ export function ensureValidReceipt (receipt) {
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       Status.checkingReceipt,
-      'Invalid Merkle Receipt. Proof hash didn\'t match Merkle root'
+      'Invalid Merkle Receipt. Proof hash didn not match Merkle root'
     );
   }
 }
 
-export function getTransactionId (certificate) {
-  let transactionId;
-  try {
-    transactionId = certificate.receipt.anchors[0].sourceId;
+/**
+ * isTransactionIdValid
+ *
+ * @param transactionId
+ * @returns {string}
+ */
+export function isTransactionIdValid (transactionId) {
+  if (typeof transactionId === 'string' && transactionId.length > 0) {
     return transactionId;
-  } catch (e) {
+  } else {
     throw new VerifierError(
       Status.getTransactionId,
       'Can\'t verify this certificate without a transaction ID to compare against.'

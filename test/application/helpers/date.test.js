@@ -1,4 +1,4 @@
-import { dateToUnixTimestamp } from '../../src/helpers/date';
+import { dateToUnixTimestamp } from '../../../src/helpers/date';
 
 describe('dateToUnixTimestamp method', () => {
   describe('when given an empty string', () => {

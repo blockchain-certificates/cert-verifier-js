@@ -1,5 +1,5 @@
-import domain from '../../../../src/domain';
-import { BLOCKCHAINS } from '../../../../src';
+import domain from '../../../../../src/domain/index';
+import { BLOCKCHAINS } from '../../../../../src/index';
 
 describe('domain certificates get chain use case test suite', () => {
   describe('given it is called with a signature', () => {

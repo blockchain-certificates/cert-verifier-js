@@ -1,64 +1,117 @@
 import 'babel-polyfill';
 import sinon from 'sinon';
-import { getVerboseMessage } from '../config/default';
-import { VERIFICATION_STATUSES } from '../src/index';
-import { readFileAsync } from './application/utils/readFile';
-import Certificate from '../src/certificate';
+import { getVerboseMessage, Status } from '../../config/default';
+import { VERIFICATION_STATUSES } from '../../src/index';
+import { readFileAsync } from '../application/utils/readFile';
+import Certificate from '../../src/certificate';
 
-xdescribe('Certificate verifier', () => {
-  // Disabling this test; issuer profile call is hanging -- need to allow redirect?
-  describe('should', () => {
-    it('verify a v1 certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-valid-1.2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
+import EthereumMainV2Valid from '../fixtures/ethereum-main-valid-2.0';
+import EthereumRopstenV2Valid from '../fixtures/ethereum-ropsten-valid-2.0';
+import EthereumMainRevoked from '../fixtures/ethereum-revoked-2.0';
+import EthereumMainInvalidMerkleRoot from '../fixtures/ethereum-merkle-root-unmatch-2.0';
+import MainnetV2Valid from '../fixtures/mainnet-valid-2.0';
+import MainnetV2AlphaValid from '../fixtures/mainnet-valid-2.0-alpha';
+import MocknetV2Valid from '../fixtures/mocknet-valid-2.0';
+import RegtestV2Valid from '../fixtures/regtest-valid-2.0';
+import TestnetV1Valid from '../fixtures/testnet-valid-1.2';
+import TestnetV2ValidV1Issuer from '../fixtures/testnet-valid-v1-issuer-2.0';
+
+describe('End-to-end verification', () => {
+  describe('given the certificate is a valid ethereum main', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(EthereumMainV2Valid);
       const result = await certificate.verify();
       expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 
+  describe('given the certificate is an ethereum main with an invalid merkle root', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(EthereumMainInvalidMerkleRoot);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingMerkleRoot && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Merkle root does not match remote hash.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a revoked ethereum main', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(EthereumMainRevoked);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingRevokedStatus && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Accidentally issued to Ethereum.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a valid ethereum ropsten', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(EthereumRopstenV2Valid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid mainnet (v2.0)', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(MainnetV2Valid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid mainnet (v2.0 alpha)', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(MainnetV2AlphaValid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid mocknet (v2.0)', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(MocknetV2Valid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid regtest (v2.0)', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(RegtestV2Valid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid testnet (v1.2)', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(TestnetV1Valid);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
+  });
+
+  describe('given the certificate is a valid mainnet (v2.0) issued by v1 issuer', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(TestnetV2ValidV1Issuer);
+      const result = await certificate.verify();
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
+  });
+
+
+});
+
+xdescribe('Certificate verifier', () => {
   describe('should', () => {
-    it('verify an ethereum mainnet v2 certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-mainnet-valid-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('verify a v2 certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('verify an ethereum v2 certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('verify an ethereum ropsten v2 certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-valid-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('verify an ethereum v2 certificate uppercase issuing address', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-uppercase-address-valid-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('verify v2 alpha certificate', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-valid-2.0-alpha.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
     it('return a failure when issuer profile URL does not exist (404)', async () => {
       const data = await readFileAsync('test/fixtures/sample_cert-invalid-issuer-url.json');
       const certificate = new Certificate(JSON.parse(data));
@@ -74,7 +127,6 @@ xdescribe('Certificate verifier', () => {
           expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
         }
       });
-
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
     });
 
@@ -177,36 +229,6 @@ xdescribe('Certificate verifier', () => {
 
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
       expect(result.message).toBe('Merkle root does not match remote hash.');
-    });
-
-    it('ensures a v2 certificate with a v1 issuer passes', async () => {
-      const data = await readFileAsync(
-        'test/fixtures/sample_cert-with_v1_issuer-2.0.json'
-      );
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-    });
-
-    it('ensure a v2 mocknet passes', async () => {
-      const data = await readFileAsync('test/fixtures/mocknet-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
-    });
-
-    it('ensure a v2 regtest passes', async () => {
-      const data = await readFileAsync('test/fixtures/regtest-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
-    });
-
-    it('ensure a v2 certificate dates get transformed to right timezone', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-breaking-timezone.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 

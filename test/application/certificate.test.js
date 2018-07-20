@@ -2,7 +2,7 @@ import SampleValidCertificate from '../fixtures/sample-cert-mainnet-valid-2.0.js
 import Certificate from '../../src/certificate';
 import { BLOCKCHAINS } from '../../src';
 
-describe('Certificate entity test suite', () => {
+xdescribe('Certificate entity test suite', () => {
   describe('given is is not instantiated with a JSON object', () => {
     let certificate;
 

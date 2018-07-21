@@ -1,8 +1,6 @@
 import 'babel-polyfill';
-import sinon from 'sinon';
-import { getVerboseMessage, Status } from '../../config/default';
+import { Status } from '../../config/default';
 import { VERIFICATION_STATUSES } from '../../src/index';
-import { readFileAsync } from '../application/utils/readFile';
 import Certificate from '../../src/certificate';
 
 import EthereumMainV2Valid from '../fixtures/ethereum-main-valid-2.0';

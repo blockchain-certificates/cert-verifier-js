@@ -100,7 +100,7 @@ export function ensureIssuerSignature (
       bitcoinChain
     )
   ) {
-    throw new VerifierError('Issuer key doesn\'t match derived address.');
+    throw new VerifierError('Issuer key does not match derived address.');
   }
 }
 
@@ -180,7 +180,7 @@ export function ensureValidReceipt (receipt) {
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       Status.checkingReceipt,
-      'Invalid Merkle Receipt. Proof hash didn not match Merkle root'
+      'Invalid Merkle Receipt. Proof hash did not match Merkle root'
     );
   }
 }
@@ -197,7 +197,7 @@ export function isTransactionIdValid (transactionId) {
   } else {
     throw new VerifierError(
       Status.getTransactionId,
-      'Can\'t verify this certificate without a transaction ID to compare against.'
+      'Cannot verify this certificate without a transaction ID to compare against.'
     );
   }
 }

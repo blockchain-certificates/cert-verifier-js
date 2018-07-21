@@ -1,5 +1,5 @@
 import 'babel-polyfill';
-import * as helpers from '../src/checks';
+import * as helpers from '../../src/checks';
 
 // TODO write all tests
 

@@ -6,14 +6,23 @@ import { readFileAsync } from '../application/utils/readFile';
 import Certificate from '../../src/certificate';
 
 import EthereumMainV2Valid from '../fixtures/ethereum-main-valid-2.0';
-import EthereumRopstenV2Valid from '../fixtures/ethereum-ropsten-valid-2.0';
-import EthereumMainRevoked from '../fixtures/ethereum-revoked-2.0';
 import EthereumMainInvalidMerkleRoot from '../fixtures/ethereum-merkle-root-unmatch-2.0';
+import EthereumMainRevoked from '../fixtures/ethereum-revoked-2.0';
+import EthereumRopstenV2Valid from '../fixtures/ethereum-ropsten-valid-2.0';
+import EthereumTampered from '../fixtures/ethereum-tampered-2.0';
+import MainnetInvalidMerkleReceipt from '../fixtures/mainnet-invalid-merkle-receipt-2.0';
+import MainnetMerkleRootUmmatch from '../fixtures/mainnet-merkle-root-unmatch-2.0';
+import MainnetV2Revoked from '../fixtures/mainnet-revoked-2.0';
 import MainnetV2Valid from '../fixtures/mainnet-valid-2.0';
 import MainnetV2AlphaValid from '../fixtures/mainnet-valid-2.0-alpha';
 import MocknetV2Valid from '../fixtures/mocknet-valid-2.0';
 import RegtestV2Valid from '../fixtures/regtest-valid-2.0';
+import Testnet404IssuerUrl from '../fixtures/testnet-404-issuer-url';
+import TestnetV1NoIssuerProfile from '../fixtures/testnet-no-issuer-profile-1.2';
+import TestnetRevokedV2 from '../fixtures/testnet-revoked-key-2.0';
+import TestnetTamperedHashes from '../fixtures/testnet-tampered-hashes-2.0';
 import TestnetV1Valid from '../fixtures/testnet-valid-1.2';
+import TestnetV2Valid from '../fixtures/testnet-valid-2.0';
 import TestnetV2ValidV1Issuer from '../fixtures/testnet-valid-v1-issuer-2.0';
 
 describe('End-to-end verification', () => {
@@ -59,6 +68,58 @@ describe('End-to-end verification', () => {
     });
   });
 
+  describe('given the certificate is a tampered ethereum', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(EthereumTampered);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.comparingHashes && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Computed hash does not match remote hash');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a mainnet with an invalid merkle receipt', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(MainnetInvalidMerkleReceipt);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingReceipt && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Invalid Merkle Receipt. Proof hash did not match Merkle root');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a mainnet with a not matching merkle root', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(MainnetMerkleRootUmmatch);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingMerkleRoot && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Merkle root does not match remote hash.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a revoked mainnet', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(MainnetV2Revoked);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingRevokedStatus && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Issued in error.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
   describe('given the certificate is a valid mainnet (v2.0)', () => {
     it('should verify successfully', async () => {
       const certificate = new Certificate(MainnetV2Valid);
@@ -91,6 +152,58 @@ describe('End-to-end verification', () => {
     });
   });
 
+  describe('given the certificate\'s issuer returns a 404', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(Testnet404IssuerUrl);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.parsingIssuerKeys && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate\'s issuer profile no longer exists', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(TestnetV1NoIssuerProfile);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.parsingIssuerKeys && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a revoked testnet', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(TestnetRevokedV2);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.checkingAuthenticity && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Transaction occurred at time when issuing address was not considered valid.');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
+  describe('given the certificate is a testnet with tampered hashes', () => {
+    it('should fail', async () => {
+      const certificate = new Certificate(TestnetTamperedHashes);
+      const result = await certificate.verify((step, text, status, errorMessage) => {
+        if (step === Status.comparingHashes && status !== Status.starting) {
+          expect(status).toBe(Status.failure);
+          expect(errorMessage).toBe('Computed hash does not match remote hash');
+        }
+      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+  });
+
   describe('given the certificate is a valid testnet (v1.2)', () => {
     it('should verify successfully', async () => {
       const certificate = new Certificate(TestnetV1Valid);
@@ -99,178 +212,19 @@ describe('End-to-end verification', () => {
     });
   });
 
-  describe('given the certificate is a valid mainnet (v2.0) issued by v1 issuer', () => {
+  describe('given the certificate is a valid testnet (v2.0)', () => {
     it('should verify successfully', async () => {
-      const certificate = new Certificate(TestnetV2ValidV1Issuer);
+      const certificate = new Certificate(TestnetV2Valid);
       const result = await certificate.verify();
       expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 
-
-});
-
-xdescribe('Certificate verifier', () => {
-  describe('should', () => {
-    it('return a failure when issuer profile URL does not exist (404)', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-invalid-issuer-url.json');
-      const certificate = new Certificate(JSON.parse(data));
+  describe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', () => {
+    it('should verify successfully', async () => {
+      const certificate = new Certificate(TestnetV2ValidV1Issuer);
       const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-    });
-
-    it('ensure a tampered v2 certificate fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-unmapped-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'computingLocalHash' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-    });
-
-    it('ensure a revoked v2 certificate fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-revoked-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'checkingRevokedStatus' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-    });
-
-    it('ensure a revoked ethereum v2 certificate fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-revoked-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'checkingRevokedStatus' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('This certificate has been revoked by the issuer. Reason given: Accidentally issued to Ethereum.');
-    });
-
-    it('ensure a v2 certificate with a revoked issuing key fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-with-revoked-key-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'checkingAuthenticity' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-    });
-
-    it('ensures a v2 certificate with an invalid merkle proof fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-merkle-proof-fail-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'checkingReceipt' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('Invalid Merkle Receipt. Proof hash did not match Merkle root');
-    });
-
-    it('ensures a v2 certificate that has been tampered with fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-tampered-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'comparingHashes' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('Computed hash does not match remote hash');
-    });
-
-    it('ensures a v2 ethereum certificate that has been tampered with fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-tampered-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'comparingHashes' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('Computed hash does not match remote hash');
-    });
-
-    it('ensures a v2 certificate that does not match blockchain value fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_cert-root-does-not-match-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'fetchingRemoteHash' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('Merkle root does not match remote hash.');
-    });
-
-    it('ensures a v2 ethereum certificate that does not match blockchain value fails', async () => {
-      const data = await readFileAsync('test/fixtures/sample_ethereum_cert-root-does-not-match-2.0.json');
-      const certificate = new Certificate(JSON.parse(data));
-      const result = await certificate.verify((stepCode, message, status) => {
-        if (stepCode === 'fetchingRemoteHash' && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        }
-      });
-
-      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-      expect(result.message).toBe('Merkle root does not match remote hash.');
-    });
-  });
-
-  xdescribe('the step callback function', () => {
-    let data;
-    let callbackSpy;
-    let testCode;
-    let expectedName;
-    let certificateInstance;
-
-    beforeEach(async () => {
-      data = await readFileAsync('test/fixtures/mocknet-2.0.json');
-      callbackSpy = sinon.spy();
-      certificateInstance = new Certificate(JSON.parse(data));
-
-      testCode = 'getTransactionId';
-      expectedName = getVerboseMessage(testCode);
-    });
-
-    afterEach(() => {
-      data = null;
-      callbackSpy = null;
-
-      testCode = null;
-      expectedName = null;
-    });
-
-    describe('when there is no failure', () => {
-      it('should be called with the code, the name and the status of the step', async () => {
-        await certificateInstance.verify(callbackSpy);
-        // verifierInstance._doAction(testCodefunction () => {});
-        expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.SUCCESS, undefined)).toBe(true);
-      });
-    });
-
-    describe('when there is a failure', () => {
-      it('should be called with the code, the name, the status and the error message', async () => {
-        const errorMessage = 'Testing the test';
-        await certificateInstance.verify(callbackSpy);
-        // verifierInstance._doAction(testCodefunction () => { throw new Error(errorMessage); });
-        expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.FAILURE, errorMessage)).toBe(true);
-      });
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 });

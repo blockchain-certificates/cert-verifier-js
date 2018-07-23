@@ -8,7 +8,7 @@ describe('Checks test suite', () => {
     const errorMessage = 'This certificate has expired.';
 
     describe('given it is called with no parameter', () => {
-      it('should return false', () => {
+      it('should not throw an error', () => {
         expect(() => {
           helpers.ensureNotExpired();
         }).not.toThrow();

@@ -2,8 +2,8 @@
   "name": "cert-verifier-js",
   "version": "1.0.0",
   "description": "Javascript library for verifying Blockcerts",
-  "main": "verifier.js",
-  "module": "verifier-es.js",
+  "main": "dist/verifier.js",
+  "module": "dist/verifier-es.js",
   "scripts": {
     "test": "jest --maxWorkers=4",
     "test:watch": "jest --watch",
@@ -53,9 +53,9 @@
       "XMLHttpRequest"
     ],
     "ignore": [
-      "verifier.js",
-      "verifier-es.js",
-      "verifier-iife.js"
+      "dist/verifier.js",
+      "dist/verifier-es.js",
+      "dist/verifier-iife.js"
     ]
   },
   "dependencies": {

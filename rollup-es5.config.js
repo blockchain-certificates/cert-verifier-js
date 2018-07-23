@@ -8,10 +8,9 @@ import babel from 'rollup-plugin-babel';
 
 export default {
   input: 'src/index.js',
-  name: 'Verifier',
   output: [
     {
-      file: 'verifier-iife.js',
+      file: 'dist/verifier-iife.js',
       format: 'iife',
       name: 'Verifier'
     }

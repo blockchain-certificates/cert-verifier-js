@@ -131,10 +131,10 @@ A `VerificationStep` has the following shape:
 ```
 
 ### `verify(stepCallback)`
-The function is asynchronous.
+This function is asynchronous.
 ```javascript
-const certificateVerification = await certificate.verify((ste, text, status, errorMessage) => {
-    console.log('Sub step update:', text, status);
+const certificateVerification = await certificate.verify((step, text, status, errorMessage) => {
+    console.log('Sub step update:', step, text, status);
 }));
 console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.errorMessage);
 ```

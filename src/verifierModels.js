@@ -1,7 +1,7 @@
 import { request } from './promisifiedRequests';
 import { Status } from '../config/default';
 import { dateToUnixTimestamp } from './helpers/date';
-import { VerifierError } from './models/verifierError';
+import { VerifierError } from './models';
 
 export class TransactionData {
   constructor (remoteHash, issuingAddress, time, revokedAddresses) {

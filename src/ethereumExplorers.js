@@ -5,7 +5,7 @@ import { startsWith } from './helpers/string';
 import { BLOCKCHAINS } from './constants/blockchains';
 import { MininumConfirmations } from './constants/config';
 import * as API_URLS from './constants/api';
-import { VerifierError } from './models/verifierError';
+import { VerifierError } from './models';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';

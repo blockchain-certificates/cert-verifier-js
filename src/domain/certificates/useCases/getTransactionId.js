@@ -1,4 +1,4 @@
-import { VerifierError } from '../../../models/verifierError';
+import { VerifierError } from '../../../models';
 
 export default function getTransactionId (certificateReceipt) {
   try {

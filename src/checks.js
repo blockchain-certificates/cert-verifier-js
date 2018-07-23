@@ -8,7 +8,7 @@ import domain from './domain';
 import sha256 from 'sha256';
 import { dateToUnixTimestamp } from './helpers/date';
 import { BLOCKCHAINS } from './constants/blockchains';
-import { VerifierError } from './models/verifierError';
+import { VerifierError } from './models';
 
 const {
   obi: OBI_CONTEXT,

@@ -5,7 +5,7 @@ import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoinExplorers';
 import { BLOCKCHAINS } from './constants/blockchains';
 import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
 import { MinimumBlockchainExplorers, Race } from './constants/config';
-import { VerifierError } from './models/verifierError';
+import { VerifierError } from './models';
 
 const log = debug('blockchainConnectors');
 

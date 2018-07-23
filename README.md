@@ -2,119 +2,160 @@
 
 A library to enable parsing and verifying a Blockcert. This can be used as a node package or in a browser. The browserified script is available as `verifier.js`.
 
-# usage
+# Usage
 
 ## install
 
-#### via github
+```shell
+$ npm i git+https://github.com/blockchain-certificates/cert-verifier-js.git
+```
+
+## Import
+
+#### Commonjs
+Exposed by default:
+
 ```javascript
-npm i git+https://github.com/blockchain-certificates/cert-verifier-js.git
+var Certificate = require('cert-verifier-js');
+var verifier = new Certificate(certificateContent);
 ```
 
-## importing in your project
-
-#### commonjs
-exposed by default
-
-```
-var Verifier - require('cert-verifier-js')
-
-var verifier = new Verifier()
+#### ES module
+```javascript
+import Certificate from 'cert-verifier-js';
+let certificate = new Certificate(certificateContent);
 ```
 
-#### es module
-```
-import Verifier from 'cert-verifier-js'
-
-var verifier = new Verifier()
-```
-
-#### script tag (iife)
-```
-<script src='node_modules/cert-verifier-js/verifier-iife.js'></script>
-
+#### Script tag (iife)
+```html
+<script src='node_modules/cert-verifier-js/dist/verifier-iife.js'></script>
 <script>
-  var verifier = new Verifier()
+  var certificate = new Certificate(certificateContent);
 </script>
 ```
 
 ## Sample code
 
-### Parsing a Blockcert
+### Parsing a Blockcert certificate
 
 ```javascript
 var fs = require('fs');
 
-fs.readFile('./tests/sample_cert-valid-1.2.0.json', 'utf8', function (err, data) {
+fs.readFile('./certificate.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }
 
-  let cert = Certificate.parseJson(JSON.parse(data));
+  let certificate = new Certificate(data);
   console.log(cert.name);
 });
 ```
 
-### Verifying a Blockcert
+### Verify a Blockcert certificate
 
 ```javascript
 var fs = require('fs');
 
-function statusCallback(arg1) {
-  console.log("status=" + arg1);
-}
-
-fs.readFile('../tests/sample_cert-valid-2.0.json', 'utf8', function (err, data) {
+fs.readFile('./certificate.json', 'utf8', function (err, data) {
   if (err) {
     console.log(err);
   }
-  let certVerifier = new CertificateVerifier(data, statusCallback);
 
-  certVerifier.verify()
-    .then(x => console.log(`final result: ${x}`))
-    .catch(e => console.error(`failed: ${e}`));
+  let certificate = new Certificate(data);
+  const verificationResult = await certificate.verify((step, text, status, errorMessage) => {
+    console.log('Step:', step, text, ' - Status:', status);
+    if (errorMessage) {
+      console.log(`The step ${step} fails with the error: ${errorMessage}`);
+    }
+  });
+  
+  if (verificationResult.status === 'failure') {
+    console.log(`The certificate is not valid. Error: ${verificationResult.errorMessage}`);
+  }
 });
 ```
 
-### Certificate Blockchain transaction info
-You can access some blockchain information about the certificate such as the transaction ID and the links to the transactions:
+# API
+
+### `constructor(certificateContentString)`
 ```javascript
-let cert = Certificate.parseJson(JSON.parse(data));
-// Transaction ID
-const transactionId = cert.transactionId;
-// Transaction link
-const transactionLink = cert.transactionLink;
-// Raw transaction link
-const rawTransactionLink = cert.rawTransactionLink;
+const certificate = new Certificate(certificateContentString);
+```
+The constructor automatically parses a certificate.
+
+#### Parameter
+`certificateContentString`: `String|Object`. certificate raw content
+
+#### Instance
+The certificate instance has the following properties:
+- `isFormatValid`: `Boolean`. Indicates whether or not the certificate has a valid format
+- `certificateImage`: `String`. Raw data of the certificate image
+- `chain`: `Object`. Chain the certificate was issued on
+- `description`: `String`. Description of the certificate
+- `expires`: `String`. Expiration date
+- `id`: `String`. Certificate's ID
+- `issuer`: `Object`. Certificate issuer
+- `publicKey`: `String`. Certificate's public key
+- `rawTransactionLink`: `String`. Raw transaction ID
+- `receipt`: `String`. Certificate's receipt
+- `recipientFullName`: `String`. Full name of recipient
+- `revocationKey`: `String|null`. Revocation key (if any)
+- `sealImage`: `String`. Raw data of the seal's image;
+- `signature`: `String`. Certificate's signature
+- `signatureImage`: `String`. Raw data of the certificate's signature image;
+- `subtitle`: `String`. Subtitle of the certificate
+- `name`: `String`. Name of the certificate
+- `transactionId`: `String`. Transaction ID
+- `transactionLink`: `String`. Transaction link
+- `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
+- `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/v2-wip/config/default.js#L60)
+
+**Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, the consumer might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
+
+A `VerificationStep` has the following shape:
+```javascript
+{
+    code: `stepCode`,
+    name: `Readable Step Name`,
+    status: `success`,
+    substeps: [
+        {
+            code: `subStepCode`,
+            name: `Readable Sub Step Name`,
+            status: `success`,
+            parentStep: `stepCode`
+        },
+        ...
+    ]
+}
 ```
 
-### Using in a browser
-
-`npm run build` generates the browserified script `verifier.js`. 
-
-The following shows how you can use it: 
-
+### `verify(stepCallback)`
+The function is asynchronous.
 ```javascript
-<script src="./verifier.js"></script>
-
-const certificateContentsString = ...
-const certJson = JSON.parse(certificateContentsString);
-const cert = Verifier.Certificate.parseJson(certJson);
+const certificateVerification = await certificate.verify((ste, text, status, errorMessage) => {
+    console.log('Sub step update:', text, status);
+}));
+console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.errorMessage);
 ```
+#### Parameter
+`(step, text, status, errorMessage) => {}`: `Function`. Callback function called whenever a substep status has changed. The callback parameter has 4 properties: 
+- `step`: substep code
+- `name`: readable name of the substep
+- `status`: substep status (`success`, `failure`, `starting`)
+- `errorMessage`: error message (optional)
 
-See [cert-web-component](https://github.com/blockchain-certificates/cert-web-component) for an example.
+#### Returns
+The final verification status:
+```javascript
+{ status, errorMessage }
+```
+- `status`: final verification status (`success`, `failure`)
+- `errorMessage`: error message (optional)
 
-In Crome DevTools to turn on debug mode:
 
-localStorage.debug = 'verifier'
 
-In Node.js:
-
-DEBUG=verifier babel-node lib/verifier.js  
-
-See [debug] (https://www.npmjs.com/package/debug) for an example.
-
-## Verification Process
+# Verification Process
 
 This library and the python [cert-verifier](https://github.com/blockchain-certificates/cert-verifier) library verify Blockchain Certificates. However, anyone should be able to verify independently, whether manually or by writing their own library or service. These steps walk you through the certificate verification steps.
 

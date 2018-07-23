@@ -7,4 +7,4 @@ import * as VERIFICATION_STATUSES from './constants/verificationStatuses';
 import Certificate from './certificate';
 
 export { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, Status, VERIFICATION_STATUSES };
-export { SignatureImage } from './models/index';
+export { SignatureImage } from './models';

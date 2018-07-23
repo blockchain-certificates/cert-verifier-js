@@ -1,8 +1,7 @@
 import domain from './domain';
 import { BLOCKCHAINS } from './constants/blockchains';
 import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
-import { SignatureImage } from './models/index';
-import { VerifierError } from './models/verifierError';
+import { SignatureImage, VerifierError } from './models';
 import { getVerboseMessage, Status } from '../config/default';
 import {
   getIssuerKeys,

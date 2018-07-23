@@ -5,7 +5,7 @@ import { dateToUnixTimestamp } from './helpers/date';
 import { startsWith } from './helpers/string';
 import { BLOCKCHAINS } from './constants/blockchains';
 import { MininumConfirmations } from './constants/config';
-import { VerifierError } from './models/verifierError';
+import { VerifierError } from './models';
 import * as API_URLS from './constants/api';
 
 export function getBlockcypherFetcher (transactionId, chain) {

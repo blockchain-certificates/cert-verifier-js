@@ -35,7 +35,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is an ethereum main with an invalid merkle root', () => {
     it('should fail', async () => {
       const certificate = new Certificate(EthereumMainInvalidMerkleRoot);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingMerkleRoot && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Merkle root does not match remote hash.');
@@ -48,7 +48,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a revoked ethereum main', () => {
     it('should fail', async () => {
       const certificate = new Certificate(EthereumMainRevoked);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingRevokedStatus && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Accidentally issued to Ethereum.');
@@ -69,7 +69,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a tampered ethereum', () => {
     it('should fail', async () => {
       const certificate = new Certificate(EthereumTampered);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.comparingHashes && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Computed hash does not match remote hash');
@@ -82,7 +82,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a mainnet with an invalid merkle receipt', () => {
     it('should fail', async () => {
       const certificate = new Certificate(MainnetInvalidMerkleReceipt);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingReceipt && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Invalid Merkle Receipt. Proof hash did not match Merkle root');
@@ -95,7 +95,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a mainnet with a not matching merkle root', () => {
     it('should fail', async () => {
       const certificate = new Certificate(MainnetMerkleRootUmmatch);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingMerkleRoot && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Merkle root does not match remote hash.');
@@ -108,7 +108,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a revoked mainnet', () => {
     it('should fail', async () => {
       const certificate = new Certificate(MainnetV2Revoked);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingRevokedStatus && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Issued in error.');
@@ -153,7 +153,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate\'s issuer returns a 404', () => {
     it('should fail', async () => {
       const certificate = new Certificate(Testnet404IssuerUrl);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.parsingIssuerKeys && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
@@ -166,7 +166,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate\'s issuer profile no longer exists', () => {
     it('should fail', async () => {
       const certificate = new Certificate(TestnetV1NoIssuerProfile);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.parsingIssuerKeys && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
@@ -179,7 +179,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a revoked testnet', () => {
     it('should fail', async () => {
       const certificate = new Certificate(TestnetRevokedV2);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.checkingAuthenticity && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Transaction occurred at time when issuing address was not considered valid.');
@@ -192,7 +192,7 @@ describe('End-to-end verification', () => {
   describe('given the certificate is a testnet with tampered hashes', () => {
     it('should fail', async () => {
       const certificate = new Certificate(TestnetTamperedHashes);
-      const result = await certificate.verify((step, text, status, errorMessage) => {
+      const result = await certificate.verify(({step, action, status, errorMessage}) => {
         if (step === Status.comparingHashes && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Computed hash does not match remote hash');

@@ -7,15 +7,16 @@ import globals from 'rollup-plugin-node-globals';
 
 export default {
   input: 'src/index.js',
-  name: 'Verifier',
   output: [
     {
-      file: 'verifier.js',
-      format: 'cjs'
+      file: 'dist/verifier.js',
+      format: 'cjs',
+      name: 'Verifier'
     },
     {
-      file: 'verifier-es.js',
-      format: 'es'
+      file: 'dist/verifier-es.js',
+      format: 'es',
+      name: 'Verifier'
     }
   ],
   plugins: [

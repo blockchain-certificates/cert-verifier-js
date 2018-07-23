@@ -100,7 +100,7 @@ export function ensureIssuerSignature (
       bitcoinChain
     )
   ) {
-    throw new VerifierError('Issuer key doesn\'t match derived address.');
+    throw new VerifierError('Issuer key does not match derived address.');
   }
 }
 
@@ -123,8 +123,8 @@ export function ensureMerkleRootEqual (merkleRoot, remoteHash) {
 }
 
 export function ensureValidIssuingKey (keyMap, txIssuingAddress, txTime) {
-  var validKey = false;
-  var theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
+  let validKey = false;
+  const theKey = getCaseInsensitiveKey(keyMap, txIssuingAddress);
   txTime = dateToUnixTimestamp(txTime);
   if (theKey) {
     validKey = true;
@@ -147,15 +147,15 @@ export function ensureValidIssuingKey (keyMap, txIssuingAddress, txTime) {
 }
 
 export function ensureValidReceipt (receipt) {
-  var proofHash = receipt.targetHash;
-  var merkleRoot = receipt.merkleRoot;
+  let proofHash = receipt.targetHash;
+  const merkleRoot = receipt.merkleRoot;
   try {
-    var proof = receipt.proof;
-    var isProof = !!proof;
+    const proof = receipt.proof;
+    const isProof = !!proof;
     if (isProof) {
-      for (var index in proof) {
+      for (let index in proof) {
         const node = proof[index];
-        var appendedBuffer;
+        let appendedBuffer;
         if (typeof node.left !== 'undefined') {
           appendedBuffer = _toByteArray(`${node.left}${proofHash}`);
           proofHash = sha256(appendedBuffer);
@@ -180,27 +180,31 @@ export function ensureValidReceipt (receipt) {
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       Status.checkingReceipt,
-      'Invalid Merkle Receipt. Proof hash didn\'t match Merkle root'
+      'Invalid Merkle Receipt. Proof hash did not match Merkle root'
     );
   }
 }
 
-export function getTransactionId (certificate) {
-  let transactionId;
-  try {
-    transactionId = certificate.receipt.anchors[0].sourceId;
+/**
+ * isTransactionIdValid
+ *
+ * @param transactionId
+ * @returns {string}
+ */
+export function isTransactionIdValid (transactionId) {
+  if (typeof transactionId === 'string' && transactionId.length > 0) {
     return transactionId;
-  } catch (e) {
+  } else {
     throw new VerifierError(
       Status.getTransactionId,
-      'Can\'t verify this certificate without a transaction ID to compare against.'
+      'Cannot verify this certificate without a transaction ID to compare against.'
     );
   }
 }
 
 export function computeLocalHash (document, version) {
-  var expandContext = document['@context'];
-  var theDocument = document;
+  let expandContext = document['@context'];
+  const theDocument = document;
   if (version === CERTIFICATE_VERSIONS.v2dot0 && CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
@@ -208,8 +212,8 @@ export function computeLocalHash (document, version) {
       expandContext.push({'@vocab': 'http://fallback.org/'});
     }
   }
-  var nodeDocumentLoader = jsonld.documentLoaders.node();
-  var customLoader = function (url, callback) {
+  const nodeDocumentLoader = jsonld.documentLoaders.node();
+  const customLoader = function (url, callback) {
     if (url in CONTEXTS) {
       return callback(null, {
         contextUrl: null,
@@ -220,7 +224,7 @@ export function computeLocalHash (document, version) {
     return nodeDocumentLoader(url, callback);
   };
   jsonld.documentLoader = customLoader;
-  var normalizeArgs = {
+  let normalizeArgs = {
     algorithm: 'URDNA2015',
     format: 'application/nquads'
   };
@@ -230,7 +234,7 @@ export function computeLocalHash (document, version) {
 
   return new Promise((resolve, reject) => {
     jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
-      var isErr = !!err;
+      const isErr = !!err;
       if (isErr) {
         reject(
           new VerifierError(
@@ -256,11 +260,11 @@ export function computeLocalHash (document, version) {
 }
 
 function getUnmappedFields (normalized) {
-  var myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
-  var matches = myRegexp.exec(normalized);
+  const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
+  const matches = myRegexp.exec(normalized);
   if (matches) {
-    var unmappedFields = [];
-    for (var i = 0; i < matches.length; i++) {
+    const unmappedFields = [];
+    for (let i = 0; i < matches.length; i++) {
       unmappedFields.push(matches[i]);
     }
     return unmappedFields;
@@ -268,35 +272,35 @@ function getUnmappedFields (normalized) {
   return null;
 }
 
-export function ensureNotExpired (expires) {
+export function ensureNotExpired (expires = null) {
   if (!expires) {
     return;
   }
-  var expiryDate = dateToUnixTimestamp(expires);
+  const expiryDate = dateToUnixTimestamp(expires);
   if (new Date() >= expiryDate) {
     throw new VerifierError(
       Status.checkingExpiresDate,
       'This certificate has expired.'
     );
   }
-  // otherwise, it's fine
 }
 
 function _toByteArray (hexString) {
-  var outArray = [];
-  var byteSize = 2;
-  for (var i = 0; i < hexString.length; i += byteSize) {
+  const outArray = [];
+  const byteSize = 2;
+  for (let i = 0; i < hexString.length; i += byteSize) {
     outArray.push(parseInt(hexString.substring(i, i + byteSize), 16));
   }
   return outArray;
 }
 
 function _toUTF8Data (string) {
-  var utf8 = [];
-  for (var i = 0; i < string.length; i++) {
-    var charcode = string.charCodeAt(i);
-    if (charcode < 0x80) utf8.push(charcode);
-    else if (charcode < 0x800) {
+  const utf8 = [];
+  for (let i = 0; i < string.length; i++) {
+    let charcode = string.charCodeAt(i);
+    if (charcode < 0x80) {
+      utf8.push(charcode);
+    } else if (charcode < 0x800) {
       utf8.push(0xc0 | (charcode >> 6), 0x80 | (charcode & 0x3f));
     } else if (charcode < 0xd800 || charcode >= 0xe000) {
       utf8.push(
@@ -324,8 +328,8 @@ function _toUTF8Data (string) {
 }
 
 function getCaseInsensitiveKey (obj, value) {
-  var key = null;
-  for (var prop in obj) {
+  let key = null;
+  for (let prop in obj) {
     if (obj.hasOwnProperty(prop)) {
       if (prop.toLowerCase() === value.toLowerCase()) {
         key = prop;

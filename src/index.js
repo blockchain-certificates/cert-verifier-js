@@ -4,7 +4,7 @@ import { Status } from '../config/default';
 import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
 import { BLOCKCHAINS } from './constants/blockchains';
 import * as VERIFICATION_STATUSES from './constants/verificationStatuses';
+import Certificate from './certificate';
 
-export { BLOCKCHAINS, CERTIFICATE_VERSIONS, Status, VERIFICATION_STATUSES };
-export { Certificate, SignatureImage } from './certificate';
-export { CertificateVerifier } from './verifier';
+export { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, Status, VERIFICATION_STATUSES };
+export { SignatureImage } from './models/index';

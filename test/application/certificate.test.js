@@ -54,10 +54,6 @@ describe('Certificate entity test suite', () => {
         expect(certificate.expires).toEqual(MainnetV2Certificate.expires);
       });
 
-      it('should set expires of the certificate object', () => {
-        expect(certificate.expires).toEqual(MainnetV2Certificate.expires);
-      });
-
       it('should set id of the certificate object', () => {
         expect(certificate.id).toEqual(MainnetV2Certificate.id);
       });

@@ -26,6 +26,7 @@ describe('Certificate entity test suite', () => {
     describe('given it is called with invalid certificate data', () => {
       it('should return an error', () => {
         expect(() => {
+          /* eslint no-new: "off" */
           new Certificate('invalid-certificate-data');
         }).toThrowError('This is not a valid certificate');
       });
@@ -34,6 +35,7 @@ describe('Certificate entity test suite', () => {
     describe('given it is called with no certificate data', () => {
       it('should throw an error', () => {
         expect(() => {
+          /* eslint no-new: "off" */
           new Certificate();
         }).toThrowError('This is not a valid certificate');
       });

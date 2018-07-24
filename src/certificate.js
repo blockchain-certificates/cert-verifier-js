@@ -74,9 +74,12 @@ export default class Certificate {
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === Status.failure);
     if (erroredStep) {
-      return this._failed(Status.final, erroredStep.message);
+      return this._failed({
+        status: Status.final,
+        errorMessage: erroredStep.message
+      });
     } else {
-      return this._succeed(Status.final);
+      return this._succeed();
     }
   }
 
@@ -121,7 +124,7 @@ export default class Certificate {
    * @param version
    * @private
    */
-  _setProperties ({ certificateImage, chain, description, expires, id, issuer, name, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
+  _setProperties ({certificateImage, chain, description, expires, id, issuer, name, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
     this.certificateImage = certificateImage;
     this.chain = chain;
     this.description = description;
@@ -300,22 +303,26 @@ export default class Certificate {
    *
    * calls the origin callback to update on a step status
    *
-   * @param stepCode
-   * @param message
+   * @param step
+   * @param action
    * @param status
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (stepCode, stepReadableAction, status, errorMessage) {
-    if (stepCode != null) {
-      this._stepCallback(stepCode, stepReadableAction, status, errorMessage);
+  _updateStatusCallback (step, action, status, errorMessage = '') {
+    if (step != null) {
+      let update = {step, action, status};
+      if (errorMessage) {
+        update.errorMessage = errorMessage;
+      }
+      this._stepCallback(update);
     }
   }
 
   /**
    * _succeed
    */
-  _succeed (stepCode = '', message = '') {
+  _succeed () {
     let status;
     if (
       this.chain.code === BLOCKCHAINS.mocknet.code ||
@@ -330,22 +337,20 @@ export default class Certificate {
       status = Status.success;
     }
 
-    // TODO Better object to return (stepStatus instance)
-    return { stepCode, message, status };
+    return {status};
   }
 
   /**
    * _failed
    *
    * @param stepCode
-   * @param message
-   * @returns {{stepCode: string, message: string, status: string}}
+   * @param errorMessage
+   * @returns {{step: string, status: string, errorMessage: string}}
    * @private
    */
-  _failed (stepCode = '', message = '') {
-    log(`failure:${message}`);
-    // TODO Better object to return (stepStatus instance)
-    return { stepCode, message, status: Status.failure };
+  _failed ({step, errorMessage}) {
+    log(`failure:${errorMessage}`);
+    return {step, status: Status.failure, errorMessage};
   }
 
   /**
@@ -363,56 +368,56 @@ export default class Certificate {
   /**
    * doAction
    *
-   * @param stepCode
+   * @param step
    * @param action
    * @returns {*}
    */
-  _doAction (stepCode, action) {
+  _doAction (step, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
     }
 
-    let readableAction = getVerboseMessage(stepCode);
+    let readableAction = getVerboseMessage(step);
     log(readableAction);
-    this._updateStatusCallback(stepCode, readableAction, Status.starting);
+    this._updateStatusCallback(step, readableAction, Status.starting);
 
     try {
       let res = action();
-      this._updateStatusCallback(stepCode, readableAction, Status.success);
-      this._stepsStatuses.push({ stepCode, status: Status.success, readableAction });
+      this._updateStatusCallback(step, readableAction, Status.success);
+      this._stepsStatuses.push({step, status: Status.success, action: readableAction});
       return res;
     } catch (err) {
-      this._updateStatusCallback(stepCode, readableAction, Status.failure, err.message);
-      this._stepsStatuses.push({ stepCode, status: Status.failure, readableAction, message: err.message });
+      this._updateStatusCallback(step, readableAction, Status.failure, err.message);
+      this._stepsStatuses.push({step, status: Status.failure, action: readableAction, message: err.message});
     }
   }
 
   /**
    * doAsyncAction
    *
-   * @param stepCode
+   * @param step
    * @param action
    * @returns {Promise<*>}
    */
-  async _doAsyncAction (stepCode, action) {
+  async _doAsyncAction (step, action) {
     // If not failing already
     if (this._isFailing()) {
       return;
     }
 
-    let readableAction = getVerboseMessage(stepCode);
+    let readableAction = getVerboseMessage(step);
     log(readableAction);
-    this._updateStatusCallback(stepCode, readableAction, Status.starting);
+    this._updateStatusCallback(step, readableAction, Status.starting);
 
     try {
       let res = await action();
-      this._updateStatusCallback(stepCode, readableAction, Status.success);
-      this._stepsStatuses.push({ stepCode, status: Status.success, readableAction });
+      this._updateStatusCallback(step, readableAction, Status.success);
+      this._stepsStatuses.push({step, status: Status.success, readableAction});
       return res;
     } catch (err) {
-      this._updateStatusCallback(stepCode, readableAction, Status.failure, err.message);
-      this._stepsStatuses.push({ stepCode, status: Status.failure, readableAction, message: err.message });
+      this._updateStatusCallback(step, readableAction, Status.failure, err.message);
+      this._stepsStatuses.push({step, status: Status.failure, readableAction, message: err.message});
     }
   }
 

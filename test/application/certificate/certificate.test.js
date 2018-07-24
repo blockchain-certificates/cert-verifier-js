@@ -1,7 +1,5 @@
 import FIXTURES from '../../fixtures';
-import Certificate from '../../../src/certificate';
-import { VERIFICATION_STATUSES } from '../../../src/index';
-import { readFileAsync } from '../utils/readFile';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import { getVerboseMessage } from '../../../config/default';
 import sinon from 'sinon';
 
@@ -43,44 +41,53 @@ describe('Certificate entity test suite', () => {
   });
 
   describe('verify method', () => {
-    xdescribe('the step callback function', () => {
-      let data;
-      let callbackSpy;
-      let testCode;
-      let expectedName;
-      let certificateInstance;
+    describe('given the callback parameter is passed', () => {
+      describe('when the certificate is valid', () => {
+        let finalStep;
+        let certificate;
+        let callbackSpy = sinon.spy();
+        let assertionStep = {
+          step: 'getTransactionId',
+          action: getVerboseMessage('getTransactionId'),
+          status: VERIFICATION_STATUSES.SUCCESS
+        };
+        const assertionFinalStep = {
+          status: VERIFICATION_STATUSES.SUCCESS
+        };
 
-      beforeEach(async () => {
-        data = await readFileAsync('test/fixtures/mocknet-2.0.json');
-        callbackSpy = sinon.spy();
-        certificateInstance = new Certificate(JSON.parse(data));
+        beforeEach(async () => {
+          certificate = new Certificate(FIXTURES.MainnetV2Valid);
+        });
 
-        testCode = 'getTransactionId';
-        expectedName = getVerboseMessage(testCode);
-      });
+        afterEach(() => {
+          callbackSpy = null;
+          certificate = null;
+        });
 
-      afterEach(() => {
-        data = null;
-        callbackSpy = null;
-
-        testCode = null;
-        expectedName = null;
-      });
-
-      describe('when there is no failure', () => {
-        it('should be called with the code, the name and the status of the step', async () => {
-          await certificateInstance.verify(callbackSpy);
-          // verifierInstance._doAction(testCodefunction () => {});
-          expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.SUCCESS, undefined)).toBe(true);
+        it('should call it with the step, the text and the status', async () => {
+          finalStep = await certificate.verify(callbackSpy);
+          expect(callbackSpy.calledWith(sinon.match(assertionStep))).toBe(true);
+          expect(finalStep).toEqual(assertionFinalStep);
         });
       });
 
-      describe('when there is a failure', () => {
-        it('should be called with the code, the name, the status and the error message', async () => {
-          const errorMessage = 'Testing the test';
-          await certificateInstance.verify(callbackSpy);
-          // verifierInstance._doAction(testCodefunction () => { throw new Error(errorMessage); });
-          expect(callbackSpy.calledWithExactly(testCode, expectedName, VERIFICATION_STATUSES.FAILURE, errorMessage)).toBe(true);
+      describe('when the certificate is invalid', () => {
+        let certificate;
+        let updates = [];
+        let assertionStep = {
+          step: 'checkingRevokedStatus',
+          action: getVerboseMessage('checkingRevokedStatus'),
+          status: VERIFICATION_STATUSES.FAILURE,
+          errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
+        };
+
+        it('should call it with the step, the text, the status & the error message', async () => {
+          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+          await certificate.verify(update => {
+            updates.push(update);
+          });
+          const updateToLook = updates.find(update => update.step === 'checkingRevokedStatus' && update.status === VERIFICATION_STATUSES.FAILURE);
+          expect(updateToLook).toEqual(assertionStep);
         });
       });
     });

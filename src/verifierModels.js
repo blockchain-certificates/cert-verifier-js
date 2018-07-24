@@ -1,7 +1,7 @@
 import { request } from './promisifiedRequests';
-import { Status } from '../config/default';
 import { dateToUnixTimestamp } from './helpers/date';
 import { VerifierError } from './models';
+import { SUB_STEPS } from './constants';
 
 export class TransactionData {
   constructor (remoteHash, issuingAddress, time, revokedAddresses) {
@@ -50,7 +50,7 @@ export function parseIssuerKeys (issuerProfileJson) {
     return keyMap;
   } catch (e) {
     throw new VerifierError(
-      Status.parsingIssuerKeys,
+      SUB_STEPS.parseIssuerKeys,
       'Unable to parse JSON out of issuer identification data.'
     );
   }
@@ -74,11 +74,11 @@ export function getIssuerProfile (issuerId) {
           let issuerProfileJson = JSON.parse(response);
           resolve(issuerProfileJson);
         } catch (err) {
-          reject(new VerifierError(Status.gettingIssuerProfile, err));
+          reject(new VerifierError(SUB_STEPS.getIssuerProfile, err));
         }
       })
       .catch(() => {
-        reject(new VerifierError(Status.gettingIssuerProfile, `Unable to get issuer profile`));
+        reject(new VerifierError(SUB_STEPS.getIssuerProfile, `Unable to get issuer profile`));
       });
   });
   return issuerProfileFetcher;
@@ -92,11 +92,11 @@ export function getIssuerKeys (issuerId) {
           let issuerKeyMap = parseIssuerKeys(issuerProfileJson);
           resolve(issuerKeyMap);
         } catch (err) {
-          reject(new VerifierError(Status.parsingIssuerKeys, err));
+          reject(new VerifierError(SUB_STEPS.parseIssuerKeys, err));
         }
       })
       .catch(function (err) {
-        reject(new VerifierError(Status.parsingIssuerKeys, err));
+        reject(new VerifierError(SUB_STEPS.parseIssuerKeys, err));
       });
   });
   return issuerKeyFetcher;
@@ -116,11 +116,11 @@ export function getRevokedAssertions (revocationListUrl) {
             : [];
           resolve(revokedAssertions);
         } catch (err) {
-          reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
+          reject(new VerifierError(SUB_STEPS.parseIssuerKeys, `Unable to get revocation assertion`));
         }
       })
       .catch(function () {
-        reject(new VerifierError(Status.parsingIssuerKeys, `Unable to get revocation assertion`));
+        reject(new VerifierError(SUB_STEPS.parseIssuerKeys, `Unable to get revocation assertion`));
       });
   });
   return revocationListFetcher;

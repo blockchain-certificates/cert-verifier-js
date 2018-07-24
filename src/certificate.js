@@ -1,8 +1,6 @@
 import domain from './domain';
-import { BLOCKCHAINS } from './constants/blockchains';
-import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import { SignatureImage, VerifierError } from './models';
-import { getVerboseMessage, Status } from '../config/default';
 import {
   getIssuerKeys,
   getIssuerProfile,
@@ -53,15 +51,15 @@ export default class Certificate {
   async verify (stepCallback = () => {}) {
     this._stepCallback = stepCallback;
 
-    if (this.version === CERTIFICATE_VERSIONS.v1dot1) {
+    if (this.version === CERTIFICATE_VERSIONS.V1_1) {
       throw new VerifierError(
         '',
         'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification'
       );
     }
 
-    if (this.version === CERTIFICATE_VERSIONS.v1dot2) {
-      await this._verifyV1dot2();
+    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
+      await this._verifyV12();
     } else if (
       this.chain.code === BLOCKCHAINS.mocknet.code ||
       this.chain.code === BLOCKCHAINS.regtest.code
@@ -72,10 +70,10 @@ export default class Certificate {
     }
 
     // Send final callback update for global verification status
-    const erroredStep = this._stepsStatuses.find(step => step.status === Status.failure);
+    const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     if (erroredStep) {
       return this._failed({
-        status: Status.final,
+        status: VERIFICATION_STATUSES.FINAL,
         errorMessage: erroredStep.message
       });
     } else {
@@ -146,8 +144,7 @@ export default class Certificate {
     this._setTransactionDetails();
 
     // Get the full verification step-by-step map
-    // TODO
-    this.verificationSteps = [];
+    this.verificationSteps = this._getVerificationStepsMap(version, chain);
   }
 
   /**
@@ -162,7 +159,7 @@ export default class Certificate {
     const assertion = certificateJson.document.assertion;
 
     const receipt = certificateJson.receipt;
-    const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.v1dot1 : CERTIFICATE_VERSIONS.v1dot2;
+    const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
 
     let {image: certificateImage, description, issuer, subtitle} = this.fullCertificateObject;
 
@@ -216,7 +213,7 @@ export default class Certificate {
     const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
     const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 
-    const version = CERTIFICATE_VERSIONS.v2dot0;
+    const version = CERTIFICATE_VERSIONS.V2_0;
     const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
     const publicKey = recipientProfile.publicKey;
     const recipientFullName = recipientProfile.name;
@@ -259,8 +256,8 @@ export default class Certificate {
     let signatureImageObjects = [];
 
     switch (certificateVersion) {
-      case CERTIFICATE_VERSIONS.v1dot1:
-      case CERTIFICATE_VERSIONS.v1dot2:
+      case CERTIFICATE_VERSIONS.V1_1:
+      case CERTIFICATE_VERSIONS.V1_2:
         if (signatureRawObject.constructor === Array) {
           for (let index in signatureRawObject) {
             let signatureLine = signatureRawObject[index];
@@ -275,7 +272,7 @@ export default class Certificate {
         }
         break;
 
-      case CERTIFICATE_VERSIONS.v2dot0:
+      case CERTIFICATE_VERSIONS.V2_0:
         for (let index in signatureRawObject) {
           let signatureLine = signatureRawObject[index];
           let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
@@ -296,6 +293,20 @@ export default class Certificate {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
     this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
+  }
+
+  /**
+   * _getVerificationStepsMap
+   *
+   * @param certificateVersion
+   * @param chain
+   * @returns {Array}
+   * @private
+   */
+  _getVerificationStepsMap (certificateVersion, chain) {
+    const stepsMap = [];
+
+    return stepsMap;
   }
 
   /**
@@ -331,10 +342,10 @@ export default class Certificate {
       log(
         'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       );
-      status = Status.mockSuccess;
+      status = VERIFICATION_STATUSES.MOCK_SUCCESS;
     } else {
       log('success');
-      status = Status.success;
+      status = VERIFICATION_STATUSES.SUCCESS;
     }
 
     return {status};
@@ -350,7 +361,7 @@ export default class Certificate {
    */
   _failed ({step, errorMessage}) {
     log(`failure:${errorMessage}`);
-    return {step, status: Status.failure, errorMessage};
+    return {step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
   }
 
   /**
@@ -362,7 +373,7 @@ export default class Certificate {
    * @private
    */
   _isFailing () {
-    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(Status.failure) > -1;
+    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(VERIFICATION_STATUSES.FAILURE) > -1;
   }
 
   /**
@@ -378,18 +389,30 @@ export default class Certificate {
       return;
     }
 
-    let readableAction = getVerboseMessage(step);
-    log(readableAction);
-    this._updateStatusCallback(step, readableAction, Status.starting);
+    let readableAction;
+    if (step) {
+      readableAction = SUB_STEPS.language[step].actionLabel;
+      log(readableAction);
+      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+    }
 
     try {
       let res = action();
-      this._updateStatusCallback(step, readableAction, Status.success);
-      this._stepsStatuses.push({step, status: Status.success, action: readableAction});
+      if (step) {
+        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, action: readableAction});
+      }
       return res;
     } catch (err) {
-      this._updateStatusCallback(step, readableAction, Status.failure, err.message);
-      this._stepsStatuses.push({step, status: Status.failure, action: readableAction, message: err.message});
+      if (step) {
+        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._stepsStatuses.push({
+          step,
+          status: VERIFICATION_STATUSES.FAILURE,
+          action: readableAction,
+          message: err.message
+        });
+      }
     }
   }
 
@@ -406,18 +429,25 @@ export default class Certificate {
       return;
     }
 
-    let readableAction = getVerboseMessage(step);
-    log(readableAction);
-    this._updateStatusCallback(step, readableAction, Status.starting);
+    let readableAction;
+    if (step) {
+      readableAction = SUB_STEPS.language[step].actionLabel;
+      log(readableAction);
+      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+    }
 
     try {
       let res = await action();
-      this._updateStatusCallback(step, readableAction, Status.success);
-      this._stepsStatuses.push({step, status: Status.success, readableAction});
+      if (step) {
+        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, readableAction});
+      }
       return res;
     } catch (err) {
-      this._updateStatusCallback(step, readableAction, Status.failure, err.message);
-      this._stepsStatuses.push({step, status: Status.failure, readableAction, message: err.message});
+      if (step) {
+        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.FAILURE, readableAction, message: err.message});
+      }
     }
   }
 
@@ -428,23 +458,23 @@ export default class Certificate {
    *
    * @returns {Promise<void>}
    */
-  async _verifyV1dot2 () {
+  async _verifyV12 () {
     // Get transaction
     // TODO use already computed this.certificate.transactionId
     let transactionId = this._doAction(
-      Status.getTransactionId,
+      SUB_STEPS.getTransactionId,
       () => checks.isTransactionIdValid(this.transactionId)
     );
 
     // Compute local hash
     let localHash = await this._doAsyncAction(
-      Status.computingLocalHash,
+      SUB_STEPS.computeLocalHash,
       async () =>
         checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Get remote hash
-    let txData = await this._doAsyncAction(Status.fetchingRemoteHash, async () =>
+    let txData = await this._doAsyncAction(SUB_STEPS.fetchRemoteHash, async () =>
       blockchainConnectors.lookForTx(
         transactionId,
         this.chain.code,
@@ -454,23 +484,23 @@ export default class Certificate {
 
     // Get issuer profile
     let issuerProfileJson = await this._doAsyncAction(
-      Status.gettingIssuerProfile,
+      SUB_STEPS.getIssuerProfile,
       async () => getIssuerProfile(this.issuer.id)
     );
 
     // Parse issuer keys
     let issuerKeyMap = await this._doAsyncAction(
-      Status.parsingIssuerKeys,
+      SUB_STEPS.parseIssuerKeys,
       () => parseIssuerKeys(issuerProfileJson)
     );
 
     // Compare hashes
-    this._doAction(Status.comparingHashes, () => {
+    this._doAction(SUB_STEPS.compareHashes, () => {
       checks.ensureHashesEqual(localHash, this.receipt.targetHash);
     });
 
     // Check merkle root
-    this._doAction(Status.checkingMerkleRoot, () =>
+    this._doAction(SUB_STEPS.checkMerkleRoot, () =>
       checks.ensureMerkleRootEqual(
         this.receipt.merkleRoot,
         txData.remoteHash
@@ -478,12 +508,12 @@ export default class Certificate {
     );
 
     // Check receipt
-    this._doAction(Status.checkingReceipt, () =>
+    this._doAction(SUB_STEPS.checkReceipt, () =>
       checks.ensureValidReceipt(this.receipt)
     );
 
     // Check revoke status
-    this._doAction(Status.checkingRevokedStatus, () =>
+    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
       checks.ensureNotRevokedBySpentOutput(
         txData.revokedAddresses,
         parseRevocationKey(issuerProfileJson),
@@ -492,7 +522,7 @@ export default class Certificate {
     );
 
     // Check authenticity
-    this._doAction(Status.checkingAuthenticity, () =>
+    this._doAction(SUB_STEPS.checkAuthenticity, () =>
       checks.ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
@@ -501,7 +531,7 @@ export default class Certificate {
     );
 
     // Check expiration
-    this._doAction(Status.checkingExpiresDate, () =>
+    this._doAction(SUB_STEPS.checkExpiresDate, () =>
       checks.ensureNotExpired(this.expires)
     );
   }
@@ -516,13 +546,13 @@ export default class Certificate {
   async _verifyV2 () {
     // Get transaction
     let transactionId = this._doAction(
-      Status.getTransactionId,
+      SUB_STEPS.getTransactionId,
       () => checks.isTransactionIdValid(this.transactionId)
     );
 
     // Compute local hash
     let localHash = await this._doAsyncAction(
-      Status.computingLocalHash,
+      SUB_STEPS.computeLocalHash,
       async () => {
         return checks.computeLocalHash(this.documentToVerify, this.version);
       }
@@ -530,7 +560,7 @@ export default class Certificate {
 
     // Fetch remote hash
     let txData = await this._doAsyncAction(
-      Status.fetchingRemoteHash,
+      SUB_STEPS.fetchRemoteHash,
       async () => {
         return blockchainConnectors.lookForTx(transactionId, this.chain.code);
       }
@@ -538,7 +568,7 @@ export default class Certificate {
 
     // Get issuer keys
     let issuerKeyMap = await this._doAsyncAction(
-      Status.parsingIssuerKeys,
+      SUB_STEPS.parseIssuerKeys,
       async () => {
         return getIssuerKeys(this.issuer.id);
       }
@@ -553,12 +583,12 @@ export default class Certificate {
     );
 
     // Compare hashes
-    this._doAction(Status.comparingHashes, () =>
+    this._doAction(SUB_STEPS.compareHashes, () =>
       checks.ensureHashesEqual(localHash, this.receipt.targetHash)
     );
 
     // Check merkle root
-    this._doAction(Status.checkingMerkleRoot, () =>
+    this._doAction(SUB_STEPS.checkMerkleRoot, () =>
       checks.ensureMerkleRootEqual(
         this.receipt.merkleRoot,
         txData.remoteHash
@@ -566,17 +596,17 @@ export default class Certificate {
     );
 
     // Check receipt
-    this._doAction(Status.checkingReceipt, () =>
+    this._doAction(SUB_STEPS.checkReceipt, () =>
       checks.ensureValidReceipt(this.receipt)
     );
 
     // Check revoked status
-    this._doAction(Status.checkingRevokedStatus, () =>
+    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
       checks.ensureNotRevokedByList(revokedAssertions, this.id)
     );
 
     // Check authenticity
-    this._doAction(Status.checkingAuthenticity, () =>
+    this._doAction(SUB_STEPS.checkAuthenticity, () =>
       checks.ensureValidIssuingKey(
         issuerKeyMap,
         txData.issuingAddress,
@@ -585,7 +615,7 @@ export default class Certificate {
     );
 
     // Check expiration date
-    this._doAction(Status.checkingExpiresDate, () =>
+    this._doAction(SUB_STEPS.checkExpiresDate, () =>
       checks.ensureNotExpired(this.expires)
     );
   }
@@ -600,23 +630,23 @@ export default class Certificate {
   async _verifyV2Mock () {
     // Compute local hash
     let localHash = await this._doAsyncAction(
-      Status.computingLocalHash,
+      SUB_STEPS.computeLocalHash,
       async () =>
         checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Compare hashes
-    this._doAction(Status.comparingHashes, () =>
+    this._doAction(SUB_STEPS.compareHashes, () =>
       checks.ensureHashesEqual(localHash, this.receipt.targetHash)
     );
 
     // Check receipt
-    this._doAction(Status.checkingReceipt, () =>
+    this._doAction(SUB_STEPS.checkReceipt, () =>
       checks.ensureValidReceipt(this.receipt)
     );
 
     // Check expiration date
-    this._doAction(Status.checkingExpiresDate, () =>
+    this._doAction(SUB_STEPS.checkExpiresDate, () =>
       checks.ensureNotExpired(this.expires)
     );
   }

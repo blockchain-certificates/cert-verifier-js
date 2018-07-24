@@ -117,13 +117,13 @@ The certificate instance has the following properties:
 A `VerificationStep` has the following shape:
 ```javascript
 {
-    code: `stepCode`,
-    name: `Readable Step Name`,
+    step: `stepCode`,
+    action: `Readable Step Name`,
     status: `success`,
     substeps: [
         {
-            code: `subStepCode`,
-            name: `Readable Sub Step Name`,
+            step: `subStepCode`,
+            action: `Readable Sub Step Name`,
             status: `success`,
             parentStep: `stepCode`
         },
@@ -136,16 +136,16 @@ A `VerificationStep` has the following shape:
 This will run the verification of a certificate. The function is asynchronous.
 
 ```javascript
-const certificateVerification = await certificate.verify(({step, text, status, errorMessage}) => {
-    console.log('Sub step update:', step, text, status);
+const certificateVerification = await certificate.verify(({step, action, status, errorMessage}) => {
+    console.log('Sub step update:', step, action, status);
 }));
 console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.errorMessage);
 ```
 
 #### Parameters
-- `({step, text, status, errorMessage}) => {}` (`Function`): callback function called whenever a substep status has changed. The callback parameter has 4 properties: 
+- `({step, action, status, errorMessage}) => {}` (`Function`): callback function called whenever a substep status has changed. The callback parameter has 4 properties: 
   - `step`: substep code
-  - `name`: readable name of the substep
+  - `action`: readable name of the substep
   - `status`: substep status (`success`, `failure`, `starting`)
   - `errorMessage`: error message (optional)
 

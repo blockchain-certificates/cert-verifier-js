@@ -1,4 +1,4 @@
-export const CONTEXTS = {
+export default {
   obi: {
     '@context': {
       'id': '@id',

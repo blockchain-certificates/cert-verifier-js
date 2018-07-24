@@ -199,6 +199,7 @@ describe('End-to-end verification', () => {
     });
   });
 
+  // TODO test is always failing, but passing when run by itself. To investigate
   xdescribe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', () => {
     it('should verify successfully', async () => {
       const certificate = new Certificate(FIXTURES.TestnetV2ValidV1Issuer);

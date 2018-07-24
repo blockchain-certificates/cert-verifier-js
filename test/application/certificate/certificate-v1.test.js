@@ -106,9 +106,9 @@ describe('Certificate entity test suite', () => {
         expect(certificate.documentToVerify).toEqual(documentToVerifyAssertion);
       });
 
-      it('should set the verificationSteps map accordingly', () => {
-        const verificationStepsAssertion = [];
-        expect(certificate.verificationSteps).toEqual(verificationStepsAssertion);
+      it('should set the verificationMap map accordingly', () => {
+        const verificationMapAssertion = [];
+        expect(certificate.verificationMap).toEqual(verificationMapAssertion);
       });
     });
   });

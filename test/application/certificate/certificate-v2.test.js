@@ -94,16 +94,16 @@ describe('Certificate entity test suite', () => {
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
 
-      it('should set verificationSteps to the certificate object', () => {
-        expect(certificate.verificationSteps).toEqual([]);
-      });
-
       it('should set isFormatValid to the certificate object', () => {
         expect(certificate.isFormatValid).toEqual(true);
       });
 
       it('should set documentToVerify accordingly', () => {
         expect(certificate.documentToVerify).toEqual(documentToVerifyAssertion);
+      });
+
+      it('should set verificationMap to the certificate object', () => {
+        expect(certificate.verificationMap).toEqual([]);
       });
     });
   });

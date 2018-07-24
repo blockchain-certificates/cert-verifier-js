@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/mainnet-valid-2.0.json';
+import fixture from '../../fixtures/mainnet-valid-2.0';
 import Certificate from '../../../src/certificate';
 import { BLOCKCHAINS } from '../../../src/index';
 import documentToVerifyAssertion from './assertions/documentToVerify-v2';

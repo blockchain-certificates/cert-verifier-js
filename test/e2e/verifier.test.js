@@ -154,7 +154,7 @@ describe('End-to-end verification', () => {
         }
       });
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-    }, 10000);
+    });
   });
 
   describe('given the certificate is a revoked testnet', () => {
@@ -199,7 +199,7 @@ describe('End-to-end verification', () => {
     });
   });
 
-  describe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', () => {
+  xdescribe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', () => {
     it('should verify successfully', async () => {
       const certificate = new Certificate(FIXTURES.TestnetV2ValidV1Issuer);
       const result = await certificate.verify();

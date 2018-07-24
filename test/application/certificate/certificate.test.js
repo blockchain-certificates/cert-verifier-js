@@ -1,6 +1,5 @@
 import FIXTURES from '../../fixtures';
-import Certificate from '../../../src/certificate';
-import { VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import { getVerboseMessage } from '../../../config/default';
 import sinon from 'sinon';
 
@@ -25,7 +24,7 @@ describe('Certificate entity test suite', () => {
     describe('given it is called with invalid certificate data', () => {
       it('should return an error', () => {
         expect(() => {
-          /*eslint no-new: "off"*/
+          /* eslint no-new: "off" */
           new Certificate('invalid-certificate-data');
         }).toThrowError('This is not a valid certificate');
       });
@@ -34,7 +33,7 @@ describe('Certificate entity test suite', () => {
     describe('given it is called with no certificate data', () => {
       it('should throw an error', () => {
         expect(() => {
-          /*eslint no-new: "off"*/
+          /* eslint no-new: "off" */
           new Certificate();
         }).toThrowError('This is not a valid certificate');
       });
@@ -74,7 +73,7 @@ describe('Certificate entity test suite', () => {
 
       describe('when the certificate is invalid', () => {
         let certificate;
-        let callbackSpy = sinon.spy();
+        let updates = [];
         let assertionStep = {
           step: 'checkingRevokedStatus',
           action: getVerboseMessage('checkingRevokedStatus'),
@@ -82,16 +81,13 @@ describe('Certificate entity test suite', () => {
           errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
         };
 
-        afterEach(() => {
-          certificate = null;
-          callbackSpy = null;
-          assertionStep = null;
-        });
-
         it('should call it with the step, the text, the status & the error message', async () => {
           certificate = new Certificate(FIXTURES.MainnetV2Revoked);
-          await certificate.verify(callbackSpy);
-          expect(callbackSpy.calledWith(assertionStep)).toBe(true);
+          await certificate.verify(update => {
+            updates.push(update);
+          });
+          const updateToLook = updates.find(update => update.step === 'checkingRevokedStatus' && update.status === VERIFICATION_STATUSES.FAILURE);
+          expect(updateToLook).toEqual(assertionStep);
         });
       });
     });

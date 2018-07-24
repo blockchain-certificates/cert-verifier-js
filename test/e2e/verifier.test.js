@@ -148,7 +148,6 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        console.log(step, action, status, errorMessage);
         if (step === Status.parsingIssuerKeys && status !== Status.starting) {
           expect(status).toBe(Status.failure);
           expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');

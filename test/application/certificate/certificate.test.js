@@ -1,4 +1,4 @@
-import MainnetV2Certificate from '../../fixtures/mainnet-valid-2.0.json';
+import FIXTURES from '../../fixtures';
 import Certificate from '../../../src/certificate';
 import { VERIFICATION_STATUSES } from '../../../src/index';
 import { readFileAsync } from '../utils/readFile';
@@ -11,7 +11,7 @@ describe('Certificate entity test suite', () => {
       let certificate;
 
       beforeEach(() => {
-        certificate = new Certificate(JSON.stringify(MainnetV2Certificate));
+        certificate = new Certificate(JSON.stringify(FIXTURES.MainnetV2Valid));
       });
 
       afterEach(() => {
@@ -19,7 +19,7 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should coerce certificateJson to an object', () => {
-        expect(certificate.certificateJson).toEqual(MainnetV2Certificate);
+        expect(certificate.certificateJson).toEqual(FIXTURES.MainnetV2Valid);
       });
     });
 

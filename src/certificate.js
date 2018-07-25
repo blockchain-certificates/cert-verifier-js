@@ -26,7 +26,7 @@ export default class Certificate {
     }
 
     // Keep certificate JSON object
-    this.certificateJson = certificateJson;
+    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
 
     // Parse certificate
     this.parseJson(certificateJson);
@@ -237,7 +237,7 @@ export default class Certificate {
    * @private
    */
   _isFailing () {
-    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(VERIFICATION_STATUSES.FAILURE) > -1;
+    return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
   /**

@@ -144,6 +144,6 @@ export default function parseJSON (certificateJson) {
   if (version instanceof Array) {
     return parseV2(certificateJson);
   } else {
-    return parseV1(certificateJson)
+    return parseV1(certificateJson);
   }
 }

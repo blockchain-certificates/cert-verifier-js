@@ -1,5 +1,5 @@
 import domain from './domain';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
+import { CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import { VerifierError } from './models';
 import {
   getIssuerKeys,
@@ -11,6 +11,7 @@ import {
 import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
+import isTestChain from './domain/chains/useCases/isTestChain';
 import parseJSON from './parser';
 
 const log = debug('Certificate');
@@ -61,10 +62,7 @@ export default class Certificate {
 
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
       await this._verifyV12();
-    } else if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    } else if (isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
       await this._verifyV2();
@@ -145,7 +143,7 @@ export default class Certificate {
     this._setTransactionDetails();
 
     // Get the full verification step-by-step map
-    this.verificationSteps = this._getVerificationStepsMap(version, chain);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
   }
 
   /**
@@ -160,33 +158,19 @@ export default class Certificate {
   }
 
   /**
-   * _getVerificationStepsMap
-   *
-   * @param certificateVersion
-   * @param chain
-   * @returns {Array}
-   * @private
-   */
-  _getVerificationStepsMap (certificateVersion, chain) {
-    const stepsMap = [];
-
-    return stepsMap;
-  }
-
-  /**
    * _updateStatusCallback
    *
    * calls the origin callback to update on a step status
    *
-   * @param step
-   * @param action
+   * @param code
+   * @param label
    * @param status
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (step, action, status, errorMessage = '') {
-    if (step != null) {
-      let update = {step, action, status};
+  _updateStatusCallback (code, label, status, errorMessage = '') {
+    if (code != null) {
+      let update = {code, label, status};
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }
@@ -199,10 +183,7 @@ export default class Certificate {
    */
   _succeed () {
     let status;
-    if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    if (domain.chains.isTestChain(this.chain)) {
       log(
         'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       );
@@ -220,12 +201,12 @@ export default class Certificate {
    *
    * @param stepCode
    * @param errorMessage
-   * @returns {{step: string, status: string, errorMessage: string}}
+   * @returns {{code: string, status: string, errorMessage: string}}
    * @private
    */
   _failed ({step, errorMessage}) {
     log(`failure:${errorMessage}`);
-    return {step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
+    return {code: step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
   }
 
   /**
@@ -253,28 +234,28 @@ export default class Certificate {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, action: readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
         this._stepsStatuses.push({
-          step,
+          code: step,
+          label,
           status: VERIFICATION_STATUSES.FAILURE,
-          action: readableAction,
-          message: err.message
+          errorMessage: err.message
         });
       }
     }
@@ -293,24 +274,29 @@ export default class Certificate {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = await action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.FAILURE, readableAction, message: err.message});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._stepsStatuses.push({
+          code: step,
+          label,
+          status: VERIFICATION_STATUSES.FAILURE,
+          errorMessage: err.message
+        });
       }
     }
   }
@@ -438,7 +424,8 @@ export default class Certificate {
       }
     );
 
-    // Get issuer keys
+    // TODO: should probably move that before `checkRevokedStatus` step
+    // Get revoked assertions
     let revokedAssertions = await this._doAsyncAction(
       null,
       async () => {

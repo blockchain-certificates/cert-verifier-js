@@ -10,8 +10,8 @@ describe('Certificate test suite', function () {
         let certificate;
         let callbackSpy = sinon.spy();
         let assertionStep = {
-          step: SUB_STEPS.getTransactionId,
-          action: SUB_STEPS.language.getTransactionId.actionLabel,
+          code: SUB_STEPS.getTransactionId,
+          label: SUB_STEPS.language.getTransactionId.labelPending,
           status: VERIFICATION_STATUSES.SUCCESS
         };
         const assertionFinalStep = {
@@ -38,8 +38,8 @@ describe('Certificate test suite', function () {
         let certificate;
         let updates = [];
         let assertionStep = {
-          step: SUB_STEPS.checkRevokedStatus,
-          action: SUB_STEPS.language.checkRevokedStatus.actionLabel,
+          code: SUB_STEPS.checkRevokedStatus,
+          label: SUB_STEPS.language.checkRevokedStatus.labelPending,
           status: VERIFICATION_STATUSES.FAILURE,
           errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
         };
@@ -49,7 +49,7 @@ describe('Certificate test suite', function () {
           await certificate.verify(update => {
             updates.push(update);
           });
-          const updateToLook = updates.find(update => update.step === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
+          const updateToLook = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
           expect(updateToLook).toEqual(assertionStep);
         });
       });

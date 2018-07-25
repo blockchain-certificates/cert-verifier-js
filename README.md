@@ -64,10 +64,10 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
   }
 
   let certificate = new Certificate(data);
-  const verificationResult = await certificate.verify((step, text, status, errorMessage) => {
-    console.log('Step:', step, text, ' - Status:', status);
+  const verificationResult = await certificate.verify((code, label, status, errorMessage) => {
+    console.log('Code:', code, label, ' - Status:', status);
     if (errorMessage) {
-      console.log(`The step ${step} fails with the error: ${errorMessage}`);
+      console.log(`The step ${code} fails with the error: ${errorMessage}`);
     }
   });
   
@@ -112,22 +112,22 @@ The certificate instance has the following properties:
 - `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
 - `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/v2-wip/config/default.js#L60)
 
-**Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, the consumer might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
+**Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
 
-A `VerificationStep` has the following shape:
+`VerificationStep` has the following shape:
 ```javascript
 {
-    step: `stepCode`,
-    action: `Readable Step Name`,
-    status: `success`,
-    substeps: [
-        {
-            step: `subStepCode`,
-            action: `Readable Sub Step Name`,
-            status: `success`,
-            parentStep: `stepCode`
-        },
-        ...
+    code: 'formatValidation',
+    label: 'Format validation',
+    labelPending: 'Validating format',
+    subSteps: [
+      {
+        code: 'getTransactionId',
+        label: 'Get transaction ID',
+        labelPending: 'Getting transaction ID',
+        parentStep: 'formatValidation'
+      },
+      ...
     ]
 }
 ```
@@ -136,16 +136,16 @@ A `VerificationStep` has the following shape:
 This will run the verification of a certificate. The function is asynchronous.
 
 ```javascript
-const certificateVerification = await certificate.verify(({step, action, status, errorMessage}) => {
-    console.log('Sub step update:', step, action, status);
+const certificateVerification = await certificate.verify(({code, label, status, errorMessage}) => {
+    console.log('Sub step update:', code, label, status);
 }));
 console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.errorMessage);
 ```
 
 #### Parameters
-- `({step, action, status, errorMessage}) => {}` (`Function`): callback function called whenever a substep status has changed. The callback parameter has 4 properties: 
-  - `step`: substep code
-  - `action`: readable name of the substep
+- `({code, label, status, errorMessage}) => {}` (`Function`): callback function called whenever a substep status has changed. The callback parameter has 4 properties: 
+  - `code`: substep code
+  - `label`: readable label of the substep
   - `status`: substep status (`success`, `failure`, `starting`)
   - `errorMessage`: error message (optional)
 

@@ -66,7 +66,8 @@ export default {
     babel({
       exclude: 'node_modules/**',
       babelrc: false,
-      presets: [['env', { modules: false }]]
+      presets: [['env', { modules: false }]],
+      plugins: ['transform-object-rest-spread']
     })
   ]
 };

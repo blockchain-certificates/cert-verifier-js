@@ -4,7 +4,7 @@ import { VERIFICATION_STATUSES } from '../../../src/constants';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
-    describe('given is is not called with a JSON object', function () {
+    describe('given it is not called with a JSON object', function () {
       let certificate;
 
       beforeEach(function () {
@@ -49,7 +49,6 @@ describe('Certificate entity test suite', function () {
         expect(certificate._isFailing()).toBe(false);
       });
     });
-
     describe('when one check is failing', function () {
       it('should return true', function () {
         const certificate = new Certificate(FIXTURES.MainnetV2Valid);

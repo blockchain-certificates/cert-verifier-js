@@ -6669,6 +6669,7 @@ var Verifier = (function (exports) {
 	  etherScanRopstenUrl: etherScanRopstenUrl
 	};
 
+	// Certificate versions
 	var V1_1 = '1.1';
 	var V1_2 = '1.2';
 	var V2_0 = '2.0';
@@ -6689,13 +6690,16 @@ var Verifier = (function (exports) {
 
 	var language = (_language = {}, _defineProperty(_language, formatValidation, {
 	  label: 'Format validation',
-	  actionLabel: 'Validating format'
+	  labelPending: 'Validating format',
+	  subSteps: []
 	}), _defineProperty(_language, hashComparison, {
 	  label: 'Hash comparison',
-	  actionLabel: 'Comparing hash'
+	  labelPending: 'Comparing hash',
+	  subSteps: []
 	}), _defineProperty(_language, statusCheck, {
 	  label: 'Status check',
-	  actionLabel: 'Checking record status'
+	  labelPending: 'Checking record status',
+	  subSteps: []
 	}), _language);
 
 	var verificationSteps = /*#__PURE__*/Object.freeze({
@@ -6723,53 +6727,65 @@ var Verifier = (function (exports) {
 	var checkExpiresDate = 'checkExpiresDate';
 
 	var language$1 = (_language$1 = {}, _defineProperty$1(_language$1, getTransactionId, {
-	  parentStep: formatValidation,
+	  code: getTransactionId,
 	  label: 'Get transaction ID',
-	  actionLabel: 'Getting transaction ID'
+	  labelPending: 'Getting transaction ID',
+	  parentStep: formatValidation
 	}), _defineProperty$1(_language$1, computeLocalHash, {
-	  parentStep: formatValidation,
+	  code: computeLocalHash,
 	  label: 'Compute local hash',
-	  actionLabel: 'Computing local hash'
+	  labelPending: 'Computing local hash',
+	  parentStep: formatValidation
 	}), _defineProperty$1(_language$1, fetchRemoteHash, {
-	  parentStep: formatValidation,
+	  code: fetchRemoteHash,
 	  label: 'Fetch remote hash',
-	  actionLabel: 'Fetching remote hash'
+	  labelPending: 'Fetching remote hash',
+	  parentStep: formatValidation
 	}), _defineProperty$1(_language$1, getIssuerProfile, {
-	  parentStep: formatValidation,
+	  code: getIssuerProfile,
 	  label: 'Get issuer profile',
-	  actionLabel: 'Getting issuer profile'
+	  labelPending: 'Getting issuer profile',
+	  parentStep: formatValidation
 	}), _defineProperty$1(_language$1, parseIssuerKeys, {
-	  parentStep: formatValidation,
+	  code: parseIssuerKeys,
 	  label: 'Parse issuer keys',
-	  actionLabel: 'Parsing issuer keys'
+	  labelPending: 'Parsing issuer keys',
+	  parentStep: formatValidation
 	}), _defineProperty$1(_language$1, compareHashes, {
-	  parentStep: hashComparison,
+	  code: compareHashes,
 	  label: 'Compare hashes',
-	  actionLabel: 'Comparing hashes'
+	  labelPending: 'Comparing hashes',
+	  parentStep: hashComparison
 	}), _defineProperty$1(_language$1, checkMerkleRoot, {
-	  parentStep: hashComparison,
+	  code: checkMerkleRoot,
 	  label: 'Check Merkle Root',
-	  actionLabel: 'Checking Merkle Root'
+	  labelPending: 'Checking Merkle Root',
+	  parentStep: hashComparison
 	}), _defineProperty$1(_language$1, checkReceipt, {
-	  parentStep: hashComparison,
+	  code: checkReceipt,
 	  label: 'Check Receipt',
-	  actionLabel: 'Checking Receipt'
+	  labelPending: 'Checking Receipt',
+	  parentStep: hashComparison
 	}), _defineProperty$1(_language$1, checkIssuerSignature, {
-	  parentStep: statusCheck,
+	  code: checkIssuerSignature,
 	  label: 'Check Issuer Signature',
-	  actionLabel: 'Checking Issuer Signature'
+	  labelPending: 'Checking Issuer Signature',
+	  parentStep: statusCheck
 	}), _defineProperty$1(_language$1, checkAuthenticity, {
-	  parentStep: statusCheck,
+	  code: checkAuthenticity,
 	  label: 'Check Authenticity',
-	  actionLabel: 'Checking Authenticity'
+	  labelPending: 'Checking Authenticity',
+	  parentStep: statusCheck
 	}), _defineProperty$1(_language$1, checkRevokedStatus, {
-	  parentStep: statusCheck,
+	  code: checkRevokedStatus,
 	  label: 'Check Revoked Status',
-	  actionLabel: 'Checking Revoked Status'
+	  labelPending: 'Checking Revoked Status',
+	  parentStep: statusCheck
 	}), _defineProperty$1(_language$1, checkExpiresDate, {
-	  parentStep: statusCheck,
+	  code: checkExpiresDate,
 	  label: 'Check Expires Date',
-	  actionLabel: 'Checking Expires Date'
+	  labelPending: 'Checking Expires Date',
+	  parentStep: statusCheck
 	}), _language$1);
 
 	var verificationSubSteps = /*#__PURE__*/Object.freeze({
@@ -7405,18 +7421,100 @@ var Verifier = (function (exports) {
 	  return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 	}
 
+	function isTestChain(chain) {
+	  if (chain) {
+	    var chainCode = typeof chain === 'string' ? chain : chain.code;
+	    var isChainValid = Object.keys(BLOCKCHAINS).find(function (chainObj) {
+	      return chainObj === chainCode;
+	    });
+
+	    if (!isChainValid) {
+	      return null;
+	    }
+
+	    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
+	  }
+
+	  return null;
+	}
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _versionVerificationM;
+
+	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var versionVerificationMap = (_versionVerificationM = {}, _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V1_2, [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V2_0, [getTransactionId, computeLocalHash, fetchRemoteHash, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, BLOCKCHAINS.mocknet.code, [computeLocalHash, compareHashes, checkReceipt, checkExpiresDate]), _versionVerificationM);
+
+	/**
+	 * getFullStepsFromSubSteps
+	 *
+	 * Builds a full steps array (with subSteps property) from an array of sub-steps
+	 *
+	 * @param subStepMap
+	 * @returns {Array}
+	 */
+	function getFullStepsFromSubSteps(subStepMap) {
+	  // Get deep copy of steps
+	  var steps = JSON.parse(JSON.stringify(language));
+	  var subSteps = subStepMap.map(function (stepCode) {
+	    return Object.assign({}, language$1[stepCode]);
+	  });
+	  subSteps.forEach(function (subStep) {
+	    return steps[subStep.parentStep].subSteps.push(subStep);
+	  });
+
+	  var stepsArray = [];
+	  Object.keys(steps).forEach(function (stepCode) {
+	    var step = steps[stepCode];
+	    return stepsArray.push(_extends({}, step, { code: stepCode }));
+	  });
+
+	  return stepsArray;
+	}
+
+	function getVerificationMap(chain, version) {
+	  var key = void 0;
+
+	  if (!chain) {
+	    return [];
+	  }
+
+	  // v1.2 is a specific case, otherwise treated as test chain or v2
+	  if (version === CERTIFICATE_VERSIONS.V1_2) {
+	    key = CERTIFICATE_VERSIONS.V1_2;
+	  } else {
+	    if (isTestChain(chain)) {
+	      key = BLOCKCHAINS.mocknet.code;
+	    } else {
+	      key = CERTIFICATE_VERSIONS.V2_0;
+	    }
+	  }
+
+	  var verificationMap = Object.assign(versionVerificationMap);
+	  return getFullStepsFromSubSteps(verificationMap[key]);
+	}
+
 
 
 	var certificates = /*#__PURE__*/Object.freeze({
 		getChain: getChain,
 		generateRevocationReason: generateRevocationReason,
 		getTransactionId: getTransactionId$1,
-		getTransactionLink: getTransactionLink
+		getTransactionLink: getTransactionLink,
+		getVerificationMap: getVerificationMap
+	});
+
+
+
+	var chains = /*#__PURE__*/Object.freeze({
+		isTestChain: isTestChain
 	});
 
 	var domain = {
 	  addresses: addresses,
-	  certificates: certificates
+	  certificates: certificates,
+	  chains: chains
 	};
 
 	var global$1 = (typeof global !== "undefined" ? global :
@@ -19477,7 +19575,7 @@ var Verifier = (function (exports) {
 	var _args = [
 		[
 			"bigi@1.4.2",
-			"/Users/julien/work/cert-verifier-js"
+			"/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code"
 		]
 	];
 	var _from = "bigi@1.4.2";
@@ -19504,7 +19602,7 @@ var Verifier = (function (exports) {
 	];
 	var _resolved = "https://registry.npmjs.org/bigi/-/bigi-1.4.2.tgz";
 	var _spec = "1.4.2";
-	var _where = "/Users/julien/work/cert-verifier-js";
+	var _where = "/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code";
 	var bugs = {
 		url: "https://github.com/cryptocoinjs/bigi/issues"
 	};
@@ -22959,7 +23057,7 @@ var Verifier = (function (exports) {
 
 	HDNode.prototype.toString = HDNode.prototype.toBase58;
 
-	var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js';
+	var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js';
 
 	var es6Promise = createCommonjsModule(function (module) {
 	/*!
@@ -33176,7 +33274,7 @@ var Verifier = (function (exports) {
 	                break;
 
 	              case 8:
-	                if (!(this.chain.code === BLOCKCHAINS.mocknet.code || this.chain.code === BLOCKCHAINS.regtest.code)) {
+	                if (!isTestChain(this.chain)) {
 	                  _context.next = 13;
 	                  break;
 	                }
@@ -33313,7 +33411,7 @@ var Verifier = (function (exports) {
 	      this._setTransactionDetails();
 
 	      // Get the full verification step-by-step map
-	      this.verificationSteps = this._getVerificationStepsMap(version, chain);
+	      this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 	    }
 
 	    /**
@@ -33331,29 +33429,12 @@ var Verifier = (function (exports) {
 	    }
 
 	    /**
-	     * _getVerificationStepsMap
-	     *
-	     * @param certificateVersion
-	     * @param chain
-	     * @returns {Array}
-	     * @private
-	     */
-
-	  }, {
-	    key: '_getVerificationStepsMap',
-	    value: function _getVerificationStepsMap(certificateVersion, chain) {
-	      var stepsMap = [];
-
-	      return stepsMap;
-	    }
-
-	    /**
 	     * _updateStatusCallback
 	     *
 	     * calls the origin callback to update on a step status
 	     *
-	     * @param step
-	     * @param action
+	     * @param code
+	     * @param label
 	     * @param status
 	     * @param errorMessage
 	     * @private
@@ -33361,11 +33442,11 @@ var Verifier = (function (exports) {
 
 	  }, {
 	    key: '_updateStatusCallback',
-	    value: function _updateStatusCallback(step, action, status) {
+	    value: function _updateStatusCallback(code, label, status) {
 	      var errorMessage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
 
-	      if (step != null) {
-	        var update = { step: step, action: action, status: status };
+	      if (code != null) {
+	        var update = { code: code, label: label, status: status };
 	        if (errorMessage) {
 	          update.errorMessage = errorMessage;
 	        }
@@ -33381,7 +33462,7 @@ var Verifier = (function (exports) {
 	    key: '_succeed',
 	    value: function _succeed() {
 	      var status = void 0;
-	      if (this.chain.code === BLOCKCHAINS.mocknet.code || this.chain.code === BLOCKCHAINS.regtest.code) {
+	      if (domain.chains.isTestChain(this.chain)) {
 	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
 	        status = MOCK_SUCCESS;
 	      } else {
@@ -33397,7 +33478,7 @@ var Verifier = (function (exports) {
 	     *
 	     * @param stepCode
 	     * @param errorMessage
-	     * @returns {{step: string, status: string, errorMessage: string}}
+	     * @returns {{code: string, status: string, errorMessage: string}}
 	     * @private
 	     */
 
@@ -33408,7 +33489,7 @@ var Verifier = (function (exports) {
 	          errorMessage = _ref3.errorMessage;
 
 	      log$4('failure:' + errorMessage);
-	      return { step: step, status: FAILURE, errorMessage: errorMessage };
+	      return { code: step, status: FAILURE, errorMessage: errorMessage };
 	    }
 
 	    /**
@@ -33444,28 +33525,28 @@ var Verifier = (function (exports) {
 	        return;
 	      }
 
-	      var readableAction = void 0;
+	      var label = void 0;
 	      if (step) {
-	        readableAction = language$1[step].actionLabel;
-	        log$4(readableAction);
-	        this._updateStatusCallback(step, readableAction, STARTING);
+	        label = language$1[step].labelPending;
+	        log$4(label);
+	        this._updateStatusCallback(step, label, STARTING);
 	      }
 
 	      try {
 	        var res = action();
 	        if (step) {
-	          this._updateStatusCallback(step, readableAction, SUCCESS);
-	          this._stepsStatuses.push({ step: step, status: SUCCESS, action: readableAction });
+	          this._updateStatusCallback(step, label, SUCCESS);
+	          this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
 	        }
 	        return res;
 	      } catch (err) {
 	        if (step) {
-	          this._updateStatusCallback(step, readableAction, FAILURE, err.message);
+	          this._updateStatusCallback(step, label, FAILURE, err.message);
 	          this._stepsStatuses.push({
-	            step: step,
+	            code: step,
+	            label: label,
 	            status: FAILURE,
-	            action: readableAction,
-	            message: err.message
+	            errorMessage: err.message
 	          });
 	        }
 	      }
@@ -33483,7 +33564,7 @@ var Verifier = (function (exports) {
 	    key: '_doAsyncAction',
 	    value: function () {
 	      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(step, action) {
-	        var readableAction, res;
+	        var label, res;
 	        return regeneratorRuntime.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -33496,12 +33577,12 @@ var Verifier = (function (exports) {
 	                return _context2.abrupt('return');
 
 	              case 2:
-	                readableAction = void 0;
+	                label = void 0;
 
 	                if (step) {
-	                  readableAction = language$1[step].actionLabel;
-	                  log$4(readableAction);
-	                  this._updateStatusCallback(step, readableAction, STARTING);
+	                  label = language$1[step].labelPending;
+	                  log$4(label);
+	                  this._updateStatusCallback(step, label, STARTING);
 	                }
 
 	                _context2.prev = 4;
@@ -33512,8 +33593,8 @@ var Verifier = (function (exports) {
 	                res = _context2.sent;
 
 	                if (step) {
-	                  this._updateStatusCallback(step, readableAction, SUCCESS);
-	                  this._stepsStatuses.push({ step: step, status: SUCCESS, readableAction: readableAction });
+	                  this._updateStatusCallback(step, label, SUCCESS);
+	                  this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
 	                }
 	                return _context2.abrupt('return', res);
 
@@ -33522,8 +33603,13 @@ var Verifier = (function (exports) {
 	                _context2.t0 = _context2['catch'](4);
 
 	                if (step) {
-	                  this._updateStatusCallback(step, readableAction, FAILURE, _context2.t0.message);
-	                  this._stepsStatuses.push({ step: step, status: FAILURE, readableAction: readableAction, message: _context2.t0.message });
+	                  this._updateStatusCallback(step, label, FAILURE, _context2.t0.message);
+	                  this._stepsStatuses.push({
+	                    code: step,
+	                    label: label,
+	                    status: FAILURE,
+	                    errorMessage: _context2.t0.message
+	                  });
 	                }
 
 	              case 15:

@@ -143,7 +143,7 @@ export default class Certificate {
     this._setTransactionDetails();
 
     // Get the full verification step-by-step map
-    this.verificationMap = domain.certificates.getVerificationMap(chain, version);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
   }
 
   /**
@@ -162,15 +162,15 @@ export default class Certificate {
    *
    * calls the origin callback to update on a step status
    *
-   * @param step
-   * @param action
+   * @param code
+   * @param label
    * @param status
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (step, action, status, errorMessage = '') {
-    if (step != null) {
-      let update = {step, action, status};
+  _updateStatusCallback (code, label, status, errorMessage = '') {
+    if (code != null) {
+      let update = {code, label, status};
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }
@@ -201,12 +201,12 @@ export default class Certificate {
    *
    * @param stepCode
    * @param errorMessage
-   * @returns {{step: string, status: string, errorMessage: string}}
+   * @returns {{code: string, status: string, errorMessage: string}}
    * @private
    */
   _failed ({step, errorMessage}) {
     log(`failure:${errorMessage}`);
-    return {step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
+    return {code: step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
   }
 
   /**
@@ -234,28 +234,28 @@ export default class Certificate {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, action: readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
         this._stepsStatuses.push({
-          step,
+          code: step,
+          label,
           status: VERIFICATION_STATUSES.FAILURE,
-          action: readableAction,
-          message: err.message
+          errorMessage: err.message
         });
       }
     }
@@ -274,24 +274,29 @@ export default class Certificate {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = await action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.FAILURE, readableAction, message: err.message});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._stepsStatuses.push({
+          code: step,
+          label,
+          status: VERIFICATION_STATUSES.FAILURE,
+          errorMessage: err.message
+        });
       }
     }
   }

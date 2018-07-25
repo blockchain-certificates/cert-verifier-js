@@ -32955,7 +32955,7 @@ var Verifier = (function (exports) {
 	    }
 
 	    // Keep certificate JSON object
-	    this.certificateJson = certificateJson;
+	    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
 
 	    // Parse certificate
 	    this.parseJson(certificateJson);

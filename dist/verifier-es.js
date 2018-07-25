@@ -19494,7 +19494,7 @@ var browser$3 = function createHmac (alg, key) {
 var _args = [
 	[
 		"bigi@1.4.2",
-		"/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code"
+		"/Users/julien/work/cert-verifier-js"
 	]
 ];
 var _from = "bigi@1.4.2";
@@ -19521,7 +19521,7 @@ var _requiredBy = [
 ];
 var _resolved = "https://registry.npmjs.org/bigi/-/bigi-1.4.2.tgz";
 var _spec = "1.4.2";
-var _where = "/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code";
+var _where = "/Users/julien/work/cert-verifier-js";
 var bugs = {
 	url: "https://github.com/cryptocoinjs/bigi/issues"
 };
@@ -22976,7 +22976,7 @@ HDNode.prototype.derivePath = function (path) {
 
 HDNode.prototype.toString = HDNode.prototype.toBase58;
 
-var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js'
+var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js'
 
 var es6Promise = createCommonjsModule(function (module) {
 /*!
@@ -33378,7 +33378,7 @@ class Certificate {
    * @private
    */
   _isFailing () {
-    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(FAILURE) > -1;
+    return this._stepsStatuses.some(step => step.status === FAILURE);
   }
 
   /**

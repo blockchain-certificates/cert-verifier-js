@@ -1,5 +1,5 @@
 import fixture from '../../fixtures/mainnet-valid-2.0';
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 
 describe('Verifier entity test suite', () => {

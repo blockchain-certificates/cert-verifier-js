@@ -1,6 +1,5 @@
 import FIXTURES from '../../fixtures';
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import { getVerboseMessage } from '../../../config/default';
+import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 
 describe('Certificate entity test suite', () => {
@@ -47,8 +46,8 @@ describe('Certificate entity test suite', () => {
         let certificate;
         let callbackSpy = sinon.spy();
         let assertionStep = {
-          step: 'getTransactionId',
-          action: getVerboseMessage('getTransactionId'),
+          step: SUB_STEPS.getTransactionId,
+          action: SUB_STEPS.language.getTransactionId.actionLabel,
           status: VERIFICATION_STATUSES.SUCCESS
         };
         const assertionFinalStep = {
@@ -75,8 +74,8 @@ describe('Certificate entity test suite', () => {
         let certificate;
         let updates = [];
         let assertionStep = {
-          step: 'checkingRevokedStatus',
-          action: getVerboseMessage('checkingRevokedStatus'),
+          step: SUB_STEPS.checkRevokedStatus,
+          action: SUB_STEPS.language.checkRevokedStatus.actionLabel,
           status: VERIFICATION_STATUSES.FAILURE,
           errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
         };
@@ -86,7 +85,7 @@ describe('Certificate entity test suite', () => {
           await certificate.verify(update => {
             updates.push(update);
           });
-          const updateToLook = updates.find(update => update.step === 'checkingRevokedStatus' && update.status === VERIFICATION_STATUSES.FAILURE);
+          const updateToLook = updates.find(update => update.step === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
           expect(updateToLook).toEqual(assertionStep);
         });
       });

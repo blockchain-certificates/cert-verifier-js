@@ -1,13 +1,9 @@
 import bitcoin from 'bitcoinjs-lib';
 import jsonld from 'jsonld';
-import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
-import { CheckForUnmappedFields } from './constants/config';
-import { CONTEXTS as ContextsMap } from './constants/contexts';
-import { Status } from '../config/default';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, CONTEXTS as ContextsMap, SUB_STEPS } from './constants';
 import domain from './domain';
 import sha256 from 'sha256';
 import { dateToUnixTimestamp } from './helpers/date';
-import { BLOCKCHAINS } from './constants/blockchains';
 import { VerifierError } from './models';
 
 const {
@@ -38,7 +34,7 @@ export function ensureNotRevokedBySpentOutput (
     const isRevokedByIssuer = revokedAssertionId !== -1;
     if (isRevokedByIssuer) {
       throw new VerifierError(
-        Status.checkingRevokedStatus,
+        SUB_STEPS.checkRevokedStatus,
         domain.certificates.generateRevocationReason(
           revokedAddresses[revokedAssertionId].revocationReason
         )
@@ -52,7 +48,7 @@ export function ensureNotRevokedBySpentOutput (
     const isRevokedByRecipient = revokedAssertionId !== -1;
     if (isRevokedByRecipient) {
       throw new VerifierError(
-        Status.checkingRevokedStatus,
+        SUB_STEPS.checkRevokedStatus,
         domain.certificates.generateRevocationReason(
           revokedAddresses[revokedAssertionId].revocationReason
         )
@@ -74,7 +70,7 @@ export function ensureNotRevokedByList (revokedAssertions, assertionUid) {
 
   if (isRevokedByIssuer) {
     throw new VerifierError(
-      Status.checkingRevokedStatus,
+      SUB_STEPS.checkRevokedStatus,
       domain.certificates.generateRevocationReason(
         revokedAssertions[revokedAssertionId].revocationReason
       )
@@ -107,7 +103,7 @@ export function ensureIssuerSignature (
 export function ensureHashesEqual (actual, expected) {
   if (actual !== expected) {
     throw new VerifierError(
-      Status.comparingHashes,
+      SUB_STEPS.compareHashes,
       'Computed hash does not match remote hash'
     );
   }
@@ -116,7 +112,7 @@ export function ensureHashesEqual (actual, expected) {
 export function ensureMerkleRootEqual (merkleRoot, remoteHash) {
   if (merkleRoot !== remoteHash) {
     throw new VerifierError(
-      Status.checkingMerkleRoot,
+      SUB_STEPS.checkMerkleRoot,
       'Merkle root does not match remote hash.'
     );
   }
@@ -140,7 +136,7 @@ export function ensureValidIssuingKey (keyMap, txIssuingAddress, txTime) {
   }
   if (!validKey) {
     throw new VerifierError(
-      Status.checkingAuthenticity,
+      SUB_STEPS.checkAuthenticity,
       'Transaction occurred at time when issuing address was not considered valid.'
     );
   }
@@ -164,7 +160,7 @@ export function ensureValidReceipt (receipt) {
           proofHash = sha256(appendedBuffer);
         } else {
           throw new VerifierError(
-            Status.checkingReceipt,
+            SUB_STEPS.checkReceipt,
             'We should never get here.'
           );
         }
@@ -172,14 +168,14 @@ export function ensureValidReceipt (receipt) {
     }
   } catch (e) {
     throw new VerifierError(
-      Status.checkingReceipt,
+      SUB_STEPS.checkReceipt,
       'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.'
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
-      Status.checkingReceipt,
+      SUB_STEPS.checkReceipt,
       'Invalid Merkle Receipt. Proof hash did not match Merkle root'
     );
   }
@@ -196,7 +192,7 @@ export function isTransactionIdValid (transactionId) {
     return transactionId;
   } else {
     throw new VerifierError(
-      Status.getTransactionId,
+      SUB_STEPS.getTransactionId,
       'Cannot verify this certificate without a transaction ID to compare against.'
     );
   }
@@ -205,7 +201,7 @@ export function isTransactionIdValid (transactionId) {
 export function computeLocalHash (document, version) {
   let expandContext = document['@context'];
   const theDocument = document;
-  if (version === CERTIFICATE_VERSIONS.v2dot0 && CheckForUnmappedFields) {
+  if (version === CERTIFICATE_VERSIONS.V2_0 && CONFIG.CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {
@@ -238,7 +234,7 @@ export function computeLocalHash (document, version) {
       if (isErr) {
         reject(
           new VerifierError(
-            Status.computingLocalHash,
+            SUB_STEPS.computeLocalHash,
             'Failed JSON-LD normalization'
           )
         );
@@ -247,7 +243,7 @@ export function computeLocalHash (document, version) {
         if (unmappedFields) {
           reject(
             new VerifierError(
-              Status.computingLocalHash,
+              SUB_STEPS.computeLocalHash,
               'Found unmapped fields during JSON-LD normalization'
             )
           ); // + unmappedFields.join(",")
@@ -279,7 +275,7 @@ export function ensureNotExpired (expires = null) {
   const expiryDate = dateToUnixTimestamp(expires);
   if (new Date() >= expiryDate) {
     throw new VerifierError(
-      Status.checkingExpiresDate,
+      SUB_STEPS.checkExpiresDate,
       'This certificate has expired.'
     );
   }

@@ -1,10 +1,6 @@
 import 'babel-polyfill';
-
-import { Status } from '../config/default';
-import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
-import { BLOCKCHAINS } from './constants/blockchains';
-import * as VERIFICATION_STATUSES from './constants/verificationStatuses';
 import Certificate from './certificate';
 
-export { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, Status, VERIFICATION_STATUSES };
+export { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from './constants';
+export { Certificate };
 export { SignatureImage } from './models';

@@ -11,6 +11,7 @@ import {
 import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
+import isTestChain from './domain/chains/useCases/isTestChain';
 
 const log = debug('Certificate');
 
@@ -60,10 +61,7 @@ export default class Certificate {
 
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
       await this._verifyV12();
-    } else if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    } else if (isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
       await this._verifyV2();

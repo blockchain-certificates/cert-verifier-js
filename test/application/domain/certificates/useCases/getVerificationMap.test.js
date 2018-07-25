@@ -20,7 +20,7 @@ describe('domain certificates get verification map use case test suite', () => {
       });
     });
 
-    describe('given it is called with a v1.2 version', () => {
+    describe.only('given it is called with a v1.2 version', () => {
       it('should return a mainnet v1.2 verification map', () => {
         const result = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin, CERTIFICATE_VERSIONS.V1_2);
         expect(result).toEqual(v12MapAssertion);

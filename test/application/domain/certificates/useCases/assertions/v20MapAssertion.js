@@ -1,65 +1,68 @@
 import { STEPS, SUB_STEPS } from '../../../../../../src';
 
 export default [{
-  step: STEPS.formatValidation,
-  action: STEPS.language.formatValidation,
-  substeps: [{
-    step: SUB_STEPS.getTransactionId,
+  code: STEPS.formatValidation,
+  label: STEPS.language.formatValidation.label,
+  labelPending: STEPS.language.formatValidation.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.getTransactionId,
     label: SUB_STEPS.language.getTransactionId.label,
-    actionLabel: SUB_STEPS.language.getTransactionId.actionLabel,
+    labelPending: SUB_STEPS.language.getTransactionId.labelPending,
     parentStep: STEPS.formatValidation
   }, {
-    step: SUB_STEPS.computeLocalHash,
+    code: SUB_STEPS.computeLocalHash,
     label: SUB_STEPS.language.computeLocalHash.label,
-    actionLabel: SUB_STEPS.language.computeLocalHash.actionLabel,
+    labelPending: SUB_STEPS.language.computeLocalHash.labelPending,
     parentStep: STEPS.formatValidation
   }, {
-    step: SUB_STEPS.fetchRemoteHash,
+    code: SUB_STEPS.fetchRemoteHash,
     label: SUB_STEPS.language.fetchRemoteHash.label,
-    actionLabel: SUB_STEPS.language.fetchRemoteHash.actionLabel,
+    labelPending: SUB_STEPS.language.fetchRemoteHash.labelPending,
     parentStep: STEPS.formatValidation
   }, {
-    step: SUB_STEPS.parseIssuerKeys,
+    code: SUB_STEPS.parseIssuerKeys,
     label: SUB_STEPS.language.parseIssuerKeys.label,
-    actionLabel: SUB_STEPS.language.parseIssuerKeys.actionLabel,
+    labelPending: SUB_STEPS.language.parseIssuerKeys.labelPending,
     parentStep: STEPS.formatValidation
   }]
 }, {
-  step: STEPS.hashComparison,
-  action: STEPS.language.hashComparison,
-  substeps: [{
-    step: SUB_STEPS.compareHashes,
+  code: STEPS.hashComparison,
+  label: STEPS.language.hashComparison.label,
+  labelPending: STEPS.language.hashComparison.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.compareHashes,
     label: SUB_STEPS.language.compareHashes.label,
-    actionLabel: SUB_STEPS.language.compareHashes.actionLabel,
+    labelPending: SUB_STEPS.language.compareHashes.labelPending,
     parentStep: STEPS.hashComparison
   }, {
-    step: SUB_STEPS.checkMerkleRoot,
+    code: SUB_STEPS.checkMerkleRoot,
     label: SUB_STEPS.language.checkMerkleRoot.label,
-    actionLabel: SUB_STEPS.language.checkMerkleRoot.actionLabel,
+    labelPending: SUB_STEPS.language.checkMerkleRoot.labelPending,
     parentStep: STEPS.hashComparison
   }, {
-    step: SUB_STEPS.checkReceipt,
+    code: SUB_STEPS.checkReceipt,
     label: SUB_STEPS.language.checkReceipt.label,
-    actionLabel: SUB_STEPS.language.checkReceipt.actionLabel,
+    labelPending: SUB_STEPS.language.checkReceipt.labelPending,
     parentStep: STEPS.hashComparison
   }]
 }, {
-  step: STEPS.statusCheck,
-  action: STEPS.language.statusCheck,
-  substeps: [{
-    step: SUB_STEPS.checkRevokedStatus,
+  code: STEPS.statusCheck,
+  label: STEPS.language.statusCheck.label,
+  labelPending: STEPS.language.statusCheck.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.checkRevokedStatus,
     label: SUB_STEPS.language.checkRevokedStatus.label,
-    actionLabel: SUB_STEPS.language.checkRevokedStatus.actionLabel,
+    labelPending: SUB_STEPS.language.checkRevokedStatus.labelPending,
     parentStep: STEPS.statusCheck
   }, {
-    step: SUB_STEPS.checkAuthenticity,
+    code: SUB_STEPS.checkAuthenticity,
     label: SUB_STEPS.language.checkAuthenticity.label,
-    actionLabel: SUB_STEPS.language.checkAuthenticity.actionLabel,
+    labelPending: SUB_STEPS.language.checkAuthenticity.labelPending,
     parentStep: STEPS.statusCheck
   }, {
-    step: SUB_STEPS.checkExpiresDate,
+    code: SUB_STEPS.checkExpiresDate,
     label: SUB_STEPS.language.checkExpiresDate.label,
-    actionLabel: SUB_STEPS.language.checkExpiresDate.actionLabel,
+    labelPending: SUB_STEPS.language.checkExpiresDate.labelPending,
     parentStep: STEPS.statusCheck
   }]
 }];

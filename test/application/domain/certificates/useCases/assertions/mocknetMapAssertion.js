@@ -1,35 +1,38 @@
 import { STEPS, SUB_STEPS } from '../../../../../../src';
 
 export default [{
-  step: STEPS.formatValidation,
-  action: STEPS.language.formatValidation,
-  substeps: [{
-    step: SUB_STEPS.computeLocalHash,
+  code: STEPS.formatValidation,
+  label: STEPS.language.formatValidation.label,
+  labelPending: STEPS.language.formatValidation.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.computeLocalHash,
     label: SUB_STEPS.language.computeLocalHash.label,
-    actionLabel: SUB_STEPS.language.computeLocalHash.actionLabel,
+    labelPending: SUB_STEPS.language.computeLocalHash.labelPending,
     parentStep: STEPS.formatValidation
   }]
 }, {
-  step: STEPS.hashComparison,
-  action: STEPS.language.hashComparison,
-  substeps: [{
-    step: SUB_STEPS.compareHashes,
+  code: STEPS.hashComparison,
+  label: STEPS.language.hashComparison.label,
+  labelPending: STEPS.language.hashComparison.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.compareHashes,
     label: SUB_STEPS.language.compareHashes.label,
-    actionLabel: SUB_STEPS.language.compareHashes.actionLabel,
+    labelPending: SUB_STEPS.language.compareHashes.labelPending,
     parentStep: STEPS.hashComparison
   }, {
-    step: SUB_STEPS.checkReceipt,
+    code: SUB_STEPS.checkReceipt,
     label: SUB_STEPS.language.checkReceipt.label,
-    actionLabel: SUB_STEPS.language.checkReceipt.actionLabel,
+    labelPending: SUB_STEPS.language.checkReceipt.labelPending,
     parentStep: STEPS.hashComparison
   }]
 }, {
-  step: STEPS.statusCheck,
-  action: STEPS.language.statusCheck,
-  substeps: [{
-    step: SUB_STEPS.checkExpiresDate,
+  code: STEPS.statusCheck,
+  label: STEPS.language.statusCheck.label,
+  labelPending: STEPS.language.statusCheck.labelPending,
+  subSteps: [{
+    code: SUB_STEPS.checkExpiresDate,
     label: SUB_STEPS.language.checkExpiresDate.label,
-    actionLabel: SUB_STEPS.language.checkExpiresDate.actionLabel,
+    labelPending: SUB_STEPS.language.checkExpiresDate.labelPending,
     parentStep: STEPS.statusCheck
   }]
 }];

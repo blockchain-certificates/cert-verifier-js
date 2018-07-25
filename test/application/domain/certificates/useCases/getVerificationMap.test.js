@@ -14,13 +14,13 @@ describe('domain certificates get verification map use case test suite', () => {
 
   describe('given it is called with the bitcoin chain', () => {
     describe('given it is called without a version', () => {
-      it('should return an empty array', () => {
+      it('should return a mainnet v2.0 verification map', () => {
         const result = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin);
-        expect(result).toEqual([]);
+        expect(result).toEqual(v20MapAssertion);
       });
     });
 
-    describe.only('given it is called with a v1.2 version', () => {
+    describe('given it is called with a v1.2 version', () => {
       it('should return a mainnet v1.2 verification map', () => {
         const result = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin, CERTIFICATE_VERSIONS.V1_2);
         expect(result).toEqual(v12MapAssertion);

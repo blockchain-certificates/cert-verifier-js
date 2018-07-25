@@ -43,8 +43,8 @@ describe('Certificate entity test suite', function () {
     describe('when all checks are successful', function () {
       it('should return false', function () {
         const certificate = new Certificate(FIXTURES.MainnetV2Valid);
-        certificate._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        certificate._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2'});
+        certificate._stepsStatuses.push({code: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
+        certificate._stepsStatuses.push({code: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2'});
 
         expect(certificate._isFailing()).toBe(false);
       });
@@ -52,8 +52,8 @@ describe('Certificate entity test suite', function () {
     describe('when one check is failing', function () {
       it('should return true', function () {
         const certificate = new Certificate(FIXTURES.MainnetV2Valid);
-        certificate._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        certificate._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2'});
+        certificate._stepsStatuses.push({code: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
+        certificate._stepsStatuses.push({code: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2'});
 
         expect(certificate._isFailing()).toBe(true);
       });

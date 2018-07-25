@@ -19498,7 +19498,7 @@ var browser$3 = function createHmac (alg, key) {
 var _args = [
 	[
 		"bigi@1.4.2",
-		"/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code"
+		"/Users/julien/work/cert-verifier-js"
 	]
 ];
 var _from = "bigi@1.4.2";
@@ -19525,7 +19525,7 @@ var _requiredBy = [
 ];
 var _resolved = "https://registry.npmjs.org/bigi/-/bigi-1.4.2.tgz";
 var _spec = "1.4.2";
-var _where = "/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code";
+var _where = "/Users/julien/work/cert-verifier-js";
 var bugs = {
 	url: "https://github.com/cryptocoinjs/bigi/issues"
 };
@@ -22980,7 +22980,7 @@ HDNode.prototype.derivePath = function (path) {
 
 HDNode.prototype.toString = HDNode.prototype.toBase58;
 
-var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js'
+var __dirname = '/Users/julien/work/cert-verifier-js/node_modules/jsonld/js'
 
 var es6Promise = createCommonjsModule(function (module) {
 /*!
@@ -33021,6 +33021,152 @@ var PromiseProperRace = function (promises, count, results = []) {
   });
 };
 
+/**
+ * _getSignatureImages
+ *
+ * @param signatureRawObject
+ * @param certificateVersion
+ * @returns {Array}
+ * @private
+ */
+function getSignatureImages (signatureRawObject, certificateVersion) {
+  let signatureImageObjects = [];
+
+  switch (certificateVersion) {
+    case CERTIFICATE_VERSIONS.V1_1:
+    case CERTIFICATE_VERSIONS.V1_2:
+      if (signatureRawObject.constructor === Array) {
+        for (let index in signatureRawObject) {
+          let signatureLine = signatureRawObject[index];
+          let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+          let signerName = 'name' in signatureLine ? signatureLine.name : null;
+          let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+          signatureImageObjects.push(signatureObject);
+        }
+      } else {
+        let signatureObject = new SignatureImage(signatureRawObject, null, null);
+        signatureImageObjects.push(signatureObject);
+      }
+      break;
+
+    case CERTIFICATE_VERSIONS.V2_0:
+      for (let index in signatureRawObject) {
+        let signatureLine = signatureRawObject[index];
+        let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+        signatureImageObjects.push(signatureObject);
+      }
+      break;
+  }
+
+  return signatureImageObjects;
+}
+
+/**
+ * parseV1
+ *
+ * @param certificateJson
+ * @returns {Certificate}
+ */
+function parseV1 (certificateJson) {
+  const fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
+  const recipient = certificateJson.recipient || certificateJson.document.recipient;
+  const assertion = certificateJson.document.assertion;
+
+  const receipt = certificateJson.receipt;
+  const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
+
+  let {image: certificateImage, description, issuer, subtitle} = fullCertificateObject;
+
+  const publicKey = recipient.publicKey;
+  const chain = domain.certificates.getChain(publicKey);
+  const expires = assertion.expires;
+  const id = assertion.uid;
+  const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
+  const revocationKey = recipient.revocationKey || null;
+  const sealImage = issuer.image;
+  const signature = certificateJson.document.signature;
+  const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
+  const signatureImage = getSignatureImages(signaturesRaw, version);
+  if (typeof subtitle === 'object') {
+    subtitle = subtitle.display ? subtitle.content : '';
+  }
+  let name = fullCertificateObject.title || fullCertificateObject.name;
+
+  return {
+    certificateImage,
+    chain,
+    description,
+    expires,
+    id,
+    issuer,
+    name,
+    publicKey,
+    receipt,
+    recipientFullName,
+    revocationKey,
+    sealImage,
+    signature,
+    signatureImage,
+    subtitle,
+    version
+  };
+}
+
+/**
+ * parseV2
+ *
+ * @param certificateJson
+ * @returns {Certificate}
+ */
+function parseV2 (certificateJson) {
+  const {id, expires, signature: receipt, badge} = certificateJson;
+  const {image: certificateImage, name, description, subtitle, issuer} = badge;
+  const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
+  const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+
+  const version = CERTIFICATE_VERSIONS.V2_0;
+  const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
+  const publicKey = recipientProfile.publicKey;
+  const recipientFullName = recipientProfile.name;
+  const revocationKey = null;
+  const sealImage = issuer.image;
+  const signatureImage = getSignatureImages(badge.signatureLines, version);
+
+  return {
+    certificateImage,
+    chain,
+    description,
+    expires,
+    id,
+    issuer,
+    name,
+    publicKey,
+    receipt,
+    recipientFullName,
+    revocationKey,
+    sealImage,
+    signature: null,
+    signatureImage,
+    subtitle,
+    version
+  };
+}
+
+/**
+ * parseJson
+ *
+ * @param certificateJson
+ * @returns {*}
+ */
+function parseJSON (certificateJson) {
+  const version = certificateJson['@context'];
+  if (version instanceof Array) {
+    return parseV2(certificateJson);
+  } else {
+    return parseV1(certificateJson);
+  }
+}
+
 const log$4 = browser$1('Certificate');
 
 class Certificate {
@@ -33034,7 +33180,7 @@ class Certificate {
     }
 
     // Keep certificate JSON object
-    this.certificateJson = certificateJson;
+    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
 
     // Parse certificate
     this.parseJson(certificateJson);
@@ -33050,8 +33196,8 @@ class Certificate {
    * @returns {*}
    */
   parseJson (certificateJson) {
-    const version = certificateJson['@context'];
-    this.isFormatValid = version instanceof Array ? this._parseV2(certificateJson) : this._parseV1(certificateJson);
+    const parsedCertificate = parseJSON(certificateJson);
+    this._setProperties(parsedCertificate);
   }
 
   /**
@@ -33157,143 +33303,6 @@ class Certificate {
   }
 
   /**
-   * parseV1
-   *
-   * @param certificateJson
-   * @returns {Certificate}
-   */
-  _parseV1 (certificateJson) {
-    this.fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
-    const recipient = certificateJson.recipient || certificateJson.document.recipient;
-    const assertion = certificateJson.document.assertion;
-
-    const receipt = certificateJson.receipt;
-    const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
-
-    let {image: certificateImage, description, issuer, subtitle} = this.fullCertificateObject;
-
-    const publicKey = recipient.publicKey;
-    const chain = domain.certificates.getChain(publicKey);
-    const expires = assertion.expires;
-    const id = assertion.uid;
-    const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
-    const revocationKey = recipient.revocationKey || null;
-    const sealImage = issuer.image;
-    const signature = certificateJson.document.signature;
-    const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
-    const signatureImage = this._getSignatureImages(signaturesRaw, version);
-    if (typeof subtitle === 'object') {
-      subtitle = subtitle.display ? subtitle.content : '';
-    }
-    let name = this.fullCertificateObject.title || this.fullCertificateObject.name;
-
-    this._setProperties({
-      certificateImage,
-      chain,
-      description,
-      expires,
-      id,
-      issuer,
-      name,
-      publicKey,
-      receipt,
-      recipientFullName,
-      revocationKey,
-      sealImage,
-      signature,
-      signatureImage,
-      subtitle,
-      version
-    });
-
-    // TODO: should be actually checking something
-    return true;
-  }
-
-  /**
-   * parseV2
-   *
-   * @param certificateJson
-   * @returns {Certificate}
-   */
-  _parseV2 (certificateJson) {
-    const {id, expires, signature: receipt, badge} = certificateJson;
-    const {image: certificateImage, name, description, subtitle, issuer} = badge;
-    const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
-    const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
-
-    const version = CERTIFICATE_VERSIONS.V2_0;
-    const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
-    const publicKey = recipientProfile.publicKey;
-    const recipientFullName = recipientProfile.name;
-    const revocationKey = null;
-    const sealImage = issuer.image;
-    const signatureImage = this._getSignatureImages(badge.signatureLines, version);
-
-    this._setProperties({
-      certificateImage,
-      chain,
-      description,
-      expires,
-      id,
-      issuer,
-      name,
-      publicKey,
-      receipt,
-      recipientFullName,
-      revocationKey,
-      sealImage,
-      signature: null,
-      signatureImage,
-      subtitle,
-      version
-    });
-
-    // TODO: should be actually checking something
-    return true;
-  }
-
-  /**
-   * _getSignatureImages
-   *
-   * @param signatureRawObject
-   * @param certificateVersion
-   * @returns {Array}
-   * @private
-   */
-  _getSignatureImages (signatureRawObject, certificateVersion) {
-    let signatureImageObjects = [];
-
-    switch (certificateVersion) {
-      case CERTIFICATE_VERSIONS.V1_1:
-      case CERTIFICATE_VERSIONS.V1_2:
-        if (signatureRawObject.constructor === Array) {
-          for (let index in signatureRawObject) {
-            let signatureLine = signatureRawObject[index];
-            let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-            let signerName = 'name' in signatureLine ? signatureLine.name : null;
-            let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
-            signatureImageObjects.push(signatureObject);
-          }
-        } else {
-          let signatureObject = new SignatureImage(signatureRawObject, null, null);
-          signatureImageObjects.push(signatureObject);
-        }
-        break;
-
-      case CERTIFICATE_VERSIONS.V2_0:
-        for (let index in signatureRawObject) {
-          let signatureLine = signatureRawObject[index];
-          let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
-          signatureImageObjects.push(signatureObject);
-        }
-        break;
-    }
-
-    return signatureImageObjects;
-  }
-
-  /**
    * _setTransactionDetails
    *
    * @private
@@ -33382,7 +33391,7 @@ class Certificate {
    * @private
    */
   _isFailing () {
-    return this._stepsStatuses.length > 0 && this._stepsStatuses.indexOf(FAILURE) > -1;
+    return this._stepsStatuses.some(step => step.status === FAILURE);
   }
 
   /**

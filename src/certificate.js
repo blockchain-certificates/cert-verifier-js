@@ -1,6 +1,6 @@
 import domain from './domain';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
-import { SignatureImage, VerifierError } from './models';
+import { VerifierError } from './models';
 import {
   getIssuerKeys,
   getIssuerProfile,
@@ -11,6 +11,7 @@ import {
 import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
+import parseJSON from './parser';
 
 const log = debug('Certificate');
 
@@ -41,8 +42,8 @@ export default class Certificate {
    * @returns {*}
    */
   parseJson (certificateJson) {
-    const version = certificateJson['@context'];
-    this.isFormatValid = version instanceof Array ? this._parseV2(certificateJson) : this._parseV1(certificateJson);
+    const parsedCertificate = parseJSON(certificateJson);
+    this._setProperties(parsedCertificate);
   }
 
   /**
@@ -145,143 +146,6 @@ export default class Certificate {
 
     // Get the full verification step-by-step map
     this.verificationSteps = this._getVerificationStepsMap(version, chain);
-  }
-
-  /**
-   * parseV1
-   *
-   * @param certificateJson
-   * @returns {Certificate}
-   */
-  _parseV1 (certificateJson) {
-    this.fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
-    const recipient = certificateJson.recipient || certificateJson.document.recipient;
-    const assertion = certificateJson.document.assertion;
-
-    const receipt = certificateJson.receipt;
-    const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
-
-    let {image: certificateImage, description, issuer, subtitle} = this.fullCertificateObject;
-
-    const publicKey = recipient.publicKey;
-    const chain = domain.certificates.getChain(publicKey);
-    const expires = assertion.expires;
-    const id = assertion.uid;
-    const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
-    const revocationKey = recipient.revocationKey || null;
-    const sealImage = issuer.image;
-    const signature = certificateJson.document.signature;
-    const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
-    const signatureImage = this._getSignatureImages(signaturesRaw, version);
-    if (typeof subtitle === 'object') {
-      subtitle = subtitle.display ? subtitle.content : '';
-    }
-    let name = this.fullCertificateObject.title || this.fullCertificateObject.name;
-
-    this._setProperties({
-      certificateImage,
-      chain,
-      description,
-      expires,
-      id,
-      issuer,
-      name,
-      publicKey,
-      receipt,
-      recipientFullName,
-      revocationKey,
-      sealImage,
-      signature,
-      signatureImage,
-      subtitle,
-      version
-    });
-
-    // TODO: should be actually checking something
-    return true;
-  }
-
-  /**
-   * parseV2
-   *
-   * @param certificateJson
-   * @returns {Certificate}
-   */
-  _parseV2 (certificateJson) {
-    const {id, expires, signature: receipt, badge} = certificateJson;
-    const {image: certificateImage, name, description, subtitle, issuer} = badge;
-    const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
-    const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
-
-    const version = CERTIFICATE_VERSIONS.V2_0;
-    const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
-    const publicKey = recipientProfile.publicKey;
-    const recipientFullName = recipientProfile.name;
-    const revocationKey = null;
-    const sealImage = issuer.image;
-    const signatureImage = this._getSignatureImages(badge.signatureLines, version);
-
-    this._setProperties({
-      certificateImage,
-      chain,
-      description,
-      expires,
-      id,
-      issuer,
-      name,
-      publicKey,
-      receipt,
-      recipientFullName,
-      revocationKey,
-      sealImage,
-      signature: null,
-      signatureImage,
-      subtitle,
-      version
-    });
-
-    // TODO: should be actually checking something
-    return true;
-  }
-
-  /**
-   * _getSignatureImages
-   *
-   * @param signatureRawObject
-   * @param certificateVersion
-   * @returns {Array}
-   * @private
-   */
-  _getSignatureImages (signatureRawObject, certificateVersion) {
-    let signatureImageObjects = [];
-
-    switch (certificateVersion) {
-      case CERTIFICATE_VERSIONS.V1_1:
-      case CERTIFICATE_VERSIONS.V1_2:
-        if (signatureRawObject.constructor === Array) {
-          for (let index in signatureRawObject) {
-            let signatureLine = signatureRawObject[index];
-            let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-            let signerName = 'name' in signatureLine ? signatureLine.name : null;
-            let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
-            signatureImageObjects.push(signatureObject);
-          }
-        } else {
-          let signatureObject = new SignatureImage(signatureRawObject, null, null);
-          signatureImageObjects.push(signatureObject);
-        }
-        break;
-
-      case CERTIFICATE_VERSIONS.V2_0:
-        for (let index in signatureRawObject) {
-          let signatureLine = signatureRawObject[index];
-          let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
-          signatureImageObjects.push(signatureObject);
-        }
-        break;
-    }
-
-    return signatureImageObjects;
   }
 
   /**

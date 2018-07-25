@@ -1,5 +1,4 @@
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../constants';
-import * as SUB_STEPS from '../../../constants/verificationSubSteps';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, STEPS, SUB_STEPS } from '../../../constants';
 import isTestChain from '../../chains/useCases/isTestChain';
 
 const versionVerificationMap = {
@@ -36,18 +35,36 @@ const versionVerificationMap = {
   ]
 };
 
+/**
+ * getFullStepsFromSubSteps
+ *
+ * Builds a full steps array (with subSteps property) from an array of sub-steps
+ *
+ * @param subStepMap
+ * @returns {Array}
+ */
+function getFullStepsFromSubSteps (subStepMap) {
+  // Get deep copy of steps
+  const steps = JSON.parse(JSON.stringify(STEPS.language));
+  let subSteps = subStepMap.map(stepCode => Object.assign({}, SUB_STEPS.language[stepCode]));
+  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
+
+  let stepsArray = [];
+  Object.keys(steps).forEach(stepCode => stepsArray.push({...steps[stepCode], code: stepCode}));
+
+  return stepsArray;
+}
+
 export default function getVerificationMap (chain, version) {
-  let map = [];
   let key;
 
-  // If not a chain or test chain and no version
   if (!chain) {
-    return map;
+    return [];
   }
 
-  // If v1.2
+  // v1.2 is a specific case, otherwise treated as test chain or v2
   if (version === CERTIFICATE_VERSIONS.V1_2) {
-    key = version;
+    key = CERTIFICATE_VERSIONS.V1_2;
   } else {
     if (isTestChain(chain)) {
       key = BLOCKCHAINS.mocknet.code;
@@ -56,5 +73,6 @@ export default function getVerificationMap (chain, version) {
     }
   }
 
-  return key ? versionVerificationMap[version].slice() : map;
+  const verificationMap = Object.assign(versionVerificationMap);
+  return getFullStepsFromSubSteps(verificationMap[key]);
 }

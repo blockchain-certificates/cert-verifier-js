@@ -1,10 +1,7 @@
 import { request } from './promisifiedRequests';
-import { Status } from '../config/default';
 import { TransactionData } from './verifierModels';
 import { startsWith } from './helpers/string';
-import { BLOCKCHAINS } from './constants/blockchains';
-import { MininumConfirmations } from './constants/config';
-import * as API_URLS from './constants/api';
+import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from './constants';
 import { VerifierError } from './models';
 
 export function getEtherScanFetcher (transactionId, chain) {
@@ -29,14 +26,14 @@ export function getEtherScanFetcher (transactionId, chain) {
               resolve(txData);
             })
             .catch(function () {
-              reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
             });
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
         }
       }).catch(function () {
-        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
   return etherScanFetcher;
@@ -76,14 +73,14 @@ function getEtherScanBlock (jsonResponse, chain) {
               resolve(blockData);
             })
             .catch(function () {
-              reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
             });
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
         }
       }).catch(function () {
-        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
 }
@@ -103,16 +100,16 @@ function checkEtherScanConfirmations (chain, blockNumber) {
         const responseData = JSON.parse(response);
         const currentBlockCount = responseData.result;
         try {
-          if (currentBlockCount - blockNumber < MininumConfirmations) {
-            reject(new VerifierError(Status.fetchingRemoteHash, `Number of transaction confirmations were less than the minimum required, according to EtherScan API`));
+          if (currentBlockCount - blockNumber < CONFIG.MininumConfirmations) {
+            reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Number of transaction confirmations were less than the minimum required, according to EtherScan API`));
           }
           resolve(currentBlockCount);
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
         }
       }).catch(function () {
-        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
 }

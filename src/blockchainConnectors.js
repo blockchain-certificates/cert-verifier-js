@@ -1,10 +1,7 @@
 import debug from 'debug';
-import { Status } from '../config/default';
 import { getEtherScanFetcher } from './ethereumExplorers';
 import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoinExplorers';
-import { BLOCKCHAINS } from './constants/blockchains';
-import * as CERTIFICATE_VERSIONS from './constants/certificateVersions';
-import { MinimumBlockchainExplorers, Race } from './constants/config';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from './constants';
 import { VerifierError } from './models';
 
 const log = debug('blockchainConnectors');
@@ -37,37 +34,37 @@ export function lookForTx (transactionId, chain, certificateVersion) {
       BlockchainExplorers = EthereumExplorers;
       break;
     default:
-      return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid chain; does not map to known BlockchainExplorers.`));
+      return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Invalid chain; does not map to known BlockchainExplorers.`));
   }
 
   // First ensure we can satisfy the MinimumBlockchainExplorers setting
-  if (MinimumBlockchainExplorers < 0 || MinimumBlockchainExplorers > BlockchainExplorers.length) {
-    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
+  if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
+    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value`));
   }
-  if (MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
-    (certificateVersion === CERTIFICATE_VERSIONS.v1dot1 || certificateVersion === CERTIFICATE_VERSIONS.v1dot2)) {
-    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Invalid application configuration; check the MinimumBlockchainExplorers configuration value`));
+  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length &&
+    (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2)) {
+    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value`));
   }
 
   // Queue up blockchain explorer APIs
   let promises = [];
   let limit;
-  if (certificateVersion === CERTIFICATE_VERSIONS.v1dot1 || certificateVersion === CERTIFICATE_VERSIONS.v1dot2) {
-    limit = Race ? BlockchainExplorersWithSpentOutputInfo.length : MinimumBlockchainExplorers;
+  if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
+    limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
     for (var i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
-    limit = Race ? BlockchainExplorers.length : MinimumBlockchainExplorers;
+    limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
     for (var j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
   }
 
   return new Promise((resolve, reject) => {
-    return PromiseProperRace(promises, MinimumBlockchainExplorers).then(winners => {
+    return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
       if (!winners || winners.length === 0) {
-        return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.`));
+        return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.`));
       }
 
       // Compare results returned by different blockchain apis. We pick off the first result and compare the others
@@ -83,15 +80,15 @@ export function lookForTx (transactionId, chain, certificateVersion) {
       for (var i = 1; i < winners.length; i++) {
         var thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-          throw new VerifierError(Status.fetchingRemoteHash, `Issuing addresses returned by the blockchain APIs were different`);
+          throw new VerifierError(SUB_STEPS.fetchRemoteHash, `Issuing addresses returned by the blockchain APIs were different`);
         }
         if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-          throw new VerifierError(Status.fetchingRemoteHash, `Remote hashes returned by the blockchain APIs were different`);
+          throw new VerifierError(SUB_STEPS.fetchRemoteHash, `Remote hashes returned by the blockchain APIs were different`);
         }
       }
       resolve(firstResponse);
     }).catch(err => {
-      reject(new VerifierError(Status.fetchingRemoteHash, err.message));
+      reject(new VerifierError(SUB_STEPS.fetchRemoteHash, err.message));
     });
   });
 }
@@ -100,7 +97,7 @@ var PromiseProperRace = function (promises, count, results = []) {
   // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
   promises = Array.from(promises);
   if (promises.length < count) {
-    return Promise.reject(new VerifierError(Status.fetchingRemoteHash, `Could not confirm the transaction`));
+    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Could not confirm the transaction`));
   }
 
   let indexPromises = promises.map((p, index) => p.then(() => index).catch((err) => {

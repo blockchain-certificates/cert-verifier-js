@@ -1,6 +1,6 @@
 import { startsWith } from '../../../helpers/string';
-import { PublicKey } from '../../../constants/config';
+import { CONFIG } from '../../../constants';
 
 export default function isMainnet (bitcoinAddress) {
-  return startsWith(bitcoinAddress, '1') || startsWith(bitcoinAddress, PublicKey);
+  return startsWith(bitcoinAddress, '1') || startsWith(bitcoinAddress, CONFIG.PublicKey);
 }

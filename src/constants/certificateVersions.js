@@ -1,3 +1,9 @@
-export const v1dot1 = '1.1';
-export const v1dot2 = '1.2';
-export const v2dot0 = '2.0';
+const V1_1 = '1.1';
+const V1_2 = '1.2';
+const V2_0 = '2.0';
+
+export default {
+  V1_1,
+  V1_2,
+  V2_0
+};

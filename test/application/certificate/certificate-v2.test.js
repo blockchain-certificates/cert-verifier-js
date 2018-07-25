@@ -1,6 +1,5 @@
-import fixture from '../../fixtures/mainnet-valid-2.0';
-import Certificate from '../../../src/certificate';
-import { BLOCKCHAINS } from '../../../src/index';
+import FIXTURES from '../../fixtures';
+import { Certificate, BLOCKCHAINS } from '../../../src';
 import documentToVerifyAssertion from './assertions/documentToVerify-v2';
 
 describe('Certificate entity test suite', () => {
@@ -9,7 +8,7 @@ describe('Certificate entity test suite', () => {
       let certificate;
 
       beforeEach(() => {
-        certificate = new Certificate(fixture);
+        certificate = new Certificate(FIXTURES.MainnetV2Valid);
       });
 
       afterEach(() => {
@@ -17,11 +16,11 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set the certificateJson of the certificate object', () => {
-        expect(certificate.certificateJson).toEqual(fixture);
+        expect(certificate.certificateJson).toEqual(FIXTURES.MainnetV2Valid);
       });
 
       it('should set certificateImage of the certificate object', () => {
-        expect(certificate.certificateImage).toEqual(fixture.badge.image);
+        expect(certificate.certificateImage).toEqual(FIXTURES.MainnetV2Valid.badge.image);
       });
 
       it('should set chain of the certificate object', () => {
@@ -29,31 +28,31 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set description of the certificate object', () => {
-        expect(certificate.description).toEqual(fixture.badge.description);
+        expect(certificate.description).toEqual(FIXTURES.MainnetV2Valid.badge.description);
       });
 
       it('should set expires of the certificate object', () => {
-        expect(certificate.expires).toEqual(fixture.expires);
+        expect(certificate.expires).toEqual(FIXTURES.MainnetV2Valid.expires);
       });
 
       it('should set id of the certificate object', () => {
-        expect(certificate.id).toEqual(fixture.id);
+        expect(certificate.id).toEqual(FIXTURES.MainnetV2Valid.id);
       });
 
       it('should set issuer of the certificate object', () => {
-        expect(certificate.issuer).toEqual(fixture.badge.issuer);
+        expect(certificate.issuer).toEqual(FIXTURES.MainnetV2Valid.badge.issuer);
       });
 
       it('should set publicKey of the certificate object', () => {
-        expect(certificate.publicKey).toEqual(fixture.recipientProfile.publicKey);
+        expect(certificate.publicKey).toEqual(FIXTURES.MainnetV2Valid.recipientProfile.publicKey);
       });
 
       it('should set receipt of the certificate object', () => {
-        expect(certificate.receipt).toEqual(fixture.signature);
+        expect(certificate.receipt).toEqual(FIXTURES.MainnetV2Valid.signature);
       });
 
       it('should set recipientFullName of the certificate object', () => {
-        const fullNameAssertion = fixture.recipientProfile.name;
+        const fullNameAssertion = FIXTURES.MainnetV2Valid.recipientProfile.name;
         expect(certificate.recipientFullName).toEqual(fullNameAssertion);
       });
 
@@ -62,7 +61,7 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set sealImage of the certificate object', () => {
-        expect(certificate.sealImage).toEqual(fixture.badge.issuer.image);
+        expect(certificate.sealImage).toEqual(FIXTURES.MainnetV2Valid.badge.issuer.image);
       });
 
       it('should set signature of the certificate object', () => {
@@ -74,24 +73,24 @@ describe('Certificate entity test suite', () => {
       });
 
       it('should set subtitle to the certificate object', () => {
-        expect(certificate.subtitle).toEqual(fixture.badge.subtitle);
+        expect(certificate.subtitle).toEqual(FIXTURES.MainnetV2Valid.badge.subtitle);
       });
 
       it('should set name to the certificate object', () => {
-        expect(certificate.name).toEqual(fixture.badge.name);
+        expect(certificate.name).toEqual(FIXTURES.MainnetV2Valid.badge.name);
       });
 
       it('should set transactionId to the certificate object', () => {
-        expect(certificate.transactionId).toEqual(fixture.signature.anchors[0].sourceId);
+        expect(certificate.transactionId).toEqual(FIXTURES.MainnetV2Valid.signature.anchors[0].sourceId);
       });
 
       it('should set rawTransactionLink to the certificate object', () => {
-        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${fixture.signature.anchors[0].sourceId}`;
+        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${FIXTURES.MainnetV2Valid.signature.anchors[0].sourceId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
       });
 
       it('should set transactionLink to the certificate object', () => {
-        const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.signature.anchors[0].sourceId}`;
+        const transactionLinkAssertion = `https://blockchain.info/tx/${FIXTURES.MainnetV2Valid.signature.anchors[0].sourceId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
 

@@ -1,6 +1,5 @@
 import fixture from '../../fixtures/testnet-valid-1.2';
-import Certificate from '../../../src/certificate';
-import { BLOCKCHAINS } from '../../../src/index';
+import { BLOCKCHAINS, Certificate } from '../../../src';
 import documentToVerifyAssertion from './assertions/documentToVerify-v1';
 
 describe('Certificate entity test suite', () => {
@@ -105,6 +104,11 @@ describe('Certificate entity test suite', () => {
 
       it('should set documentToVerify accordingly', () => {
         expect(certificate.documentToVerify).toEqual(documentToVerifyAssertion);
+      });
+
+      it('should set the verificationSteps map accordingly', () => {
+        const verificationStepsAssertion = [];
+        expect(certificate.verificationSteps).toEqual(verificationStepsAssertion);
       });
     });
   });

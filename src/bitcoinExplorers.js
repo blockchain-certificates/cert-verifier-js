@@ -1,12 +1,9 @@
 import { request } from './promisifiedRequests';
 import { TransactionData } from './verifierModels';
-import { Status } from '../config/default';
 import { dateToUnixTimestamp } from './helpers/date';
 import { startsWith } from './helpers/string';
-import { BLOCKCHAINS } from './constants/blockchains';
-import { MininumConfirmations } from './constants/config';
+import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from './constants';
 import { VerifierError } from './models';
-import * as API_URLS from './constants/api';
 
 export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;
@@ -28,7 +25,7 @@ export function getBlockcypherFetcher (transactionId, chain) {
         }
       })
       .catch(function () {
-        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
   return blockcypherFetcher;
@@ -51,18 +48,18 @@ export function getChainSoFetcher (transactionId, chain) {
           resolve(txData);
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
         }
       })
       .catch(function () {
-        reject(new VerifierError(Status.fetchingRemoteHash, `Unable to get remote hash`));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
   return chainSoFetcher;
 }
 
 function parseBlockCypherResponse (jsonResponse) {
-  if (jsonResponse.confirmations < MininumConfirmations) {
+  if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(
       'Number of transaction confirmations were less than the minimum required, according to Blockcypher API'
     );
@@ -84,7 +81,7 @@ function parseBlockCypherResponse (jsonResponse) {
 }
 
 function parseChainSoResponse (jsonResponse) {
-  if (jsonResponse.data.confirmations < MininumConfirmations) {
+  if (jsonResponse.data.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(
       'Number of transaction confirmations were less than the minimum required, according to Chain.so API'
     );

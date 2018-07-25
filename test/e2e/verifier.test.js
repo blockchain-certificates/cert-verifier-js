@@ -1,7 +1,5 @@
 import 'babel-polyfill';
-import { Status } from '../../config/default';
-import { VERIFICATION_STATUSES } from '../../src/index';
-import Certificate from '../../src/certificate';
+import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 
 describe('End-to-end verification', () => {
@@ -17,8 +15,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.EthereumMainInvalidMerkleRoot);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingMerkleRoot && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkMerkleRoot && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Merkle root does not match remote hash.');
         }
       });
@@ -30,8 +28,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.EthereumMainRevoked);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingRevokedStatus && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkRevokedStatus && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Accidentally issued to Ethereum.');
         }
       });
@@ -51,8 +49,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.EthereumTampered);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.comparingHashes && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.comparingHashes && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Computed hash does not match remote hash');
         }
       });
@@ -64,8 +62,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.MainnetInvalidMerkleReceipt);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingReceipt && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkingReceipt && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Invalid Merkle Receipt. Proof hash did not match Merkle root');
         }
       });
@@ -77,8 +75,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.MainnetMerkleRootUmmatch);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingMerkleRoot && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkingMerkleRoot && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Merkle root does not match remote hash.');
         }
       });
@@ -90,8 +88,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.MainnetV2Revoked);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingRevokedStatus && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkingRevokedStatus && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('This certificate has been revoked by the issuer. Reason given: Issued in error.');
         }
       });
@@ -135,8 +133,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.Testnet404IssuerUrl);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.parsingIssuerKeys && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.parseIssuerKeys && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
         }
       });
@@ -148,8 +146,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.parsingIssuerKeys && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.parseIssuerKeys && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
         }
       });
@@ -161,8 +159,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.TestnetRevokedV2);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.checkingAuthenticity && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.checkAuthenticity && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Transaction occurred at time when issuing address was not considered valid.');
         }
       });
@@ -174,8 +172,8 @@ describe('End-to-end verification', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.TestnetTamperedHashes);
       const result = await certificate.verify(({step, action, status, errorMessage}) => {
-        if (step === Status.comparingHashes && status !== Status.starting) {
-          expect(status).toBe(Status.failure);
+        if (step === SUB_STEPS.compareHashes && status !== VERIFICATION_STATUSES.STARTING) {
+          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
           expect(errorMessage).toBe('Computed hash does not match remote hash');
         }
       });

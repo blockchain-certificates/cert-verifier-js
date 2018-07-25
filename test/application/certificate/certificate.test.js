@@ -37,8 +37,6 @@ describe('Certificate entity test suite', function () {
         }).toThrowError('This is not a valid certificate');
       });
     });
-
-
   });
 
   describe('verify method', function () {

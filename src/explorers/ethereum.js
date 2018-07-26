@@ -1,7 +1,7 @@
-import { request } from './promisifiedRequests';
-import { startsWith } from './helpers/string';
-import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from './constants';
-import { TransactionData, VerifierError } from './models';
+import { request } from '../promisifiedRequests';
+import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from '../constants';
+import { TransactionData, VerifierError } from '../models';
+import { stripHashPrefix } from './utils/stripHashPrefix';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';
@@ -42,7 +42,7 @@ function parseEtherScanResponse (jsonResponse, block) {
   const data = jsonResponse.result;
   const date = new Date(parseInt(block.timestamp, 16) * 1000);
   const issuingAddress = data.from;
-  const opReturnScript = cleanupRemoteHash(data.input); // remove '0x'
+  const opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
 
   // The method of checking revocations by output spent do not work with Ethereum.
   // There are no input/outputs, only balances.
@@ -111,12 +111,4 @@ function checkEtherScanConfirmations (chain, blockNumber) {
         reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Unable to get remote hash`));
       });
   });
-}
-
-function cleanupRemoteHash (remoteHash) {
-  let prefix = '0x';
-  if (startsWith(remoteHash, prefix)) {
-    return remoteHash.slice(prefix.length);
-  }
-  return remoteHash;
 }

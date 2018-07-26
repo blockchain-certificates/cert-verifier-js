@@ -130,13 +130,14 @@ describe('End-to-end verification', () => {
 
   describe('given the certificate\'s issuer returns a 404', () => {
     it('should fail', async () => {
-      const certificate = new Certificate(FIXTURES.Testnet404IssuerUrl);
+      const certificate = new Certificate(FIXTURES.TestnetV1IssuerUrl404);
+      let failingStep = {};
       const result = await certificate.verify(({code, label, status, errorMessage}) => {
-        if (code === SUB_STEPS.parseIssuerKeys && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-          expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
+        if (code === SUB_STEPS.getIssuerProfile && status === VERIFICATION_STATUSES.FAILURE) {
+          failingStep = {code, label, status, errorMessage};
         }
       });
+      expect(failingStep).toEqual({code: SUB_STEPS.getIssuerProfile, label: 'Getting issuer profile', status: VERIFICATION_STATUSES.FAILURE, errorMessage: 'Unable to get issuer profile'});
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
     });
   });
@@ -144,12 +145,13 @@ describe('End-to-end verification', () => {
   describe('given the certificate\'s issuer profile no longer exists', () => {
     it('should fail', async () => {
       const certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
+      let failingStep = {};
       const result = await certificate.verify(({code, label, status, errorMessage}) => {
-        if (code === SUB_STEPS.parseIssuerKeys && status !== VERIFICATION_STATUSES.STARTING) {
-          expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-          expect(errorMessage).toBe('Unable to parse JSON out of issuer identification data.');
+        if (code === SUB_STEPS.getIssuerProfile && status === VERIFICATION_STATUSES.FAILURE) {
+          failingStep = {code, label, status, errorMessage};
         }
       });
+      expect(failingStep).toEqual({code: SUB_STEPS.getIssuerProfile, label: 'Getting issuer profile', status: VERIFICATION_STATUSES.FAILURE, errorMessage: 'Unable to get issuer profile'});
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
     });
   });

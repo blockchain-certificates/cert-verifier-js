@@ -6824,6 +6824,7 @@ var Verifier = (function (exports) {
 	  bitcoin: {
 	    code: 'bitcoin',
 	    name: 'Bitcoin',
+	    prefixes: ['6a20', 'OP_RETURN '],
 	    signatureValue: 'bitcoinMainnet',
 	    transactionTemplates: {
 	      full: 'https://blockchain.info/tx/' + TRANSACTION_TEMPLATE_ID_PLACEHOLDER,
@@ -6833,6 +6834,7 @@ var Verifier = (function (exports) {
 	  ethmain: {
 	    code: 'ethmain',
 	    name: 'Ethereum',
+	    prefixes: ['0x'],
 	    signatureValue: 'ethereumMainnet',
 	    transactionTemplates: {
 	      full: 'https://etherscan.io/tx/' + TRANSACTION_TEMPLATE_ID_PLACEHOLDER,
@@ -7358,11 +7360,16 @@ var Verifier = (function (exports) {
 	  return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
 	}
 
+	var REVOCATION_LANGUAGE = {
+	  PRE_REASON: 'Reason given:',
+	  REVOCATION: 'This certificate has been revoked by the issuer.'
+	};
+
 	function generateRevocationReason(reason) {
 	  reason = reason.trim();
 	  // TODO take strings out to constants
-	  reason = reason.length > 0 ? ' Reason given: ' + reason + (reason.slice(-1) !== '.' ? '.' : '') : '';
-	  return 'This certificate has been revoked by the issuer.' + reason;
+	  reason = reason.length > 0 ? ' ' + REVOCATION_LANGUAGE.PRE_REASON + ' ' + reason + (reason.slice(-1) !== '.' ? '.' : '') : '';
+	  return '' + REVOCATION_LANGUAGE.REVOCATION + reason;
 	}
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -7422,7 +7429,7 @@ var Verifier = (function (exports) {
 	  try {
 	    return certificateReceipt.anchors[0].sourceId;
 	  } catch (e) {
-	    throw new VerifierError('Can\'t verify this certificate without a transaction ID to compare against.');
+	    throw new VerifierError('', 'Cannot verify this certificate without a transaction ID to compare against.');
 	  }
 	}
 
@@ -7439,9 +7446,94 @@ var Verifier = (function (exports) {
 	function getTransactionLink(transactionId, chainObject) {
 	  var getRawVersion = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
+	  if (!transactionId || !chainObject) {
+	    return '';
+	  }
 	  var rawTransactionLinkTemplate = chainObject.transactionTemplates[getRawVersion ? 'raw' : 'full'];
 	  return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 	}
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _versionVerificationM;
+
+	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var versionVerificationMap = (_versionVerificationM = {}, _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V1_2, [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V2_0, [getTransactionId, computeLocalHash, fetchRemoteHash, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, BLOCKCHAINS.mocknet.code, [computeLocalHash, compareHashes, checkReceipt, checkExpiresDate]), _versionVerificationM);
+
+	/**
+	 * stepsObjectToArray
+	 *
+	 * Turn an object with steps as properties to an array
+	 *
+	 * @param stepsObject
+	 * @returns {{code: string}[]}
+	 */
+	function stepsObjectToArray(stepsObject) {
+	  return Object.keys(stepsObject).map(function (stepCode) {
+	    return _extends({}, stepsObject[stepCode], { code: stepCode });
+	  });
+	}
+
+	/**
+	 * setSubStepsToSteps
+	 *
+	 * Takes an array of sub-steps and set them to their proper parent step
+	 *
+	 * @param subSteps
+	 * @returns {any}
+	 */
+	function setSubStepsToSteps(subSteps) {
+	  var steps = JSON.parse(JSON.stringify(language));
+	  subSteps.forEach(function (subStep) {
+	    return steps[subStep.parentStep].subSteps.push(subStep);
+	  });
+	  return steps;
+	}
+
+	/**
+	 * getFullStepsFromSubSteps
+	 *
+	 * Builds a full steps array (with subSteps property) from an array of sub-steps
+	 *
+	 * @param subStepMap
+	 * @returns {Array}
+	 */
+	function getFullStepsFromSubSteps(subStepMap) {
+	  var subSteps = subStepMap.map(function (stepCode) {
+	    return Object.assign({}, language$1[stepCode]);
+	  });
+
+	  var steps = setSubStepsToSteps(subSteps);
+
+	  return stepsObjectToArray(steps);
+	}
+
+	function getVerificationMap(chain) {
+	  var version = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CERTIFICATE_VERSIONS.V2_0;
+
+	  if (!chain) {
+	    return [];
+	  }
+
+	  var key = version;
+	  if (domain$1.chains.isTestChain(chain)) {
+	    key = BLOCKCHAINS.mocknet.code;
+	  }
+
+	  var verificationMap = Object.assign(versionVerificationMap);
+	  return getFullStepsFromSubSteps(verificationMap[key]);
+	}
+
+
+
+	var certificates = /*#__PURE__*/Object.freeze({
+		getChain: getChain,
+		generateRevocationReason: generateRevocationReason,
+		getTransactionId: getTransactionId$1,
+		getTransactionLink: getTransactionLink,
+		getVerificationMap: getVerificationMap
+	});
 
 	function isTestChain(chain) {
 	  if (chain) {
@@ -7459,72 +7551,6 @@ var Verifier = (function (exports) {
 
 	  return null;
 	}
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var _versionVerificationM;
-
-	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-	var versionVerificationMap = (_versionVerificationM = {}, _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V1_2, [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V2_0, [getTransactionId, computeLocalHash, fetchRemoteHash, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, BLOCKCHAINS.mocknet.code, [computeLocalHash, compareHashes, checkReceipt, checkExpiresDate]), _versionVerificationM);
-
-	/**
-	 * getFullStepsFromSubSteps
-	 *
-	 * Builds a full steps array (with subSteps property) from an array of sub-steps
-	 *
-	 * @param subStepMap
-	 * @returns {Array}
-	 */
-	function getFullStepsFromSubSteps(subStepMap) {
-	  // Get deep copy of steps
-	  var steps = JSON.parse(JSON.stringify(language));
-	  var subSteps = subStepMap.map(function (stepCode) {
-	    return Object.assign({}, language$1[stepCode]);
-	  });
-	  subSteps.forEach(function (subStep) {
-	    return steps[subStep.parentStep].subSteps.push(subStep);
-	  });
-
-	  var stepsArray = [];
-	  Object.keys(steps).forEach(function (stepCode) {
-	    return stepsArray.push(_extends({}, steps[stepCode], { code: stepCode }));
-	  });
-
-	  return stepsArray;
-	}
-
-	function getVerificationMap(chain, version) {
-	  var key = void 0;
-
-	  if (!chain) {
-	    return [];
-	  }
-
-	  // v1.2 is a specific case, otherwise treated as test chain or v2
-	  if (version === CERTIFICATE_VERSIONS.V1_2) {
-	    key = CERTIFICATE_VERSIONS.V1_2;
-	  } else {
-	    if (isTestChain(chain)) {
-	      key = BLOCKCHAINS.mocknet.code;
-	    } else {
-	      key = CERTIFICATE_VERSIONS.V2_0;
-	    }
-	  }
-
-	  var verificationMap = Object.assign(versionVerificationMap);
-	  return getFullStepsFromSubSteps(verificationMap[key]);
-	}
-
-
-
-	var certificates = /*#__PURE__*/Object.freeze({
-		getChain: getChain,
-		generateRevocationReason: generateRevocationReason,
-		getTransactionId: getTransactionId$1,
-		getTransactionLink: getTransactionLink,
-		getVerificationMap: getVerificationMap
-	});
 
 
 
@@ -32874,6 +32900,16 @@ var Verifier = (function (exports) {
 	  return obj[key];
 	}
 
+	function stripHashPrefix(remoteHash, prefixes) {
+	  for (var i = 0; i < prefixes.length; i++) {
+	    var prefix = prefixes[i];
+	    if (startsWith(remoteHash, prefix)) {
+	      return remoteHash.slice(prefix.length);
+	    }
+	  }
+	  return remoteHash;
+	}
+
 	function getEtherScanFetcher(transactionId, chain) {
 	  var action = '&action=eth_getTransactionByHash&txhash=';
 	  var etherScanUrl = void 0;
@@ -32910,7 +32946,7 @@ var Verifier = (function (exports) {
 	  var data = jsonResponse.result;
 	  var date = new Date(parseInt(block.timestamp, 16) * 1000);
 	  var issuingAddress = data.from;
-	  var opReturnScript = cleanupRemoteHash(data.input); // remove '0x'
+	  var opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
 
 	  // The method of checking revocations by output spent do not work with Ethereum.
 	  // There are no input/outputs, only balances.
@@ -32977,14 +33013,6 @@ var Verifier = (function (exports) {
 	  });
 	}
 
-	function cleanupRemoteHash(remoteHash) {
-	  var prefix = '0x';
-	  if (startsWith(remoteHash, prefix)) {
-	    return remoteHash.slice(prefix.length);
-	  }
-	  return remoteHash;
-	}
-
 	function getBlockcypherFetcher(transactionId, chain) {
 	  var blockCypherUrl = void 0;
 	  if (chain === BLOCKCHAINS.bitcoin.code) {
@@ -33042,7 +33070,7 @@ var Verifier = (function (exports) {
 	  var outputs = jsonResponse.outputs;
 	  var lastOutput = outputs[outputs.length - 1];
 	  var issuingAddress = jsonResponse.inputs[0].addresses[0];
-	  var opReturnScript = cleanupRemoteHash$1(lastOutput.script);
+	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
 	  var revokedAddresses = outputs.filter(function (output) {
 	    return !!output.spent_by;
 	  }).map(function (output) {
@@ -33059,7 +33087,7 @@ var Verifier = (function (exports) {
 	  var outputs = jsonResponse.data.outputs;
 	  var lastOutput = outputs[outputs.length - 1];
 	  var issuingAddress = jsonResponse.data.inputs[0].address;
-	  var opReturnScript = cleanupRemoteHash$1(lastOutput.script);
+	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
 	  // Legacy v1.2 verification notes:
 	  // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
 	  // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
@@ -33068,19 +33096,6 @@ var Verifier = (function (exports) {
 	  // you should consider adding an additional lookup to crosscheck revocation addresses.
 	  return new TransactionData(opReturnScript, issuingAddress, time, undefined);
 	}
-
-	function cleanupRemoteHash$1(remoteHash) {
-	  var prefixes = ['6a20', 'OP_RETURN '];
-	  for (var i = 0; i < prefixes.length; i++) {
-	    var prefix = prefixes[i];
-	    if (startsWith(remoteHash, prefix)) {
-	      return remoteHash.slice(prefix.length);
-	    }
-	  }
-	  return remoteHash;
-	}
-
-	var log$3 = browser$1('blockchainConnectors');
 
 	var BitcoinExplorers = [function (transactionId, chain) {
 	  return getChainSoFetcher(transactionId, chain);
@@ -33097,8 +33112,43 @@ var Verifier = (function (exports) {
 	  return getBlockcypherFetcher(transactionId, chain);
 	}];
 
+	var log$3 = browser$1('blockchainConnectors');
+
+	function PromiseProperRace(promises, count) {
+	  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+	  // Source: https://blog.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+	  promises = Array.from(promises);
+	  if (promises.length < count) {
+	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction'));
+	  }
+
+	  var indexPromises = promises.map(function (p, index) {
+	    return p.then(function () {
+	      return index;
+	    }).catch(function (err) {
+	      log$3(err);
+	      throw index;
+	    });
+	  });
+
+	  return Promise.race(indexPromises).then(function (index) {
+	    var p = promises.splice(index, 1)[0];
+	    p.then(function (e) {
+	      return results.push(e);
+	    });
+	    if (count === 1) {
+	      return results;
+	    }
+	    return PromiseProperRace(promises, count - 1, results);
+	  }).catch(function (index) {
+	    promises.splice(index, 1);
+	    return PromiseProperRace(promises, count, results);
+	  });
+	}
+
 	function lookForTx(transactionId, chain, certificateVersion) {
-	  var BlockchainExplorers;
+	  var BlockchainExplorers = void 0;
 	  switch (chain) {
 	    case BLOCKCHAINS.bitcoin.code:
 	    case BLOCKCHAINS.regtest.code:
@@ -33153,8 +33203,8 @@ var Verifier = (function (exports) {
 	      // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
 	      // are above the `MininumConfirmations` threshold, then we can proceed with verification.
 	      var firstResponse = winners[0];
-	      for (var i = 1; i < winners.length; i++) {
-	        var thisResponse = winners[i];
+	      for (var _i = 1; _i < winners.length; _i++) {
+	        var thisResponse = winners[_i];
 	        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
 	          throw new VerifierError(fetchRemoteHash, 'Issuing addresses returned by the blockchain APIs were different');
 	        }
@@ -33168,39 +33218,6 @@ var Verifier = (function (exports) {
 	    });
 	  });
 	}
-
-	var PromiseProperRace = function PromiseProperRace(promises, count) {
-	  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-	  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-	  promises = Array.from(promises);
-	  if (promises.length < count) {
-	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction'));
-	  }
-
-	  var indexPromises = promises.map(function (p, index) {
-	    return p.then(function () {
-	      return index;
-	    }).catch(function (err) {
-	      log$3(err);
-	      throw index;
-	    });
-	  });
-
-	  return Promise.race(indexPromises).then(function (index) {
-	    var p = promises.splice(index, 1)[0];
-	    p.then(function (e) {
-	      return results.push(e);
-	    });
-	    if (count === 1) {
-	      return results;
-	    }
-	    return PromiseProperRace(promises, count - 1, results);
-	  }).catch(function (index) {
-	    promises.splice(index, 1);
-	    return PromiseProperRace(promises, count, results);
-	  });
-	};
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 

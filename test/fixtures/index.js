@@ -10,7 +10,7 @@ import MainnetV2Valid from './mainnet-valid-2.0';
 import MainnetV2AlphaValid from './mainnet-valid-2.0-alpha';
 import MocknetV2Valid from './mocknet-valid-2.0';
 import RegtestV2Valid from './regtest-valid-2.0';
-import Testnet404IssuerUrl from './testnet-404-issuer-url';
+import TestnetV1IssuerUrl404 from './testnet-404-issuer-url-1.2';
 import TestnetV1NoIssuerProfile from './testnet-no-issuer-profile-1.2';
 import TestnetRevokedV2 from './testnet-revoked-key-2.0';
 import TestnetTamperedHashes from './testnet-tampered-hashes-2.0';
@@ -31,7 +31,7 @@ export default {
   MainnetV2AlphaValid,
   MocknetV2Valid,
   RegtestV2Valid,
-  Testnet404IssuerUrl,
+  TestnetV1IssuerUrl404,
   TestnetV1NoIssuerProfile,
   TestnetRevokedV2,
   TestnetTamperedHashes,

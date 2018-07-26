@@ -55,22 +55,14 @@ function getFullStepsFromSubSteps (subStepMap) {
   return stepsArray;
 }
 
-export default function getVerificationMap (chain, version) {
-  let key;
-
+export default function getVerificationMap (chain, version = CERTIFICATE_VERSIONS.V2_0) {
   if (!chain) {
     return [];
   }
 
-  // v1.2 is a specific case, otherwise treated as test chain or v2
-  if (version === CERTIFICATE_VERSIONS.V1_2) {
-    key = CERTIFICATE_VERSIONS.V1_2;
-  } else {
-    if (isTestChain(chain)) {
-      key = BLOCKCHAINS.mocknet.code;
-    } else {
-      key = CERTIFICATE_VERSIONS.V2_0;
-    }
+  let key = version;
+  if (isTestChain(chain)) {
+    key = BLOCKCHAINS.mocknet.code;
   }
 
   const verificationMap = Object.assign(versionVerificationMap);

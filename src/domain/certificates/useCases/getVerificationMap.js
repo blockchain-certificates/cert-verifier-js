@@ -1,5 +1,5 @@
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, STEPS, SUB_STEPS } from '../../../constants';
-import isTestChain from '../../chains/useCases/isTestChain';
+import domain from '../../';
 
 const versionVerificationMap = {
   [CERTIFICATE_VERSIONS.V1_2]: [
@@ -61,7 +61,7 @@ export default function getVerificationMap (chain, version = CERTIFICATE_VERSION
   }
 
   let key = version;
-  if (isTestChain(chain)) {
+  if (domain.chain.isTestChain(chain)) {
     key = BLOCKCHAINS.mocknet.code;
   }
 

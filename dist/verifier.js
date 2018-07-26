@@ -6834,6 +6834,7 @@ const BLOCKCHAINS = {
   bitcoin: {
     code: 'bitcoin',
     name: 'Bitcoin',
+    prefixes: ['6a20', 'OP_RETURN '],
     signatureValue: 'bitcoinMainnet',
     transactionTemplates: {
       full: `https://blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
@@ -6843,6 +6844,7 @@ const BLOCKCHAINS = {
   ethmain: {
     code: 'ethmain',
     name: 'Ethereum',
+    prefixes: ['0x'],
     signatureValue: 'ethereumMainnet',
     transactionTemplates: {
       full: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
@@ -7382,11 +7384,16 @@ function getChain (address, signature = null) {
   return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
 }
 
+const REVOCATION_LANGUAGE = {
+  PRE_REASON: 'Reason given:',
+  REVOCATION: 'This certificate has been revoked by the issuer.'
+};
+
 function generateRevocationReason (reason) {
   reason = reason.trim();
   // TODO take strings out to constants
-  reason = reason.length > 0 ? ` Reason given: ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
-  return `This certificate has been revoked by the issuer.${reason}`;
+  reason = reason.length > 0 ? ` ${REVOCATION_LANGUAGE.PRE_REASON} ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
+  return `${REVOCATION_LANGUAGE.REVOCATION}${reason}`;
 }
 
 class Key {
@@ -7427,7 +7434,8 @@ function getTransactionId$1 (certificateReceipt) {
     return certificateReceipt.anchors[0].sourceId;
   } catch (e) {
     throw new VerifierError(
-      'Can\'t verify this certificate without a transaction ID to compare against.'
+      '',
+      'Cannot verify this certificate without a transaction ID to compare against.'
     );
   }
 }
@@ -7443,23 +7451,11 @@ function getTransactionId$1 (certificateReceipt) {
  * @returns {*}
  */
 function getTransactionLink (transactionId, chainObject, getRawVersion = false) {
+  if (!transactionId || !chainObject) {
+    return '';
+  }
   const rawTransactionLinkTemplate = chainObject.transactionTemplates[getRawVersion ? 'raw' : 'full'];
   return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
-}
-
-function isTestChain (chain) {
-  if (chain) {
-    const chainCode = typeof chain === 'string' ? chain : chain.code;
-    const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);
-
-    if (!isChainValid) {
-      return null;
-    }
-
-    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
-  }
-
-  return null;
 }
 
 const versionVerificationMap = {
@@ -7497,6 +7493,34 @@ const versionVerificationMap = {
 };
 
 /**
+ * stepsObjectToArray
+ *
+ * Turn an object with steps as properties to an array
+ *
+ * @param stepsObject
+ * @returns {{code: string}[]}
+ */
+function stepsObjectToArray (stepsObject) {
+  return Object.keys(stepsObject).map(stepCode => {
+    return {...stepsObject[stepCode], code: stepCode};
+  });
+}
+
+/**
+ * setSubStepsToSteps
+ *
+ * Takes an array of sub-steps and set them to their proper parent step
+ *
+ * @param subSteps
+ * @returns {any}
+ */
+function setSubStepsToSteps (subSteps) {
+  const steps = JSON.parse(JSON.stringify(language));
+  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
+  return steps;
+}
+
+/**
  * getFullStepsFromSubSteps
  *
  * Builds a full steps array (with subSteps property) from an array of sub-steps
@@ -7505,33 +7529,21 @@ const versionVerificationMap = {
  * @returns {Array}
  */
 function getFullStepsFromSubSteps (subStepMap) {
-  // Get deep copy of steps
-  const steps = JSON.parse(JSON.stringify(language));
   let subSteps = subStepMap.map(stepCode => Object.assign({}, language$1[stepCode]));
-  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
 
-  let stepsArray = [];
-  Object.keys(steps).forEach(stepCode => stepsArray.push({...steps[stepCode], code: stepCode}));
+  const steps = setSubStepsToSteps(subSteps);
 
-  return stepsArray;
+  return stepsObjectToArray(steps);
 }
 
-function getVerificationMap (chain, version) {
-  let key;
-
+function getVerificationMap (chain, version = CERTIFICATE_VERSIONS.V2_0) {
   if (!chain) {
     return [];
   }
 
-  // v1.2 is a specific case, otherwise treated as test chain or v2
-  if (version === CERTIFICATE_VERSIONS.V1_2) {
-    key = CERTIFICATE_VERSIONS.V1_2;
-  } else {
-    if (isTestChain(chain)) {
-      key = BLOCKCHAINS.mocknet.code;
-    } else {
-      key = CERTIFICATE_VERSIONS.V2_0;
-    }
+  let key = version;
+  if (domain$1.chains.isTestChain(chain)) {
+    key = BLOCKCHAINS.mocknet.code;
   }
 
   const verificationMap = Object.assign(versionVerificationMap);
@@ -7547,6 +7559,21 @@ var certificates = /*#__PURE__*/Object.freeze({
 	getTransactionLink: getTransactionLink,
 	getVerificationMap: getVerificationMap
 });
+
+function isTestChain (chain) {
+  if (chain) {
+    const chainCode = typeof chain === 'string' ? chain : chain.code;
+    const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);
+
+    if (!isChainValid) {
+      return null;
+    }
+
+    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
+  }
+
+  return null;
+}
 
 
 
@@ -32955,6 +32982,16 @@ function getCaseInsensitiveKey (obj, value) {
   return obj[key];
 }
 
+function stripHashPrefix (remoteHash, prefixes) {
+  for (let i = 0; i < prefixes.length; i++) {
+    let prefix = prefixes[i];
+    if (startsWith(remoteHash, prefix)) {
+      return remoteHash.slice(prefix.length);
+    }
+  }
+  return remoteHash;
+}
+
 function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';
   let etherScanUrl;
@@ -32994,7 +33031,7 @@ function parseEtherScanResponse (jsonResponse, block) {
   const data = jsonResponse.result;
   const date = new Date(parseInt(block.timestamp, 16) * 1000);
   const issuingAddress = data.from;
-  const opReturnScript = cleanupRemoteHash(data.input); // remove '0x'
+  const opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
 
   // The method of checking revocations by output spent do not work with Ethereum.
   // There are no input/outputs, only balances.
@@ -33065,14 +33102,6 @@ function checkEtherScanConfirmations (chain, blockNumber) {
   });
 }
 
-function cleanupRemoteHash (remoteHash) {
-  let prefix = '0x';
-  if (startsWith(remoteHash, prefix)) {
-    return remoteHash.slice(prefix.length);
-  }
-  return remoteHash;
-}
-
 function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;
   if (chain === BLOCKCHAINS.bitcoin.code) {
@@ -33134,10 +33163,10 @@ function parseBlockCypherResponse (jsonResponse) {
   }
   const time = dateToUnixTimestamp(jsonResponse.received);
   const outputs = jsonResponse.outputs;
-  var lastOutput = outputs[outputs.length - 1];
-  var issuingAddress = jsonResponse.inputs[0].addresses[0];
-  const opReturnScript = cleanupRemoteHash$1(lastOutput.script);
-  var revokedAddresses = outputs
+  const lastOutput = outputs[outputs.length - 1];
+  const issuingAddress = jsonResponse.inputs[0].addresses[0];
+  const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
+  const revokedAddresses = outputs
     .filter(output => !!output.spent_by)
     .map(output => output.addresses[0]);
   return new TransactionData(
@@ -33156,9 +33185,9 @@ function parseChainSoResponse (jsonResponse) {
   }
   const time = new Date(jsonResponse.data.time * 1000);
   const outputs = jsonResponse.data.outputs;
-  var lastOutput = outputs[outputs.length - 1];
-  var issuingAddress = jsonResponse.data.inputs[0].address;
-  const opReturnScript = cleanupRemoteHash$1(lastOutput.script);
+  const lastOutput = outputs[outputs.length - 1];
+  const issuingAddress = jsonResponse.data.inputs[0].address;
+  const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
   // Legacy v1.2 verification notes:
   // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
   // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
@@ -33167,19 +33196,6 @@ function parseChainSoResponse (jsonResponse) {
   // you should consider adding an additional lookup to crosscheck revocation addresses.
   return new TransactionData(opReturnScript, issuingAddress, time, undefined);
 }
-
-function cleanupRemoteHash$1 (remoteHash) {
-  let prefixes = ['6a20', 'OP_RETURN '];
-  for (var i = 0; i < prefixes.length; i++) {
-    let prefix = prefixes[i];
-    if (startsWith(remoteHash, prefix)) {
-      return remoteHash.slice(prefix.length);
-    }
-  }
-  return remoteHash;
-}
-
-const log$3 = browser$1('blockchainConnectors');
 
 const BitcoinExplorers = [
   (transactionId, chain) => getChainSoFetcher(transactionId, chain),
@@ -33195,8 +33211,35 @@ const BlockchainExplorersWithSpentOutputInfo = [
   (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 
+const log$3 = browser$1('blockchainConnectors');
+
+function PromiseProperRace (promises, count, results = []) {
+  // Source: https://blog.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+  promises = Array.from(promises);
+  if (promises.length < count) {
+    return Promise.reject(new VerifierError(fetchRemoteHash, `Could not confirm the transaction`));
+  }
+
+  let indexPromises = promises.map((p, index) => p.then(() => index).catch((err) => {
+    log$3(err);
+    throw index;
+  }));
+
+  return Promise.race(indexPromises).then(index => {
+    let p = promises.splice(index, 1)[0];
+    p.then(e => results.push(e));
+    if (count === 1) {
+      return results;
+    }
+    return PromiseProperRace(promises, count - 1, results);
+  }).catch(index => {
+    promises.splice(index, 1);
+    return PromiseProperRace(promises, count, results);
+  });
+}
+
 function lookForTx (transactionId, chain, certificateVersion) {
-  var BlockchainExplorers;
+  let BlockchainExplorers;
   switch (chain) {
     case BLOCKCHAINS.bitcoin.code:
     case BLOCKCHAINS.regtest.code:
@@ -33226,12 +33269,12 @@ function lookForTx (transactionId, chain, certificateVersion) {
   let limit;
   if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
     limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
-    for (var i = 0; i < limit; i++) {
+    for (let i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
     limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
-    for (var j = 0; j < limit; j++) {
+    for (let j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
   }
@@ -33251,9 +33294,9 @@ function lookForTx (transactionId, chain, certificateVersion) {
       // Note that APIs returning results where the number of confirmations is less than `MininumConfirmations` are
       // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
       // are above the `MininumConfirmations` threshold, then we can proceed with verification.
-      var firstResponse = winners[0];
-      for (var i = 1; i < winners.length; i++) {
-        var thisResponse = winners[i];
+      const firstResponse = winners[0];
+      for (let i = 1; i < winners.length; i++) {
+        const thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
           throw new VerifierError(fetchRemoteHash, `Issuing addresses returned by the blockchain APIs were different`);
         }
@@ -33267,31 +33310,6 @@ function lookForTx (transactionId, chain, certificateVersion) {
     });
   });
 }
-
-var PromiseProperRace = function (promises, count, results = []) {
-  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-  promises = Array.from(promises);
-  if (promises.length < count) {
-    return Promise.reject(new VerifierError(fetchRemoteHash, `Could not confirm the transaction`));
-  }
-
-  let indexPromises = promises.map((p, index) => p.then(() => index).catch((err) => {
-    log$3(err);
-    throw index;
-  }));
-
-  return Promise.race(indexPromises).then(index => {
-    let p = promises.splice(index, 1)[0];
-    p.then(e => results.push(e));
-    if (count === 1) {
-      return results;
-    }
-    return PromiseProperRace(promises, count - 1, results);
-  }).catch(index => {
-    promises.splice(index, 1);
-    return PromiseProperRace(promises, count, results);
-  });
-};
 
 const log$4 = browser$1('Verifier');
 

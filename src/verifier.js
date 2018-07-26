@@ -154,9 +154,8 @@ export default class Verifier {
    * @returns {Promise<void>}
    */
   async _verifyV12 () {
-    // Get transaction
-    // TODO use already computed this.certificate.transactionId
-    let transactionId = this._doAction(
+    // Check transaction id validity
+    this._doAction(
       SUB_STEPS.getTransactionId,
       () => checks.isTransactionIdValid(this.transactionId)
     );
@@ -164,17 +163,13 @@ export default class Verifier {
     // Compute local hash
     let localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
-      async () =>
-        checks.computeLocalHash(this.documentToVerify, this.version)
+      async () => checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
-    // Get remote hash
-    let txData = await this._doAsyncAction(SUB_STEPS.fetchRemoteHash, async () =>
-      blockchainConnectors.lookForTx(
-        transactionId,
-        this.chain.code,
-        this.version
-      )
+    // Fetch remote hash
+    let txData = await this._doAsyncAction(
+      SUB_STEPS.fetchRemoteHash,
+      async () => blockchainConnectors.lookForTx(this.transactionId, this.chain.code, this.version)
     );
 
     // Get issuer profile
@@ -196,10 +191,7 @@ export default class Verifier {
 
     // Check merkle root
     this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      checks.ensureMerkleRootEqual(
-        this.receipt.merkleRoot,
-        txData.remoteHash
-      )
+      checks.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );
 
     // Check receipt
@@ -218,11 +210,7 @@ export default class Verifier {
 
     // Check authenticity
     this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      checks.ensureValidIssuingKey(
-        issuerKeyMap,
-        txData.issuingAddress,
-        txData.time
-      )
+      checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
     );
 
     // Check expiration
@@ -239,8 +227,8 @@ export default class Verifier {
    * @returns {Promise<void>}
    */
   async _verifyV2 () {
-    // Get transaction
-    let transactionId = this._doAction(
+    // Check transaction id validity
+    this._doAction(
       SUB_STEPS.getTransactionId,
       () => checks.isTransactionIdValid(this.transactionId)
     );
@@ -248,33 +236,31 @@ export default class Verifier {
     // Compute local hash
     let localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
-      async () => {
-        return checks.computeLocalHash(this.documentToVerify, this.version);
-      }
+      async () => checks.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
     let txData = await this._doAsyncAction(
       SUB_STEPS.fetchRemoteHash,
-      async () => {
-        return blockchainConnectors.lookForTx(transactionId, this.chain.code);
-      }
+      async () => blockchainConnectors.lookForTx(this.transactionId, this.chain.code)
     );
 
-    // Get issuer keys
+    // Get issuer profile
+    let issuerProfileJson = await this._doAsyncAction(
+      SUB_STEPS.getIssuerProfile,
+      async () => domain.verifier.getIssuerProfile(this.issuer.id)
+    );
+
+    // Parse issuer keys
     let issuerKeyMap = await this._doAsyncAction(
       SUB_STEPS.parseIssuerKeys,
-      async () => {
-        return domain.verifier.getIssuerKeys(this.issuer.id);
-      }
+      () => domain.verifier.parseIssuerKeys(issuerProfileJson)
     );
 
-    // Get issuer keys
+    // Get revoked assertions
     let revokedAssertions = await this._doAsyncAction(
       null,
-      async () => {
-        return domain.verifier.getRevokedAssertions(this.issuer.revocationList);
-      }
+      async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
     );
 
     // Compare hashes
@@ -284,10 +270,7 @@ export default class Verifier {
 
     // Check merkle root
     this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      checks.ensureMerkleRootEqual(
-        this.receipt.merkleRoot,
-        txData.remoteHash
-      )
+      checks.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );
 
     // Check receipt
@@ -302,11 +285,7 @@ export default class Verifier {
 
     // Check authenticity
     this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      checks.ensureValidIssuingKey(
-        issuerKeyMap,
-        txData.issuingAddress,
-        txData.time
-      )
+      checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
     );
 
     // Check expiration date

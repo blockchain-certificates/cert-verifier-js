@@ -3,12 +3,12 @@ import domain from '../../../../../src/domain/index';
 describe('domain certificates get transaction id use case test suite', () => {
   describe('given it is called with a valid certificate receipt', () => {
     it('should return a transaction id', () => {
-      const receiptAssertion = {
+      const receiptFixture = {
         anchors: [{
           sourceId: 'source-id-assertion'
         }]
       };
-      expect(domain.certificates.getTransactionId(receiptAssertion)).toBe('source-id-assertion');
+      expect(domain.certificates.getTransactionId(receiptFixture)).toBe('source-id-assertion');
     });
   });
 

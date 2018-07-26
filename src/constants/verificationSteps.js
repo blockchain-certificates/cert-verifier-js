@@ -5,15 +5,18 @@ const statusCheck = 'statusCheck';
 const language = {
   [formatValidation]: {
     label: 'Format validation',
-    actionLabel: 'Validating format'
+    labelPending: 'Validating format',
+    subSteps: []
   },
   [hashComparison]: {
     label: 'Hash comparison',
-    actionLabel: 'Comparing hash'
+    labelPending: 'Comparing hash',
+    subSteps: []
   },
   [statusCheck]: {
     label: 'Status check',
-    actionLabel: 'Checking record status'
+    labelPending: 'Checking record status',
+    subSteps: []
   }
 };
 

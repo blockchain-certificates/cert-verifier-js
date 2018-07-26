@@ -6666,6 +6666,7 @@ var API_URLS = {
   etherScanRopstenUrl
 };
 
+// Certificate versions
 const V1_1 = '1.1';
 const V1_2 = '1.2';
 const V2_0 = '2.0';
@@ -6683,15 +6684,18 @@ const statusCheck = 'statusCheck';
 const language = {
   [formatValidation]: {
     label: 'Format validation',
-    actionLabel: 'Validating format'
+    labelPending: 'Validating format',
+    subSteps: []
   },
   [hashComparison]: {
     label: 'Hash comparison',
-    actionLabel: 'Comparing hash'
+    labelPending: 'Comparing hash',
+    subSteps: []
   },
   [statusCheck]: {
     label: 'Status check',
-    actionLabel: 'Checking record status'
+    labelPending: 'Checking record status',
+    subSteps: []
   }
 };
 
@@ -6717,64 +6721,76 @@ const checkExpiresDate = 'checkExpiresDate';
 
 const language$1 = {
   [getTransactionId]: {
-    parentStep: formatValidation,
+    code: getTransactionId,
     label: 'Get transaction ID',
-    actionLabel: 'Getting transaction ID'
+    labelPending: 'Getting transaction ID',
+    parentStep: formatValidation
   },
   [computeLocalHash]: {
-    parentStep: formatValidation,
+    code: computeLocalHash,
     label: 'Compute local hash',
-    actionLabel: 'Computing local hash'
+    labelPending: 'Computing local hash',
+    parentStep: formatValidation
   },
   [fetchRemoteHash]: {
-    parentStep: formatValidation,
+    code: fetchRemoteHash,
     label: 'Fetch remote hash',
-    actionLabel: 'Fetching remote hash'
+    labelPending: 'Fetching remote hash',
+    parentStep: formatValidation
   },
   [getIssuerProfile]: {
-    parentStep: formatValidation,
+    code: getIssuerProfile,
     label: 'Get issuer profile',
-    actionLabel: 'Getting issuer profile'
+    labelPending: 'Getting issuer profile',
+    parentStep: formatValidation
   },
   [parseIssuerKeys]: {
-    parentStep: formatValidation,
+    code: parseIssuerKeys,
     label: 'Parse issuer keys',
-    actionLabel: 'Parsing issuer keys'
+    labelPending: 'Parsing issuer keys',
+    parentStep: formatValidation
   },
   [compareHashes]: {
-    parentStep: hashComparison,
+    code: compareHashes,
     label: 'Compare hashes',
-    actionLabel: 'Comparing hashes'
+    labelPending: 'Comparing hashes',
+    parentStep: hashComparison
   },
   [checkMerkleRoot]: {
-    parentStep: hashComparison,
+    code: checkMerkleRoot,
     label: 'Check Merkle Root',
-    actionLabel: 'Checking Merkle Root'
+    labelPending: 'Checking Merkle Root',
+    parentStep: hashComparison
   },
   [checkReceipt]: {
-    parentStep: hashComparison,
+    code: checkReceipt,
     label: 'Check Receipt',
-    actionLabel: 'Checking Receipt'
+    labelPending: 'Checking Receipt',
+    parentStep: hashComparison
   },
   [checkIssuerSignature]: {
-    parentStep: statusCheck,
+    code: checkIssuerSignature,
     label: 'Check Issuer Signature',
-    actionLabel: 'Checking Issuer Signature'
+    labelPending: 'Checking Issuer Signature',
+    parentStep: statusCheck
   },
   [checkAuthenticity]: {
-    parentStep: statusCheck,
+    code: checkAuthenticity,
     label: 'Check Authenticity',
-    actionLabel: 'Checking Authenticity'
+    labelPending: 'Checking Authenticity',
+    parentStep: statusCheck
   },
   [checkRevokedStatus]: {
-    parentStep: statusCheck,
+    code: checkRevokedStatus,
     label: 'Check Revoked Status',
-    actionLabel: 'Checking Revoked Status'
+    labelPending: 'Checking Revoked Status',
+    parentStep: statusCheck
   },
   [checkExpiresDate]: {
-    parentStep: statusCheck,
+    code: checkExpiresDate,
     label: 'Check Expires Date',
-    actionLabel: 'Checking Expires Date'
+    labelPending: 'Checking Expires Date',
+    parentStep: statusCheck
   }
 };
 
@@ -7427,13 +7443,111 @@ function getTransactionLink (transactionId, chainObject, getRawVersion = false) 
   return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 }
 
+function isTestChain (chain) {
+  if (chain) {
+    const chainCode = typeof chain === 'string' ? chain : chain.code;
+    const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);
+
+    if (!isChainValid) {
+      return null;
+    }
+
+    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
+  }
+
+  return null;
+}
+
+const versionVerificationMap = {
+  [CERTIFICATE_VERSIONS.V1_2]: [
+    getTransactionId,
+    computeLocalHash,
+    fetchRemoteHash,
+    getIssuerProfile,
+    parseIssuerKeys,
+    compareHashes,
+    checkMerkleRoot,
+    checkReceipt,
+    checkRevokedStatus,
+    checkAuthenticity,
+    checkExpiresDate
+  ],
+  [CERTIFICATE_VERSIONS.V2_0]: [
+    getTransactionId,
+    computeLocalHash,
+    fetchRemoteHash,
+    parseIssuerKeys,
+    compareHashes,
+    checkMerkleRoot,
+    checkReceipt,
+    checkRevokedStatus,
+    checkAuthenticity,
+    checkExpiresDate
+  ],
+  [BLOCKCHAINS.mocknet.code]: [
+    computeLocalHash,
+    compareHashes,
+    checkReceipt,
+    checkExpiresDate
+  ]
+};
+
+/**
+ * getFullStepsFromSubSteps
+ *
+ * Builds a full steps array (with subSteps property) from an array of sub-steps
+ *
+ * @param subStepMap
+ * @returns {Array}
+ */
+function getFullStepsFromSubSteps (subStepMap) {
+  // Get deep copy of steps
+  const steps = JSON.parse(JSON.stringify(language));
+  let subSteps = subStepMap.map(stepCode => Object.assign({}, language$1[stepCode]));
+  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
+
+  let stepsArray = [];
+  Object.keys(steps).forEach(stepCode => stepsArray.push({...steps[stepCode], code: stepCode}));
+
+  return stepsArray;
+}
+
+function getVerificationMap (chain, version) {
+  let key;
+
+  if (!chain) {
+    return [];
+  }
+
+  // v1.2 is a specific case, otherwise treated as test chain or v2
+  if (version === CERTIFICATE_VERSIONS.V1_2) {
+    key = CERTIFICATE_VERSIONS.V1_2;
+  } else {
+    if (isTestChain(chain)) {
+      key = BLOCKCHAINS.mocknet.code;
+    } else {
+      key = CERTIFICATE_VERSIONS.V2_0;
+    }
+  }
+
+  const verificationMap = Object.assign(versionVerificationMap);
+  return getFullStepsFromSubSteps(verificationMap[key]);
+}
+
 
 
 var certificates = /*#__PURE__*/Object.freeze({
 	getChain: getChain,
 	generateRevocationReason: generateRevocationReason,
 	getTransactionId: getTransactionId$1,
-	getTransactionLink: getTransactionLink
+	getTransactionLink: getTransactionLink,
+	getVerificationMap: getVerificationMap
+});
+
+
+
+var chains = /*#__PURE__*/Object.freeze({
+	isTestChain: isTestChain
 });
 
 var global$1 = (typeof global !== "undefined" ? global :
@@ -15826,6 +15940,7 @@ var verifier = /*#__PURE__*/Object.freeze({
 var domain$1 = {
   addresses,
   certificates,
+  chains,
   verifier
 };
 
@@ -33216,10 +33331,7 @@ class Verifier {
 
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
       await this._verifyV12();
-    } else if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    } else if (domain$1.chains.isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
       await this._verifyV2();
@@ -33250,28 +33362,28 @@ class Verifier {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = language$1[step].actionLabel;
-      log$4(readableAction);
-      this._updateStatusCallback(step, readableAction, STARTING);
+      label = language$1[step].labelPending;
+      log$4(label);
+      this._updateStatusCallback(step, label, STARTING);
     }
 
     try {
       let res = action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, SUCCESS);
-        this._stepsStatuses.push({step, status: SUCCESS, action: readableAction});
+        this._updateStatusCallback(step, label, SUCCESS);
+        this._stepsStatuses.push({step, label, status: SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, FAILURE, err.message);
+        this._updateStatusCallback(step, label, FAILURE, err.message);
         this._stepsStatuses.push({
-          step,
+          code: step,
+          label,
           status: FAILURE,
-          action: readableAction,
-          message: err.message
+          errorMessage: err.message
         });
       }
     }
@@ -33290,72 +33402,31 @@ class Verifier {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = language$1[step].actionLabel;
-      log$4(readableAction);
-      this._updateStatusCallback(step, readableAction, STARTING);
+      label = language$1[step].labelPending;
+      log$4(label);
+      this._updateStatusCallback(step, label, STARTING);
     }
 
     try {
       let res = await action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, SUCCESS);
-        this._stepsStatuses.push({step, status: SUCCESS, readableAction});
+        this._updateStatusCallback(step, label, SUCCESS);
+        this._stepsStatuses.push({step, label, status: SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, FAILURE, err.message);
-        this._stepsStatuses.push({step, status: FAILURE, readableAction, message: err.message});
+        this._updateStatusCallback(step, label, FAILURE, err.message);
+        this._stepsStatuses.push({
+          code: step,
+          label,
+          status: FAILURE,
+          errorMessage: err.message
+        });
       }
     }
-  }
-
-  /**
-   * _failed
-   *
-   * @param stepCode
-   * @param errorMessage
-   * @returns {{step: string, status: string, errorMessage: string}}
-   * @private
-   */
-  _failed ({step, errorMessage}) {
-    log$4(`failure:${errorMessage}`);
-    return {step, status: FAILURE, errorMessage};
-  }
-
-  /**
-   * _isFailing
-   *
-   * whether or not the current verification is failing
-   *
-   * @returns {boolean}
-   * @private
-   */
-  _isFailing () {
-    return this._stepsStatuses.some(step => step.status === FAILURE);
-  }
-
-  /**
-   * _succeed
-   */
-  _succeed () {
-    let status;
-    if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
-      log$4(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
-      );
-      status = MOCK_SUCCESS;
-    } else {
-      log$4('success');
-      status = SUCCESS;
-    }
-
-    return {status};
   }
 
   /**
@@ -33559,19 +33630,62 @@ class Verifier {
   }
 
   /**
+   * _failed
+   *
+   * @param stepCode
+   * @param errorMessage
+   * @returns {{code: string, status: string, errorMessage: string}}
+   * @private
+   */
+  _failed ({step, errorMessage}) {
+    log$4(`failure:${errorMessage}`);
+    return {code: step, status: FAILURE, errorMessage};
+  }
+
+  /**
+   * _isFailing
+   *
+   * whether or not the current verification is failing
+   *
+   * @returns {boolean}
+   * @private
+   */
+  _isFailing () {
+    return this._stepsStatuses.some(step => step.status === FAILURE);
+  }
+
+  /**
+   * _succeed
+   */
+  _succeed () {
+    let status;
+    if (domain$1.chains.isTestChain(this.chain)) {
+      log$4(
+        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
+      );
+      status = MOCK_SUCCESS;
+    } else {
+      log$4('success');
+      status = SUCCESS;
+    }
+
+    return {status};
+  }
+
+  /**
    * _updateStatusCallback
    *
    * calls the origin callback to update on a step status
    *
-   * @param step
-   * @param action
+   * @param code
+   * @param label
    * @param status
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (step, action, status, errorMessage = '') {
-    if (step != null) {
-      let update = {step, action, status};
+  _updateStatusCallback (code, label, status, errorMessage = '') {
+    if (code != null) {
+      let update = {code, label, status};
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }
@@ -33672,7 +33786,7 @@ class Certificate {
     this._setTransactionDetails();
 
     // Get the full verification step-by-step map
-    this.verificationSteps = this._getVerificationStepsMap(version, chain);
+    this.verificationSteps = domain$1.certificates.getVerificationMap(chain, version);
   }
 
   /**
@@ -33684,20 +33798,6 @@ class Certificate {
     this.transactionId = domain$1.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain$1.certificates.getTransactionLink(this.transactionId, this.chain, true);
     this.transactionLink = domain$1.certificates.getTransactionLink(this.transactionId, this.chain);
-  }
-
-  /**
-   * _getVerificationStepsMap
-   *
-   * @param certificateVersion
-   * @param chain
-   * @returns {Array}
-   * @private
-   */
-  _getVerificationStepsMap (certificateVersion, chain) {
-    const stepsMap = [];
-
-    return stepsMap;
   }
 }
 

@@ -15,64 +15,76 @@ const checkExpiresDate = 'checkExpiresDate';
 
 const language = {
   [getTransactionId]: {
-    parentStep: STEPS.formatValidation,
+    code: getTransactionId,
     label: 'Get transaction ID',
-    actionLabel: 'Getting transaction ID'
+    labelPending: 'Getting transaction ID',
+    parentStep: STEPS.formatValidation
   },
   [computeLocalHash]: {
-    parentStep: STEPS.formatValidation,
+    code: computeLocalHash,
     label: 'Compute local hash',
-    actionLabel: 'Computing local hash'
+    labelPending: 'Computing local hash',
+    parentStep: STEPS.formatValidation
   },
   [fetchRemoteHash]: {
-    parentStep: STEPS.formatValidation,
+    code: fetchRemoteHash,
     label: 'Fetch remote hash',
-    actionLabel: 'Fetching remote hash'
+    labelPending: 'Fetching remote hash',
+    parentStep: STEPS.formatValidation
   },
   [getIssuerProfile]: {
-    parentStep: STEPS.formatValidation,
+    code: getIssuerProfile,
     label: 'Get issuer profile',
-    actionLabel: 'Getting issuer profile'
+    labelPending: 'Getting issuer profile',
+    parentStep: STEPS.formatValidation
   },
   [parseIssuerKeys]: {
-    parentStep: STEPS.formatValidation,
+    code: parseIssuerKeys,
     label: 'Parse issuer keys',
-    actionLabel: 'Parsing issuer keys'
+    labelPending: 'Parsing issuer keys',
+    parentStep: STEPS.formatValidation
   },
   [compareHashes]: {
-    parentStep: STEPS.hashComparison,
+    code: compareHashes,
     label: 'Compare hashes',
-    actionLabel: 'Comparing hashes'
+    labelPending: 'Comparing hashes',
+    parentStep: STEPS.hashComparison
   },
   [checkMerkleRoot]: {
-    parentStep: STEPS.hashComparison,
+    code: checkMerkleRoot,
     label: 'Check Merkle Root',
-    actionLabel: 'Checking Merkle Root'
+    labelPending: 'Checking Merkle Root',
+    parentStep: STEPS.hashComparison
   },
   [checkReceipt]: {
-    parentStep: STEPS.hashComparison,
+    code: checkReceipt,
     label: 'Check Receipt',
-    actionLabel: 'Checking Receipt'
+    labelPending: 'Checking Receipt',
+    parentStep: STEPS.hashComparison
   },
   [checkIssuerSignature]: {
-    parentStep: STEPS.statusCheck,
+    code: checkIssuerSignature,
     label: 'Check Issuer Signature',
-    actionLabel: 'Checking Issuer Signature'
+    labelPending: 'Checking Issuer Signature',
+    parentStep: STEPS.statusCheck
   },
   [checkAuthenticity]: {
-    parentStep: STEPS.statusCheck,
+    code: checkAuthenticity,
     label: 'Check Authenticity',
-    actionLabel: 'Checking Authenticity'
+    labelPending: 'Checking Authenticity',
+    parentStep: STEPS.statusCheck
   },
   [checkRevokedStatus]: {
-    parentStep: STEPS.statusCheck,
+    code: checkRevokedStatus,
     label: 'Check Revoked Status',
-    actionLabel: 'Checking Revoked Status'
+    labelPending: 'Checking Revoked Status',
+    parentStep: STEPS.statusCheck
   },
   [checkExpiresDate]: {
-    parentStep: STEPS.statusCheck,
+    code: checkExpiresDate,
     label: 'Check Expires Date',
-    actionLabel: 'Checking Expires Date'
+    labelPending: 'Checking Expires Date',
+    parentStep: STEPS.statusCheck
   }
 };
 

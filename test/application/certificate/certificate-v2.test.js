@@ -1,5 +1,6 @@
 import FIXTURES from '../../fixtures';
 import { Certificate, BLOCKCHAINS } from '../../../src';
+import v20MapAssertion from '../domain/certificates/useCases/assertions/v20MapAssertion';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -94,7 +95,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set verificationSteps to the certificate object', function () {
-        expect(certificate.verificationSteps).toEqual([]);
+        expect(certificate.verificationSteps).toEqual(v20MapAssertion);
       });
     });
   });

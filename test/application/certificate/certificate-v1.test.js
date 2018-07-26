@@ -1,5 +1,6 @@
 import fixture from '../../fixtures/testnet-valid-1.2';
 import { BLOCKCHAINS, Certificate } from '../../../src';
+import v12MapAssertion from '../domain/certificates/useCases/assertions/v12MapAssertion';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -94,12 +95,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set verificationSteps to the certificate object', function () {
-        expect(certificate.verificationSteps).toEqual([]);
-      });
-
-      it('should set the verificationSteps map accordingly', function () {
-        const verificationStepsAssertion = [];
-        expect(certificate.verificationSteps).toEqual(verificationStepsAssertion);
+        expect(certificate.verificationSteps).toEqual(v12MapAssertion);
       });
     });
   });

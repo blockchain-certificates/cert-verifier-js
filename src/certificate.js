@@ -94,7 +94,7 @@ export default class Certificate {
     this._setTransactionDetails();
 
     // Get the full verification step-by-step map
-    this.verificationSteps = this._getVerificationStepsMap(version, chain);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
   }
 
   /**
@@ -106,19 +106,5 @@ export default class Certificate {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
     this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
-  }
-
-  /**
-   * _getVerificationStepsMap
-   *
-   * @param certificateVersion
-   * @param chain
-   * @returns {Array}
-   * @private
-   */
-  _getVerificationStepsMap (certificateVersion, chain) {
-    const stepsMap = [];
-
-    return stepsMap;
   }
 }

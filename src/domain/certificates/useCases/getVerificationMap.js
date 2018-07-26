@@ -1,5 +1,5 @@
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, STEPS, SUB_STEPS } from '../../../constants';
-import isTestChain from '../../chains/useCases/isTestChain';
+import domain from '../../';
 
 const versionVerificationMap = {
   [CERTIFICATE_VERSIONS.V1_2]: [
@@ -36,6 +36,34 @@ const versionVerificationMap = {
 };
 
 /**
+ * stepsObjectToArray
+ *
+ * Turn an object with steps as properties to an array
+ *
+ * @param stepsObject
+ * @returns {{code: string}[]}
+ */
+function stepsObjectToArray (stepsObject) {
+  return Object.keys(stepsObject).map(stepCode => {
+    return {...stepsObject[stepCode], code: stepCode};
+  });
+}
+
+/**
+ * setSubStepsToSteps
+ *
+ * Takes an array of sub-steps and set them to their proper parent step
+ *
+ * @param subSteps
+ * @returns {any}
+ */
+function setSubStepsToSteps (subSteps) {
+  const steps = JSON.parse(JSON.stringify(STEPS.language));
+  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
+  return steps;
+}
+
+/**
  * getFullStepsFromSubSteps
  *
  * Builds a full steps array (with subSteps property) from an array of sub-steps
@@ -44,33 +72,21 @@ const versionVerificationMap = {
  * @returns {Array}
  */
 function getFullStepsFromSubSteps (subStepMap) {
-  // Get deep copy of steps
-  const steps = JSON.parse(JSON.stringify(STEPS.language));
   let subSteps = subStepMap.map(stepCode => Object.assign({}, SUB_STEPS.language[stepCode]));
-  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
 
-  let stepsArray = [];
-  Object.keys(steps).forEach(stepCode => stepsArray.push({...steps[stepCode], code: stepCode}));
+  const steps = setSubStepsToSteps(subSteps);
 
-  return stepsArray;
+  return stepsObjectToArray(steps);
 }
 
-export default function getVerificationMap (chain, version) {
-  let key;
-
+export default function getVerificationMap (chain, version = CERTIFICATE_VERSIONS.V2_0) {
   if (!chain) {
     return [];
   }
 
-  // v1.2 is a specific case, otherwise treated as test chain or v2
-  if (version === CERTIFICATE_VERSIONS.V1_2) {
-    key = CERTIFICATE_VERSIONS.V1_2;
-  } else {
-    if (isTestChain(chain)) {
-      key = BLOCKCHAINS.mocknet.code;
-    } else {
-      key = CERTIFICATE_VERSIONS.V2_0;
-    }
+  let key = version;
+  if (domain.chains.isTestChain(chain)) {
+    key = BLOCKCHAINS.mocknet.code;
   }
 
   const verificationMap = Object.assign(versionVerificationMap);

@@ -7367,15 +7367,37 @@ var Verifier = (function (exports) {
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	var Key = function Key(publicKey, created, revoked, expires) {
+	  _classCallCheck(this, Key);
+
+	  this.publicKey = publicKey;
+	  this.created = created;
+	  this.revoked = revoked;
+	  this.expires = expires;
+	};
+
+	function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 	var SignatureImage = function SignatureImage(image, jobTitle, name) {
-	  _classCallCheck(this, SignatureImage);
+	  _classCallCheck$1(this, SignatureImage);
 
 	  this.image = image;
 	  this.jobTitle = jobTitle;
 	  this.name = name;
 	};
 
-	function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var TransactionData = function TransactionData(remoteHash, issuingAddress, time, revokedAddresses) {
+	  _classCallCheck$2(this, TransactionData);
+
+	  this.remoteHash = remoteHash;
+	  this.issuingAddress = issuingAddress;
+	  this.time = time;
+	  this.revokedAddresses = revokedAddresses;
+	};
+
+	function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
@@ -7385,7 +7407,7 @@ var Verifier = (function (exports) {
 	  _inherits(VerifierError, _Error);
 
 	  function VerifierError(stepCode, message) {
-	    _classCallCheck$1(this, VerifierError);
+	    _classCallCheck$3(this, VerifierError);
 
 	    var _this = _possibleConstructorReturn(this, (VerifierError.__proto__ || Object.getPrototypeOf(VerifierError)).call(this, message));
 
@@ -7466,8 +7488,7 @@ var Verifier = (function (exports) {
 
 	  var stepsArray = [];
 	  Object.keys(steps).forEach(function (stepCode) {
-	    var step = steps[stepCode];
-	    return stepsArray.push(_extends({}, step, { code: stepCode }));
+	    return stepsArray.push(_extends({}, steps[stepCode], { code: stepCode }));
 	  });
 
 	  return stepsArray;
@@ -7510,12 +7531,6 @@ var Verifier = (function (exports) {
 	var chains = /*#__PURE__*/Object.freeze({
 		isTestChain: isTestChain
 	});
-
-	var domain = {
-	  addresses: addresses,
-	  certificates: certificates,
-	  chains: chains
-	};
 
 	var global$1 = (typeof global !== "undefined" ? global :
 	            typeof self !== "undefined" ? self :
@@ -11460,7 +11475,7 @@ var Verifier = (function (exports) {
 
 	xhr = null; // Help gc
 
-	var domain$1;
+	var domain;
 
 	// This constructor is used to store event handlers. Instantiating this is
 	// faster than explicitly calling `Object.create(null)` to get a "clean" empty
@@ -11490,8 +11505,8 @@ var Verifier = (function (exports) {
 	  this.domain = null;
 	  if (EventEmitter.usingDomains) {
 	    // if there is an active domain, then attach to it.
-	    if (domain$1.active && !(this instanceof domain$1.Domain)) {
-	      this.domain = domain$1.active;
+	    if (domain.active && !(this instanceof domain.Domain)) {
+	      this.domain = domain.active;
 	    }
 	  }
 
@@ -15722,6 +15737,22 @@ var Verifier = (function (exports) {
 	  });
 	}
 
+	function getIssuerProfile$1(issuerId) {
+	  var issuerProfileFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: issuerId }).then(function (response) {
+	      try {
+	        var issuerProfileJson = JSON.parse(response);
+	        resolve(issuerProfileJson);
+	      } catch (err) {
+	        reject(new VerifierError(getIssuerProfile, err));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(getIssuerProfile, 'Unable to get issuer profile'));
+	    });
+	  });
+	  return issuerProfileFetcher;
+	}
+
 	/* eslint no-useless-escape: "off" */
 
 	function noOffset(s) {
@@ -15789,26 +15820,6 @@ var Verifier = (function (exports) {
 	  return dateFromIso(date);
 	}
 
-	function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var TransactionData = function TransactionData(remoteHash, issuingAddress, time, revokedAddresses) {
-	  _classCallCheck$2(this, TransactionData);
-
-	  this.remoteHash = remoteHash;
-	  this.issuingAddress = issuingAddress;
-	  this.time = time;
-	  this.revokedAddresses = revokedAddresses;
-	};
-
-	var Key = function Key(publicKey, created, revoked, expires) {
-	  _classCallCheck$2(this, Key);
-
-	  this.publicKey = publicKey;
-	  this.created = created;
-	  this.revoked = revoked;
-	  this.expires = expires;
-	};
-
 	function parseIssuerKeys$1(issuerProfileJson) {
 	  try {
 	    var keyMap = {};
@@ -15838,29 +15849,6 @@ var Verifier = (function (exports) {
 	  } catch (e) {
 	    throw new VerifierError(parseIssuerKeys, 'Unable to parse JSON out of issuer identification data.');
 	  }
-	}
-
-	function parseRevocationKey(issuerProfileJson) {
-	  if (issuerProfileJson.revocationKeys && issuerProfileJson.revocationKeys.length > 0) {
-	    return issuerProfileJson.revocationKeys[0].key;
-	  }
-	  return null;
-	}
-
-	function getIssuerProfile$1(issuerId) {
-	  var issuerProfileFetcher = new Promise(function (resolve, reject) {
-	    return request$1({ url: issuerId }).then(function (response) {
-	      try {
-	        var issuerProfileJson = JSON.parse(response);
-	        resolve(issuerProfileJson);
-	      } catch (err) {
-	        reject(new VerifierError(getIssuerProfile, err));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(getIssuerProfile, 'Unable to get issuer profile'));
-	    });
-	  });
-	  return issuerProfileFetcher;
 	}
 
 	function getIssuerKeys(issuerId) {
@@ -15897,6 +15885,190 @@ var Verifier = (function (exports) {
 	    });
 	  });
 	  return revocationListFetcher;
+	}
+
+	function parseRevocationKey(issuerProfileJson) {
+	  if (issuerProfileJson.revocationKeys && issuerProfileJson.revocationKeys.length > 0) {
+	    return issuerProfileJson.revocationKeys[0].key;
+	  }
+	  return null;
+	}
+
+
+
+	var verifier = /*#__PURE__*/Object.freeze({
+		getIssuerKeys: getIssuerKeys,
+		getIssuerProfile: getIssuerProfile$1,
+		getRevokedAssertions: getRevokedAssertions,
+		parseIssuerKeys: parseIssuerKeys$1,
+		parseRevocationKey: parseRevocationKey
+	});
+
+	var domain$1 = {
+	  addresses: addresses,
+	  certificates: certificates,
+	  chains: chains,
+	  verifier: verifier
+	};
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	/**
+	 * _getSignatureImages
+	 *
+	 * @param signatureRawObject
+	 * @param certificateVersion
+	 * @returns {Array}
+	 * @private
+	 */
+	function getSignatureImages(signatureRawObject, certificateVersion) {
+	  var signatureImageObjects = [];
+
+	  switch (certificateVersion) {
+	    case CERTIFICATE_VERSIONS.V1_1:
+	    case CERTIFICATE_VERSIONS.V1_2:
+	      if (signatureRawObject.constructor === Array) {
+	        for (var index in signatureRawObject) {
+	          var signatureLine = signatureRawObject[index];
+	          var jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+	          var signerName = 'name' in signatureLine ? signatureLine.name : null;
+	          var signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+	          signatureImageObjects.push(signatureObject);
+	        }
+	      } else {
+	        var _signatureObject = new SignatureImage(signatureRawObject, null, null);
+	        signatureImageObjects.push(_signatureObject);
+	      }
+	      break;
+
+	    case CERTIFICATE_VERSIONS.V2_0:
+	      for (var _index in signatureRawObject) {
+	        var _signatureLine = signatureRawObject[_index];
+	        var _signatureObject2 = new SignatureImage(_signatureLine.image, _signatureLine.jobTitle, _signatureLine.name);
+	        signatureImageObjects.push(_signatureObject2);
+	      }
+	      break;
+	  }
+
+	  return signatureImageObjects;
+	}
+
+	/**
+	 * parseV1
+	 *
+	 * @param certificateJson
+	 * @returns {Certificate}
+	 */
+	function parseV1(certificateJson) {
+	  var fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
+	  var recipient = certificateJson.recipient || certificateJson.document.recipient;
+	  var assertion = certificateJson.document.assertion;
+
+	  var receipt = certificateJson.receipt;
+	  var version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
+
+	  var certificateImage = fullCertificateObject.image,
+	      description = fullCertificateObject.description,
+	      issuer = fullCertificateObject.issuer,
+	      subtitle = fullCertificateObject.subtitle;
+
+
+	  var publicKey = recipient.publicKey;
+	  var chain = domain$1.certificates.getChain(publicKey);
+	  var expires = assertion.expires;
+	  var id = assertion.uid;
+	  var recipientFullName = recipient.givenName + ' ' + recipient.familyName;
+	  var revocationKey = recipient.revocationKey || null;
+	  var sealImage = issuer.image;
+	  var signature = certificateJson.document.signature;
+	  var signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
+	  var signatureImage = getSignatureImages(signaturesRaw, version);
+	  if ((typeof subtitle === 'undefined' ? 'undefined' : _typeof(subtitle)) === 'object') {
+	    subtitle = subtitle.display ? subtitle.content : '';
+	  }
+	  var name = fullCertificateObject.title || fullCertificateObject.name;
+
+	  return {
+	    certificateImage: certificateImage,
+	    chain: chain,
+	    description: description,
+	    expires: expires,
+	    id: id,
+	    issuer: issuer,
+	    name: name,
+	    publicKey: publicKey,
+	    receipt: receipt,
+	    recipientFullName: recipientFullName,
+	    revocationKey: revocationKey,
+	    sealImage: sealImage,
+	    signature: signature,
+	    signatureImage: signatureImage,
+	    subtitle: subtitle,
+	    version: version
+	  };
+	}
+
+	/**
+	 * parseV2
+	 *
+	 * @param certificateJson
+	 * @returns {Certificate}
+	 */
+	function parseV2(certificateJson) {
+	  var id = certificateJson.id,
+	      expires = certificateJson.expires,
+	      receipt = certificateJson.signature,
+	      badge = certificateJson.badge;
+	  var certificateImage = badge.image,
+	      name = badge.name,
+	      description = badge.description,
+	      subtitle = badge.subtitle,
+	      issuer = badge.issuer;
+
+	  var issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
+	  var recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+
+	  var version = CERTIFICATE_VERSIONS.V2_0;
+	  var chain = domain$1.certificates.getChain(issuerKey, certificateJson.signature);
+	  var publicKey = recipientProfile.publicKey;
+	  var recipientFullName = recipientProfile.name;
+	  var revocationKey = null;
+	  var sealImage = issuer.image;
+	  var signatureImage = getSignatureImages(badge.signatureLines, version);
+
+	  return {
+	    certificateImage: certificateImage,
+	    chain: chain,
+	    description: description,
+	    expires: expires,
+	    id: id,
+	    issuer: issuer,
+	    name: name,
+	    publicKey: publicKey,
+	    receipt: receipt,
+	    recipientFullName: recipientFullName,
+	    revocationKey: revocationKey,
+	    sealImage: sealImage,
+	    signature: null,
+	    signatureImage: signatureImage,
+	    subtitle: subtitle,
+	    version: version
+	  };
+	}
+
+	/**
+	 * parseJson
+	 *
+	 * @param certificateJson
+	 * @returns {*}
+	 */
+	function parseJSON(certificateJson) {
+	  var version = certificateJson['@context'];
+	  if (version instanceof Array) {
+	    return parseV2(certificateJson);
+	  } else {
+	    return parseV1(certificateJson);
+	  }
 	}
 
 	var inherits_browser = createCommonjsModule(function (module) {
@@ -32475,7 +32647,7 @@ var Verifier = (function (exports) {
 	    });
 	    var isRevokedByIssuer = revokedAssertionId !== -1;
 	    if (isRevokedByIssuer) {
-	      throw new VerifierError(checkRevokedStatus, domain.certificates.generateRevocationReason(revokedAddresses[revokedAssertionId].revocationReason));
+	      throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAddresses[revokedAssertionId].revocationReason));
 	    }
 	  }
 	  if (recipientRevocationKey) {
@@ -32484,7 +32656,7 @@ var Verifier = (function (exports) {
 	    });
 	    var isRevokedByRecipient = _revokedAssertionId !== -1;
 	    if (isRevokedByRecipient) {
-	      throw new VerifierError(checkRevokedStatus, domain.certificates.generateRevocationReason(revokedAddresses[_revokedAssertionId].revocationReason));
+	      throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAddresses[_revokedAssertionId].revocationReason));
 	    }
 	  }
 	}
@@ -32503,7 +32675,7 @@ var Verifier = (function (exports) {
 	  var isRevokedByIssuer = revokedAssertionId !== -1;
 
 	  if (isRevokedByIssuer) {
-	    throw new VerifierError(checkRevokedStatus, domain.certificates.generateRevocationReason(revokedAssertions[revokedAssertionId].revocationReason));
+	    throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAssertions[revokedAssertionId].revocationReason));
 	  }
 	}
 
@@ -33030,221 +33202,60 @@ var Verifier = (function (exports) {
 	  });
 	};
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-	/**
-	 * _getSignatureImages
-	 *
-	 * @param signatureRawObject
-	 * @param certificateVersion
-	 * @returns {Array}
-	 * @private
-	 */
-	function getSignatureImages(signatureRawObject, certificateVersion) {
-	  var signatureImageObjects = [];
-
-	  switch (certificateVersion) {
-	    case CERTIFICATE_VERSIONS.V1_1:
-	    case CERTIFICATE_VERSIONS.V1_2:
-	      if (signatureRawObject.constructor === Array) {
-	        for (var index in signatureRawObject) {
-	          var signatureLine = signatureRawObject[index];
-	          var jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-	          var signerName = 'name' in signatureLine ? signatureLine.name : null;
-	          var signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
-	          signatureImageObjects.push(signatureObject);
-	        }
-	      } else {
-	        var _signatureObject = new SignatureImage(signatureRawObject, null, null);
-	        signatureImageObjects.push(_signatureObject);
-	      }
-	      break;
-
-	    case CERTIFICATE_VERSIONS.V2_0:
-	      for (var _index in signatureRawObject) {
-	        var _signatureLine = signatureRawObject[_index];
-	        var _signatureObject2 = new SignatureImage(_signatureLine.image, _signatureLine.jobTitle, _signatureLine.name);
-	        signatureImageObjects.push(_signatureObject2);
-	      }
-	      break;
-	  }
-
-	  return signatureImageObjects;
-	}
-
-	/**
-	 * parseV1
-	 *
-	 * @param certificateJson
-	 * @returns {Certificate}
-	 */
-	function parseV1(certificateJson) {
-	  var fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
-	  var recipient = certificateJson.recipient || certificateJson.document.recipient;
-	  var assertion = certificateJson.document.assertion;
-
-	  var receipt = certificateJson.receipt;
-	  var version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
-
-	  var certificateImage = fullCertificateObject.image,
-	      description = fullCertificateObject.description,
-	      issuer = fullCertificateObject.issuer,
-	      subtitle = fullCertificateObject.subtitle;
-
-
-	  var publicKey = recipient.publicKey;
-	  var chain = domain.certificates.getChain(publicKey);
-	  var expires = assertion.expires;
-	  var id = assertion.uid;
-	  var recipientFullName = recipient.givenName + ' ' + recipient.familyName;
-	  var revocationKey = recipient.revocationKey || null;
-	  var sealImage = issuer.image;
-	  var signature = certificateJson.document.signature;
-	  var signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
-	  var signatureImage = getSignatureImages(signaturesRaw, version);
-	  if ((typeof subtitle === 'undefined' ? 'undefined' : _typeof(subtitle)) === 'object') {
-	    subtitle = subtitle.display ? subtitle.content : '';
-	  }
-	  var name = fullCertificateObject.title || fullCertificateObject.name;
-
-	  return {
-	    certificateImage: certificateImage,
-	    chain: chain,
-	    description: description,
-	    expires: expires,
-	    id: id,
-	    issuer: issuer,
-	    name: name,
-	    publicKey: publicKey,
-	    receipt: receipt,
-	    recipientFullName: recipientFullName,
-	    revocationKey: revocationKey,
-	    sealImage: sealImage,
-	    signature: signature,
-	    signatureImage: signatureImage,
-	    subtitle: subtitle,
-	    version: version
-	  };
-	}
-
-	/**
-	 * parseV2
-	 *
-	 * @param certificateJson
-	 * @returns {Certificate}
-	 */
-	function parseV2(certificateJson) {
-	  var id = certificateJson.id,
-	      expires = certificateJson.expires,
-	      receipt = certificateJson.signature,
-	      badge = certificateJson.badge;
-	  var certificateImage = badge.image,
-	      name = badge.name,
-	      description = badge.description,
-	      subtitle = badge.subtitle,
-	      issuer = badge.issuer;
-
-	  var issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
-	  var recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
-
-	  var version = CERTIFICATE_VERSIONS.V2_0;
-	  var chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
-	  var publicKey = recipientProfile.publicKey;
-	  var recipientFullName = recipientProfile.name;
-	  var revocationKey = null;
-	  var sealImage = issuer.image;
-	  var signatureImage = getSignatureImages(badge.signatureLines, version);
-
-	  return {
-	    certificateImage: certificateImage,
-	    chain: chain,
-	    description: description,
-	    expires: expires,
-	    id: id,
-	    issuer: issuer,
-	    name: name,
-	    publicKey: publicKey,
-	    receipt: receipt,
-	    recipientFullName: recipientFullName,
-	    revocationKey: revocationKey,
-	    sealImage: sealImage,
-	    signature: null,
-	    signatureImage: signatureImage,
-	    subtitle: subtitle,
-	    version: version
-	  };
-	}
-
-	/**
-	 * parseJson
-	 *
-	 * @param certificateJson
-	 * @returns {*}
-	 */
-	function parseJSON(certificateJson) {
-	  var version = certificateJson['@context'];
-	  if (version instanceof Array) {
-	    return parseV2(certificateJson);
-	  } else {
-	    return parseV1(certificateJson);
-	  }
-	}
-
-	var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-	function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var log$4 = browser$1('Certificate');
+	var log$4 = browser$1('Verifier');
 
-	var Certificate = function () {
-	  function Certificate(certificateJson) {
-	    _classCallCheck$3(this, Certificate);
+	var Verifier = function () {
+	  function Verifier(_ref) {
+	    var certificateJson = _ref.certificateJson,
+	        chain = _ref.chain,
+	        expires = _ref.expires,
+	        id = _ref.id,
+	        issuer = _ref.issuer,
+	        receipt = _ref.receipt,
+	        revocationKey = _ref.revocationKey,
+	        transactionId = _ref.transactionId,
+	        version = _ref.version;
 
-	    if ((typeof certificateJson === 'undefined' ? 'undefined' : _typeof$1(certificateJson)) !== 'object') {
-	      try {
-	        certificateJson = JSON.parse(certificateJson);
-	      } catch (err) {
-	        throw new Error('This is not a valid certificate');
-	      }
+	    _classCallCheck$4(this, Verifier);
+
+	    this.chain = chain;
+	    this.expires = expires;
+	    this.id = id;
+	    this.issuer = issuer;
+	    this.receipt = receipt;
+	    this.revocationKey = revocationKey;
+	    this.version = version;
+	    this.transactionId = transactionId;
+
+	    var document = certificateJson.document;
+	    if (!document) {
+	      var certificateCopy = Object.assign({}, certificateJson);
+	      delete certificateCopy['signature'];
+	      document = certificateCopy;
 	    }
 
-	    // Keep certificate JSON object
-	    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
+	    this.documentToVerify = Object.assign({}, document);
 
-	    // Parse certificate
-	    this.parseJson(certificateJson);
-
-	    // Initialize verification
-	    this._initVerifier();
+	    // Final verification result
+	    // Init status as success, we will update the final status at the end
+	    this._stepsStatuses = [];
 	  }
 
 	  /**
-	   * parseJson
-	   *
-	   * @param certificateJson
-	   * @returns {*}
+	   * verify
 	   */
 
 
-	  _createClass(Certificate, [{
-	    key: 'parseJson',
-	    value: function parseJson(certificateJson) {
-	      var parsedCertificate = parseJSON(certificateJson);
-	      this._setProperties(parsedCertificate);
-	    }
-
-	    /**
-	     * verify
-	     */
-
-	  }, {
+	  _createClass(Verifier, [{
 	    key: 'verify',
 	    value: function () {
-	      var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+	      var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
 	        var stepCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 	        var erroredStep;
 	        return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -33274,7 +33285,7 @@ var Verifier = (function (exports) {
 	                break;
 
 	              case 8:
-	                if (!isTestChain(this.chain)) {
+	                if (!domain$1.chains.isTestChain(this.chain)) {
 	                  _context.next = 13;
 	                  break;
 	                }
@@ -33319,177 +33330,142 @@ var Verifier = (function (exports) {
 	      }));
 
 	      function verify() {
-	        return _ref.apply(this, arguments);
+	        return _ref2.apply(this, arguments);
 	      }
 
 	      return verify;
 	    }()
 
 	    /**
-	     * _initVerifier
+	     * doAction
 	     *
-	     * @private
+	     * @param step
+	     * @param action
+	     * @returns {*}
 	     */
 
 	  }, {
-	    key: '_initVerifier',
-	    value: function _initVerifier() {
-	      var document = this.certificateJson.document;
-	      if (!document) {
-	        var certificateCopy = Object.assign({}, this.certificateJson);
-	        delete certificateCopy['signature'];
-	        document = certificateCopy;
+	    key: '_doAction',
+	    value: function _doAction(step, action) {
+	      // If not failing already
+	      if (this._isFailing()) {
+	        return;
 	      }
 
-	      this.documentToVerify = Object.assign({}, document);
+	      var readableAction = void 0;
+	      if (step) {
+	        readableAction = language$1[step].actionLabel;
+	        log$4(readableAction);
+	        this._updateStatusCallback(step, readableAction, STARTING);
+	      }
 
-	      // Final verification result
-	      // Init status as success, we will update the final status at the end
-	      this._stepsStatuses = [];
-	    }
-
-	    /**
-	     * _setProperties
-	     *
-	     * @param certificateImage
-	     * @param chain
-	     * @param description
-	     * @param expires
-	     * @param id
-	     * @param issuer
-	     * @param publicKey
-	     * @param receipt
-	     * @param recipientFullName
-	     * @param revocationKey
-	     * @param sealImage
-	     * @param signature
-	     * @param signatureImage
-	     * @param subtitle
-	     * @param title
-	     * @param version
-	     * @private
-	     */
-
-	  }, {
-	    key: '_setProperties',
-	    value: function _setProperties(_ref2) {
-	      var certificateImage = _ref2.certificateImage,
-	          chain = _ref2.chain,
-	          description = _ref2.description,
-	          expires = _ref2.expires,
-	          id = _ref2.id,
-	          issuer = _ref2.issuer,
-	          name = _ref2.name,
-	          publicKey = _ref2.publicKey,
-	          receipt = _ref2.receipt,
-	          recipientFullName = _ref2.recipientFullName,
-	          revocationKey = _ref2.revocationKey,
-	          sealImage = _ref2.sealImage,
-	          signature = _ref2.signature,
-	          signatureImage = _ref2.signatureImage,
-	          subtitle = _ref2.subtitle,
-	          version = _ref2.version;
-
-	      this.certificateImage = certificateImage;
-	      this.chain = chain;
-	      this.description = description;
-	      this.expires = expires;
-	      this.id = id;
-	      this.issuer = issuer;
-	      this.publicKey = publicKey;
-	      this.receipt = receipt;
-	      this.recipientFullName = recipientFullName;
-	      this.revocationKey = revocationKey;
-	      this.sealImage = sealImage;
-	      this.signature = signature;
-	      this.signatureImage = signatureImage;
-	      this.subtitle = subtitle;
-	      this.name = name;
-	      this.version = version;
-
-	      // Transaction ID, link & raw link
-	      this._setTransactionDetails();
-
-	      // Get the full verification step-by-step map
-	      this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
-	    }
-
-	    /**
-	     * _setTransactionDetails
-	     *
-	     * @private
-	     */
-
-	  }, {
-	    key: '_setTransactionDetails',
-	    value: function _setTransactionDetails() {
-	      this.transactionId = domain.certificates.getTransactionId(this.receipt);
-	      this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
-	      this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
-	    }
-
-	    /**
-	     * _updateStatusCallback
-	     *
-	     * calls the origin callback to update on a step status
-	     *
-	     * @param code
-	     * @param label
-	     * @param status
-	     * @param errorMessage
-	     * @private
-	     */
-
-	  }, {
-	    key: '_updateStatusCallback',
-	    value: function _updateStatusCallback(code, label, status) {
-	      var errorMessage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
-
-	      if (code != null) {
-	        var update = { code: code, label: label, status: status };
-	        if (errorMessage) {
-	          update.errorMessage = errorMessage;
+	      try {
+	        var res = action();
+	        if (step) {
+	          this._updateStatusCallback(step, readableAction, SUCCESS);
+	          this._stepsStatuses.push({ step: step, status: SUCCESS, action: readableAction });
 	        }
-	        this._stepCallback(update);
+	        return res;
+	      } catch (err) {
+	        if (step) {
+	          this._updateStatusCallback(step, readableAction, FAILURE, err.message);
+	          this._stepsStatuses.push({
+	            step: step,
+	            status: FAILURE,
+	            action: readableAction,
+	            message: err.message
+	          });
+	        }
 	      }
 	    }
 
 	    /**
-	     * _succeed
+	     * doAsyncAction
+	     *
+	     * @param step
+	     * @param action
+	     * @returns {Promise<*>}
 	     */
 
 	  }, {
-	    key: '_succeed',
-	    value: function _succeed() {
-	      var status = void 0;
-	      if (domain.chains.isTestChain(this.chain)) {
-	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
-	        status = MOCK_SUCCESS;
-	      } else {
-	        log$4('success');
-	        status = SUCCESS;
+	    key: '_doAsyncAction',
+	    value: function () {
+	      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(step, action) {
+	        var readableAction, res;
+	        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+	          while (1) {
+	            switch (_context2.prev = _context2.next) {
+	              case 0:
+	                if (!this._isFailing()) {
+	                  _context2.next = 2;
+	                  break;
+	                }
+
+	                return _context2.abrupt('return');
+
+	              case 2:
+	                readableAction = void 0;
+
+	                if (step) {
+	                  readableAction = language$1[step].actionLabel;
+	                  log$4(readableAction);
+	                  this._updateStatusCallback(step, readableAction, STARTING);
+	                }
+
+	                _context2.prev = 4;
+	                _context2.next = 7;
+	                return action();
+
+	              case 7:
+	                res = _context2.sent;
+
+	                if (step) {
+	                  this._updateStatusCallback(step, readableAction, SUCCESS);
+	                  this._stepsStatuses.push({ step: step, status: SUCCESS, readableAction: readableAction });
+	                }
+	                return _context2.abrupt('return', res);
+
+	              case 12:
+	                _context2.prev = 12;
+	                _context2.t0 = _context2['catch'](4);
+
+	                if (step) {
+	                  this._updateStatusCallback(step, readableAction, FAILURE, _context2.t0.message);
+	                  this._stepsStatuses.push({ step: step, status: FAILURE, readableAction: readableAction, message: _context2.t0.message });
+	                }
+
+	              case 15:
+	              case 'end':
+	                return _context2.stop();
+	            }
+	          }
+	        }, _callee2, this, [[4, 12]]);
+	      }));
+
+	      function _doAsyncAction(_x2, _x3) {
+	        return _ref3.apply(this, arguments);
 	      }
 
-	      return { status: status };
-	    }
+	      return _doAsyncAction;
+	    }()
 
 	    /**
 	     * _failed
 	     *
 	     * @param stepCode
 	     * @param errorMessage
-	     * @returns {{code: string, status: string, errorMessage: string}}
+	     * @returns {{step: string, status: string, errorMessage: string}}
 	     * @private
 	     */
 
 	  }, {
 	    key: '_failed',
-	    value: function _failed(_ref3) {
-	      var step = _ref3.step,
-	          errorMessage = _ref3.errorMessage;
+	    value: function _failed(_ref4) {
+	      var step = _ref4.step,
+	          errorMessage = _ref4.errorMessage;
 
 	      log$4('failure:' + errorMessage);
-	      return { code: step, status: FAILURE, errorMessage: errorMessage };
+	      return { step: step, status: FAILURE, errorMessage: errorMessage };
 	    }
 
 	    /**
@@ -33510,122 +33486,23 @@ var Verifier = (function (exports) {
 	    }
 
 	    /**
-	     * doAction
-	     *
-	     * @param step
-	     * @param action
-	     * @returns {*}
+	     * _succeed
 	     */
 
 	  }, {
-	    key: '_doAction',
-	    value: function _doAction(step, action) {
-	      // If not failing already
-	      if (this._isFailing()) {
-	        return;
+	    key: '_succeed',
+	    value: function _succeed() {
+	      var status = void 0;
+	      if (domain$1.chains.isTestChain(this.chain)) {
+	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
+	        status = MOCK_SUCCESS;
+	      } else {
+	        log$4('success');
+	        status = SUCCESS;
 	      }
 
-	      var label = void 0;
-	      if (step) {
-	        label = language$1[step].labelPending;
-	        log$4(label);
-	        this._updateStatusCallback(step, label, STARTING);
-	      }
-
-	      try {
-	        var res = action();
-	        if (step) {
-	          this._updateStatusCallback(step, label, SUCCESS);
-	          this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
-	        }
-	        return res;
-	      } catch (err) {
-	        if (step) {
-	          this._updateStatusCallback(step, label, FAILURE, err.message);
-	          this._stepsStatuses.push({
-	            code: step,
-	            label: label,
-	            status: FAILURE,
-	            errorMessage: err.message
-	          });
-	        }
-	      }
+	      return { status: status };
 	    }
-
-	    /**
-	     * doAsyncAction
-	     *
-	     * @param step
-	     * @param action
-	     * @returns {Promise<*>}
-	     */
-
-	  }, {
-	    key: '_doAsyncAction',
-	    value: function () {
-	      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(step, action) {
-	        var label, res;
-	        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-	          while (1) {
-	            switch (_context2.prev = _context2.next) {
-	              case 0:
-	                if (!this._isFailing()) {
-	                  _context2.next = 2;
-	                  break;
-	                }
-
-	                return _context2.abrupt('return');
-
-	              case 2:
-	                label = void 0;
-
-	                if (step) {
-	                  label = language$1[step].labelPending;
-	                  log$4(label);
-	                  this._updateStatusCallback(step, label, STARTING);
-	                }
-
-	                _context2.prev = 4;
-	                _context2.next = 7;
-	                return action();
-
-	              case 7:
-	                res = _context2.sent;
-
-	                if (step) {
-	                  this._updateStatusCallback(step, label, SUCCESS);
-	                  this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
-	                }
-	                return _context2.abrupt('return', res);
-
-	              case 12:
-	                _context2.prev = 12;
-	                _context2.t0 = _context2['catch'](4);
-
-	                if (step) {
-	                  this._updateStatusCallback(step, label, FAILURE, _context2.t0.message);
-	                  this._stepsStatuses.push({
-	                    code: step,
-	                    label: label,
-	                    status: FAILURE,
-	                    errorMessage: _context2.t0.message
-	                  });
-	                }
-
-	              case 15:
-	              case 'end':
-	                return _context2.stop();
-	            }
-	          }
-	        }, _callee2, this, [[4, 12]]);
-	      }));
-
-	      function _doAsyncAction(_x3, _x4) {
-	        return _ref4.apply(this, arguments);
-	      }
-
-	      return _doAsyncAction;
-	    }()
 
 	    /**
 	     * verifyV1_2
@@ -33696,7 +33573,7 @@ var Verifier = (function (exports) {
 	                    while (1) {
 	                      switch (_context5.prev = _context5.next) {
 	                        case 0:
-	                          return _context5.abrupt('return', getIssuerProfile$1(_this.issuer.id));
+	                          return _context5.abrupt('return', domain$1.verifier.getIssuerProfile(_this.issuer.id));
 
 	                        case 1:
 	                        case 'end':
@@ -33710,7 +33587,7 @@ var Verifier = (function (exports) {
 	                issuerProfileJson = _context6.sent;
 	                _context6.next = 12;
 	                return this._doAsyncAction(parseIssuerKeys, function () {
-	                  return parseIssuerKeys$1(issuerProfileJson);
+	                  return domain$1.verifier.parseIssuerKeys(issuerProfileJson);
 	                });
 
 	              case 12:
@@ -33734,7 +33611,7 @@ var Verifier = (function (exports) {
 
 	                // Check revoke status
 	                this._doAction(checkRevokedStatus, function () {
-	                  return ensureNotRevokedBySpentOutput(txData.revokedAddresses, parseRevocationKey(issuerProfileJson), _this.revocationKey);
+	                  return ensureNotRevokedBySpentOutput(txData.revokedAddresses, domain$1.verifier.parseRevocationKey(issuerProfileJson), _this.revocationKey);
 	                });
 
 	                // Check authenticity
@@ -33830,7 +33707,7 @@ var Verifier = (function (exports) {
 	                    while (1) {
 	                      switch (_context9.prev = _context9.next) {
 	                        case 0:
-	                          return _context9.abrupt('return', getIssuerKeys(_this2.issuer.id));
+	                          return _context9.abrupt('return', domain$1.verifier.getIssuerKeys(_this2.issuer.id));
 
 	                        case 1:
 	                        case 'end':
@@ -33848,7 +33725,7 @@ var Verifier = (function (exports) {
 	                    while (1) {
 	                      switch (_context10.prev = _context10.next) {
 	                        case 0:
-	                          return _context10.abrupt('return', getRevokedAssertions(_this2.issuer.revocationList));
+	                          return _context10.abrupt('return', domain$1.verifier.getRevokedAssertions(_this2.issuer.revocationList));
 
 	                        case 1:
 	                        case 'end':
@@ -33975,6 +33852,203 @@ var Verifier = (function (exports) {
 
 	      return _verifyV2Mock;
 	    }()
+
+	    /**
+	     * _updateStatusCallback
+	     *
+	     * calls the origin callback to update on a step status
+	     *
+	     * @param step
+	     * @param action
+	     * @param status
+	     * @param errorMessage
+	     * @private
+	     */
+
+	  }, {
+	    key: '_updateStatusCallback',
+	    value: function _updateStatusCallback(step, action, status) {
+	      var errorMessage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
+
+	      if (step != null) {
+	        var update = { step: step, action: action, status: status };
+	        if (errorMessage) {
+	          update.errorMessage = errorMessage;
+	        }
+	        this._stepCallback(update);
+	      }
+	    }
+	  }]);
+
+	  return Verifier;
+	}();
+
+	var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+	var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _asyncToGenerator$1(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
+	function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Certificate = function () {
+	  function Certificate(certificateJson) {
+	    _classCallCheck$5(this, Certificate);
+
+	    if ((typeof certificateJson === 'undefined' ? 'undefined' : _typeof$1(certificateJson)) !== 'object') {
+	      try {
+	        certificateJson = JSON.parse(certificateJson);
+	      } catch (err) {
+	        throw new Error('This is not a valid certificate');
+	      }
+	    }
+
+	    // Keep certificate JSON object
+	    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
+
+	    // Parse certificate
+	    this.parseJson(certificateJson);
+	  }
+
+	  /**
+	   * parseJson
+	   *
+	   * @param certificateJson
+	   * @returns {*}
+	   */
+
+
+	  _createClass$1(Certificate, [{
+	    key: 'parseJson',
+	    value: function parseJson(certificateJson) {
+	      var parsedCertificate = parseJSON(certificateJson);
+	      this._setProperties(parsedCertificate);
+	    }
+
+	    /**
+	     * verify
+	     *
+	     * @param stepCallback
+	     * @returns {Promise<*>}
+	     */
+
+	  }, {
+	    key: 'verify',
+	    value: function () {
+	      var _ref = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+	        var stepCallback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
+	        var verifier;
+	        return regeneratorRuntime.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                verifier = new Verifier({
+	                  certificateJson: this.certificateJson,
+	                  chain: this.chain,
+	                  expires: this.expires,
+	                  id: this.id,
+	                  issuer: this.issuer,
+	                  receipt: this.receipt,
+	                  revocationKey: this.revocationKey,
+	                  transactionId: this.transactionId,
+	                  version: this.version
+	                });
+	                return _context.abrupt('return', verifier.verify(stepCallback));
+
+	              case 2:
+	              case 'end':
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      function verify() {
+	        return _ref.apply(this, arguments);
+	      }
+
+	      return verify;
+	    }()
+
+	    /**
+	     * _setProperties
+	     *
+	     * @param certificateImage
+	     * @param chain
+	     * @param description
+	     * @param expires
+	     * @param id
+	     * @param issuer
+	     * @param publicKey
+	     * @param receipt
+	     * @param recipientFullName
+	     * @param revocationKey
+	     * @param sealImage
+	     * @param signature
+	     * @param signatureImage
+	     * @param subtitle
+	     * @param title
+	     * @param version
+	     * @private
+	     */
+
+	  }, {
+	    key: '_setProperties',
+	    value: function _setProperties(_ref2) {
+	      var certificateImage = _ref2.certificateImage,
+	          chain = _ref2.chain,
+	          description = _ref2.description,
+	          expires = _ref2.expires,
+	          id = _ref2.id,
+	          issuer = _ref2.issuer,
+	          name = _ref2.name,
+	          publicKey = _ref2.publicKey,
+	          receipt = _ref2.receipt,
+	          recipientFullName = _ref2.recipientFullName,
+	          revocationKey = _ref2.revocationKey,
+	          sealImage = _ref2.sealImage,
+	          signature = _ref2.signature,
+	          signatureImage = _ref2.signatureImage,
+	          subtitle = _ref2.subtitle,
+	          version = _ref2.version;
+
+	      this.certificateImage = certificateImage;
+	      this.chain = chain;
+	      this.description = description;
+	      this.expires = expires;
+	      this.id = id;
+	      this.issuer = issuer;
+	      this.publicKey = publicKey;
+	      this.receipt = receipt;
+	      this.recipientFullName = recipientFullName;
+	      this.revocationKey = revocationKey;
+	      this.sealImage = sealImage;
+	      this.signature = signature;
+	      this.signatureImage = signatureImage;
+	      this.subtitle = subtitle;
+	      this.name = name;
+	      this.version = version;
+
+	      // Transaction ID, link & raw link
+	      this._setTransactionDetails();
+
+	      // Get the full verification step-by-step map
+	      this.verificationSteps = domain$1.certificates.getVerificationMap(chain, version);
+	    }
+
+	    /**
+	     * _setTransactionDetails
+	     *
+	     * @private
+	     */
+
+	  }, {
+	    key: '_setTransactionDetails',
+	    value: function _setTransactionDetails() {
+	      this.transactionId = domain$1.certificates.getTransactionId(this.receipt);
+	      this.rawTransactionLink = domain$1.certificates.getTransactionLink(this.transactionId, this.chain, true);
+	      this.transactionLink = domain$1.certificates.getTransactionLink(this.transactionId, this.chain);
+	    }
 	  }]);
 
 	  return Certificate;

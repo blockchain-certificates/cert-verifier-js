@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 

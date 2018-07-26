@@ -1,6 +1,6 @@
 import debug from 'debug';
-import { getEtherScanFetcher } from './ethereumExplorers';
-import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoinExplorers';
+import { getEtherScanFetcher } from './explorers/ethereum';
+import { getBlockcypherFetcher, getChainSoFetcher } from './explorers/bitcoin';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from './constants';
 import { VerifierError } from './models';
 

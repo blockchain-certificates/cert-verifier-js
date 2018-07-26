@@ -1,8 +1,8 @@
-import { request } from './promisifiedRequests';
-import { dateToUnixTimestamp } from './helpers/date';
-import { startsWith } from './helpers/string';
-import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from './constants';
-import { TransactionData, VerifierError } from './models';
+import { request } from '../promisifiedRequests';
+import { dateToUnixTimestamp } from '../helpers/date';
+import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from '../constants';
+import { TransactionData, VerifierError } from '../models';
+import { stripHashPrefix } from './utils/stripHashPrefix';
 
 export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;
@@ -67,7 +67,7 @@ function parseBlockCypherResponse (jsonResponse) {
   const outputs = jsonResponse.outputs;
   var lastOutput = outputs[outputs.length - 1];
   var issuingAddress = jsonResponse.inputs[0].addresses[0];
-  const opReturnScript = cleanupRemoteHash(lastOutput.script);
+  const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
   var revokedAddresses = outputs
     .filter(output => !!output.spent_by)
     .map(output => output.addresses[0]);
@@ -89,7 +89,7 @@ function parseChainSoResponse (jsonResponse) {
   const outputs = jsonResponse.data.outputs;
   var lastOutput = outputs[outputs.length - 1];
   var issuingAddress = jsonResponse.data.inputs[0].address;
-  const opReturnScript = cleanupRemoteHash(lastOutput.script);
+  const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
   // Legacy v1.2 verification notes:
   // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
   // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
@@ -97,15 +97,4 @@ function parseChainSoResponse (jsonResponse) {
   // few v1.2 issuances, but you want to provide v1.2 verification with higher confidence (of cross-checking APIs), then
   // you should consider adding an additional lookup to crosscheck revocation addresses.
   return new TransactionData(opReturnScript, issuingAddress, time, undefined);
-}
-
-function cleanupRemoteHash (remoteHash) {
-  let prefixes = ['6a20', 'OP_RETURN '];
-  for (var i = 0; i < prefixes.length; i++) {
-    let prefix = prefixes[i];
-    if (startsWith(remoteHash, prefix)) {
-      return remoteHash.slice(prefix.length);
-    }
-  }
-  return remoteHash;
 }

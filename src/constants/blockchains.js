@@ -4,6 +4,7 @@ export const BLOCKCHAINS = {
   bitcoin: {
     code: 'bitcoin',
     name: 'Bitcoin',
+    prefixes: ['6a20', 'OP_RETURN '],
     signatureValue: 'bitcoinMainnet',
     transactionTemplates: {
       full: `https://blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
@@ -13,6 +14,7 @@ export const BLOCKCHAINS = {
   ethmain: {
     code: 'ethmain',
     name: 'Ethereum',
+    prefixes: ['0x'],
     signatureValue: 'ethereumMainnet',
     transactionTemplates: {
       full: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,

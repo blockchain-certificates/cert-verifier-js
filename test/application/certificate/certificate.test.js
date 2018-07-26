@@ -1,6 +1,5 @@
 import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
-import { VERIFICATION_STATUSES } from '../../../src/constants';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -35,27 +34,6 @@ describe('Certificate entity test suite', function () {
           /* eslint no-new: "off" */
           new Certificate();
         }).toThrowError('This is not a valid certificate');
-      });
-    });
-  });
-
-  describe('isFailing method', function () {
-    describe('when all checks are successful', function () {
-      it('should return false', function () {
-        const certificate = new Certificate(FIXTURES.MainnetV2Valid);
-        certificate._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        certificate._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2'});
-
-        expect(certificate._isFailing()).toBe(false);
-      });
-    });
-    describe('when one check is failing', function () {
-      it('should return true', function () {
-        const certificate = new Certificate(FIXTURES.MainnetV2Valid);
-        certificate._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        certificate._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2'});
-
-        expect(certificate._isFailing()).toBe(true);
       });
     });
   });

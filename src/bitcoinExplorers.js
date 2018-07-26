@@ -1,9 +1,8 @@
 import { request } from './promisifiedRequests';
-import { TransactionData } from './verifierModels';
 import { dateToUnixTimestamp } from './helpers/date';
 import { startsWith } from './helpers/string';
 import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from './constants';
-import { VerifierError } from './models';
+import { TransactionData, VerifierError } from './models';
 
 export function getBlockcypherFetcher (transactionId, chain) {
   let blockCypherUrl;

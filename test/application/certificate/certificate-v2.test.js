@@ -1,6 +1,5 @@
 import FIXTURES from '../../fixtures';
 import { Certificate, BLOCKCHAINS } from '../../../src';
-import documentToVerifyAssertion from './assertions/documentToVerify-v2';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -96,10 +95,6 @@ describe('Certificate entity test suite', function () {
 
       it('should set verificationSteps to the certificate object', function () {
         expect(certificate.verificationSteps).toEqual([]);
-      });
-
-      it('should set documentToVerify accordingly', function () {
-        expect(certificate.documentToVerify).toEqual(documentToVerifyAssertion);
       });
     });
   });

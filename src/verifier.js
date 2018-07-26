@@ -48,10 +48,7 @@ export default class Verifier {
 
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
       await this._verifyV12();
-    } else if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    } else if (domain.chains.isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
       await this._verifyV2();
@@ -174,10 +171,7 @@ export default class Verifier {
    */
   _succeed () {
     let status;
-    if (
-      this.chain.code === BLOCKCHAINS.mocknet.code ||
-      this.chain.code === BLOCKCHAINS.regtest.code
-    ) {
+    if (domain.chains.isTestChain(this.chain)) {
       log(
         'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       );

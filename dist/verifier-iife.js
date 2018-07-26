@@ -33352,28 +33352,28 @@ var Verifier = (function (exports) {
 	        return;
 	      }
 
-	      var readableAction = void 0;
+	      var label = void 0;
 	      if (step) {
-	        readableAction = language$1[step].actionLabel;
-	        log$4(readableAction);
-	        this._updateStatusCallback(step, readableAction, STARTING);
+	        label = language$1[step].labelPending;
+	        log$4(label);
+	        this._updateStatusCallback(step, label, STARTING);
 	      }
 
 	      try {
 	        var res = action();
 	        if (step) {
-	          this._updateStatusCallback(step, readableAction, SUCCESS);
-	          this._stepsStatuses.push({ step: step, status: SUCCESS, action: readableAction });
+	          this._updateStatusCallback(step, label, SUCCESS);
+	          this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
 	        }
 	        return res;
 	      } catch (err) {
 	        if (step) {
-	          this._updateStatusCallback(step, readableAction, FAILURE, err.message);
+	          this._updateStatusCallback(step, label, FAILURE, err.message);
 	          this._stepsStatuses.push({
-	            step: step,
+	            code: step,
+	            label: label,
 	            status: FAILURE,
-	            action: readableAction,
-	            message: err.message
+	            errorMessage: err.message
 	          });
 	        }
 	      }
@@ -33391,7 +33391,7 @@ var Verifier = (function (exports) {
 	    key: '_doAsyncAction',
 	    value: function () {
 	      var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(step, action) {
-	        var readableAction, res;
+	        var label, res;
 	        return regeneratorRuntime.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -33404,12 +33404,12 @@ var Verifier = (function (exports) {
 	                return _context2.abrupt('return');
 
 	              case 2:
-	                readableAction = void 0;
+	                label = void 0;
 
 	                if (step) {
-	                  readableAction = language$1[step].actionLabel;
-	                  log$4(readableAction);
-	                  this._updateStatusCallback(step, readableAction, STARTING);
+	                  label = language$1[step].labelPending;
+	                  log$4(label);
+	                  this._updateStatusCallback(step, label, STARTING);
 	                }
 
 	                _context2.prev = 4;
@@ -33420,8 +33420,8 @@ var Verifier = (function (exports) {
 	                res = _context2.sent;
 
 	                if (step) {
-	                  this._updateStatusCallback(step, readableAction, SUCCESS);
-	                  this._stepsStatuses.push({ step: step, status: SUCCESS, readableAction: readableAction });
+	                  this._updateStatusCallback(step, label, SUCCESS);
+	                  this._stepsStatuses.push({ step: step, label: label, status: SUCCESS });
 	                }
 	                return _context2.abrupt('return', res);
 
@@ -33430,8 +33430,13 @@ var Verifier = (function (exports) {
 	                _context2.t0 = _context2['catch'](4);
 
 	                if (step) {
-	                  this._updateStatusCallback(step, readableAction, FAILURE, _context2.t0.message);
-	                  this._stepsStatuses.push({ step: step, status: FAILURE, readableAction: readableAction, message: _context2.t0.message });
+	                  this._updateStatusCallback(step, label, FAILURE, _context2.t0.message);
+	                  this._stepsStatuses.push({
+	                    code: step,
+	                    label: label,
+	                    status: FAILURE,
+	                    errorMessage: _context2.t0.message
+	                  });
 	                }
 
 	              case 15:
@@ -33450,61 +33455,6 @@ var Verifier = (function (exports) {
 	    }()
 
 	    /**
-	     * _failed
-	     *
-	     * @param stepCode
-	     * @param errorMessage
-	     * @returns {{step: string, status: string, errorMessage: string}}
-	     * @private
-	     */
-
-	  }, {
-	    key: '_failed',
-	    value: function _failed(_ref4) {
-	      var step = _ref4.step,
-	          errorMessage = _ref4.errorMessage;
-
-	      log$4('failure:' + errorMessage);
-	      return { step: step, status: FAILURE, errorMessage: errorMessage };
-	    }
-
-	    /**
-	     * _isFailing
-	     *
-	     * whether or not the current verification is failing
-	     *
-	     * @returns {boolean}
-	     * @private
-	     */
-
-	  }, {
-	    key: '_isFailing',
-	    value: function _isFailing() {
-	      return this._stepsStatuses.some(function (step) {
-	        return step.status === FAILURE;
-	      });
-	    }
-
-	    /**
-	     * _succeed
-	     */
-
-	  }, {
-	    key: '_succeed',
-	    value: function _succeed() {
-	      var status = void 0;
-	      if (domain$1.chains.isTestChain(this.chain)) {
-	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
-	        status = MOCK_SUCCESS;
-	      } else {
-	        log$4('success');
-	        status = SUCCESS;
-	      }
-
-	      return { status: status };
-	    }
-
-	    /**
 	     * verifyV1_2
 	     *
 	     * Verified certificate v1.2
@@ -33515,7 +33465,7 @@ var Verifier = (function (exports) {
 	  }, {
 	    key: '_verifyV12',
 	    value: function () {
-	      var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+	      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
 	        var _this = this;
 
 	        var transactionId, localHash, txData, issuerProfileJson, issuerKeyMap;
@@ -33633,7 +33583,7 @@ var Verifier = (function (exports) {
 	      }));
 
 	      function _verifyV12() {
-	        return _ref5.apply(this, arguments);
+	        return _ref4.apply(this, arguments);
 	      }
 
 	      return _verifyV12;
@@ -33650,7 +33600,7 @@ var Verifier = (function (exports) {
 	  }, {
 	    key: '_verifyV2',
 	    value: function () {
-	      var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
+	      var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
 	        var _this2 = this;
 
 	        var transactionId, localHash, txData, issuerKeyMap, revokedAssertions;
@@ -33778,7 +33728,7 @@ var Verifier = (function (exports) {
 	      }));
 
 	      function _verifyV2() {
-	        return _ref9.apply(this, arguments);
+	        return _ref8.apply(this, arguments);
 	      }
 
 	      return _verifyV2;
@@ -33795,7 +33745,7 @@ var Verifier = (function (exports) {
 	  }, {
 	    key: '_verifyV2Mock',
 	    value: function () {
-	      var _ref14 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
+	      var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
 	        var _this3 = this;
 
 	        var localHash;
@@ -33847,19 +33797,74 @@ var Verifier = (function (exports) {
 	      }));
 
 	      function _verifyV2Mock() {
-	        return _ref14.apply(this, arguments);
+	        return _ref13.apply(this, arguments);
 	      }
 
 	      return _verifyV2Mock;
 	    }()
 
 	    /**
+	     * _failed
+	     *
+	     * @param stepCode
+	     * @param errorMessage
+	     * @returns {{code: string, status: string, errorMessage: string}}
+	     * @private
+	     */
+
+	  }, {
+	    key: '_failed',
+	    value: function _failed(_ref15) {
+	      var step = _ref15.step,
+	          errorMessage = _ref15.errorMessage;
+
+	      log$4('failure:' + errorMessage);
+	      return { code: step, status: FAILURE, errorMessage: errorMessage };
+	    }
+
+	    /**
+	     * _isFailing
+	     *
+	     * whether or not the current verification is failing
+	     *
+	     * @returns {boolean}
+	     * @private
+	     */
+
+	  }, {
+	    key: '_isFailing',
+	    value: function _isFailing() {
+	      return this._stepsStatuses.some(function (step) {
+	        return step.status === FAILURE;
+	      });
+	    }
+
+	    /**
+	     * _succeed
+	     */
+
+	  }, {
+	    key: '_succeed',
+	    value: function _succeed() {
+	      var status = void 0;
+	      if (domain$1.chains.isTestChain(this.chain)) {
+	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
+	        status = MOCK_SUCCESS;
+	      } else {
+	        log$4('success');
+	        status = SUCCESS;
+	      }
+
+	      return { status: status };
+	    }
+
+	    /**
 	     * _updateStatusCallback
 	     *
 	     * calls the origin callback to update on a step status
 	     *
-	     * @param step
-	     * @param action
+	     * @param code
+	     * @param label
 	     * @param status
 	     * @param errorMessage
 	     * @private
@@ -33867,11 +33872,11 @@ var Verifier = (function (exports) {
 
 	  }, {
 	    key: '_updateStatusCallback',
-	    value: function _updateStatusCallback(step, action, status) {
+	    value: function _updateStatusCallback(code, label, status) {
 	      var errorMessage = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '';
 
-	      if (step != null) {
-	        var update = { step: step, action: action, status: status };
+	      if (code != null) {
+	        var update = { code: code, label: label, status: status };
 	        if (errorMessage) {
 	          update.errorMessage = errorMessage;
 	        }

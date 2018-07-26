@@ -1,4 +1,4 @@
-import { BLOCKCHAINS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
+import { SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
@@ -79,28 +79,28 @@ export default class Verifier {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, action: readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
         this._stepsStatuses.push({
-          step,
+          code: step,
+          label,
           status: VERIFICATION_STATUSES.FAILURE,
-          action: readableAction,
-          message: err.message
+          errorMessage: err.message
         });
       }
     }
@@ -119,69 +119,31 @@ export default class Verifier {
       return;
     }
 
-    let readableAction;
+    let label;
     if (step) {
-      readableAction = SUB_STEPS.language[step].actionLabel;
-      log(readableAction);
-      this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.STARTING);
+      label = SUB_STEPS.language[step].labelPending;
+      log(label);
+      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       let res = await action();
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.SUCCESS, readableAction});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, readableAction, VERIFICATION_STATUSES.FAILURE, err.message);
-        this._stepsStatuses.push({step, status: VERIFICATION_STATUSES.FAILURE, readableAction, message: err.message});
+        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._stepsStatuses.push({
+          code: step,
+          label,
+          status: VERIFICATION_STATUSES.FAILURE,
+          errorMessage: err.message
+        });
       }
     }
-  }
-
-  /**
-   * _failed
-   *
-   * @param stepCode
-   * @param errorMessage
-   * @returns {{step: string, status: string, errorMessage: string}}
-   * @private
-   */
-  _failed ({step, errorMessage}) {
-    log(`failure:${errorMessage}`);
-    return {step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
-  }
-
-  /**
-   * _isFailing
-   *
-   * whether or not the current verification is failing
-   *
-   * @returns {boolean}
-   * @private
-   */
-  _isFailing () {
-    return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
-  }
-
-  /**
-   * _succeed
-   */
-  _succeed () {
-    let status;
-    if (domain.chains.isTestChain(this.chain)) {
-      log(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
-      );
-      status = VERIFICATION_STATUSES.MOCK_SUCCESS;
-    } else {
-      log('success');
-      status = VERIFICATION_STATUSES.SUCCESS;
-    }
-
-    return {status};
   }
 
   /**
@@ -385,19 +347,62 @@ export default class Verifier {
   }
 
   /**
+   * _failed
+   *
+   * @param stepCode
+   * @param errorMessage
+   * @returns {{code: string, status: string, errorMessage: string}}
+   * @private
+   */
+  _failed ({step, errorMessage}) {
+    log(`failure:${errorMessage}`);
+    return {code: step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
+  }
+
+  /**
+   * _isFailing
+   *
+   * whether or not the current verification is failing
+   *
+   * @returns {boolean}
+   * @private
+   */
+  _isFailing () {
+    return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
+  }
+
+  /**
+   * _succeed
+   */
+  _succeed () {
+    let status;
+    if (domain.chains.isTestChain(this.chain)) {
+      log(
+        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
+      );
+      status = VERIFICATION_STATUSES.MOCK_SUCCESS;
+    } else {
+      log('success');
+      status = VERIFICATION_STATUSES.SUCCESS;
+    }
+
+    return {status};
+  }
+
+  /**
    * _updateStatusCallback
    *
    * calls the origin callback to update on a step status
    *
-   * @param step
-   * @param action
+   * @param code
+   * @param label
    * @param status
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (step, action, status, errorMessage = '') {
-    if (step != null) {
-      let update = {step, action, status};
+  _updateStatusCallback (code, label, status, errorMessage = '') {
+    if (code != null) {
+      let update = {code, label, status};
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

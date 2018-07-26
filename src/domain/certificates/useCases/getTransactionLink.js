@@ -11,6 +11,9 @@ import { TRANSACTION_TEMPLATE_ID_PLACEHOLDER } from '../../../constants/blockcha
  * @returns {*}
  */
 export default function getTransactionLink (transactionId, chainObject, getRawVersion = false) {
+  if (!transactionId || !chainObject) {
+    return '';
+  }
   const rawTransactionLinkTemplate = chainObject.transactionTemplates[getRawVersion ? 'raw' : 'full'];
   return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 }

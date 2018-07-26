@@ -1,27 +1,10 @@
-import debug from 'debug';
-import { getEtherScanFetcher } from './explorers/ethereum';
-import { getBlockcypherFetcher, getChainSoFetcher } from './explorers/bitcoin';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from './constants';
 import { VerifierError } from './models';
-
-const log = debug('blockchainConnectors');
-
-const BitcoinExplorers = [
-  (transactionId, chain) => getChainSoFetcher(transactionId, chain),
-  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
-];
-
-const EthereumExplorers = [
-  (transactionId, chain) => getEtherScanFetcher(transactionId, chain)
-];
-
-// for legacy (pre-v2) Blockcerts
-const BlockchainExplorersWithSpentOutputInfo = [
-  (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
-];
+import { BitcoinExplorers, BlockchainExplorersWithSpentOutputInfo, EthereumExplorers } from './explorers';
+import PromiseProperRace from './helpers/promiseProperRace';
 
 export function lookForTx (transactionId, chain, certificateVersion) {
-  var BlockchainExplorers;
+  let BlockchainExplorers;
   switch (chain) {
     case BLOCKCHAINS.bitcoin.code:
     case BLOCKCHAINS.regtest.code:
@@ -51,12 +34,12 @@ export function lookForTx (transactionId, chain, certificateVersion) {
   let limit;
   if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
     limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
-    for (var i = 0; i < limit; i++) {
+    for (let i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
     limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
-    for (var j = 0; j < limit; j++) {
+    for (let j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
   }
@@ -76,9 +59,9 @@ export function lookForTx (transactionId, chain, certificateVersion) {
       // Note that APIs returning results where the number of confirmations is less than `MininumConfirmations` are
       // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
       // are above the `MininumConfirmations` threshold, then we can proceed with verification.
-      var firstResponse = winners[0];
-      for (var i = 1; i < winners.length; i++) {
-        var thisResponse = winners[i];
+      const firstResponse = winners[0];
+      for (let i = 1; i < winners.length; i++) {
+        const thisResponse = winners[i];
         if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
           throw new VerifierError(SUB_STEPS.fetchRemoteHash, `Issuing addresses returned by the blockchain APIs were different`);
         }
@@ -92,28 +75,3 @@ export function lookForTx (transactionId, chain, certificateVersion) {
     });
   });
 }
-
-var PromiseProperRace = function (promises, count, results = []) {
-  // Source: https://www.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-  promises = Array.from(promises);
-  if (promises.length < count) {
-    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, `Could not confirm the transaction`));
-  }
-
-  let indexPromises = promises.map((p, index) => p.then(() => index).catch((err) => {
-    log(err);
-    throw index;
-  }));
-
-  return Promise.race(indexPromises).then(index => {
-    let p = promises.splice(index, 1)[0];
-    p.then(e => results.push(e));
-    if (count === 1) {
-      return results;
-    }
-    return PromiseProperRace(promises, count - 1, results);
-  }).catch(index => {
-    promises.splice(index, 1);
-    return PromiseProperRace(promises, count, results);
-  });
-};

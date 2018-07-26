@@ -65,10 +65,10 @@ function parseBlockCypherResponse (jsonResponse) {
   }
   const time = dateToUnixTimestamp(jsonResponse.received);
   const outputs = jsonResponse.outputs;
-  var lastOutput = outputs[outputs.length - 1];
-  var issuingAddress = jsonResponse.inputs[0].addresses[0];
+  const lastOutput = outputs[outputs.length - 1];
+  const issuingAddress = jsonResponse.inputs[0].addresses[0];
   const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
-  var revokedAddresses = outputs
+  const revokedAddresses = outputs
     .filter(output => !!output.spent_by)
     .map(output => output.addresses[0]);
   return new TransactionData(
@@ -87,8 +87,8 @@ function parseChainSoResponse (jsonResponse) {
   }
   const time = new Date(jsonResponse.data.time * 1000);
   const outputs = jsonResponse.data.outputs;
-  var lastOutput = outputs[outputs.length - 1];
-  var issuingAddress = jsonResponse.data.inputs[0].address;
+  const lastOutput = outputs[outputs.length - 1];
+  const issuingAddress = jsonResponse.data.inputs[0].address;
   const opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
   // Legacy v1.2 verification notes:
   // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,

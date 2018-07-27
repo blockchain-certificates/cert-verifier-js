@@ -1,8 +1,8 @@
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, STEPS, SUB_STEPS } from '../../../constants';
+import { NETWORKS, STEPS, SUB_STEPS } from '../../../constants';
 import chainsService from '../../chains';
 
 const versionVerificationMap = {
-  [CERTIFICATE_VERSIONS.V1_2]: [
+  [NETWORKS.mainnet]: [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
     SUB_STEPS.fetchRemoteHash,
@@ -15,20 +15,7 @@ const versionVerificationMap = {
     SUB_STEPS.checkAuthenticity,
     SUB_STEPS.checkExpiresDate
   ],
-  [CERTIFICATE_VERSIONS.V2_0]: [
-    SUB_STEPS.getTransactionId,
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.fetchRemoteHash,
-    SUB_STEPS.getIssuerProfile,
-    SUB_STEPS.parseIssuerKeys,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkMerkleRoot,
-    SUB_STEPS.checkReceipt,
-    SUB_STEPS.checkRevokedStatus,
-    SUB_STEPS.checkAuthenticity,
-    SUB_STEPS.checkExpiresDate
-  ],
-  [BLOCKCHAINS.mocknet.code]: [
+  [NETWORKS.testnet]: [
     SUB_STEPS.computeLocalHash,
     SUB_STEPS.compareHashes,
     SUB_STEPS.checkReceipt,
@@ -80,16 +67,20 @@ function getFullStepsFromSubSteps (subStepMap) {
   return stepsObjectToArray(steps);
 }
 
-export default function getVerificationMap (chain, version = CERTIFICATE_VERSIONS.V2_0) {
+/**
+ * getVerificationMap
+ *
+ * Get verification map from the chain
+ *
+ * @param chain
+ * @returns {Array}
+ */
+export default function getVerificationMap (chain) {
   if (!chain) {
     return [];
   }
 
-  let key = version;
-  if (chainsService.isTestChain(chain)) {
-    key = BLOCKCHAINS.mocknet.code;
-  }
-
+  let network = chainsService.isTestChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
-  return getFullStepsFromSubSteps(verificationMap[key]);
+  return getFullStepsFromSubSteps(verificationMap[network]);
 }

@@ -3,30 +3,30 @@ import parseJSON from './parser';
 import Verifier from './verifier';
 
 export default class Certificate {
-  constructor (certificateJson) {
-    if (typeof certificateJson !== 'object') {
+  constructor (certificateContent) {
+    if (typeof certificateContent !== 'object') {
       try {
-        certificateJson = JSON.parse(certificateJson);
+        certificateContent = JSON.parse(certificateContent);
       } catch (err) {
         throw new Error('This is not a valid certificate');
       }
     }
 
     // Keep certificate JSON object
-    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
+    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
 
     // Parse certificate
-    this.parseJson(certificateJson);
+    this.parseJson(certificateContent);
   }
 
   /**
    * parseJson
    *
-   * @param certificateJson
+   * @param certificateContent
    * @returns {*}
    */
-  parseJson (certificateJson) {
-    const parsedCertificate = parseJSON(certificateJson);
+  parseJson (certificateContent) {
+    const parsedCertificate = parseJSON(certificateContent);
     this._setProperties(parsedCertificate);
   }
 
@@ -59,42 +59,49 @@ export default class Certificate {
    * @param description
    * @param expires
    * @param id
+   * @param issuedOn
    * @param issuer
+   * @param metadataJson
+   * @param name
    * @param publicKey
    * @param receipt
    * @param recipientFullName
+   * @param recordLink
    * @param revocationKey
    * @param sealImage
    * @param signature
    * @param signatureImage
    * @param subtitle
-   * @param title
    * @param version
    * @private
    */
-  _setProperties ({certificateImage, chain, description, expires, id, issuer, name, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
+  _setProperties ({certificateImage, chain, description, expires, id, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
     this.certificateImage = certificateImage;
     this.chain = chain;
     this.description = description;
     this.expires = expires;
     this.id = id;
+    this.issuedOn = issuedOn;
     this.issuer = issuer;
+    this.metadataJson = metadataJson;
+    this.name = name;
     this.publicKey = publicKey;
     this.receipt = receipt;
     this.recipientFullName = recipientFullName;
+    this.recordLink = recordLink;
     this.revocationKey = revocationKey;
     this.sealImage = sealImage;
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-    this.name = name;
+
+    // Get the full verification step-by-step map
+    this.verificationSteps = domain.certificates.getVerificationMap(chain);
+
     this.version = version;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();
-
-    // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
   }
 
   /**

@@ -34,8 +34,16 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.id).toEqual(fixture.id);
     });
 
+    it('should set issuedOn of the certificate object', () => {
+      expect(parsedCertificate.issuedOn).toBe(fixture.issuedOn);
+    });
+
     it('should set the issuer of the certificate object', () => {
       expect(parsedCertificate.issuer).toEqual(fixture.badge.issuer);
+    });
+
+    it('should set metadataJson of the certificate object', () => {
+      expect(parsedCertificate.metadataJson).toEqual(fixture.metadataJson);
     });
 
     it('should set the name of the certificate object', () => {
@@ -53,6 +61,10 @@ describe('Parser test suite', function () {
     it('should set the recipientFullName of the certificate object', () => {
       const fullNameAssertion = fixture.recipientProfile.name;
       expect(parsedCertificate.recipientFullName).toEqual(fullNameAssertion);
+    });
+
+    it('should set recordLink of the certificate object', () => {
+      expect(parsedCertificate.recordLink).toBe(fixture.id);
     });
 
     it('should set the revocationKey of the certificate object', () => {
@@ -75,7 +87,7 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.subtitle).toEqual(fixture.badge.subtitle);
     });
 
-    it('should set the the version of the certificate object', function () {
+    it('should set the the version of the certificate object', () => {
       expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V2_0);
     });
   });

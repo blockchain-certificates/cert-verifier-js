@@ -62,7 +62,10 @@ function parseV1 (certificateJson) {
   const chain = domain.certificates.getChain(publicKey);
   const expires = assertion.expires;
   const id = assertion.uid;
+  const issuedOn = assertion.issuedOn;
+  const metadataJson = assertion.metadataJson;
   const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
+  const recordLink = assertion.id;
   const revocationKey = recipient.revocationKey || null;
   const sealImage = issuer.image;
   const signature = certificateJson.document.signature;
@@ -79,11 +82,14 @@ function parseV1 (certificateJson) {
     description,
     expires,
     id,
+    issuedOn,
     issuer,
+    metadataJson,
     name,
     publicKey,
     receipt,
     recipientFullName,
+    recordLink,
     revocationKey,
     sealImage,
     signature,
@@ -107,8 +113,11 @@ function parseV2 (certificateJson) {
 
   const version = CERTIFICATE_VERSIONS.V2_0;
   const chain = domain.certificates.getChain(issuerKey, certificateJson.signature);
+  const issuedOn = certificateJson.issuedOn;
+  const metadataJson = certificateJson.metadataJson;
   const publicKey = recipientProfile.publicKey;
   const recipientFullName = recipientProfile.name;
+  const recordLink = certificateJson.id;
   const revocationKey = null;
   const sealImage = issuer.image;
   const signatureImage = getSignatureImages(badge.signatureLines, version);
@@ -119,11 +128,14 @@ function parseV2 (certificateJson) {
     description,
     expires,
     id,
+    issuedOn,
     issuer,
+    metadataJson,
     name,
     publicKey,
     receipt,
     recipientFullName,
+    recordLink,
     revocationKey,
     sealImage,
     signature: null,

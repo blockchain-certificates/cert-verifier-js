@@ -1,5 +1,5 @@
 import fixture from '../../fixtures/testnet-valid-1.2';
-import { BLOCKCHAINS, Certificate } from '../../../src';
+import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 
 describe('Certificate entity test suite', function () {
@@ -39,8 +39,20 @@ describe('Certificate entity test suite', function () {
         expect(certificate.id).toEqual(fixture.document.assertion.uid);
       });
 
+      it('should set issuedOn of the certificate object', () => {
+        expect(certificate.issuedOn).toBe(fixture.document.assertion.issuedOn);
+      });
+
       it('should set issuer of the certificate object', function () {
         expect(certificate.issuer).toEqual(fixture.document.certificate.issuer);
+      });
+
+      it('should set metadataJson of the certificate object', () => {
+        expect(certificate.metadataJson).toEqual(fixture.document.assertion.metadataJson);
+      });
+
+      it('should set name to the certificate object', function () {
+        expect(certificate.name).toEqual(fixture.document.certificate.name);
       });
 
       it('should set publicKey of the certificate object', function () {
@@ -54,6 +66,10 @@ describe('Certificate entity test suite', function () {
       it('should set recipientFullName of the certificate object', function () {
         const fullNameAssertion = fixture.document.recipient.givenName + ' ' + fixture.document.recipient.familyName;
         expect(certificate.recipientFullName).toEqual(fullNameAssertion);
+      });
+
+      it('should set recordLink of the certificate object', () => {
+        expect(certificate.recordLink).toBe(fixture.document.assertion.id);
       });
 
       it('should set revocationKey of the certificate object', function () {
@@ -76,10 +92,6 @@ describe('Certificate entity test suite', function () {
         expect(certificate.subtitle).toEqual(fixture.document.certificate.subtitle);
       });
 
-      it('should set name to the certificate object', function () {
-        expect(certificate.name).toEqual(fixture.document.certificate.name);
-      });
-
       it('should set transactionId to the certificate object', function () {
         expect(certificate.transactionId).toEqual(fixture.receipt.anchors[0].sourceId);
       });
@@ -96,6 +108,10 @@ describe('Certificate entity test suite', function () {
 
       it('should set verificationSteps to the certificate object', function () {
         expect(certificate.verificationSteps).toEqual(mainnetMapAssertion);
+      });
+
+      it('should set version to the certificate object', () => {
+        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V1_2);
       });
     });
   });

@@ -19,6 +19,7 @@ const versionVerificationMap = {
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
     SUB_STEPS.fetchRemoteHash,
+    SUB_STEPS.getIssuerProfile,
     SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.compareHashes,
     SUB_STEPS.checkMerkleRoot,

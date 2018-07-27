@@ -20,6 +20,11 @@ export default [{
     labelPending: SUB_STEPS.language.fetchRemoteHash.labelPending,
     parentStep: STEPS.formatValidation
   }, {
+    code: SUB_STEPS.getIssuerProfile,
+    label: SUB_STEPS.language.getIssuerProfile.label,
+    labelPending: SUB_STEPS.language.getIssuerProfile.labelPending,
+    parentStep: STEPS.formatValidation
+  }, {
     code: SUB_STEPS.parseIssuerKeys,
     label: SUB_STEPS.language.parseIssuerKeys.label,
     labelPending: SUB_STEPS.language.parseIssuerKeys.labelPending,

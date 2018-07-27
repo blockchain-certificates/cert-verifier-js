@@ -6894,6 +6894,11 @@ const BLOCKCHAINS = {
   }
 };
 
+const NETWORKS = {
+  mainnet: 'mainnet',
+  testnet: 'testnet'
+};
+
 const SecurityContextUrl = 'https://w3id.org/security/v1';
 
 // Minimum number of confirmations to consider a transaction valid. Recommended setting = 10
@@ -7454,8 +7459,29 @@ function getTransactionLink (transactionId, chainObject, getRawVersion = false) 
   return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 }
 
+function isTestChain (chain) {
+  if (chain) {
+    const chainCode = typeof chain === 'string' ? chain : chain.code;
+    const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);
+
+    if (!isChainValid) {
+      return null;
+    }
+
+    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
+  }
+
+  return null;
+}
+
+
+
+var chainsService = /*#__PURE__*/Object.freeze({
+	isTestChain: isTestChain
+});
+
 const versionVerificationMap = {
-  [CERTIFICATE_VERSIONS.V1_2]: [
+  [NETWORKS.mainnet]: [
     getTransactionId,
     computeLocalHash,
     fetchRemoteHash,
@@ -7468,19 +7494,7 @@ const versionVerificationMap = {
     checkAuthenticity,
     checkExpiresDate
   ],
-  [CERTIFICATE_VERSIONS.V2_0]: [
-    getTransactionId,
-    computeLocalHash,
-    fetchRemoteHash,
-    parseIssuerKeys,
-    compareHashes,
-    checkMerkleRoot,
-    checkReceipt,
-    checkRevokedStatus,
-    checkAuthenticity,
-    checkExpiresDate
-  ],
-  [BLOCKCHAINS.mocknet.code]: [
+  [NETWORKS.testnet]: [
     computeLocalHash,
     compareHashes,
     checkReceipt,
@@ -7532,18 +7546,22 @@ function getFullStepsFromSubSteps (subStepMap) {
   return stepsObjectToArray(steps);
 }
 
-function getVerificationMap (chain, version = CERTIFICATE_VERSIONS.V2_0) {
+/**
+ * getVerificationMap
+ *
+ * Get verification map from the chain
+ *
+ * @param chain
+ * @returns {Array}
+ */
+function getVerificationMap (chain) {
   if (!chain) {
     return [];
   }
 
-  let key = version;
-  if (domain$1.chains.isTestChain(chain)) {
-    key = BLOCKCHAINS.mocknet.code;
-  }
-
+  let network = chainsService.isTestChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
-  return getFullStepsFromSubSteps(verificationMap[key]);
+  return getFullStepsFromSubSteps(verificationMap[network]);
 }
 
 
@@ -7554,27 +7572,6 @@ var certificates = /*#__PURE__*/Object.freeze({
 	getTransactionId: getTransactionId$1,
 	getTransactionLink: getTransactionLink,
 	getVerificationMap: getVerificationMap
-});
-
-function isTestChain (chain) {
-  if (chain) {
-    const chainCode = typeof chain === 'string' ? chain : chain.code;
-    const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);
-
-    if (!isChainValid) {
-      return null;
-    }
-
-    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
-  }
-
-  return null;
-}
-
-
-
-var chains = /*#__PURE__*/Object.freeze({
-	isTestChain: isTestChain
 });
 
 var global$1 = (typeof global !== "undefined" ? global :
@@ -15800,6 +15797,30 @@ function getIssuerProfile$1 (issuerId) {
   return issuerProfileFetcher;
 }
 
+function getRevokedAssertions (revocationListUrl) {
+  if (!revocationListUrl) {
+    return Promise.resolve([]);
+  }
+  let revocationListFetcher = new Promise((resolve, reject) => {
+    return request$1({url: revocationListUrl})
+      .then(function (response) {
+        try {
+          let issuerRevocationJson = JSON.parse(response);
+          let revokedAssertions = issuerRevocationJson.revokedAssertions
+            ? issuerRevocationJson.revokedAssertions
+            : [];
+          resolve(revokedAssertions);
+        } catch (err) {
+          reject(new VerifierError(parseIssuerKeys, `Unable to get revocation assertion`));
+        }
+      })
+      .catch(function () {
+        reject(new VerifierError(parseIssuerKeys, `Unable to get revocation assertion`));
+      });
+  });
+  return revocationListFetcher;
+}
+
 /* eslint no-useless-escape: "off" */
 
 function noOffset (s) {
@@ -15902,48 +15923,6 @@ function parseIssuerKeys$1 (issuerProfileJson) {
   }
 }
 
-function getIssuerKeys (issuerId) {
-  let issuerKeyFetcher = new Promise((resolve, reject) => {
-    return getIssuerProfile$1(issuerId)
-      .then(function (issuerProfileJson) {
-        try {
-          let issuerKeyMap = parseIssuerKeys$1(issuerProfileJson);
-          resolve(issuerKeyMap);
-        } catch (err) {
-          reject(new VerifierError(parseIssuerKeys, err));
-        }
-      })
-      .catch(function (err) {
-        reject(new VerifierError(parseIssuerKeys, err));
-      });
-  });
-  return issuerKeyFetcher;
-}
-
-function getRevokedAssertions (revocationListUrl) {
-  if (!revocationListUrl) {
-    return Promise.resolve([]);
-  }
-  let revocationListFetcher = new Promise((resolve, reject) => {
-    return request$1({url: revocationListUrl})
-      .then(function (response) {
-        try {
-          let issuerRevocationJson = JSON.parse(response);
-          let revokedAssertions = issuerRevocationJson.revokedAssertions
-            ? issuerRevocationJson.revokedAssertions
-            : [];
-          resolve(revokedAssertions);
-        } catch (err) {
-          reject(new VerifierError(parseIssuerKeys, `Unable to get revocation assertion`));
-        }
-      })
-      .catch(function () {
-        reject(new VerifierError(parseIssuerKeys, `Unable to get revocation assertion`));
-      });
-  });
-  return revocationListFetcher;
-}
-
 function parseRevocationKey (issuerProfileJson) {
   if (
     issuerProfileJson.revocationKeys &&
@@ -15957,7 +15936,6 @@ function parseRevocationKey (issuerProfileJson) {
 
 
 var verifier = /*#__PURE__*/Object.freeze({
-	getIssuerKeys: getIssuerKeys,
 	getIssuerProfile: getIssuerProfile$1,
 	getRevokedAssertions: getRevokedAssertions,
 	parseIssuerKeys: parseIssuerKeys$1,
@@ -15967,7 +15945,7 @@ var verifier = /*#__PURE__*/Object.freeze({
 var domain$1 = {
   addresses,
   certificates,
-  chains,
+  chains: chainsService,
   verifier
 };
 
@@ -16031,7 +16009,10 @@ function parseV1 (certificateJson) {
   const chain = domain$1.certificates.getChain(publicKey);
   const expires = assertion.expires;
   const id = assertion.uid;
+  const issuedOn = assertion.issuedOn;
+  const metadataJson = assertion.metadataJson;
   const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
+  const recordLink = assertion.id;
   const revocationKey = recipient.revocationKey || null;
   const sealImage = issuer.image;
   const signature = certificateJson.document.signature;
@@ -16048,11 +16029,14 @@ function parseV1 (certificateJson) {
     description,
     expires,
     id,
+    issuedOn,
     issuer,
+    metadataJson,
     name,
     publicKey,
     receipt,
     recipientFullName,
+    recordLink,
     revocationKey,
     sealImage,
     signature,
@@ -16076,8 +16060,11 @@ function parseV2 (certificateJson) {
 
   const version = CERTIFICATE_VERSIONS.V2_0;
   const chain = domain$1.certificates.getChain(issuerKey, certificateJson.signature);
+  const issuedOn = certificateJson.issuedOn;
+  const metadataJson = certificateJson.metadataJson;
   const publicKey = recipientProfile.publicKey;
   const recipientFullName = recipientProfile.name;
+  const recordLink = certificateJson.id;
   const revocationKey = null;
   const sealImage = issuer.image;
   const signatureImage = getSignatureImages(badge.signatureLines, version);
@@ -16088,11 +16075,14 @@ function parseV2 (certificateJson) {
     description,
     expires,
     id,
+    issuedOn,
     issuer,
+    metadataJson,
     name,
     publicKey,
     receipt,
     recipientFullName,
+    recordLink,
     revocationKey,
     sealImage,
     signature: null,
@@ -33347,12 +33337,10 @@ class Verifier {
       );
     }
 
-    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
-      await this._verifyV12();
-    } else if (domain$1.chains.isTestChain(this.chain)) {
+    if (domain$1.chains.isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
-      await this._verifyV2();
+      await this._verifyMain();
     }
 
     // Send final callback update for global verification status
@@ -33447,17 +33435,9 @@ class Verifier {
     }
   }
 
-  /**
-   * verifyV1_2
-   *
-   * Verified certificate v1.2
-   *
-   * @returns {Promise<void>}
-   */
-  async _verifyV12 () {
-    // Get transaction
-    // TODO use already computed this.certificate.transactionId
-    let transactionId = this._doAction(
+  async _verifyMain () {
+    // Check transaction id validity
+    this._doAction(
       getTransactionId,
       () => isTransactionIdValid(this.transactionId)
     );
@@ -33465,17 +33445,13 @@ class Verifier {
     // Compute local hash
     let localHash = await this._doAsyncAction(
       computeLocalHash,
-      async () =>
-        computeLocalHash$1(this.documentToVerify, this.version)
+      async () => computeLocalHash$1(this.documentToVerify, this.version)
     );
 
-    // Get remote hash
-    let txData = await this._doAsyncAction(fetchRemoteHash, async () =>
-      lookForTx(
-        transactionId,
-        this.chain.code,
-        this.version
-      )
+    // Fetch remote hash
+    let txData = await this._doAsyncAction(
+      fetchRemoteHash,
+      async () => lookForTx(this.transactionId, this.chain.code, this.version)
     );
 
     // Get issuer profile
@@ -33497,10 +33473,7 @@ class Verifier {
 
     // Check merkle root
     this._doAction(checkMerkleRoot, () =>
-      ensureMerkleRootEqual(
-        this.receipt.merkleRoot,
-        txData.remoteHash
-      )
+      ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );
 
     // Check receipt
@@ -33509,108 +33482,33 @@ class Verifier {
     );
 
     // Check revoke status
-    this._doAction(checkRevokedStatus, () =>
-      ensureNotRevokedBySpentOutput(
-        txData.revokedAddresses,
-        domain$1.verifier.parseRevocationKey(issuerProfileJson),
-        this.revocationKey
-      )
-    );
+    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
+      this._doAction(checkRevokedStatus, () =>
+        ensureNotRevokedBySpentOutput(
+          txData.revokedAddresses,
+          domain$1.verifier.parseRevocationKey(issuerProfileJson),
+          this.revocationKey
+        )
+      );
+    } else {
+      // Get revoked assertions
+      let revokedAssertions = await this._doAsyncAction(
+        null,
+        async () => domain$1.verifier.getRevokedAssertions(this.issuer.revocationList)
+      );
+
+      // Check revoked status
+      this._doAction(checkRevokedStatus, () =>
+        ensureNotRevokedByList(revokedAssertions, this.id)
+      );
+    }
 
     // Check authenticity
     this._doAction(checkAuthenticity, () =>
-      ensureValidIssuingKey(
-        issuerKeyMap,
-        txData.issuingAddress,
-        txData.time
-      )
+      ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
     );
 
     // Check expiration
-    this._doAction(checkExpiresDate, () =>
-      ensureNotExpired(this.expires)
-    );
-  }
-
-  /**
-   * verifyV2
-   *
-   * Verified certificate v2
-   *
-   * @returns {Promise<void>}
-   */
-  async _verifyV2 () {
-    // Get transaction
-    let transactionId = this._doAction(
-      getTransactionId,
-      () => isTransactionIdValid(this.transactionId)
-    );
-
-    // Compute local hash
-    let localHash = await this._doAsyncAction(
-      computeLocalHash,
-      async () => {
-        return computeLocalHash$1(this.documentToVerify, this.version);
-      }
-    );
-
-    // Fetch remote hash
-    let txData = await this._doAsyncAction(
-      fetchRemoteHash,
-      async () => {
-        return lookForTx(transactionId, this.chain.code);
-      }
-    );
-
-    // Get issuer keys
-    let issuerKeyMap = await this._doAsyncAction(
-      parseIssuerKeys,
-      async () => {
-        return domain$1.verifier.getIssuerKeys(this.issuer.id);
-      }
-    );
-
-    // Get issuer keys
-    let revokedAssertions = await this._doAsyncAction(
-      null,
-      async () => {
-        return domain$1.verifier.getRevokedAssertions(this.issuer.revocationList);
-      }
-    );
-
-    // Compare hashes
-    this._doAction(compareHashes, () =>
-      ensureHashesEqual(localHash, this.receipt.targetHash)
-    );
-
-    // Check merkle root
-    this._doAction(checkMerkleRoot, () =>
-      ensureMerkleRootEqual(
-        this.receipt.merkleRoot,
-        txData.remoteHash
-      )
-    );
-
-    // Check receipt
-    this._doAction(checkReceipt, () =>
-      ensureValidReceipt(this.receipt)
-    );
-
-    // Check revoked status
-    this._doAction(checkRevokedStatus, () =>
-      ensureNotRevokedByList(revokedAssertions, this.id)
-    );
-
-    // Check authenticity
-    this._doAction(checkAuthenticity, () =>
-      ensureValidIssuingKey(
-        issuerKeyMap,
-        txData.issuingAddress,
-        txData.time
-      )
-    );
-
-    // Check expiration date
     this._doAction(checkExpiresDate, () =>
       ensureNotExpired(this.expires)
     );
@@ -33713,30 +33611,30 @@ class Verifier {
 }
 
 class Certificate {
-  constructor (certificateJson) {
-    if (typeof certificateJson !== 'object') {
+  constructor (certificateContent) {
+    if (typeof certificateContent !== 'object') {
       try {
-        certificateJson = JSON.parse(certificateJson);
+        certificateContent = JSON.parse(certificateContent);
       } catch (err) {
         throw new Error('This is not a valid certificate');
       }
     }
 
     // Keep certificate JSON object
-    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
+    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
 
     // Parse certificate
-    this.parseJson(certificateJson);
+    this.parseJson(certificateContent);
   }
 
   /**
    * parseJson
    *
-   * @param certificateJson
+   * @param certificateContent
    * @returns {*}
    */
-  parseJson (certificateJson) {
-    const parsedCertificate = parseJSON(certificateJson);
+  parseJson (certificateContent) {
+    const parsedCertificate = parseJSON(certificateContent);
     this._setProperties(parsedCertificate);
   }
 
@@ -33769,42 +33667,49 @@ class Certificate {
    * @param description
    * @param expires
    * @param id
+   * @param issuedOn
    * @param issuer
+   * @param metadataJson
+   * @param name
    * @param publicKey
    * @param receipt
    * @param recipientFullName
+   * @param recordLink
    * @param revocationKey
    * @param sealImage
    * @param signature
    * @param signatureImage
    * @param subtitle
-   * @param title
    * @param version
    * @private
    */
-  _setProperties ({certificateImage, chain, description, expires, id, issuer, name, publicKey, receipt, recipientFullName, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
+  _setProperties ({certificateImage, chain, description, expires, id, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
     this.certificateImage = certificateImage;
     this.chain = chain;
     this.description = description;
     this.expires = expires;
     this.id = id;
+    this.issuedOn = issuedOn;
     this.issuer = issuer;
+    this.metadataJson = metadataJson;
+    this.name = name;
     this.publicKey = publicKey;
     this.receipt = receipt;
     this.recipientFullName = recipientFullName;
+    this.recordLink = recordLink;
     this.revocationKey = revocationKey;
     this.sealImage = sealImage;
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-    this.name = name;
+
+    // Get the full verification step-by-step map
+    this.verificationSteps = domain$1.certificates.getVerificationMap(chain);
+
     this.version = version;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();
-
-    // Get the full verification step-by-step map
-    this.verificationSteps = domain$1.certificates.getVerificationMap(chain, version);
   }
 
   /**

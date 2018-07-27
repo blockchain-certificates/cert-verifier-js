@@ -6888,6 +6888,11 @@ var Verifier = (function (exports) {
 	  }
 	};
 
+	var NETWORKS = {
+	  mainnet: 'mainnet',
+	  testnet: 'testnet'
+	};
+
 	var SecurityContextUrl = 'https://w3id.org/security/v1';
 
 	// Minimum number of confirmations to consider a transaction valid. Recommended setting = 10
@@ -7453,13 +7458,36 @@ var Verifier = (function (exports) {
 	  return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
 	}
 
+	function isTestChain(chain) {
+	  if (chain) {
+	    var chainCode = typeof chain === 'string' ? chain : chain.code;
+	    var isChainValid = Object.keys(BLOCKCHAINS).find(function (chainObj) {
+	      return chainObj === chainCode;
+	    });
+
+	    if (!isChainValid) {
+	      return null;
+	    }
+
+	    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
+	  }
+
+	  return null;
+	}
+
+
+
+	var chainsService = /*#__PURE__*/Object.freeze({
+		isTestChain: isTestChain
+	});
+
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	var _versionVerificationM;
 
 	function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var versionVerificationMap = (_versionVerificationM = {}, _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V1_2, [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, CERTIFICATE_VERSIONS.V2_0, [getTransactionId, computeLocalHash, fetchRemoteHash, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, BLOCKCHAINS.mocknet.code, [computeLocalHash, compareHashes, checkReceipt, checkExpiresDate]), _versionVerificationM);
+	var versionVerificationMap = (_versionVerificationM = {}, _defineProperty$2(_versionVerificationM, NETWORKS.mainnet, [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys, compareHashes, checkMerkleRoot, checkReceipt, checkRevokedStatus, checkAuthenticity, checkExpiresDate]), _defineProperty$2(_versionVerificationM, NETWORKS.testnet, [computeLocalHash, compareHashes, checkReceipt, checkExpiresDate]), _versionVerificationM);
 
 	/**
 	 * stepsObjectToArray
@@ -7509,20 +7537,22 @@ var Verifier = (function (exports) {
 	  return stepsObjectToArray(steps);
 	}
 
+	/**
+	 * getVerificationMap
+	 *
+	 * Get verification map from the chain
+	 *
+	 * @param chain
+	 * @returns {Array}
+	 */
 	function getVerificationMap(chain) {
-	  var version = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : CERTIFICATE_VERSIONS.V2_0;
-
 	  if (!chain) {
 	    return [];
 	  }
 
-	  var key = version;
-	  if (domain$1.chains.isTestChain(chain)) {
-	    key = BLOCKCHAINS.mocknet.code;
-	  }
-
+	  var network = chainsService.isTestChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
 	  var verificationMap = Object.assign(versionVerificationMap);
-	  return getFullStepsFromSubSteps(verificationMap[key]);
+	  return getFullStepsFromSubSteps(verificationMap[network]);
 	}
 
 
@@ -7533,29 +7563,6 @@ var Verifier = (function (exports) {
 		getTransactionId: getTransactionId$1,
 		getTransactionLink: getTransactionLink,
 		getVerificationMap: getVerificationMap
-	});
-
-	function isTestChain(chain) {
-	  if (chain) {
-	    var chainCode = typeof chain === 'string' ? chain : chain.code;
-	    var isChainValid = Object.keys(BLOCKCHAINS).find(function (chainObj) {
-	      return chainObj === chainCode;
-	    });
-
-	    if (!isChainValid) {
-	      return null;
-	    }
-
-	    return chainCode === BLOCKCHAINS.mocknet.code || chainCode === BLOCKCHAINS.regtest.code;
-	  }
-
-	  return null;
-	}
-
-
-
-	var chains = /*#__PURE__*/Object.freeze({
-		isTestChain: isTestChain
 	});
 
 	var global$1 = (typeof global !== "undefined" ? global :
@@ -15779,6 +15786,26 @@ var Verifier = (function (exports) {
 	  return issuerProfileFetcher;
 	}
 
+	function getRevokedAssertions(revocationListUrl) {
+	  if (!revocationListUrl) {
+	    return Promise.resolve([]);
+	  }
+	  var revocationListFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: revocationListUrl }).then(function (response) {
+	      try {
+	        var issuerRevocationJson = JSON.parse(response);
+	        var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
+	        resolve(revokedAssertions);
+	      } catch (err) {
+	        reject(new VerifierError(parseIssuerKeys, 'Unable to get revocation assertion'));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(parseIssuerKeys, 'Unable to get revocation assertion'));
+	    });
+	  });
+	  return revocationListFetcher;
+	}
+
 	/* eslint no-useless-escape: "off" */
 
 	function noOffset(s) {
@@ -15877,42 +15904,6 @@ var Verifier = (function (exports) {
 	  }
 	}
 
-	function getIssuerKeys(issuerId) {
-	  var issuerKeyFetcher = new Promise(function (resolve, reject) {
-	    return getIssuerProfile$1(issuerId).then(function (issuerProfileJson) {
-	      try {
-	        var issuerKeyMap = parseIssuerKeys$1(issuerProfileJson);
-	        resolve(issuerKeyMap);
-	      } catch (err) {
-	        reject(new VerifierError(parseIssuerKeys, err));
-	      }
-	    }).catch(function (err) {
-	      reject(new VerifierError(parseIssuerKeys, err));
-	    });
-	  });
-	  return issuerKeyFetcher;
-	}
-
-	function getRevokedAssertions(revocationListUrl) {
-	  if (!revocationListUrl) {
-	    return Promise.resolve([]);
-	  }
-	  var revocationListFetcher = new Promise(function (resolve, reject) {
-	    return request$1({ url: revocationListUrl }).then(function (response) {
-	      try {
-	        var issuerRevocationJson = JSON.parse(response);
-	        var revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
-	        resolve(revokedAssertions);
-	      } catch (err) {
-	        reject(new VerifierError(parseIssuerKeys, 'Unable to get revocation assertion'));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(parseIssuerKeys, 'Unable to get revocation assertion'));
-	    });
-	  });
-	  return revocationListFetcher;
-	}
-
 	function parseRevocationKey(issuerProfileJson) {
 	  if (issuerProfileJson.revocationKeys && issuerProfileJson.revocationKeys.length > 0) {
 	    return issuerProfileJson.revocationKeys[0].key;
@@ -15923,7 +15914,6 @@ var Verifier = (function (exports) {
 
 
 	var verifier = /*#__PURE__*/Object.freeze({
-		getIssuerKeys: getIssuerKeys,
 		getIssuerProfile: getIssuerProfile$1,
 		getRevokedAssertions: getRevokedAssertions,
 		parseIssuerKeys: parseIssuerKeys$1,
@@ -15933,7 +15923,7 @@ var Verifier = (function (exports) {
 	var domain$1 = {
 	  addresses: addresses,
 	  certificates: certificates,
-	  chains: chains,
+	  chains: chainsService,
 	  verifier: verifier
 	};
 
@@ -16003,7 +15993,10 @@ var Verifier = (function (exports) {
 	  var chain = domain$1.certificates.getChain(publicKey);
 	  var expires = assertion.expires;
 	  var id = assertion.uid;
+	  var issuedOn = assertion.issuedOn;
+	  var metadataJson = assertion.metadataJson;
 	  var recipientFullName = recipient.givenName + ' ' + recipient.familyName;
+	  var recordLink = assertion.id;
 	  var revocationKey = recipient.revocationKey || null;
 	  var sealImage = issuer.image;
 	  var signature = certificateJson.document.signature;
@@ -16020,11 +16013,14 @@ var Verifier = (function (exports) {
 	    description: description,
 	    expires: expires,
 	    id: id,
+	    issuedOn: issuedOn,
 	    issuer: issuer,
+	    metadataJson: metadataJson,
 	    name: name,
 	    publicKey: publicKey,
 	    receipt: receipt,
 	    recipientFullName: recipientFullName,
+	    recordLink: recordLink,
 	    revocationKey: revocationKey,
 	    sealImage: sealImage,
 	    signature: signature,
@@ -16056,8 +16052,11 @@ var Verifier = (function (exports) {
 
 	  var version = CERTIFICATE_VERSIONS.V2_0;
 	  var chain = domain$1.certificates.getChain(issuerKey, certificateJson.signature);
+	  var issuedOn = certificateJson.issuedOn;
+	  var metadataJson = certificateJson.metadataJson;
 	  var publicKey = recipientProfile.publicKey;
 	  var recipientFullName = recipientProfile.name;
+	  var recordLink = certificateJson.id;
 	  var revocationKey = null;
 	  var sealImage = issuer.image;
 	  var signatureImage = getSignatureImages(badge.signatureLines, version);
@@ -16068,11 +16067,14 @@ var Verifier = (function (exports) {
 	    description: description,
 	    expires: expires,
 	    id: id,
+	    issuedOn: issuedOn,
 	    issuer: issuer,
+	    metadataJson: metadataJson,
 	    name: name,
 	    publicKey: publicKey,
 	    receipt: receipt,
 	    recipientFullName: recipientFullName,
+	    recordLink: recordLink,
 	    revocationKey: revocationKey,
 	    sealImage: sealImage,
 	    signature: null,
@@ -33289,36 +33291,23 @@ var Verifier = (function (exports) {
 	                throw new VerifierError('', 'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification');
 
 	              case 3:
-	                if (!(this.version === CERTIFICATE_VERSIONS.V1_2)) {
+	                if (!domain$1.chains.isTestChain(this.chain)) {
 	                  _context.next = 8;
 	                  break;
 	                }
 
 	                _context.next = 6;
-	                return this._verifyV12();
+	                return this._verifyV2Mock();
 
 	              case 6:
-	                _context.next = 15;
+	                _context.next = 10;
 	                break;
 
 	              case 8:
-	                if (!domain$1.chains.isTestChain(this.chain)) {
-	                  _context.next = 13;
-	                  break;
-	                }
+	                _context.next = 10;
+	                return this._verifyMain();
 
-	                _context.next = 11;
-	                return this._verifyV2Mock();
-
-	              case 11:
-	                _context.next = 15;
-	                break;
-
-	              case 13:
-	                _context.next = 15;
-	                return this._verifyV2();
-
-	              case 15:
+	              case 10:
 
 	                // Send final callback update for global verification status
 	                erroredStep = this._stepsStatuses.find(function (step) {
@@ -33326,7 +33315,7 @@ var Verifier = (function (exports) {
 	                });
 
 	                if (!erroredStep) {
-	                  _context.next = 20;
+	                  _context.next = 15;
 	                  break;
 	                }
 
@@ -33335,10 +33324,10 @@ var Verifier = (function (exports) {
 	                  errorMessage: erroredStep.message
 	                }));
 
-	              case 20:
+	              case 15:
 	                return _context.abrupt('return', this._succeed());
 
-	              case 21:
+	              case 16:
 	              case 'end':
 	                return _context.stop();
 	            }
@@ -33470,35 +33459,24 @@ var Verifier = (function (exports) {
 
 	      return _doAsyncAction;
 	    }()
-
-	    /**
-	     * verifyV1_2
-	     *
-	     * Verified certificate v1.2
-	     *
-	     * @returns {Promise<void>}
-	     */
-
 	  }, {
-	    key: '_verifyV12',
+	    key: '_verifyMain',
 	    value: function () {
-	      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+	      var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
 	        var _this = this;
 
-	        var transactionId, localHash, txData, issuerProfileJson, issuerKeyMap;
-	        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+	        var localHash, txData, issuerProfileJson, issuerKeyMap, revokedAssertions;
+	        return regeneratorRuntime.wrap(function _callee7$(_context7) {
 	          while (1) {
-	            switch (_context6.prev = _context6.next) {
+	            switch (_context7.prev = _context7.next) {
 	              case 0:
-	                // Get transaction
-	                // TODO use already computed this.certificate.transactionId
-	                transactionId = this._doAction(getTransactionId, function () {
+	                // Check transaction id validity
+	                this._doAction(getTransactionId, function () {
 	                  return isTransactionIdValid(_this.transactionId);
 	                });
 
 	                // Compute local hash
-
-	                _context6.next = 3;
+	                _context7.next = 3;
 	                return this._doAsyncAction(computeLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
 	                  return regeneratorRuntime.wrap(function _callee3$(_context3) {
 	                    while (1) {
@@ -33515,14 +33493,14 @@ var Verifier = (function (exports) {
 	                })));
 
 	              case 3:
-	                localHash = _context6.sent;
-	                _context6.next = 6;
+	                localHash = _context7.sent;
+	                _context7.next = 6;
 	                return this._doAsyncAction(fetchRemoteHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
 	                  return regeneratorRuntime.wrap(function _callee4$(_context4) {
 	                    while (1) {
 	                      switch (_context4.prev = _context4.next) {
 	                        case 0:
-	                          return _context4.abrupt('return', lookForTx(transactionId, _this.chain.code, _this.version));
+	                          return _context4.abrupt('return', lookForTx(_this.transactionId, _this.chain.code, _this.version));
 
 	                        case 1:
 	                        case 'end':
@@ -33533,8 +33511,8 @@ var Verifier = (function (exports) {
 	                })));
 
 	              case 6:
-	                txData = _context6.sent;
-	                _context6.next = 9;
+	                txData = _context7.sent;
+	                _context7.next = 9;
 	                return this._doAsyncAction(getIssuerProfile, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
 	                  return regeneratorRuntime.wrap(function _callee5$(_context5) {
 	                    while (1) {
@@ -33551,14 +33529,14 @@ var Verifier = (function (exports) {
 	                })));
 
 	              case 9:
-	                issuerProfileJson = _context6.sent;
-	                _context6.next = 12;
+	                issuerProfileJson = _context7.sent;
+	                _context7.next = 12;
 	                return this._doAsyncAction(parseIssuerKeys, function () {
 	                  return domain$1.verifier.parseIssuerKeys(issuerProfileJson);
 	                });
 
 	              case 12:
-	                issuerKeyMap = _context6.sent;
+	                issuerKeyMap = _context7.sent;
 
 
 	                // Compare hashes
@@ -33577,9 +33555,45 @@ var Verifier = (function (exports) {
 	                });
 
 	                // Check revoke status
+
+	                if (!(this.version === CERTIFICATE_VERSIONS.V1_2)) {
+	                  _context7.next = 20;
+	                  break;
+	                }
+
 	                this._doAction(checkRevokedStatus, function () {
 	                  return ensureNotRevokedBySpentOutput(txData.revokedAddresses, domain$1.verifier.parseRevocationKey(issuerProfileJson), _this.revocationKey);
 	                });
+	                _context7.next = 24;
+	                break;
+
+	              case 20:
+	                _context7.next = 22;
+	                return this._doAsyncAction(null, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
+	                  return regeneratorRuntime.wrap(function _callee6$(_context6) {
+	                    while (1) {
+	                      switch (_context6.prev = _context6.next) {
+	                        case 0:
+	                          return _context6.abrupt('return', domain$1.verifier.getRevokedAssertions(_this.issuer.revocationList));
+
+	                        case 1:
+	                        case 'end':
+	                          return _context6.stop();
+	                      }
+	                    }
+	                  }, _callee6, _this);
+	                })));
+
+	              case 22:
+	                revokedAssertions = _context7.sent;
+
+
+	                // Check revoked status
+	                this._doAction(checkRevokedStatus, function () {
+	                  return ensureNotRevokedByList(revokedAssertions, _this.id);
+	                });
+
+	              case 24:
 
 	                // Check authenticity
 	                this._doAction(checkAuthenticity, function () {
@@ -33591,164 +33605,19 @@ var Verifier = (function (exports) {
 	                  return ensureNotExpired(_this.expires);
 	                });
 
-	              case 19:
+	              case 26:
 	              case 'end':
-	                return _context6.stop();
+	                return _context7.stop();
 	            }
 	          }
-	        }, _callee6, this);
+	        }, _callee7, this);
 	      }));
 
-	      function _verifyV12() {
+	      function _verifyMain() {
 	        return _ref4.apply(this, arguments);
 	      }
 
-	      return _verifyV12;
-	    }()
-
-	    /**
-	     * verifyV2
-	     *
-	     * Verified certificate v2
-	     *
-	     * @returns {Promise<void>}
-	     */
-
-	  }, {
-	    key: '_verifyV2',
-	    value: function () {
-	      var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee11() {
-	        var _this2 = this;
-
-	        var transactionId, localHash, txData, issuerKeyMap, revokedAssertions;
-	        return regeneratorRuntime.wrap(function _callee11$(_context11) {
-	          while (1) {
-	            switch (_context11.prev = _context11.next) {
-	              case 0:
-	                // Get transaction
-	                transactionId = this._doAction(getTransactionId, function () {
-	                  return isTransactionIdValid(_this2.transactionId);
-	                });
-
-	                // Compute local hash
-
-	                _context11.next = 3;
-	                return this._doAsyncAction(computeLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
-	                  return regeneratorRuntime.wrap(function _callee7$(_context7) {
-	                    while (1) {
-	                      switch (_context7.prev = _context7.next) {
-	                        case 0:
-	                          return _context7.abrupt('return', computeLocalHash$1(_this2.documentToVerify, _this2.version));
-
-	                        case 1:
-	                        case 'end':
-	                          return _context7.stop();
-	                      }
-	                    }
-	                  }, _callee7, _this2);
-	                })));
-
-	              case 3:
-	                localHash = _context11.sent;
-	                _context11.next = 6;
-	                return this._doAsyncAction(fetchRemoteHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
-	                  return regeneratorRuntime.wrap(function _callee8$(_context8) {
-	                    while (1) {
-	                      switch (_context8.prev = _context8.next) {
-	                        case 0:
-	                          return _context8.abrupt('return', lookForTx(transactionId, _this2.chain.code));
-
-	                        case 1:
-	                        case 'end':
-	                          return _context8.stop();
-	                      }
-	                    }
-	                  }, _callee8, _this2);
-	                })));
-
-	              case 6:
-	                txData = _context11.sent;
-	                _context11.next = 9;
-	                return this._doAsyncAction(parseIssuerKeys, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
-	                  return regeneratorRuntime.wrap(function _callee9$(_context9) {
-	                    while (1) {
-	                      switch (_context9.prev = _context9.next) {
-	                        case 0:
-	                          return _context9.abrupt('return', domain$1.verifier.getIssuerKeys(_this2.issuer.id));
-
-	                        case 1:
-	                        case 'end':
-	                          return _context9.stop();
-	                      }
-	                    }
-	                  }, _callee9, _this2);
-	                })));
-
-	              case 9:
-	                issuerKeyMap = _context11.sent;
-	                _context11.next = 12;
-	                return this._doAsyncAction(null, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee10() {
-	                  return regeneratorRuntime.wrap(function _callee10$(_context10) {
-	                    while (1) {
-	                      switch (_context10.prev = _context10.next) {
-	                        case 0:
-	                          return _context10.abrupt('return', domain$1.verifier.getRevokedAssertions(_this2.issuer.revocationList));
-
-	                        case 1:
-	                        case 'end':
-	                          return _context10.stop();
-	                      }
-	                    }
-	                  }, _callee10, _this2);
-	                })));
-
-	              case 12:
-	                revokedAssertions = _context11.sent;
-
-
-	                // Compare hashes
-	                this._doAction(compareHashes, function () {
-	                  return ensureHashesEqual(localHash, _this2.receipt.targetHash);
-	                });
-
-	                // Check merkle root
-	                this._doAction(checkMerkleRoot, function () {
-	                  return ensureMerkleRootEqual(_this2.receipt.merkleRoot, txData.remoteHash);
-	                });
-
-	                // Check receipt
-	                this._doAction(checkReceipt, function () {
-	                  return ensureValidReceipt(_this2.receipt);
-	                });
-
-	                // Check revoked status
-	                this._doAction(checkRevokedStatus, function () {
-	                  return ensureNotRevokedByList(revokedAssertions, _this2.id);
-	                });
-
-	                // Check authenticity
-	                this._doAction(checkAuthenticity, function () {
-	                  return ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time);
-	                });
-
-	                // Check expiration date
-	                this._doAction(checkExpiresDate, function () {
-	                  return ensureNotExpired(_this2.expires);
-	                });
-
-	              case 19:
-	              case 'end':
-	                return _context11.stop();
-	            }
-	          }
-	        }, _callee11, this);
-	      }));
-
-	      function _verifyV2() {
-	        return _ref8.apply(this, arguments);
-	      }
-
-	      return _verifyV2;
+	      return _verifyMain;
 	    }()
 
 	    /**
@@ -33762,59 +33631,59 @@ var Verifier = (function (exports) {
 	  }, {
 	    key: '_verifyV2Mock',
 	    value: function () {
-	      var _ref13 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee13() {
-	        var _this3 = this;
+	      var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee9() {
+	        var _this2 = this;
 
 	        var localHash;
-	        return regeneratorRuntime.wrap(function _callee13$(_context13) {
+	        return regeneratorRuntime.wrap(function _callee9$(_context9) {
 	          while (1) {
-	            switch (_context13.prev = _context13.next) {
+	            switch (_context9.prev = _context9.next) {
 	              case 0:
-	                _context13.next = 2;
-	                return this._doAsyncAction(computeLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee12() {
-	                  return regeneratorRuntime.wrap(function _callee12$(_context12) {
+	                _context9.next = 2;
+	                return this._doAsyncAction(computeLocalHash, _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee8() {
+	                  return regeneratorRuntime.wrap(function _callee8$(_context8) {
 	                    while (1) {
-	                      switch (_context12.prev = _context12.next) {
+	                      switch (_context8.prev = _context8.next) {
 	                        case 0:
-	                          return _context12.abrupt('return', computeLocalHash$1(_this3.documentToVerify, _this3.version));
+	                          return _context8.abrupt('return', computeLocalHash$1(_this2.documentToVerify, _this2.version));
 
 	                        case 1:
 	                        case 'end':
-	                          return _context12.stop();
+	                          return _context8.stop();
 	                      }
 	                    }
-	                  }, _callee12, _this3);
+	                  }, _callee8, _this2);
 	                })));
 
 	              case 2:
-	                localHash = _context13.sent;
+	                localHash = _context9.sent;
 
 
 	                // Compare hashes
 	                this._doAction(compareHashes, function () {
-	                  return ensureHashesEqual(localHash, _this3.receipt.targetHash);
+	                  return ensureHashesEqual(localHash, _this2.receipt.targetHash);
 	                });
 
 	                // Check receipt
 	                this._doAction(checkReceipt, function () {
-	                  return ensureValidReceipt(_this3.receipt);
+	                  return ensureValidReceipt(_this2.receipt);
 	                });
 
 	                // Check expiration date
 	                this._doAction(checkExpiresDate, function () {
-	                  return ensureNotExpired(_this3.expires);
+	                  return ensureNotExpired(_this2.expires);
 	                });
 
 	              case 6:
 	              case 'end':
-	                return _context13.stop();
+	                return _context9.stop();
 	            }
 	          }
-	        }, _callee13, this);
+	        }, _callee9, this);
 	      }));
 
 	      function _verifyV2Mock() {
-	        return _ref13.apply(this, arguments);
+	        return _ref9.apply(this, arguments);
 	      }
 
 	      return _verifyV2Mock;
@@ -33831,9 +33700,9 @@ var Verifier = (function (exports) {
 
 	  }, {
 	    key: '_failed',
-	    value: function _failed(_ref15) {
-	      var step = _ref15.step,
-	          errorMessage = _ref15.errorMessage;
+	    value: function _failed(_ref11) {
+	      var step = _ref11.step,
+	          errorMessage = _ref11.errorMessage;
 
 	      log$4('failure:' + errorMessage);
 	      return { code: step, status: FAILURE, errorMessage: errorMessage };
@@ -33914,36 +33783,36 @@ var Verifier = (function (exports) {
 	function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Certificate = function () {
-	  function Certificate(certificateJson) {
+	  function Certificate(certificateContent) {
 	    _classCallCheck$5(this, Certificate);
 
-	    if ((typeof certificateJson === 'undefined' ? 'undefined' : _typeof$1(certificateJson)) !== 'object') {
+	    if ((typeof certificateContent === 'undefined' ? 'undefined' : _typeof$1(certificateContent)) !== 'object') {
 	      try {
-	        certificateJson = JSON.parse(certificateJson);
+	        certificateContent = JSON.parse(certificateContent);
 	      } catch (err) {
 	        throw new Error('This is not a valid certificate');
 	      }
 	    }
 
 	    // Keep certificate JSON object
-	    this.certificateJson = JSON.parse(JSON.stringify(certificateJson));
+	    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
 
 	    // Parse certificate
-	    this.parseJson(certificateJson);
+	    this.parseJson(certificateContent);
 	  }
 
 	  /**
 	   * parseJson
 	   *
-	   * @param certificateJson
+	   * @param certificateContent
 	   * @returns {*}
 	   */
 
 
 	  _createClass$1(Certificate, [{
 	    key: 'parseJson',
-	    value: function parseJson(certificateJson) {
-	      var parsedCertificate = parseJSON(certificateJson);
+	    value: function parseJson(certificateContent) {
+	      var parsedCertificate = parseJSON(certificateContent);
 	      this._setProperties(parsedCertificate);
 	    }
 
@@ -34000,16 +33869,19 @@ var Verifier = (function (exports) {
 	     * @param description
 	     * @param expires
 	     * @param id
+	     * @param issuedOn
 	     * @param issuer
+	     * @param metadataJson
+	     * @param name
 	     * @param publicKey
 	     * @param receipt
 	     * @param recipientFullName
+	     * @param recordLink
 	     * @param revocationKey
 	     * @param sealImage
 	     * @param signature
 	     * @param signatureImage
 	     * @param subtitle
-	     * @param title
 	     * @param version
 	     * @private
 	     */
@@ -34022,11 +33894,14 @@ var Verifier = (function (exports) {
 	          description = _ref2.description,
 	          expires = _ref2.expires,
 	          id = _ref2.id,
+	          issuedOn = _ref2.issuedOn,
 	          issuer = _ref2.issuer,
+	          metadataJson = _ref2.metadataJson,
 	          name = _ref2.name,
 	          publicKey = _ref2.publicKey,
 	          receipt = _ref2.receipt,
 	          recipientFullName = _ref2.recipientFullName,
+	          recordLink = _ref2.recordLink,
 	          revocationKey = _ref2.revocationKey,
 	          sealImage = _ref2.sealImage,
 	          signature = _ref2.signature,
@@ -34039,23 +33914,27 @@ var Verifier = (function (exports) {
 	      this.description = description;
 	      this.expires = expires;
 	      this.id = id;
+	      this.issuedOn = issuedOn;
 	      this.issuer = issuer;
+	      this.metadataJson = metadataJson;
+	      this.name = name;
 	      this.publicKey = publicKey;
 	      this.receipt = receipt;
 	      this.recipientFullName = recipientFullName;
+	      this.recordLink = recordLink;
 	      this.revocationKey = revocationKey;
 	      this.sealImage = sealImage;
 	      this.signature = signature;
 	      this.signatureImage = signatureImage;
 	      this.subtitle = subtitle;
-	      this.name = name;
+
+	      // Get the full verification step-by-step map
+	      this.verificationSteps = domain$1.certificates.getVerificationMap(chain);
+
 	      this.version = version;
 
 	      // Transaction ID, link & raw link
 	      this._setTransactionDetails();
-
-	      // Get the full verification step-by-step map
-	      this.verificationSteps = domain$1.certificates.getVerificationMap(chain, version);
 	    }
 
 	    /**

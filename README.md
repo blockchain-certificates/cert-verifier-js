@@ -79,6 +79,8 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
 
 # API
 
+## `Certificate`
+
 ### `new Certificate(certificateContent)`
 ```javascript
 const certificate = new Certificate(certificateContent);
@@ -96,21 +98,24 @@ The certificate instance has the following properties:
 - `expires`: `String`. Expiration date
 - `id`: `String`. Certificate's ID
 - `isFormatValid`: `Boolean`. Indicates whether or not the certificate has a valid format
+- `issuedOn`: `String`. Datetime of issuance (ISO-8601)
 - `issuer`: `Object`. Certificate issuer
+- `metadataJson`: `Object`. Certificate metadata object
 - `name`: `String`. Name of the certificate
 - `publicKey`: `String`. Certificate's public key
-- `rawTransactionLink`: `String`. Raw transaction ID
 - `receipt`: `String`. Certificate's receipt
 - `recipientFullName`: `String`. Full name of recipient
+- `recordLink`: `String`. Link to the certificate record
 - `revocationKey`: `String|null`. Revocation key (if any)
 - `sealImage`: `String`. Raw data of the seal's image;
 - `signature`: `String`. Certificate's signature
 - `signatureImage`: `String`. Raw data of the certificate's signature image;
 - `subtitle`: `String`. Subtitle of the certificate
 - `transactionId`: `String`. Transaction ID
+- `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link
 - `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
-- `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/v2-wip/config/default.js#L60)
+- `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/v2-wip/src/constants/certificateVersions.js)
 
 **Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
 
@@ -157,6 +162,16 @@ The final verification status:
 - `status`: final verification status (`success`, `failure`)
 - `errorMessage`: error message (optional)
 
+### Constants
+Several constants are being exposed:
+```javascript
+import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from 'cert-verifier-js';
+```
+- `BLOCKCHAINS`: descriptive object of all blockchains supported by the library
+- `STEPS`: descriptive object of all verification steps (top level)
+- `SUB_STEPS`: descriptive object of all verification substeps
+- `CERTIFICATE_VERSIONS`: list of all certificate versions
+- [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/cert-verifier-js/blob/v2-wip/src/constants/verificationStatuses.js)
 
 ## Contribute
 

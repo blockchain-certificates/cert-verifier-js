@@ -46,12 +46,10 @@ export default class Verifier {
       );
     }
 
-    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
-      await this._verifyV12();
-    } else if (domain.chains.isTestChain(this.chain)) {
+    if (domain.chains.isTestChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
-      await this._verifyV2();
+      await this._verifyMain();
     }
 
     // Send final callback update for global verification status
@@ -146,14 +144,7 @@ export default class Verifier {
     }
   }
 
-  /**
-   * verifyV1_2
-   *
-   * Verified certificate v1.2
-   *
-   * @returns {Promise<void>}
-   */
-  async _verifyV12 () {
+  async _verifyMain () {
     // Check transaction id validity
     this._doAction(
       SUB_STEPS.getTransactionId,
@@ -200,13 +191,26 @@ export default class Verifier {
     );
 
     // Check revoke status
-    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-      checks.ensureNotRevokedBySpentOutput(
-        txData.revokedAddresses,
-        domain.verifier.parseRevocationKey(issuerProfileJson),
-        this.revocationKey
-      )
-    );
+    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
+      this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+        checks.ensureNotRevokedBySpentOutput(
+          txData.revokedAddresses,
+          domain.verifier.parseRevocationKey(issuerProfileJson),
+          this.revocationKey
+        )
+      );
+    } else {
+      // Get revoked assertions
+      let revokedAssertions = await this._doAsyncAction(
+        null,
+        async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
+      );
+
+      // Check revoked status
+      this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+        checks.ensureNotRevokedByList(revokedAssertions, this.id)
+      );
+    }
 
     // Check authenticity
     this._doAction(SUB_STEPS.checkAuthenticity, () =>
@@ -214,81 +218,6 @@ export default class Verifier {
     );
 
     // Check expiration
-    this._doAction(SUB_STEPS.checkExpiresDate, () =>
-      checks.ensureNotExpired(this.expires)
-    );
-  }
-
-  /**
-   * verifyV2
-   *
-   * Verified certificate v2
-   *
-   * @returns {Promise<void>}
-   */
-  async _verifyV2 () {
-    // Check transaction id validity
-    this._doAction(
-      SUB_STEPS.getTransactionId,
-      () => checks.isTransactionIdValid(this.transactionId)
-    );
-
-    // Compute local hash
-    let localHash = await this._doAsyncAction(
-      SUB_STEPS.computeLocalHash,
-      async () => checks.computeLocalHash(this.documentToVerify, this.version)
-    );
-
-    // Fetch remote hash
-    let txData = await this._doAsyncAction(
-      SUB_STEPS.fetchRemoteHash,
-      async () => blockchainConnectors.lookForTx(this.transactionId, this.chain.code)
-    );
-
-    // Get issuer profile
-    let issuerProfileJson = await this._doAsyncAction(
-      SUB_STEPS.getIssuerProfile,
-      async () => domain.verifier.getIssuerProfile(this.issuer.id)
-    );
-
-    // Parse issuer keys
-    let issuerKeyMap = await this._doAsyncAction(
-      SUB_STEPS.parseIssuerKeys,
-      () => domain.verifier.parseIssuerKeys(issuerProfileJson)
-    );
-
-    // Get revoked assertions
-    let revokedAssertions = await this._doAsyncAction(
-      null,
-      async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
-    );
-
-    // Compare hashes
-    this._doAction(SUB_STEPS.compareHashes, () =>
-      checks.ensureHashesEqual(localHash, this.receipt.targetHash)
-    );
-
-    // Check merkle root
-    this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      checks.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
-    );
-
-    // Check receipt
-    this._doAction(SUB_STEPS.checkReceipt, () =>
-      checks.ensureValidReceipt(this.receipt)
-    );
-
-    // Check revoked status
-    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-      checks.ensureNotRevokedByList(revokedAssertions, this.id)
-    );
-
-    // Check authenticity
-    this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
-    );
-
-    // Check expiration date
     this._doAction(SUB_STEPS.checkExpiresDate, () =>
       checks.ensureNotExpired(this.expires)
     );

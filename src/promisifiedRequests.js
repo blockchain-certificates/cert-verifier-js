@@ -7,6 +7,10 @@ export function request (obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
 
+    if (!url) {
+      reject(new Error('URL is missing'));
+    }
+
     // server
     const xhr = typeof XMLHttpRequest === 'undefined' ? xhrPolyfill : XMLHttpRequest;
     /* eslint new-cap: "off" */

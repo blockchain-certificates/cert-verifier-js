@@ -6,7 +6,7 @@ export default function getRevokedAssertions (revocationListUrl) {
   if (!revocationListUrl) {
     return Promise.resolve([]);
   }
-  let revocationListFetcher = new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     return request({url: revocationListUrl})
       .then(function (response) {
         try {
@@ -23,5 +23,4 @@ export default function getRevokedAssertions (revocationListUrl) {
         reject(new VerifierError(SUB_STEPS.parseIssuerKeys, `Unable to get revocation assertion`));
       });
   });
-  return revocationListFetcher;
 }

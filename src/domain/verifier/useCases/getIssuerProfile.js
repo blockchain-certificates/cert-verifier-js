@@ -2,20 +2,21 @@ import { request } from '../../../promisifiedRequests';
 import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 
-export default function getIssuerProfile (issuerId) {
-  let issuerProfileFetcher = new Promise((resolve, reject) => {
-    return request({url: issuerId})
-      .then(response => {
-        try {
-          let issuerProfileJson = JSON.parse(response);
-          resolve(issuerProfileJson);
-        } catch (err) {
-          reject(new VerifierError(SUB_STEPS.getIssuerProfile, err));
-        }
-      })
-      .catch(() => {
-        reject(new VerifierError(SUB_STEPS.getIssuerProfile, `Unable to get issuer profile`));
-      });
+/**
+ * getIssuerProfile
+ *
+ * @param issuerId
+ * @returns {Promise<any>}
+ */
+export default async function getIssuerProfile (issuerId) {
+  const errorMessage = 'Unable to get issuer profile';
+  if (!issuerId) {
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
+  }
+
+  const response = await request({url: issuerId}).catch(() => {
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   });
-  return issuerProfileFetcher;
+
+  return JSON.parse(response);
 }

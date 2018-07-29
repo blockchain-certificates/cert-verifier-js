@@ -2,31 +2,46 @@ import { dateToUnixTimestamp } from '../../../helpers/date';
 import { SUB_STEPS } from '../../../constants';
 import { Key, VerifierError } from '../../../models';
 
+/**
+ * createKeyObject
+ *
+ * @param rawKeyObject
+ * @param finalPublicKey
+ * @returns {Key}
+ */
+function createKeyObject (rawKeyObject, finalPublicKey = null) {
+  const created = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
+  const revoked = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
+  const expires = rawKeyObject.expires ? dateToUnixTimestamp(rawKeyObject.expires) : null;
+  // backcompat for v2 alpha
+  let publicKey = finalPublicKey;
+  if (!finalPublicKey) {
+    const publicKeyTemp = rawKeyObject.id || rawKeyObject.publicKey;
+    publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
+  }
+  return new Key(publicKey, created, revoked, expires);
+}
+
+/**
+ * parseIssuerKeys
+ *
+ * @param issuerProfileJson
+ */
 export default function parseIssuerKeys (issuerProfileJson) {
   try {
-    var keyMap = {};
-    var k;
+    let keyMap = {};
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
-      var responseKeys =
-        issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
-      for (var i = 0; i < responseKeys.length; i++) {
-        var key = responseKeys[i];
-        var created = key.created ? dateToUnixTimestamp(key.created) : null;
-        var revoked = key.revoked ? dateToUnixTimestamp(key.revoked) : null;
-        var expires = key.expires ? dateToUnixTimestamp(key.expires) : null;
-        // backcompat for v2 alpha
-        var publicKeyTemp = key.id || key.publicKey;
-        var publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
-        k = new Key(publicKey, created, revoked, expires);
-        keyMap[k.publicKey] = k;
+      const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
+      for (let i = 0; i < responseKeys.length; i++) {
+        const key = createKeyObject(responseKeys[i]);
+        keyMap[key.publicKey] = key;
       }
     } else {
       // This is a v2 certificate with a v1 issuer
       const issuerKeys = issuerProfileJson.issuerKeys || [];
-      var issuerKey = issuerKeys[0].key;
-      k = new Key(issuerKey, null, null, null);
-      keyMap[k.publicKey] = k;
+      const key = createKeyObject({}, issuerKeys[0].key);
+      keyMap[key.publicKey] = key;
     }
     return keyMap;
   } catch (e) {

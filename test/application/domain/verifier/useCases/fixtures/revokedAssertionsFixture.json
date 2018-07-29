@@ -1,0 +1,16 @@
+{
+  "@context": "https://w3id.org/openbadges/v2",
+  "id": "https://domain.tld/revocationList.json",
+  "type": "RevocationList",
+  "issuer": "https://domain.tld/issuerTestnet.json",
+  "revokedAssertions": [
+    {
+      "id": "urn:uuid:00000000000-aaaa-1111-2222-000000000",
+      "revocationReason": "Honor code violation"
+    },
+    {
+      "id": "urn:uuid:00000000001-aaaa-1111-2222-000000000",
+      "revocationReason": "Issued in error."
+    }
+  ]
+}

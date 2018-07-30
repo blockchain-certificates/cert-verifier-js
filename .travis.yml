@@ -13,3 +13,6 @@ before_script:
   - npm run lint
 script:
   - echo "Build complete"
+after_script:
+  - npm run test:coverage
+  - npm run test:coverage:report

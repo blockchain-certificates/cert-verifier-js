@@ -1,7 +1,5 @@
 import 'babel-polyfill';
-import * as helpers from '../../src/checks';
-
-// TODO write all tests
+import { ensureNotExpired } from '../../../src/inspectors';
 
 describe('Checks test suite', () => {
   describe('ensureNotExpired method', () => {
@@ -10,7 +8,7 @@ describe('Checks test suite', () => {
     describe('given it is called with no parameter', () => {
       it('should not throw an error', () => {
         expect(() => {
-          helpers.ensureNotExpired();
+          ensureNotExpired();
         }).not.toThrow();
       });
     });
@@ -19,7 +17,7 @@ describe('Checks test suite', () => {
       it('should throw an error', () => {
         const assertionDate = '2017-01-01';
         expect(() => {
-          helpers.ensureNotExpired(assertionDate);
+          ensureNotExpired(assertionDate);
         }).toThrow(errorMessage);
       });
     });
@@ -28,7 +26,7 @@ describe('Checks test suite', () => {
       it('should not throw an error ', () => {
         const fixtureDate = '2817-01-01';
         expect(() => {
-          helpers.ensureNotExpired(fixtureDate);
+          ensureNotExpired(fixtureDate);
         }).not.toThrow();
       });
     });

@@ -7,6 +7,8 @@
   "scripts": {
     "test": "jest --maxWorkers=4",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
+    "test:coverage:report": "codecov",
     "build": "npm run build:esm && npm run build:es5",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
@@ -80,6 +82,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "brfs": "^1.4.3",
+    "codecov": "^3.0.4",
     "husky": "^0.14.3",
     "jest": "^23.4.1",
     "rollup": "^0.59.4",

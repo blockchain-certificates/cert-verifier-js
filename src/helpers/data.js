@@ -1,4 +1,4 @@
-function _toByteArray (hexString) {
+export function toByteArray (hexString) {
   const outArray = [];
   const byteSize = 2;
   for (let i = 0; i < hexString.length; i += byteSize) {
@@ -7,7 +7,7 @@ function _toByteArray (hexString) {
   return outArray;
 }
 
-function _toUTF8Data (string) {
+export function toUTF8Data (string) {
   const utf8 = [];
   for (let i = 0; i < string.length; i++) {
     let charcode = string.charCodeAt(i);
@@ -34,7 +34,7 @@ function _toUTF8Data (string) {
         0x80 | ((charcode >> 12) & 0x3f),
         0x80 | ((charcode >> 6) & 0x3f),
         0x80 | (charcode & 0x3f)
-      );brave
+      );
     }
   }
   return utf8;

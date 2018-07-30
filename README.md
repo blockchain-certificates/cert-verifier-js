@@ -17,20 +17,20 @@ Exposed by default:
 
 ```javascript
 var Certificate = require('cert-verifier-js');
-var certificate = new Certificate(certificateContent);
+var certificate = new Certificate(certificateDefinition);
 ```
 
 #### ES module
 ```javascript
 import Certificate from 'cert-verifier-js';
-let certificate = new Certificate(certificateContent);
+let certificate = new Certificate(certificateDefinition);
 ```
 
 #### Script tag (iife)
 ```html
 <script src='node_modules/cert-verifier-js/dist/verifier-iife.js'></script>
 <script>
-  var certificate = new Certificate(certificateContent);
+  var certificate = new Certificate(certificateDefinition);
 </script>
 ```
 
@@ -81,14 +81,14 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
 
 ## `Certificate`
 
-### `new Certificate(certificateContent)`
+### `new Certificate(certificateDefinition)`
 ```javascript
-const certificate = new Certificate(certificateContent);
+const certificate = new Certificate(certificateDefinition);
 ```
 The constructor automatically parses a certificate.
 
 #### Parameter
-- `certificateContent` (`String|Object`): the certificate content. Can either be a string or a JSON object.
+- `certificateDefinition` (`String|Object`): the certificate definition. Can either be a string or a JSON object.
 
 #### Returns
 The certificate instance has the following properties:

@@ -93,6 +93,7 @@ The constructor automatically parses a certificate.
 #### Returns
 The certificate instance has the following properties:
 - `certificateImage`: `String`. Raw data of the certificate image
+- `certificateJson`: `Object`. Certificate JSON object
 - `chain`: `Object`. Chain the certificate was issued on
 - `description`: `String`. Description of the certificate
 - `expires`: `String`. Expiration date

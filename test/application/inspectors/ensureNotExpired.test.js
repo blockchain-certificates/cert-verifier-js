@@ -1,7 +1,6 @@
-import 'babel-polyfill';
 import { ensureNotExpired } from '../../../src/inspectors';
 
-describe('Checks test suite', function () {
+describe('Inspectors test suite', function () {
   describe('ensureNotExpired method', function () {
     const errorMessage = 'This certificate has expired.';
 

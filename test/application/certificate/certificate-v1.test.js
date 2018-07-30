@@ -39,7 +39,7 @@ describe('Certificate entity test suite', function () {
         expect(certificate.id).toEqual(fixture.document.assertion.uid);
       });
 
-      it('should set issuedOn of the certificate object', () => {
+      it('should set issuedOn of the certificate object', function () {
         expect(certificate.issuedOn).toBe(fixture.document.assertion.issuedOn);
       });
 
@@ -47,7 +47,7 @@ describe('Certificate entity test suite', function () {
         expect(certificate.issuer).toEqual(fixture.document.certificate.issuer);
       });
 
-      it('should set metadataJson of the certificate object', () => {
+      it('should set metadataJson of the certificate object', function () {
         expect(certificate.metadataJson).toEqual(fixture.document.assertion.metadataJson);
       });
 
@@ -68,7 +68,7 @@ describe('Certificate entity test suite', function () {
         expect(certificate.recipientFullName).toEqual(fullNameAssertion);
       });
 
-      it('should set recordLink of the certificate object', () => {
+      it('should set recordLink of the certificate object', function () {
         expect(certificate.recordLink).toBe(fixture.document.assertion.id);
       });
 
@@ -110,7 +110,7 @@ describe('Certificate entity test suite', function () {
         expect(certificate.verificationSteps).toEqual(mainnetMapAssertion);
       });
 
-      it('should set version to the certificate object', () => {
+      it('should set version to the certificate object', function () {
         expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V1_2);
       });
     });

@@ -3,36 +3,36 @@ import * as PromisifiedRequests from '../../../../../src/promisifiedRequests';
 import sinon from 'sinon';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
 
-describe('Verifier domain getRevokedAssertions use case test suite', () => {
+describe('Verifier domain getRevokedAssertions use case test suite', function () {
   const errorMessageAssertion = 'Unable to get revocation assertions';
 
-  describe('given it is called without an revocationListUrl parameter', () => {
-    it('should throw an error', async () => {
+  describe('given it is called without an revocationListUrl parameter', function () {
+    it('should throw an error', async function () {
       await getRevokedAssertions().catch(e => {
         expect(e.message).toBe(errorMessageAssertion);
       });
     });
   });
 
-  describe('given it is called with an revocationListUrl', () => {
+  describe('given it is called with an revocationListUrl', function () {
     const revokedAssertionsAssertionString = JSON.stringify(revokedAssertionsFixture);
     const issuerIdFixture = 'http://domain.tld';
 
     let requestStub = sinon.stub(PromisifiedRequests, 'request').returns(new Promise(resolve => resolve(revokedAssertionsAssertionString)));
 
-    describe('when the request is successful', () => {
-      it('should return the revoked assertions JSON object', async () => {
+    describe('when the request is successful', function () {
+      it('should return the revoked assertions JSON object', async function () {
         const result = await getRevokedAssertions(issuerIdFixture);
         expect(result).toEqual(revokedAssertionsFixture.revokedAssertions);
       });
     });
 
-    describe('when the request fails', () => {
-      afterEach(() => {
+    describe('when the request fails', function () {
+      afterEach(function () {
         requestStub.restore();
       });
 
-      it('should throw an error', async () => {
+      it('should throw an error', async function () {
         requestStub.returns(new Promise((resolve, reject) => reject(errorMessageAssertion)));
         await getRevokedAssertions(issuerIdFixture).catch(e => {
           expect(e.message).toBe(errorMessageAssertion);

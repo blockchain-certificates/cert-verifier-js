@@ -3,36 +3,36 @@ import * as PromisifiedRequests from '../../../../../src/promisifiedRequests';
 import sinon from 'sinon';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
 
-describe('Verifier domain getIssuerProfile use case test suite', () => {
-  describe('given it is called without an issuerId parameter', () => {
-    it('should throw an error', async () => {
+describe('Verifier domain getIssuerProfile use case test suite', function () {
+  describe('given it is called without an issuerId parameter', function () {
+    it('should throw an error', async function () {
       await getIssuerProfile().catch(e => {
         expect(e.message).toBe('Unable to get issuer profile');
       });
     });
   });
 
-  describe('given it is called with an issuerId', () => {
+  describe('given it is called with an issuerId', function () {
     const issuerProfileFixtureString = JSON.stringify(issuerProfileV2JsonFixture);
     const issuerIdFixture = 'http://domain.tld';
 
     let requestStub = sinon.stub(PromisifiedRequests, 'request').returns(new Promise(resolve => resolve(issuerProfileFixtureString)));
 
-    describe('when the request is successful', () => {
-      it('should return the issuer profile JSON object', async () => {
+    describe('when the request is successful', function () {
+      it('should return the issuer profile JSON object', async function () {
         const result = await getIssuerProfile(issuerIdFixture);
         expect(result).toEqual(issuerProfileV2JsonFixture);
       });
     });
 
-    describe('when the request fails', () => {
+    describe('when the request fails', function () {
       const errorMessageFixture = 'Unable to get issuer profile';
 
-      afterEach(() => {
+      afterEach(function () {
         requestStub.restore();
       });
 
-      it('should throw an error', async () => {
+      it('should throw an error', async function () {
         requestStub.returns(new Promise((resolve, reject) => reject(errorMessageFixture)));
         await getIssuerProfile(issuerIdFixture).catch(e => {
           expect(e.message).toBe(errorMessageFixture);

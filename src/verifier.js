@@ -1,10 +1,10 @@
 import { SUB_STEPS, VERIFICATION_STATUSES } from './constants';
-import * as checks from './checks';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
 import CERTIFICATE_VERSIONS from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
 import domain from './domain';
+import * as inspectors from './inspectors';
 
 const log = debug('Verifier');
 
@@ -148,13 +148,13 @@ export default class Verifier {
     // Check transaction id validity
     this._doAction(
       SUB_STEPS.getTransactionId,
-      () => checks.isTransactionIdValid(this.transactionId)
+      () => inspectors.isTransactionIdValid(this.transactionId)
     );
 
     // Compute local hash
     let localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
-      async () => checks.computeLocalHash(this.documentToVerify, this.version)
+      async () => inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
@@ -177,23 +177,23 @@ export default class Verifier {
 
     // Compare hashes
     this._doAction(SUB_STEPS.compareHashes, () => {
-      checks.ensureHashesEqual(localHash, this.receipt.targetHash);
+      inspectors.ensureHashesEqual(localHash, this.receipt.targetHash);
     });
 
     // Check merkle root
     this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      checks.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
+      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );
 
     // Check receipt
     this._doAction(SUB_STEPS.checkReceipt, () =>
-      checks.ensureValidReceipt(this.receipt)
+      inspectors.ensureValidReceipt(this.receipt)
     );
 
     // Check revoke status
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
       this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-        checks.ensureNotRevokedBySpentOutput(
+        inspectors.ensureNotRevokedBySpentOutput(
           txData.revokedAddresses,
           domain.verifier.parseRevocationKey(issuerProfileJson),
           this.revocationKey
@@ -208,18 +208,18 @@ export default class Verifier {
 
       // Check revoked status
       this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-        checks.ensureNotRevokedByList(revokedAssertions, this.id)
+        inspectors.ensureNotRevokedByList(revokedAssertions, this.id)
       );
     }
 
     // Check authenticity
     this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      checks.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
+      inspectors.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
     );
 
     // Check expiration
     this._doAction(SUB_STEPS.checkExpiresDate, () =>
-      checks.ensureNotExpired(this.expires)
+      inspectors.ensureNotExpired(this.expires)
     );
   }
 
@@ -235,22 +235,22 @@ export default class Verifier {
     let localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
       async () =>
-        checks.computeLocalHash(this.documentToVerify, this.version)
+        inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Compare hashes
     this._doAction(SUB_STEPS.compareHashes, () =>
-      checks.ensureHashesEqual(localHash, this.receipt.targetHash)
+      inspectors.ensureHashesEqual(localHash, this.receipt.targetHash)
     );
 
     // Check receipt
     this._doAction(SUB_STEPS.checkReceipt, () =>
-      checks.ensureValidReceipt(this.receipt)
+      inspectors.ensureValidReceipt(this.receipt)
     );
 
     // Check expiration date
     this._doAction(SUB_STEPS.checkExpiresDate, () =>
-      checks.ensureNotExpired(this.expires)
+      inspectors.ensureNotExpired(this.expires)
     );
   }
 

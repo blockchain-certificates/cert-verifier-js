@@ -1,0 +1,25 @@
+import { BLOCKCHAINS } from '../constants';
+import bitcoin from 'bitcoinjs-lib';
+import VerifierError from '../models/verifierError';
+
+export default function ensureIssuerSignature (
+  issuerKey,
+  certificateUid,
+  certificateSignature,
+  chain
+) {
+  let bitcoinChain =
+    chain === BLOCKCHAINS.bitcoin.code
+      ? bitcoin.networks.bitcoin
+      : bitcoin.networks.testnet;
+  if (
+    !bitcoin.message.verify(
+      issuerKey,
+      certificateSignature,
+      certificateUid,
+      bitcoinChain
+    )
+  ) {
+    throw new VerifierError('Issuer key does not match derived address.');
+  }
+}

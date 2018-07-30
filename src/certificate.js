@@ -3,30 +3,30 @@ import parseJSON from './parser';
 import Verifier from './verifier';
 
 export default class Certificate {
-  constructor (certificateContent) {
-    if (typeof certificateContent !== 'object') {
+  constructor (certificateDefinition) {
+    if (typeof certificateDefinition !== 'object') {
       try {
-        certificateContent = JSON.parse(certificateContent);
+        certificateDefinition = JSON.parse(certificateDefinition);
       } catch (err) {
         throw new Error('This is not a valid certificate');
       }
     }
 
     // Keep certificate JSON object
-    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
+    this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
 
     // Parse certificate
-    this.parseJson(certificateContent);
+    this.parseJson(certificateDefinition);
   }
 
   /**
    * parseJson
    *
-   * @param certificateContent
+   * @param certificateDefinition
    * @returns {*}
    */
-  parseJson (certificateContent) {
-    const parsedCertificate = parseJSON(certificateContent);
+  parseJson (certificateDefinition) {
+    const parsedCertificate = parseJSON(certificateDefinition);
     this._setProperties(parsedCertificate);
   }
 

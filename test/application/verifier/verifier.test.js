@@ -2,7 +2,7 @@ import fixture from '../../fixtures/mainnet-valid-2.0';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 
-describe('Verifier entity test suite', () => {
+describe('Verifier entity test suite', function () {
   const verifierParamFixture = {
     certificateJson: fixture,
     chain: BLOCKCHAINS.bitcoin,
@@ -15,43 +15,43 @@ describe('Verifier entity test suite', () => {
     version: CERTIFICATE_VERSIONS.V2_0
   };
 
-  describe('constructor method', () => {
-    describe('given all parameters are passed', () => {
+  describe('constructor method', function () {
+    describe('given all parameters are passed', function () {
       let verifierInstance = new Verifier(verifierParamFixture);
 
-      it('should set the chain to the verifier object', () => {
+      it('should set the chain to the verifier object', function () {
         expect(verifierInstance.chain).toEqual(verifierParamFixture.chain);
       });
 
-      it('should set the expires to the verifier object', () => {
+      it('should set the expires to the verifier object', function () {
         expect(verifierInstance.expires).toBe(verifierParamFixture.expires);
       });
 
-      it('should set the id to the verifier object', () => {
+      it('should set the id to the verifier object', function () {
         expect(verifierInstance.id).toBe(verifierParamFixture.id);
       });
 
-      it('should set the issuer to the verifier object', () => {
+      it('should set the issuer to the verifier object', function () {
         expect(verifierInstance.issuer).toEqual(verifierParamFixture.issuer);
       });
 
-      it('should set the receipt to the verifier object', () => {
+      it('should set the receipt to the verifier object', function () {
         expect(verifierInstance.receipt).toBe(verifierParamFixture.receipt);
       });
 
-      it('should set the revocationKey to the verifier object', () => {
+      it('should set the revocationKey to the verifier object', function () {
         expect(verifierInstance.revocationKey).toBe(verifierParamFixture.revocationKey);
       });
 
-      it('should set the version to the verifier object', () => {
+      it('should set the version to the verifier object', function () {
         expect(verifierInstance.version).toBe(verifierParamFixture.version);
       });
 
-      it('should set the transactionId to the verifier object', () => {
+      it('should set the transactionId to the verifier object', function () {
         expect(verifierInstance.transactionId).toBe(verifierParamFixture.transactionId);
       });
 
-      it('should set the documentToVerify to the verifier object', () => {
+      it('should set the documentToVerify to the verifier object', function () {
         const documentAssertion = JSON.parse(JSON.stringify(fixture));
         delete documentAssertion.signature;
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
@@ -61,7 +61,7 @@ describe('Verifier entity test suite', () => {
 
   describe('isFailing method', function () {
     let verifierInstance;
-    beforeEach(() => {
+    beforeEach(function () {
       verifierInstance = new Verifier(verifierParamFixture);
     });
 

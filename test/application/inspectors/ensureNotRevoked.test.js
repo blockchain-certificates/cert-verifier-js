@@ -5,13 +5,13 @@ describe('Inspectors test suite', function () {
   describe('ensureNotRevoked method', function () {
     describe('given it is called without revokedAddresses', function () {
       it('should return nothing', function () {
-        expect(ensureNotRevoked()).toBe();
+        expect(ensureNotRevoked()).toBeUndefined();
       });
     });
 
     describe('given it is called without keys', function () {
       it('should return nothing', function () {
-        expect(ensureNotRevoked(['something here'])).toBe();
+        expect(ensureNotRevoked(['something here'])).toBeUndefined();
       });
     });
 

@@ -12,7 +12,7 @@ describe('Inspectors test suite', function () {
       });
     });
 
-    describe('given it is called with different merkleRoot & remoteHash', () => {
+    describe('given it is called with different merkleRoot & remoteHash', function () {
       it('should throw an error', function () {
         expect(function () {
           ensureMerkleRootEqual('merkle-root', 'remote-hash');

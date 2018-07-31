@@ -14,8 +14,7 @@ export default async function getRevokedAssertions (revocationListUrl) {
   });
 
   let issuerRevocationJson = JSON.parse(response);
-  let revokedAssertions = issuerRevocationJson.revokedAssertions
+  return issuerRevocationJson.revokedAssertions
     ? issuerRevocationJson.revokedAssertions
     : [];
-  return revokedAssertions;
 }

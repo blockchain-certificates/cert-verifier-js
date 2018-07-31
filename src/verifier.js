@@ -190,27 +190,27 @@ export default class Verifier {
       inspectors.ensureValidReceipt(this.receipt)
     );
 
-    // Check revoke status
+    // Check revoked status
+    let keys;
+    let revokedAddresses;
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
-      this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-        inspectors.ensureNotRevokedBySpentOutput(
-          txData.revokedAddresses,
-          domain.verifier.parseRevocationKey(issuerProfileJson),
-          this.revocationKey
-        )
-      );
+      revokedAddresses = txData.revokedAddresses;
+      keys = [
+        domain.verifier.parseRevocationKey(issuerProfileJson),
+        this.revocationKey
+      ];
     } else {
       // Get revoked assertions
-      let revokedAssertions = await this._doAsyncAction(
+      revokedAddresses = await this._doAsyncAction(
         null,
         async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
       );
-
-      // Check revoked status
-      this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-        inspectors.ensureNotRevokedByList(revokedAssertions, this.id)
-      );
+      keys = this.id;
     }
+
+    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+      inspectors.ensureNotRevoked(revokedAddresses, keys)
+    );
 
     // Check authenticity
     this._doAction(SUB_STEPS.checkAuthenticity, () =>

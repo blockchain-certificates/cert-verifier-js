@@ -13,7 +13,7 @@ export default function ensureNotRevoked (revokedAddresses, keys) {
     keys = [keys];
   }
 
-  keys = keys.filter(key => key != null && typeof key !== 'undefined');
+  keys = keys.filter(key => key != null);
 
   const matches = intersect(keys, revokedAddresses.map(assertion => assertion.id));
 

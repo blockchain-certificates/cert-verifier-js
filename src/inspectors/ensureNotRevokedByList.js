@@ -7,9 +7,8 @@ export default function ensureNotRevokedByList (revokedAssertions, assertionUid)
     // nothing to do
     return;
   }
-  const revokedAddresses = revokedAssertions.map(output => output.id);
-  const revokedAssertionId = revokedAddresses.findIndex(
-    id => id === assertionUid
+  const revokedAssertionId = revokedAssertions.findIndex(
+    assertion => assertion.id === assertionUid
   );
   const isRevokedByIssuer = revokedAssertionId !== -1;
 

@@ -158,8 +158,9 @@ console.log(`Verification was a ${certificateVerification.status}:`, certificate
 #### Returns
 The final verification status:
 ```javascript
-{ status, errorMessage }
+{ code, status, errorMessage }
 ```
+- `code`: code of the final step (`final`)
 - `status`: final verification status (`success`, `failure`)
 - `errorMessage`: error message (optional)
 

@@ -3,8 +3,7 @@ import ensureHashesEqual from './ensureHashesEqual';
 import ensureIssuerSignature from './ensureIssuerSignature';
 import ensureMerkleRootEqual from './ensureMerkleRootEqual';
 import ensureNotExpired from './ensureNotExpired';
-import ensureNotRevokedByList from './ensureNotRevokedByList';
-import ensureNotRevokedBySpentOutput from './ensureNotRevokedBySpentOutput';
+import ensureNotRevoked from './ensureNotRevoked';
 import ensureValidIssuingKey from './ensureValidIssuingKey';
 import ensureValidReceipt from './ensureValidReceipt';
 import isTransactionIdValid from './isTransactionIdValid';
@@ -15,8 +14,7 @@ export {
   ensureIssuerSignature,
   ensureMerkleRootEqual,
   ensureNotExpired,
-  ensureNotRevokedByList,
-  ensureNotRevokedBySpentOutput,
+  ensureNotRevoked,
   ensureValidIssuingKey,
   ensureValidReceipt,
   isTransactionIdValid

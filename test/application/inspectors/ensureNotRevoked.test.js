@@ -15,23 +15,23 @@ describe('Inspectors test suite', function () {
       });
     });
 
-    describe('given it is called with addresses and keys', () => {
-      describe('given a revocation assertion matches the assertion UID', () => {
-        describe('given keys is a type string', () => {
-          it('should find the revocation match and throw an error', () => {
+    describe('given it is called with addresses and keys', function () {
+      describe('given a revocation assertion matches the assertion UID', function () {
+        describe('given keys is a type string', function () {
+          it('should find the revocation match and throw an error', function () {
             const assertionUidFixture = revokedAssertionsFixture.revokedAssertions[0].id;
             const revocationReasonAssertion = revokedAssertionsFixture.revokedAssertions[0].revocationReason;
-            expect(() => {
+            expect(function () {
               ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
             }).toThrowError(`This certificate has been revoked by the issuer. Reason given: ${revocationReasonAssertion}.`);
           });
         });
 
-        describe('given keys is an array', () => {
-          it('should throw an error with the revocation reason', () => {
+        describe('given keys is an array', function () {
+          it('should throw an error with the revocation reason', function () {
             const assertionUidFixture = [revokedAssertionsFixture.revokedAssertions[0].id];
             const revocationReasonAssertion = revokedAssertionsFixture.revokedAssertions[0].revocationReason;
-            expect(() => {
+            expect(function () {
               ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
             }).toThrowError(`This certificate has been revoked by the issuer. Reason given: ${revocationReasonAssertion}.`);
           });

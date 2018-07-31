@@ -13,7 +13,7 @@ describe('Inspectors test suite', function () {
       });
     });
 
-    describe('given it is called with two different hashes', () => {
+    describe('given it is called with two different hashes', function () {
       it('should throw an error', function () {
         expect(function () {
           ensureHashesEqual('hash', 'different-hash');

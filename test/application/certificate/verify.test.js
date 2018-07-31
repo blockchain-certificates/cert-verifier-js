@@ -1,4 +1,4 @@
-import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 
@@ -15,6 +15,7 @@ describe('Certificate test suite', function () {
           status: VERIFICATION_STATUSES.SUCCESS
         };
         const assertionFinalStep = {
+          code: STEPS.final,
           status: VERIFICATION_STATUSES.SUCCESS
         };
 

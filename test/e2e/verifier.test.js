@@ -116,7 +116,7 @@ describe('End-to-end verification', function () {
     it('should verify successfully', async function () {
       const certificate = new Certificate(FIXTURES.MocknetV2Valid);
       const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 
@@ -124,7 +124,7 @@ describe('End-to-end verification', function () {
     it('should verify successfully', async function () {
       const certificate = new Certificate(FIXTURES.RegtestV2Valid);
       const result = await certificate.verify();
-      expect(result.status).toBe(VERIFICATION_STATUSES.MOCK_SUCCESS);
+      expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     });
   });
 

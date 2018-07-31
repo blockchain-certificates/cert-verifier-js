@@ -1,4 +1,4 @@
-import { SUB_STEPS, VERIFICATION_STATUSES } from './constants';
+import { SUB_STEPS, STEPS, VERIFICATION_STATUSES } from './constants';
 import * as blockchainConnectors from './blockchainConnectors';
 import debug from 'debug';
 import CERTIFICATE_VERSIONS from './constants/certificateVersions';
@@ -54,14 +54,7 @@ export default class Verifier {
 
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
-    if (erroredStep) {
-      return this._failed({
-        status: VERIFICATION_STATUSES.FINAL,
-        errorMessage: erroredStep.message
-      });
-    } else {
-      return this._succeed();
-    }
+    return erroredStep ? this._failed(erroredStep.message) : this._succeed();
   }
 
   /**
@@ -257,14 +250,15 @@ export default class Verifier {
   /**
    * _failed
    *
-   * @param stepCode
+   * Returns a failure final step message
+   *
    * @param errorMessage
-   * @returns {{code: string, status: string, errorMessage: string}}
+   * @returns {{code: string, status: string, errorMessage: *}}
    * @private
    */
-  _failed ({step, errorMessage}) {
+  _failed (errorMessage) {
     log(`failure:${errorMessage}`);
-    return {code: step, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
+    return {code: STEPS.final, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
   }
 
   /**
@@ -281,20 +275,15 @@ export default class Verifier {
 
   /**
    * _succeed
+   *
+   * Returns a final success message
    */
   _succeed () {
-    let status;
-    if (domain.chains.isTestChain(this.chain)) {
-      log(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
-      );
-      status = VERIFICATION_STATUSES.MOCK_SUCCESS;
-    } else {
-      log('success');
-      status = VERIFICATION_STATUSES.SUCCESS;
-    }
-
-    return {status};
+    const logMessage = domain.chains.isTestChain(this.chain)
+      ? 'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
+      : 'Success';
+    log(logMessage);
+    return {code: STEPS.final, status: VERIFICATION_STATUSES.SUCCESS};
   }
 
   /**

@@ -1,6 +1,7 @@
 const formatValidation = 'formatValidation';
 const hashComparison = 'hashComparison';
 const statusCheck = 'statusCheck';
+const final = 'final';
 
 const language = {
   [formatValidation]: {
@@ -20,4 +21,4 @@ const language = {
   }
 };
 
-export { formatValidation, hashComparison, statusCheck, language };
+export { final, formatValidation, hashComparison, statusCheck, language };

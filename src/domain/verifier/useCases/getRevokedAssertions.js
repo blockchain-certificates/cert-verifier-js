@@ -1,4 +1,4 @@
-import { request } from '../../../promisifiedRequests';
+import { request } from '../../../services';
 import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 

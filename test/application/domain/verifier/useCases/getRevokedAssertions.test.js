@@ -1,5 +1,5 @@
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
-import * as PromisifiedRequests from '../../../../../src/promisifiedRequests';
+import * as Services from '../../../../../src/services';
 import sinon from 'sinon';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
 
@@ -18,7 +18,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
     const revokedAssertionsAssertionString = JSON.stringify(revokedAssertionsFixture);
     const issuerIdFixture = 'http://domain.tld';
 
-    let requestStub = sinon.stub(PromisifiedRequests, 'request').returns(new Promise(resolve => resolve(revokedAssertionsAssertionString)));
+    let requestStub = sinon.stub(Services, 'request').returns(new Promise(resolve => resolve(revokedAssertionsAssertionString)));
 
     describe('when the request is successful', function () {
       it('should return the revoked assertions JSON object', async function () {

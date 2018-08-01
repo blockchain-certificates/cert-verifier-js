@@ -20,8 +20,8 @@ describe('domain verifier parseIssuerKeys use case test suite', function () {
       });
     });
 
-    describe('given issuerProfileJson does not have a issuerKeys property', () => {
-      it('should throw an error', () => {
+    describe('given issuerProfileJson does not have a issuerKeys property', function () {
+      it('should throw an error', function () {
         const fixture = JSON.parse(JSON.stringify(issuerProfileV1JsonFixture));
         delete fixture.issuerKeys;
         expect(() => {

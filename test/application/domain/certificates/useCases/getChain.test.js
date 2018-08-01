@@ -13,7 +13,7 @@ describe('domain certificates get chain use case test suite', function () {
         }]
       };
 
-      describe('given the chain is found in BLOCKCHAINS', () => {
+      describe('given the chain is found in BLOCKCHAINS', function () {
         it('should return the correct chain object', function () {
           const result = domain.certificates.getChain(addressFixture, signatureFixture);
           const chainAssertion = BLOCKCHAINS.ethmain;
@@ -22,7 +22,7 @@ describe('domain certificates get chain use case test suite', function () {
       });
 
       describe('given the chain is not found in BLOCKCHAINS', function () {
-        it('should throw an error', () => {
+        it('should throw an error', function () {
           signatureFixture.anchors[0].chain = 'wrong-chain';
           expect(() => {
             domain.certificates.getChain(addressFixture, signatureFixture);

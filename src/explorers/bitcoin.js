@@ -1,4 +1,4 @@
-import { request } from '../promisifiedRequests';
+import { request } from '../services';
 import { dateToUnixTimestamp } from '../helpers/date';
 import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from '../constants';
 import { TransactionData, VerifierError } from '../models';

@@ -1,5 +1,5 @@
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
-import * as PromisifiedRequests from '../../../../../src/promisifiedRequests';
+import * as Services from '../../../../../src/services';
 import sinon from 'sinon';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
 
@@ -16,7 +16,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
     const issuerProfileFixtureString = JSON.stringify(issuerProfileV2JsonFixture);
     const issuerIdFixture = 'http://domain.tld';
 
-    let requestStub = sinon.stub(PromisifiedRequests, 'request').returns(new Promise(resolve => resolve(issuerProfileFixtureString)));
+    let requestStub = sinon.stub(Services, 'request').returns(new Promise(resolve => resolve(issuerProfileFixtureString)));
 
     describe('when the request is successful', function () {
       it('should return the issuer profile JSON object', async function () {

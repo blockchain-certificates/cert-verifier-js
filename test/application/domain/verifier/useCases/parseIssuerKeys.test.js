@@ -26,7 +26,7 @@ describe('domain verifier parseIssuerKeys use case test suite', function () {
         delete fixture.issuerKeys;
         expect(() => {
           parseIssuerKeys(fixture);
-        }).toThrow();
+        }).toThrow('Unable to parse JSON out of issuer identification data.');
       });
     });
   });

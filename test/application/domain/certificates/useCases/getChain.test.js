@@ -12,11 +12,22 @@ describe('domain certificates get chain use case test suite', function () {
           'chain': 'ethereumMainnet'
         }]
       };
-      const result = domain.certificates.getChain(addressFixture, signatureFixture);
-      const chainAssertion = BLOCKCHAINS.ethmain;
 
-      it('should return the correct chain object', function () {
-        expect(result).toEqual(chainAssertion);
+      describe('given the chain is found in BLOCKCHAINS', () => {
+        it('should return the correct chain object', function () {
+          const result = domain.certificates.getChain(addressFixture, signatureFixture);
+          const chainAssertion = BLOCKCHAINS.ethmain;
+          expect(result).toEqual(chainAssertion);
+        });
+      });
+
+      describe('given the chain is not found in BLOCKCHAINS', function () {
+        it('should throw an error', () => {
+          signatureFixture.anchors[0].chain = 'wrong-chain';
+          expect(() => {
+            domain.certificates.getChain(addressFixture, signatureFixture);
+          }).toThrow('Didn\'t recognize chain value');
+        });
       });
     });
 

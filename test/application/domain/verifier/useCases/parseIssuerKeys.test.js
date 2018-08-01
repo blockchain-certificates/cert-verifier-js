@@ -19,5 +19,15 @@ describe('domain verifier parseIssuerKeys use case test suite', function () {
         expect(result).toEqual(parsedIssuerKeysV1Assertion);
       });
     });
+
+    describe('given issuerProfileJson does not have a issuerKeys property', () => {
+      it('should throw an error', () => {
+        const fixture = JSON.parse(JSON.stringify(issuerProfileV1JsonFixture));
+        delete fixture.issuerKeys;
+        expect(() => {
+          parseIssuerKeys(fixture);
+        }).toThrow();
+      });
+    });
   });
 });

@@ -30,15 +30,6 @@ export const BLOCKCHAINS = {
       raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
-  ethtest: {
-    code: 'ethtest',
-    name: 'Mocknet',
-    signatureValue: 'ethereumTestnet',
-    transactionTemplates: {
-      full: '',
-      raw: ''
-    }
-  },
   mocknet: {
     code: 'mocknet',
     name: 'Mocknet',

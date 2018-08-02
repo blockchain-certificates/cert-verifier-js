@@ -4,6 +4,7 @@ import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.js',
@@ -66,6 +67,7 @@ export default {
     }),
     json(),
     builtins(),
-    globals()
+    globals(),
+    terser()
   ]
 };

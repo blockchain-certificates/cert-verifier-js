@@ -1,6 +1,6 @@
 # cert-verifier-js
 
-A library to enable parsing and verifying a Blockcert. This can be used as a node package or in a browser. The browserified script is available as `verifier.js`.
+A library to parse and verify [Blockcerts](https://www.blockcerts.org/) certificates.
 
 # Usage
 

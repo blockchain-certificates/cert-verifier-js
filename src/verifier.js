@@ -1,5 +1,4 @@
-import { SUB_STEPS, STEPS, VERIFICATION_STATUSES } from './constants';
-import * as blockchainConnectors from './blockchainConnectors';
+import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import CERTIFICATE_VERSIONS from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
@@ -153,7 +152,7 @@ export default class Verifier {
     // Fetch remote hash
     let txData = await this._doAsyncAction(
       SUB_STEPS.fetchRemoteHash,
-      async () => blockchainConnectors.lookForTx(this.transactionId, this.chain.code, this.version)
+      async () => domain.verifier.lookForTx(this.transactionId, this.chain.code, this.version)
     );
 
     // Get issuer profile

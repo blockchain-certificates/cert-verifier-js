@@ -25,5 +25,13 @@ describe('Verifier domain parseRevocationKey use case test suite', function () {
         expect(result).toBe(assertion);
       });
     });
+
+    describe('given the issuer profile has no revocation key', function () {
+      it('should return null', function () {
+        issuerProfileWithRevocationKeysFixture.revocationKeys = [];
+        const result = parseRevocationKey(issuerProfileWithRevocationKeysFixture);
+        expect(result).toBe(null);
+      });
+    });
   });
 });

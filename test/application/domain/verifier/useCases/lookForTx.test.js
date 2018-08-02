@@ -1,6 +1,6 @@
 import domain from '../../../../../src/domain';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
-import { BitcoinExplorers } from '../../../../../src/explorers';
+import { BitcoinExplorers, BlockchainExplorersWithSpentOutputInfo } from '../../../../../src/explorers';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
@@ -37,7 +37,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       });
     });
 
-    describe('given MinimumBlockchainExplorers ', function () {
+    describe('given MinimumBlockchainExplorers is higher than BlockchainExplorers length', function () {
       const originalValue = CONFIG.MinimumBlockchainExplorers;
       beforeEach(function () {
         CONFIG.MinimumBlockchainExplorers = BitcoinExplorers.length + 1;
@@ -49,6 +49,21 @@ describe('Verifier domain lookForTx use case test suite', function () {
 
       it('should throw an error', function () {
         expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
+      });
+    });
+
+    describe('given certificateVersion is v1', function () {
+      describe('given MinimumBlockchainExplorers is higher than BlockchainExplorersWithSpentOutputInfo length', () => {
+        const originalValue = CONFIG.MinimumBlockchainExplorers;
+        beforeEach(() => {
+          CONFIG.MinimumBlockchainExplorers = BlockchainExplorersWithSpentOutputInfo.length + 1;
+        });
+        afterEach(() => {
+          CONFIG.MinimumBlockchainExplorers = originalValue;
+        });
+        it('should throw an error', function () {
+          expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
+        });
       });
     });
   });

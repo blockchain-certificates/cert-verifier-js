@@ -6680,6 +6680,7 @@ var CERTIFICATE_VERSIONS = {
 const formatValidation = 'formatValidation';
 const hashComparison = 'hashComparison';
 const statusCheck = 'statusCheck';
+const final = 'final';
 
 const language = {
   [formatValidation]: {
@@ -6700,6 +6701,7 @@ const language = {
 };
 
 var verificationSteps = /*#__PURE__*/Object.freeze({
+	final: final,
 	formatValidation: formatValidation,
 	hashComparison: hashComparison,
 	statusCheck: statusCheck,
@@ -6811,15 +6813,11 @@ var verificationSubSteps = /*#__PURE__*/Object.freeze({
 });
 
 const FAILURE = 'failure';
-const FINAL = 'final';
-const MOCK_SUCCESS = 'mockSuccess';
 const STARTING = 'starting';
 const SUCCESS = 'success';
 
 var verificationStatuses = /*#__PURE__*/Object.freeze({
 	FAILURE: FAILURE,
-	FINAL: FINAL,
-	MOCK_SUCCESS: MOCK_SUCCESS,
 	STARTING: STARTING,
 	SUCCESS: SUCCESS
 });
@@ -15734,7 +15732,7 @@ var browser_5 = browser$1.useColors;
 var browser_6 = browser$1.storage;
 var browser_7 = browser$1.colors;
 
-const log$2 = browser$1('promisifiedRequests');
+const log$2 = browser$1('request');
 
 function request$1 (obj) {
   return new Promise((resolve, reject) => {
@@ -15814,317 +15812,9 @@ async function getRevokedAssertions (revocationListUrl) {
   });
 
   let issuerRevocationJson = JSON.parse(response);
-  let revokedAssertions = issuerRevocationJson.revokedAssertions
+  return issuerRevocationJson.revokedAssertions
     ? issuerRevocationJson.revokedAssertions
     : [];
-  return revokedAssertions;
-}
-
-/* eslint no-useless-escape: "off" */
-
-function noOffset (s) {
-  let day = s.slice(0, -5).split(/\D/).map(function (itm) {
-    return parseInt(itm, 10) || 0;
-  });
-  day[1] -= 1;
-  day = new Date(Date.UTC.apply(Date, day));
-  let offsetString = s.slice(-5);
-  let offset = parseInt(offsetString, 10) / 100;
-  if (offsetString.slice(0, 1) === '+') offset *= -1;
-  day.setHours(day.getHours() + offset);
-  return day.getTime();
-}
-
-function dateFromRegex (s) {
-  let day;
-  let tz;
-  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
-  let p = rx.exec(s) || [];
-  if (p[1]) {
-    day = p[1].split(/\D/).map(function (itm) {
-      return parseInt(itm, 10) || 0;
-    });
-    day[1] -= 1;
-    day = new Date(Date.UTC.apply(Date, day));
-    if (!day.getDate()) return NaN;
-    if (p[5]) {
-      tz = parseInt(p[5], 10) / 100 * 60;
-      if (p[6]) tz += parseInt(p[6], 10);
-      if (p[4] === '+') tz *= -1;
-      if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
-    }
-    return day;
-  }
-  return NaN;
-}
-
-function dateFromIso (isoDate) {
-  // Chrome
-  let diso = Date.parse(isoDate);
-  if (diso) {
-    return new Date(diso);
-  }
-
-  // JS 1.8 gecko
-  let offsetDate = noOffset(isoDate);
-  if (offsetDate) {
-    return offsetDate;
-  }
-
-  return dateFromRegex(isoDate);
-}
-
-/**
- * dateToUnixTimestamp
- *
- * @param date
- * @returns {string}
- */
-function dateToUnixTimestamp (date) {
-  if (date === '') {
-    return '';
-  }
-  return dateFromIso(date);
-}
-
-/**
- * createKeyObject
- *
- * @param rawKeyObject
- * @param finalPublicKey
- * @returns {Key}
- */
-function createKeyObject (rawKeyObject, finalPublicKey = null) {
-  const created = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
-  const revoked = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
-  const expires = rawKeyObject.expires ? dateToUnixTimestamp(rawKeyObject.expires) : null;
-  // backcompat for v2 alpha
-  let publicKey = finalPublicKey;
-  if (!finalPublicKey) {
-    const publicKeyTemp = rawKeyObject.id || rawKeyObject.publicKey;
-    publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
-  }
-  return new Key(publicKey, created, revoked, expires);
-}
-
-/**
- * parseIssuerKeys
- *
- * @param issuerProfileJson
- */
-function parseIssuerKeys$1 (issuerProfileJson) {
-  try {
-    let keyMap = {};
-    if ('@context' in issuerProfileJson) {
-      // backcompat for v2 alpha
-      const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
-      for (let i = 0; i < responseKeys.length; i++) {
-        const key = createKeyObject(responseKeys[i]);
-        keyMap[key.publicKey] = key;
-      }
-    } else {
-      // This is a v2 certificate with a v1 issuer
-      const issuerKeys = issuerProfileJson.issuerKeys || [];
-      const key = createKeyObject({}, issuerKeys[0].key);
-      keyMap[key.publicKey] = key;
-    }
-    return keyMap;
-  } catch (e) {
-    throw new VerifierError(
-      parseIssuerKeys,
-      'Unable to parse JSON out of issuer identification data.'
-    );
-  }
-}
-
-/**
- * parseRevocationKey
- *
- * @param issuerProfileJson
- * @returns {*}
- */
-function parseRevocationKey (issuerProfileJson) {
-  if (!issuerProfileJson || !issuerProfileJson.hasOwnProperty('revocationKeys')) {
-    return null;
-  }
-  if (issuerProfileJson.revocationKeys.length > 0) {
-    return issuerProfileJson.revocationKeys[0].key;
-  }
-  return null;
-}
-
-
-
-var verifier = /*#__PURE__*/Object.freeze({
-	getIssuerProfile: getIssuerProfile$1,
-	getRevokedAssertions: getRevokedAssertions,
-	parseIssuerKeys: parseIssuerKeys$1,
-	parseRevocationKey: parseRevocationKey
-});
-
-var domain$1 = {
-  addresses,
-  certificates,
-  chains: chainsService,
-  verifier
-};
-
-/**
- * _getSignatureImages
- *
- * @param signatureRawObject
- * @param certificateVersion
- * @returns {Array}
- * @private
- */
-function getSignatureImages (signatureRawObject, certificateVersion) {
-  let signatureImageObjects = [];
-
-  switch (certificateVersion) {
-    case CERTIFICATE_VERSIONS.V1_1:
-    case CERTIFICATE_VERSIONS.V1_2:
-      if (signatureRawObject.constructor === Array) {
-        for (let index in signatureRawObject) {
-          let signatureLine = signatureRawObject[index];
-          let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-          let signerName = 'name' in signatureLine ? signatureLine.name : null;
-          let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
-          signatureImageObjects.push(signatureObject);
-        }
-      } else {
-        let signatureObject = new SignatureImage(signatureRawObject, null, null);
-        signatureImageObjects.push(signatureObject);
-      }
-      break;
-
-    case CERTIFICATE_VERSIONS.V2_0:
-      for (let index in signatureRawObject) {
-        let signatureLine = signatureRawObject[index];
-        let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
-        signatureImageObjects.push(signatureObject);
-      }
-      break;
-  }
-
-  return signatureImageObjects;
-}
-
-/**
- * parseV1
- *
- * @param certificateJson
- * @returns {Certificate}
- */
-function parseV1 (certificateJson) {
-  const fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
-  const recipient = certificateJson.recipient || certificateJson.document.recipient;
-  const assertion = certificateJson.document.assertion;
-
-  const receipt = certificateJson.receipt;
-  const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
-
-  let {image: certificateImage, description, issuer, subtitle} = fullCertificateObject;
-
-  const publicKey = recipient.publicKey;
-  const chain = domain$1.certificates.getChain(publicKey);
-  const expires = assertion.expires;
-  const id = assertion.uid;
-  const issuedOn = assertion.issuedOn;
-  const metadataJson = assertion.metadataJson;
-  const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
-  const recordLink = assertion.id;
-  const revocationKey = recipient.revocationKey || null;
-  const sealImage = issuer.image;
-  const signature = certificateJson.document.signature;
-  const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
-  const signatureImage = getSignatureImages(signaturesRaw, version);
-  if (typeof subtitle === 'object') {
-    subtitle = subtitle.display ? subtitle.content : '';
-  }
-  let name = fullCertificateObject.title || fullCertificateObject.name;
-
-  return {
-    certificateImage,
-    chain,
-    description,
-    expires,
-    id,
-    issuedOn,
-    issuer,
-    metadataJson,
-    name,
-    publicKey,
-    receipt,
-    recipientFullName,
-    recordLink,
-    revocationKey,
-    sealImage,
-    signature,
-    signatureImage,
-    subtitle,
-    version
-  };
-}
-
-/**
- * parseV2
- *
- * @param certificateJson
- * @returns {Certificate}
- */
-function parseV2 (certificateJson) {
-  const {id, expires, signature: receipt, badge} = certificateJson;
-  const {image: certificateImage, name, description, subtitle, issuer} = badge;
-  const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
-  const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
-
-  const version = CERTIFICATE_VERSIONS.V2_0;
-  const chain = domain$1.certificates.getChain(issuerKey, certificateJson.signature);
-  const issuedOn = certificateJson.issuedOn;
-  const metadataJson = certificateJson.metadataJson;
-  const publicKey = recipientProfile.publicKey;
-  const recipientFullName = recipientProfile.name;
-  const recordLink = certificateJson.id;
-  const revocationKey = null;
-  const sealImage = issuer.image;
-  const signatureImage = getSignatureImages(badge.signatureLines, version);
-
-  return {
-    certificateImage,
-    chain,
-    description,
-    expires,
-    id,
-    issuedOn,
-    issuer,
-    metadataJson,
-    name,
-    publicKey,
-    receipt,
-    recipientFullName,
-    recordLink,
-    revocationKey,
-    sealImage,
-    signature: null,
-    signatureImage,
-    subtitle,
-    version
-  };
-}
-
-/**
- * parseJson
- *
- * @param certificateJson
- * @returns {*}
- */
-function parseJSON (certificateJson) {
-  const version = certificateJson['@context'];
-  if (version instanceof Array) {
-    return parseV2(certificateJson);
-  } else {
-    return parseV1(certificateJson);
-  }
 }
 
 function stripHashPrefix (remoteHash, prefixes) {
@@ -16245,6 +15935,73 @@ function checkEtherScanConfirmations (chain, blockNumber) {
         reject(new VerifierError(fetchRemoteHash, `Unable to get remote hash`));
       });
   });
+}
+
+/* eslint no-useless-escape: "off" */
+
+function noOffset (s) {
+  let day = s.slice(0, -5).split(/\D/).map(function (itm) {
+    return parseInt(itm, 10) || 0;
+  });
+  day[1] -= 1;
+  day = new Date(Date.UTC.apply(Date, day));
+  let offsetString = s.slice(-5);
+  let offset = parseInt(offsetString, 10) / 100;
+  if (offsetString.slice(0, 1) === '+') offset *= -1;
+  day.setHours(day.getHours() + offset);
+  return day.getTime();
+}
+
+function dateFromRegex (s) {
+  let day;
+  let tz;
+  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
+  let p = rx.exec(s) || [];
+  if (p[1]) {
+    day = p[1].split(/\D/).map(function (itm) {
+      return parseInt(itm, 10) || 0;
+    });
+    day[1] -= 1;
+    day = new Date(Date.UTC.apply(Date, day));
+    if (!day.getDate()) return NaN;
+    if (p[5]) {
+      tz = parseInt(p[5], 10) / 100 * 60;
+      if (p[6]) tz += parseInt(p[6], 10);
+      if (p[4] === '+') tz *= -1;
+      if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
+    }
+    return day;
+  }
+  return NaN;
+}
+
+function dateFromIso (isoDate) {
+  // Chrome
+  let diso = Date.parse(isoDate);
+  if (diso) {
+    return new Date(diso);
+  }
+
+  // JS 1.8 gecko
+  let offsetDate = noOffset(isoDate);
+  if (offsetDate) {
+    return offsetDate;
+  }
+
+  return dateFromRegex(isoDate);
+}
+
+/**
+ * dateToUnixTimestamp
+ *
+ * @param date
+ * @returns {string}
+ */
+function dateToUnixTimestamp (date) {
+  if (date === '') {
+    return '';
+  }
+  return dateFromIso(date);
 }
 
 function getBlockcypherFetcher (transactionId, chain) {
@@ -16413,12 +16170,12 @@ function lookForTx (transactionId, chain, certificateVersion) {
   let promises = [];
   let limit;
   if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
-    limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
+    limit = CONFIG.MinimumBlockchainExplorers;
     for (let i = 0; i < limit; i++) {
       promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
     }
   } else {
-    limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
+    limit = CONFIG.MinimumBlockchainExplorers;
     for (let j = 0; j < limit; j++) {
       promises.push(BlockchainExplorers[j](transactionId, chain));
     }
@@ -16454,6 +16211,247 @@ function lookForTx (transactionId, chain, certificateVersion) {
       reject(new VerifierError(fetchRemoteHash, err.message));
     });
   });
+}
+
+/**
+ * createKeyObject
+ *
+ * @param rawKeyObject
+ * @param finalPublicKey
+ * @returns {Key}
+ */
+function createKeyObject (rawKeyObject, finalPublicKey = null) {
+  const created = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
+  const revoked = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
+  const expires = rawKeyObject.expires ? dateToUnixTimestamp(rawKeyObject.expires) : null;
+  // backcompat for v2 alpha
+  let publicKey = finalPublicKey;
+  if (!finalPublicKey) {
+    const publicKeyTemp = rawKeyObject.id || rawKeyObject.publicKey;
+    publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
+  }
+  return new Key(publicKey, created, revoked, expires);
+}
+
+/**
+ * parseIssuerKeys
+ *
+ * @param issuerProfileJson
+ */
+function parseIssuerKeys$1 (issuerProfileJson) {
+  try {
+    let keyMap = {};
+    if ('@context' in issuerProfileJson) {
+      // backcompat for v2 alpha
+      const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
+      for (let i = 0; i < responseKeys.length; i++) {
+        const key = createKeyObject(responseKeys[i]);
+        keyMap[key.publicKey] = key;
+      }
+    } else {
+      // This is a v2 certificate with a v1 issuer
+      const issuerKeys = issuerProfileJson.issuerKeys || [];
+      const key = createKeyObject({}, issuerKeys[0].key);
+      keyMap[key.publicKey] = key;
+    }
+    return keyMap;
+  } catch (e) {
+    throw new VerifierError(
+      parseIssuerKeys,
+      'Unable to parse JSON out of issuer identification data.'
+    );
+  }
+}
+
+/**
+ * parseRevocationKey
+ *
+ * @param issuerProfileJson
+ * @returns {*}
+ */
+function parseRevocationKey (issuerProfileJson) {
+  if (!issuerProfileJson || !issuerProfileJson.hasOwnProperty('revocationKeys')) {
+    return null;
+  }
+  if (issuerProfileJson.revocationKeys.length > 0) {
+    return issuerProfileJson.revocationKeys[0].key;
+  }
+  return null;
+}
+
+
+
+var verifier = /*#__PURE__*/Object.freeze({
+	getIssuerProfile: getIssuerProfile$1,
+	getRevokedAssertions: getRevokedAssertions,
+	lookForTx: lookForTx,
+	parseIssuerKeys: parseIssuerKeys$1,
+	parseRevocationKey: parseRevocationKey
+});
+
+var domain$1 = {
+  addresses,
+  certificates,
+  chains: chainsService,
+  verifier
+};
+
+/**
+ * _getSignatureImages
+ *
+ * @param signatureRawObject
+ * @param certificateVersion
+ * @returns {Array}
+ * @private
+ */
+function getSignatureImages (signatureRawObject, certificateVersion) {
+  let signatureImageObjects = [];
+
+  switch (certificateVersion) {
+    case CERTIFICATE_VERSIONS.V1_1:
+    case CERTIFICATE_VERSIONS.V1_2:
+      if (signatureRawObject.constructor === Array) {
+        for (let index in signatureRawObject) {
+          let signatureLine = signatureRawObject[index];
+          let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+          let signerName = 'name' in signatureLine ? signatureLine.name : null;
+          let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+          signatureImageObjects.push(signatureObject);
+        }
+      } else {
+        let signatureObject = new SignatureImage(signatureRawObject, null, null);
+        signatureImageObjects.push(signatureObject);
+      }
+      break;
+
+    case CERTIFICATE_VERSIONS.V2_0:
+      for (let index in signatureRawObject) {
+        let signatureLine = signatureRawObject[index];
+        let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+        signatureImageObjects.push(signatureObject);
+      }
+      break;
+  }
+
+  return signatureImageObjects;
+}
+
+/**
+ * parseV1
+ *
+ * @param certificateJson
+ * @returns {Certificate}
+ */
+function parseV1 (certificateJson) {
+  const fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
+  const recipient = certificateJson.recipient || certificateJson.document.recipient;
+  const assertion = certificateJson.document.assertion;
+
+  const receipt = certificateJson.receipt;
+  const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
+
+  let {image: certificateImage, description, issuer, subtitle} = fullCertificateObject;
+
+  const publicKey = recipient.publicKey;
+  const chain = domain$1.certificates.getChain(publicKey);
+  const expires = assertion.expires;
+  const id = assertion.uid;
+  const issuedOn = assertion.issuedOn;
+  const metadataJson = assertion.metadataJson;
+  const recipientFullName = `${recipient.givenName} ${recipient.familyName}`;
+  const recordLink = assertion.id;
+  const revocationKey = recipient.revocationKey || null;
+  const sealImage = issuer.image;
+  const signature = certificateJson.document.signature;
+  const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
+  const signatureImage = getSignatureImages(signaturesRaw, version);
+  if (typeof subtitle === 'object') {
+    subtitle = subtitle.display ? subtitle.content : '';
+  }
+  let name = fullCertificateObject.title || fullCertificateObject.name;
+
+  return {
+    certificateImage,
+    chain,
+    description,
+    expires,
+    id,
+    issuedOn,
+    issuer,
+    metadataJson,
+    name,
+    publicKey,
+    receipt,
+    recipientFullName,
+    recordLink,
+    revocationKey,
+    sealImage,
+    signature,
+    signatureImage,
+    subtitle,
+    version
+  };
+}
+
+/**
+ * parseV2
+ *
+ * @param certificateJson
+ * @returns {Certificate}
+ */
+function parseV2 (certificateJson) {
+  const {id, expires, signature: receipt, badge} = certificateJson;
+  const {image: certificateImage, name, description, subtitle, issuer} = badge;
+  const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
+  const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+
+  const version = CERTIFICATE_VERSIONS.V2_0;
+  const chain = domain$1.certificates.getChain(issuerKey, certificateJson.signature);
+  const issuedOn = certificateJson.issuedOn;
+  const metadataJson = certificateJson.metadataJson;
+  const publicKey = recipientProfile.publicKey;
+  const recipientFullName = recipientProfile.name;
+  const recordLink = certificateJson.id;
+  const revocationKey = null;
+  const sealImage = issuer.image;
+  const signatureImage = getSignatureImages(badge.signatureLines, version);
+
+  return {
+    certificateImage,
+    chain,
+    description,
+    expires,
+    id,
+    issuedOn,
+    issuer,
+    metadataJson,
+    name,
+    publicKey,
+    receipt,
+    recipientFullName,
+    recordLink,
+    revocationKey,
+    sealImage,
+    signature: null,
+    signatureImage,
+    subtitle,
+    version
+  };
+}
+
+/**
+ * parseJson
+ *
+ * @param certificateJson
+ * @returns {*}
+ */
+function parseJSON (certificateJson) {
+  const version = certificateJson['@context'];
+  if (version instanceof Array) {
+    return parseV2(certificateJson);
+  } else {
+    return parseV1(certificateJson);
+  }
 }
 
 var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js'
@@ -33169,56 +33167,41 @@ function ensureNotExpired (expires = null) {
   }
 }
 
-function ensureNotRevokedByList (revokedAssertions, assertionUid) {
-  if (!revokedAssertions) {
+/**
+ * intersect
+ *
+ * Returns the similarities between two arrays (removing duplicates as well)
+ *
+ * @param array1
+ * @param array2
+ * @returns {*[]}
+ */
+function intersect (array1 = [], array2 = []) {
+  return array1.filter(value => array2.indexOf(value) !== -1).filter((element, index, arr) => arr.indexOf(element) === index);
+}
+
+function ensureNotRevoked (revokedAddresses, keys) {
+  if (!revokedAddresses || !keys) {
     // nothing to do
     return;
   }
-  const revokedAddresses = revokedAssertions.map(output => output.id);
-  const revokedAssertionId = revokedAddresses.findIndex(
-    id => id === assertionUid
-  );
-  const isRevokedByIssuer = revokedAssertionId !== -1;
 
-  if (isRevokedByIssuer) {
-    throw new VerifierError(
-      checkRevokedStatus,
-      domain$1.certificates.generateRevocationReason(
-        revokedAssertions[revokedAssertionId].revocationReason
-      )
-    );
+  if (!Array.isArray(keys)) {
+    keys = [keys];
   }
-}
 
-function ensureNotRevokedBySpentOutput (
-  revokedAddresses,
-  issuerRevocationKey,
-  recipientRevocationKey
-) {
-  if (issuerRevocationKey) {
-    const revokedAssertionId = revokedAddresses.findIndex(
-      address => address === issuerRevocationKey
-    );
-    const isRevokedByIssuer = revokedAssertionId !== -1;
-    if (isRevokedByIssuer) {
+  keys = keys.filter(key => key != null);
+
+  const matches = intersect(keys, revokedAddresses.map(assertion => assertion.id));
+
+  if (matches.length > 0) {
+    const indexOfMatch = revokedAddresses.findIndex(address => address.id === matches[0]);
+
+    if (indexOfMatch > -1) {
       throw new VerifierError(
         checkRevokedStatus,
         domain$1.certificates.generateRevocationReason(
-          revokedAddresses[revokedAssertionId].revocationReason
-        )
-      );
-    }
-  }
-  if (recipientRevocationKey) {
-    const revokedAssertionId = revokedAddresses.findIndex(
-      address => address === recipientRevocationKey
-    );
-    const isRevokedByRecipient = revokedAssertionId !== -1;
-    if (isRevokedByRecipient) {
-      throw new VerifierError(
-        checkRevokedStatus,
-        domain$1.certificates.generateRevocationReason(
-          revokedAddresses[revokedAssertionId].revocationReason
+          revokedAddresses[indexOfMatch].revocationReason
         )
       );
     }
@@ -33365,14 +33348,7 @@ class Verifier {
 
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === FAILURE);
-    if (erroredStep) {
-      return this._failed({
-        status: FINAL,
-        errorMessage: erroredStep.message
-      });
-    } else {
-      return this._succeed();
-    }
+    return erroredStep ? this._failed(erroredStep.message) : this._succeed();
   }
 
   /**
@@ -33471,7 +33447,7 @@ class Verifier {
     // Fetch remote hash
     let txData = await this._doAsyncAction(
       fetchRemoteHash,
-      async () => lookForTx(this.transactionId, this.chain.code, this.version)
+      async () => domain$1.verifier.lookForTx(this.transactionId, this.chain.code, this.version)
     );
 
     // Get issuer profile
@@ -33501,27 +33477,27 @@ class Verifier {
       ensureValidReceipt(this.receipt)
     );
 
-    // Check revoke status
+    // Check revoked status
+    let keys;
+    let revokedAddresses;
     if (this.version === CERTIFICATE_VERSIONS.V1_2) {
-      this._doAction(checkRevokedStatus, () =>
-        ensureNotRevokedBySpentOutput(
-          txData.revokedAddresses,
-          domain$1.verifier.parseRevocationKey(issuerProfileJson),
-          this.revocationKey
-        )
-      );
+      revokedAddresses = txData.revokedAddresses;
+      keys = [
+        domain$1.verifier.parseRevocationKey(issuerProfileJson),
+        this.revocationKey
+      ];
     } else {
       // Get revoked assertions
-      let revokedAssertions = await this._doAsyncAction(
+      revokedAddresses = await this._doAsyncAction(
         null,
         async () => domain$1.verifier.getRevokedAssertions(this.issuer.revocationList)
       );
-
-      // Check revoked status
-      this._doAction(checkRevokedStatus, () =>
-        ensureNotRevokedByList(revokedAssertions, this.id)
-      );
+      keys = this.id;
     }
+
+    this._doAction(checkRevokedStatus, () =>
+      ensureNotRevoked(revokedAddresses, keys)
+    );
 
     // Check authenticity
     this._doAction(checkAuthenticity, () =>
@@ -33568,14 +33544,15 @@ class Verifier {
   /**
    * _failed
    *
-   * @param stepCode
+   * Returns a failure final step message
+   *
    * @param errorMessage
-   * @returns {{code: string, status: string, errorMessage: string}}
+   * @returns {{code: string, status: string, errorMessage: *}}
    * @private
    */
-  _failed ({step, errorMessage}) {
+  _failed (errorMessage) {
     log$4(`failure:${errorMessage}`);
-    return {code: step, status: FAILURE, errorMessage};
+    return {code: final, status: FAILURE, errorMessage};
   }
 
   /**
@@ -33592,20 +33569,15 @@ class Verifier {
 
   /**
    * _succeed
+   *
+   * Returns a final success message
    */
   _succeed () {
-    let status;
-    if (domain$1.chains.isTestChain(this.chain)) {
-      log$4(
-        'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
-      );
-      status = MOCK_SUCCESS;
-    } else {
-      log$4('success');
-      status = SUCCESS;
-    }
-
-    return {status};
+    const logMessage = domain$1.chains.isTestChain(this.chain)
+      ? 'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
+      : 'Success';
+    log$4(logMessage);
+    return {code: final, status: SUCCESS};
   }
 
   /**
@@ -33631,30 +33603,30 @@ class Verifier {
 }
 
 class Certificate {
-  constructor (certificateContent) {
-    if (typeof certificateContent !== 'object') {
+  constructor (certificateDefinition) {
+    if (typeof certificateDefinition !== 'object') {
       try {
-        certificateContent = JSON.parse(certificateContent);
+        certificateDefinition = JSON.parse(certificateDefinition);
       } catch (err) {
         throw new Error('This is not a valid certificate');
       }
     }
 
     // Keep certificate JSON object
-    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
+    this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
 
     // Parse certificate
-    this.parseJson(certificateContent);
+    this.parseJson(certificateDefinition);
   }
 
   /**
    * parseJson
    *
-   * @param certificateContent
+   * @param certificateDefinition
    * @returns {*}
    */
-  parseJson (certificateContent) {
-    const parsedCertificate = parseJSON(certificateContent);
+  parseJson (certificateDefinition) {
+    const parsedCertificate = parseJSON(certificateDefinition);
     this._setProperties(parsedCertificate);
   }
 

@@ -27,10 +27,11 @@ let certificate = new Certificate(certificateDefinition);
 ```
 
 #### Script tag (iife)
+[Check an example here](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/test/e2e/script-tag.html)
 ```html
 <script src='node_modules/cert-verifier-js/dist/verifier-iife.js'></script>
 <script>
-  var certificate = new Certificate(certificateDefinition);
+  var certificate = new Verifier.Certificate(certificateDefinition);
 </script>
 ```
 

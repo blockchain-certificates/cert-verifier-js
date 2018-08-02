@@ -4,7 +4,7 @@ import { CERTIFICATE_VERSIONS } from '../../../../../dist/verifier-es';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
-  let MOCK_CHAIN = BLOCKCHAINS.bitcoin.code
+  let MOCK_CHAIN = BLOCKCHAINS.bitcoin.code;
   const MOCK_CERTIFICATE_VERSION = CERTIFICATE_VERSIONS.V1_2;
 
   describe('given it is called with a transactionId, a chain and a certificateVersion', function () {

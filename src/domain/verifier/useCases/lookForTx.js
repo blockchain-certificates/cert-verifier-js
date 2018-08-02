@@ -1,9 +1,9 @@
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from './constants';
-import { VerifierError } from './models';
-import { BitcoinExplorers, BlockchainExplorersWithSpentOutputInfo, EthereumExplorers } from './explorers';
-import PromiseProperRace from './helpers/promiseProperRace';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from '../../../constants';
+import { VerifierError } from '../../../models';
+import { BitcoinExplorers, BlockchainExplorersWithSpentOutputInfo, EthereumExplorers } from '../../../explorers';
+import PromiseProperRace from '../../../helpers/promiseProperRace';
 
-export function lookForTx (transactionId, chain, certificateVersion) {
+export default function lookForTx (transactionId, chain, certificateVersion) {
   let BlockchainExplorers;
   switch (chain) {
     case BLOCKCHAINS.bitcoin.code:

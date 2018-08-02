@@ -6687,6 +6687,7 @@ var Verifier = (function (exports) {
 	var formatValidation = 'formatValidation';
 	var hashComparison = 'hashComparison';
 	var statusCheck = 'statusCheck';
+	var final = 'final';
 
 	var language = (_language = {}, _defineProperty(_language, formatValidation, {
 	  label: 'Format validation',
@@ -6703,6 +6704,7 @@ var Verifier = (function (exports) {
 	}), _language);
 
 	var verificationSteps = /*#__PURE__*/Object.freeze({
+		final: final,
 		formatValidation: formatValidation,
 		hashComparison: hashComparison,
 		statusCheck: statusCheck,
@@ -6805,15 +6807,11 @@ var Verifier = (function (exports) {
 	});
 
 	var FAILURE = 'failure';
-	var FINAL = 'final';
-	var MOCK_SUCCESS = 'mockSuccess';
 	var STARTING = 'starting';
 	var SUCCESS = 'success';
 
 	var verificationStatuses = /*#__PURE__*/Object.freeze({
 		FAILURE: FAILURE,
-		FINAL: FINAL,
-		MOCK_SUCCESS: MOCK_SUCCESS,
 		STARTING: STARTING,
 		SUCCESS: SUCCESS
 	});
@@ -15725,7 +15723,7 @@ var Verifier = (function (exports) {
 	var browser_6 = browser$1.storage;
 	var browser_7 = browser$1.colors;
 
-	var log$2 = browser$1('promisifiedRequests');
+	var log$2 = browser$1('request');
 
 	function request$1(obj) {
 	  return new Promise(function (resolve, reject) {
@@ -15827,7 +15825,7 @@ var Verifier = (function (exports) {
 
 	var getRevokedAssertions = (function () {
 	  var _ref = _asyncToGenerator$1( /*#__PURE__*/regeneratorRuntime.mark(function _callee(revocationListUrl) {
-	    var errorMessage, response, issuerRevocationJson, revokedAssertions;
+	    var errorMessage, response, issuerRevocationJson;
 	    return regeneratorRuntime.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
@@ -15849,10 +15847,9 @@ var Verifier = (function (exports) {
 	          case 5:
 	            response = _context.sent;
 	            issuerRevocationJson = JSON.parse(response);
-	            revokedAssertions = issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : [];
-	            return _context.abrupt('return', revokedAssertions);
+	            return _context.abrupt('return', issuerRevocationJson.revokedAssertions ? issuerRevocationJson.revokedAssertions : []);
 
-	          case 9:
+	          case 8:
 	          case 'end':
 	            return _context.stop();
 	        }
@@ -15866,6 +15863,119 @@ var Verifier = (function (exports) {
 
 	  return getRevokedAssertions;
 	})();
+
+	function stripHashPrefix(remoteHash, prefixes) {
+	  for (var i = 0; i < prefixes.length; i++) {
+	    var prefix = prefixes[i];
+	    if (startsWith(remoteHash, prefix)) {
+	      return remoteHash.slice(prefix.length);
+	    }
+	  }
+	  return remoteHash;
+	}
+
+	function getEtherScanFetcher(transactionId, chain) {
+	  var action = '&action=eth_getTransactionByHash&txhash=';
+	  var etherScanUrl = void 0;
+	  if (chain === BLOCKCHAINS.ethmain.code) {
+	    etherScanUrl = API_URLS.etherScanMainUrl + action + transactionId;
+	  } else {
+	    etherScanUrl = API_URLS.etherScanRopstenUrl + action + transactionId;
+	  }
+
+	  var etherScanFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseTxData = JSON.parse(response);
+	      try {
+	        // Parse block to get timestamp first, then create TransactionData
+	        var blockFetcher = getEtherScanBlock(responseTxData, chain);
+	        blockFetcher.then(function (blockResponse) {
+	          var txData = parseEtherScanResponse(responseTxData, blockResponse);
+	          resolve(txData);
+	        }).catch(function () {
+	          reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	        });
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	    });
+	  });
+	  return etherScanFetcher;
+	}
+
+	function parseEtherScanResponse(jsonResponse, block) {
+	  var data = jsonResponse.result;
+	  var date = new Date(parseInt(block.timestamp, 16) * 1000);
+	  var issuingAddress = data.from;
+	  var opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
+
+	  // The method of checking revocations by output spent do not work with Ethereum.
+	  // There are no input/outputs, only balances.
+	  return new TransactionData(opReturnScript, issuingAddress, date, undefined);
+	}
+
+	function getEtherScanBlock(jsonResponse, chain) {
+	  var data = jsonResponse.result;
+	  var blockNumber = data.blockNumber;
+	  var action = '&action=eth_getBlockByNumber&boolean=true&tag=';
+	  var etherScanUrl = void 0;
+	  if (chain === BLOCKCHAINS.ethmain.code) {
+	    etherScanUrl = API_URLS.etherScanMainUrl + action + blockNumber;
+	  } else {
+	    etherScanUrl = API_URLS.etherScanRopstenUrl + action + blockNumber;
+	  }
+
+	  return new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      var blockData = responseData.result;
+	      try {
+	        var checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
+	        checkConfirmationsFetcher.then(function () {
+	          resolve(blockData);
+	        }).catch(function () {
+	          reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	        });
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	    });
+	  });
+	}
+
+	function checkEtherScanConfirmations(chain, blockNumber) {
+	  var action = '&action=eth_blockNumber';
+	  var etherScanUrl = void 0;
+	  if (chain === BLOCKCHAINS.ethmain.code) {
+	    etherScanUrl = API_URLS.etherScanMainUrl + action;
+	  } else {
+	    etherScanUrl = API_URLS.etherScanRopstenUrl + action;
+	  }
+
+	  return new Promise(function (resolve, reject) {
+	    return request$1({ url: etherScanUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      var currentBlockCount = responseData.result;
+	      try {
+	        if (currentBlockCount - blockNumber < CONFIG.MininumConfirmations) {
+	          reject(new VerifierError(fetchRemoteHash, 'Number of transaction confirmations were less than the minimum required, according to EtherScan API'));
+	        }
+	        resolve(currentBlockCount);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	    });
+	  });
+	}
 
 	/* eslint no-useless-escape: "off" */
 
@@ -15932,6 +16042,212 @@ var Verifier = (function (exports) {
 	    return '';
 	  }
 	  return dateFromIso(date);
+	}
+
+	function getBlockcypherFetcher(transactionId, chain) {
+	  var blockCypherUrl = void 0;
+	  if (chain === BLOCKCHAINS.bitcoin.code) {
+	    blockCypherUrl = API_URLS.blockCypherUrl + transactionId + '?limit=500';
+	  } else {
+	    blockCypherUrl = API_URLS.blockCypherTestUrl + transactionId + '?limit=500';
+	  }
+	  var blockcypherFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: blockCypherUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      try {
+	        var txData = parseBlockCypherResponse(responseData);
+	        resolve(txData);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(err.message);
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	    });
+	  });
+	  return blockcypherFetcher;
+	}
+
+	function getChainSoFetcher(transactionId, chain) {
+	  var chainSoUrl = void 0;
+	  if (chain === BLOCKCHAINS.bitcoin.code) {
+	    chainSoUrl = API_URLS.chainSoUrl + transactionId;
+	  } else {
+	    chainSoUrl = API_URLS.chainSoTestUrl + transactionId;
+	  }
+
+	  var chainSoFetcher = new Promise(function (resolve, reject) {
+	    return request$1({ url: chainSoUrl }).then(function (response) {
+	      var responseData = JSON.parse(response);
+	      try {
+	        var txData = parseChainSoResponse(responseData);
+	        resolve(txData);
+	      } catch (err) {
+	        // don't need to wrap this exception
+	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	      }
+	    }).catch(function () {
+	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
+	    });
+	  });
+	  return chainSoFetcher;
+	}
+
+	function parseBlockCypherResponse(jsonResponse) {
+	  if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
+	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Blockcypher API');
+	  }
+	  var time = dateToUnixTimestamp(jsonResponse.received);
+	  var outputs = jsonResponse.outputs;
+	  var lastOutput = outputs[outputs.length - 1];
+	  var issuingAddress = jsonResponse.inputs[0].addresses[0];
+	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
+	  var revokedAddresses = outputs.filter(function (output) {
+	    return !!output.spent_by;
+	  }).map(function (output) {
+	    return output.addresses[0];
+	  });
+	  return new TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
+	}
+
+	function parseChainSoResponse(jsonResponse) {
+	  if (jsonResponse.data.confirmations < CONFIG.MininumConfirmations) {
+	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Chain.so API');
+	  }
+	  var time = new Date(jsonResponse.data.time * 1000);
+	  var outputs = jsonResponse.data.outputs;
+	  var lastOutput = outputs[outputs.length - 1];
+	  var issuingAddress = jsonResponse.data.inputs[0].address;
+	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
+	  // Legacy v1.2 verification notes:
+	  // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
+	  // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
+	  // and ideally we would provide at least 1 more connector to crosscheck the list of revoked addresses. There were very
+	  // few v1.2 issuances, but you want to provide v1.2 verification with higher confidence (of cross-checking APIs), then
+	  // you should consider adding an additional lookup to crosscheck revocation addresses.
+	  return new TransactionData(opReturnScript, issuingAddress, time, undefined);
+	}
+
+	var BitcoinExplorers = [function (transactionId, chain) {
+	  return getChainSoFetcher(transactionId, chain);
+	}, function (transactionId, chain) {
+	  return getBlockcypherFetcher(transactionId, chain);
+	}];
+
+	var EthereumExplorers = [function (transactionId, chain) {
+	  return getEtherScanFetcher(transactionId, chain);
+	}];
+
+	// for legacy (pre-v2) Blockcerts
+	var BlockchainExplorersWithSpentOutputInfo = [function (transactionId, chain) {
+	  return getBlockcypherFetcher(transactionId, chain);
+	}];
+
+	var log$3 = browser$1('blockchainConnectors');
+
+	function PromiseProperRace(promises, count) {
+	  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+	  // Source: https://blog.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
+	  promises = Array.from(promises);
+	  if (promises.length < count) {
+	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction'));
+	  }
+
+	  var indexPromises = promises.map(function (p, index) {
+	    return p.then(function () {
+	      return index;
+	    }).catch(function (err) {
+	      log$3(err);
+	      throw index;
+	    });
+	  });
+
+	  return Promise.race(indexPromises).then(function (index) {
+	    var p = promises.splice(index, 1)[0];
+	    p.then(function (e) {
+	      return results.push(e);
+	    });
+	    if (count === 1) {
+	      return results;
+	    }
+	    return PromiseProperRace(promises, count - 1, results);
+	  }).catch(function (index) {
+	    promises.splice(index, 1);
+	    return PromiseProperRace(promises, count, results);
+	  });
+	}
+
+	function lookForTx(transactionId, chain, certificateVersion) {
+	  var BlockchainExplorers = void 0;
+	  switch (chain) {
+	    case BLOCKCHAINS.bitcoin.code:
+	    case BLOCKCHAINS.regtest.code:
+	    case BLOCKCHAINS.testnet.code:
+	    case BLOCKCHAINS.mocknet.code:
+	      BlockchainExplorers = BitcoinExplorers;
+	      break;
+	    case BLOCKCHAINS.ethmain.code:
+	    case BLOCKCHAINS.ethropst.code:
+	      BlockchainExplorers = EthereumExplorers;
+	      break;
+	    default:
+	      return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid chain; does not map to known BlockchainExplorers.'));
+	  }
+
+	  // First ensure we can satisfy the MinimumBlockchainExplorers setting
+	  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
+	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value'));
+	  }
+	  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2)) {
+	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value'));
+	  }
+
+	  // Queue up blockchain explorer APIs
+	  var promises = [];
+	  var limit = void 0;
+	  if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
+	    limit = CONFIG.MinimumBlockchainExplorers;
+	    for (var i = 0; i < limit; i++) {
+	      promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
+	    }
+	  } else {
+	    limit = CONFIG.MinimumBlockchainExplorers;
+	    for (var j = 0; j < limit; j++) {
+	      promises.push(BlockchainExplorers[j](transactionId, chain));
+	    }
+	  }
+
+	  return new Promise(function (resolve, reject) {
+	    return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(function (winners) {
+	      if (!winners || winners.length === 0) {
+	        return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.'));
+	      }
+
+	      // Compare results returned by different blockchain apis. We pick off the first result and compare the others
+	      // returned. The number of winners corresponds to the configuration setting `MinimumBlockchainExplorers`.
+	      // We require that all results agree on `issuingAddress` and `remoteHash`. Not all blockchain apis return
+	      // spent outputs (revoked addresses for <=v1.2), and we do not have enough coverage to compare this, but we do
+	      // ensure that a TxData with revoked addresses is returned, for the rare case of legacy 1.2 certificates.
+	      //
+	      // Note that APIs returning results where the number of confirmations is less than `MininumConfirmations` are
+	      // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
+	      // are above the `MininumConfirmations` threshold, then we can proceed with verification.
+	      var firstResponse = winners[0];
+	      for (var _i = 1; _i < winners.length; _i++) {
+	        var thisResponse = winners[_i];
+	        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
+	          throw new VerifierError(fetchRemoteHash, 'Issuing addresses returned by the blockchain APIs were different');
+	        }
+	        if (firstResponse.remoteHash !== thisResponse.remoteHash) {
+	          throw new VerifierError(fetchRemoteHash, 'Remote hashes returned by the blockchain APIs were different');
+	        }
+	      }
+	      resolve(firstResponse);
+	    }).catch(function (err) {
+	      reject(new VerifierError(fetchRemoteHash, err.message));
+	    });
+	  });
 	}
 
 	/**
@@ -16004,6 +16320,7 @@ var Verifier = (function (exports) {
 	var verifier = /*#__PURE__*/Object.freeze({
 		getIssuerProfile: getIssuerProfile$1,
 		getRevokedAssertions: getRevokedAssertions,
+		lookForTx: lookForTx,
 		parseIssuerKeys: parseIssuerKeys$1,
 		parseRevocationKey: parseRevocationKey
 	});
@@ -16185,325 +16502,6 @@ var Verifier = (function (exports) {
 	  } else {
 	    return parseV1(certificateJson);
 	  }
-	}
-
-	function stripHashPrefix(remoteHash, prefixes) {
-	  for (var i = 0; i < prefixes.length; i++) {
-	    var prefix = prefixes[i];
-	    if (startsWith(remoteHash, prefix)) {
-	      return remoteHash.slice(prefix.length);
-	    }
-	  }
-	  return remoteHash;
-	}
-
-	function getEtherScanFetcher(transactionId, chain) {
-	  var action = '&action=eth_getTransactionByHash&txhash=';
-	  var etherScanUrl = void 0;
-	  if (chain === BLOCKCHAINS.ethmain.code) {
-	    etherScanUrl = API_URLS.etherScanMainUrl + action + transactionId;
-	  } else {
-	    etherScanUrl = API_URLS.etherScanRopstenUrl + action + transactionId;
-	  }
-
-	  var etherScanFetcher = new Promise(function (resolve, reject) {
-	    return request$1({ url: etherScanUrl }).then(function (response) {
-	      var responseTxData = JSON.parse(response);
-	      try {
-	        // Parse block to get timestamp first, then create TransactionData
-	        var blockFetcher = getEtherScanBlock(responseTxData, chain);
-	        blockFetcher.then(function (blockResponse) {
-	          var txData = parseEtherScanResponse(responseTxData, blockResponse);
-	          resolve(txData);
-	        }).catch(function () {
-	          reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	        });
-	      } catch (err) {
-	        // don't need to wrap this exception
-	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	    });
-	  });
-	  return etherScanFetcher;
-	}
-
-	function parseEtherScanResponse(jsonResponse, block) {
-	  var data = jsonResponse.result;
-	  var date = new Date(parseInt(block.timestamp, 16) * 1000);
-	  var issuingAddress = data.from;
-	  var opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
-
-	  // The method of checking revocations by output spent do not work with Ethereum.
-	  // There are no input/outputs, only balances.
-	  return new TransactionData(opReturnScript, issuingAddress, date, undefined);
-	}
-
-	function getEtherScanBlock(jsonResponse, chain) {
-	  var data = jsonResponse.result;
-	  var blockNumber = data.blockNumber;
-	  var action = '&action=eth_getBlockByNumber&boolean=true&tag=';
-	  var etherScanUrl = void 0;
-	  if (chain === BLOCKCHAINS.ethmain.code) {
-	    etherScanUrl = API_URLS.etherScanMainUrl + action + blockNumber;
-	  } else {
-	    etherScanUrl = API_URLS.etherScanRopstenUrl + action + blockNumber;
-	  }
-
-	  return new Promise(function (resolve, reject) {
-	    return request$1({ url: etherScanUrl }).then(function (response) {
-	      var responseData = JSON.parse(response);
-	      var blockData = responseData.result;
-	      try {
-	        var checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
-	        checkConfirmationsFetcher.then(function () {
-	          resolve(blockData);
-	        }).catch(function () {
-	          reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	        });
-	      } catch (err) {
-	        // don't need to wrap this exception
-	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	    });
-	  });
-	}
-
-	function checkEtherScanConfirmations(chain, blockNumber) {
-	  var action = '&action=eth_blockNumber';
-	  var etherScanUrl = void 0;
-	  if (chain === BLOCKCHAINS.ethmain.code) {
-	    etherScanUrl = API_URLS.etherScanMainUrl + action;
-	  } else {
-	    etherScanUrl = API_URLS.etherScanRopstenUrl + action;
-	  }
-
-	  return new Promise(function (resolve, reject) {
-	    return request$1({ url: etherScanUrl }).then(function (response) {
-	      var responseData = JSON.parse(response);
-	      var currentBlockCount = responseData.result;
-	      try {
-	        if (currentBlockCount - blockNumber < CONFIG.MininumConfirmations) {
-	          reject(new VerifierError(fetchRemoteHash, 'Number of transaction confirmations were less than the minimum required, according to EtherScan API'));
-	        }
-	        resolve(currentBlockCount);
-	      } catch (err) {
-	        // don't need to wrap this exception
-	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	    });
-	  });
-	}
-
-	function getBlockcypherFetcher(transactionId, chain) {
-	  var blockCypherUrl = void 0;
-	  if (chain === BLOCKCHAINS.bitcoin.code) {
-	    blockCypherUrl = API_URLS.blockCypherUrl + transactionId + '?limit=500';
-	  } else {
-	    blockCypherUrl = API_URLS.blockCypherTestUrl + transactionId + '?limit=500';
-	  }
-	  var blockcypherFetcher = new Promise(function (resolve, reject) {
-	    return request$1({ url: blockCypherUrl }).then(function (response) {
-	      var responseData = JSON.parse(response);
-	      try {
-	        var txData = parseBlockCypherResponse(responseData);
-	        resolve(txData);
-	      } catch (err) {
-	        // don't need to wrap this exception
-	        reject(err.message);
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	    });
-	  });
-	  return blockcypherFetcher;
-	}
-
-	function getChainSoFetcher(transactionId, chain) {
-	  var chainSoUrl = void 0;
-	  if (chain === BLOCKCHAINS.bitcoin.code) {
-	    chainSoUrl = API_URLS.chainSoUrl + transactionId;
-	  } else {
-	    chainSoUrl = API_URLS.chainSoTestUrl + transactionId;
-	  }
-
-	  var chainSoFetcher = new Promise(function (resolve, reject) {
-	    return request$1({ url: chainSoUrl }).then(function (response) {
-	      var responseData = JSON.parse(response);
-	      try {
-	        var txData = parseChainSoResponse(responseData);
-	        resolve(txData);
-	      } catch (err) {
-	        // don't need to wrap this exception
-	        reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	      }
-	    }).catch(function () {
-	      reject(new VerifierError(fetchRemoteHash, 'Unable to get remote hash'));
-	    });
-	  });
-	  return chainSoFetcher;
-	}
-
-	function parseBlockCypherResponse(jsonResponse) {
-	  if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
-	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Blockcypher API');
-	  }
-	  var time = dateToUnixTimestamp(jsonResponse.received);
-	  var outputs = jsonResponse.outputs;
-	  var lastOutput = outputs[outputs.length - 1];
-	  var issuingAddress = jsonResponse.inputs[0].addresses[0];
-	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
-	  var revokedAddresses = outputs.filter(function (output) {
-	    return !!output.spent_by;
-	  }).map(function (output) {
-	    return output.addresses[0];
-	  });
-	  return new TransactionData(opReturnScript, issuingAddress, time, revokedAddresses);
-	}
-
-	function parseChainSoResponse(jsonResponse) {
-	  if (jsonResponse.data.confirmations < CONFIG.MininumConfirmations) {
-	    throw new VerifierError('Number of transaction confirmations were less than the minimum required, according to Chain.so API');
-	  }
-	  var time = new Date(jsonResponse.data.time * 1000);
-	  var outputs = jsonResponse.data.outputs;
-	  var lastOutput = outputs[outputs.length - 1];
-	  var issuingAddress = jsonResponse.data.inputs[0].address;
-	  var opReturnScript = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
-	  // Legacy v1.2 verification notes:
-	  // Chain.so requires that you lookup spent outputs per index, which would require potentially a lot of calls. However,
-	  // this is only for v1.2 so we will allow connectors to omit revoked addresses. Blockcypher returns revoked addresses,
-	  // and ideally we would provide at least 1 more connector to crosscheck the list of revoked addresses. There were very
-	  // few v1.2 issuances, but you want to provide v1.2 verification with higher confidence (of cross-checking APIs), then
-	  // you should consider adding an additional lookup to crosscheck revocation addresses.
-	  return new TransactionData(opReturnScript, issuingAddress, time, undefined);
-	}
-
-	var BitcoinExplorers = [function (transactionId, chain) {
-	  return getChainSoFetcher(transactionId, chain);
-	}, function (transactionId, chain) {
-	  return getBlockcypherFetcher(transactionId, chain);
-	}];
-
-	var EthereumExplorers = [function (transactionId, chain) {
-	  return getEtherScanFetcher(transactionId, chain);
-	}];
-
-	// for legacy (pre-v2) Blockcerts
-	var BlockchainExplorersWithSpentOutputInfo = [function (transactionId, chain) {
-	  return getBlockcypherFetcher(transactionId, chain);
-	}];
-
-	var log$3 = browser$1('blockchainConnectors');
-
-	function PromiseProperRace(promises, count) {
-	  var results = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
-	  // Source: https://blog.jcore.com/2016/12/18/promise-me-you-wont-use-promise-race/
-	  promises = Array.from(promises);
-	  if (promises.length < count) {
-	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction'));
-	  }
-
-	  var indexPromises = promises.map(function (p, index) {
-	    return p.then(function () {
-	      return index;
-	    }).catch(function (err) {
-	      log$3(err);
-	      throw index;
-	    });
-	  });
-
-	  return Promise.race(indexPromises).then(function (index) {
-	    var p = promises.splice(index, 1)[0];
-	    p.then(function (e) {
-	      return results.push(e);
-	    });
-	    if (count === 1) {
-	      return results;
-	    }
-	    return PromiseProperRace(promises, count - 1, results);
-	  }).catch(function (index) {
-	    promises.splice(index, 1);
-	    return PromiseProperRace(promises, count, results);
-	  });
-	}
-
-	function lookForTx(transactionId, chain, certificateVersion) {
-	  var BlockchainExplorers = void 0;
-	  switch (chain) {
-	    case BLOCKCHAINS.bitcoin.code:
-	    case BLOCKCHAINS.regtest.code:
-	    case BLOCKCHAINS.testnet.code:
-	    case BLOCKCHAINS.mocknet.code:
-	      BlockchainExplorers = BitcoinExplorers;
-	      break;
-	    case BLOCKCHAINS.ethmain.code:
-	    case BLOCKCHAINS.ethropst.code:
-	      BlockchainExplorers = EthereumExplorers;
-	      break;
-	    default:
-	      return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid chain; does not map to known BlockchainExplorers.'));
-	  }
-
-	  // First ensure we can satisfy the MinimumBlockchainExplorers setting
-	  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
-	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value'));
-	  }
-	  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2)) {
-	    return Promise.reject(new VerifierError(fetchRemoteHash, 'Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value'));
-	  }
-
-	  // Queue up blockchain explorer APIs
-	  var promises = [];
-	  var limit = void 0;
-	  if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
-	    limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
-	    for (var i = 0; i < limit; i++) {
-	      promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
-	    }
-	  } else {
-	    limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
-	    for (var j = 0; j < limit; j++) {
-	      promises.push(BlockchainExplorers[j](transactionId, chain));
-	    }
-	  }
-
-	  return new Promise(function (resolve, reject) {
-	    return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(function (winners) {
-	      if (!winners || winners.length === 0) {
-	        return Promise.reject(new VerifierError(fetchRemoteHash, 'Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.'));
-	      }
-
-	      // Compare results returned by different blockchain apis. We pick off the first result and compare the others
-	      // returned. The number of winners corresponds to the configuration setting `MinimumBlockchainExplorers`.
-	      // We require that all results agree on `issuingAddress` and `remoteHash`. Not all blockchain apis return
-	      // spent outputs (revoked addresses for <=v1.2), and we do not have enough coverage to compare this, but we do
-	      // ensure that a TxData with revoked addresses is returned, for the rare case of legacy 1.2 certificates.
-	      //
-	      // Note that APIs returning results where the number of confirmations is less than `MininumConfirmations` are
-	      // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
-	      // are above the `MininumConfirmations` threshold, then we can proceed with verification.
-	      var firstResponse = winners[0];
-	      for (var _i = 1; _i < winners.length; _i++) {
-	        var thisResponse = winners[_i];
-	        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-	          throw new VerifierError(fetchRemoteHash, 'Issuing addresses returned by the blockchain APIs were different');
-	        }
-	        if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-	          throw new VerifierError(fetchRemoteHash, 'Remote hashes returned by the blockchain APIs were different');
-	        }
-	      }
-	      resolve(firstResponse);
-	    }).catch(function (err) {
-	      reject(new VerifierError(fetchRemoteHash, err.message));
-	    });
-	  });
 	}
 
 	var __dirname = '/Users/raiseandfall/Projects/learningmachine/cert-verifier-js/code/node_modules/jsonld/js';
@@ -33193,41 +33191,51 @@ var Verifier = (function (exports) {
 	  }
 	}
 
-	function ensureNotRevokedByList(revokedAssertions, assertionUid) {
-	  if (!revokedAssertions) {
+	/**
+	 * intersect
+	 *
+	 * Returns the similarities between two arrays (removing duplicates as well)
+	 *
+	 * @param array1
+	 * @param array2
+	 * @returns {*[]}
+	 */
+	function intersect() {
+	  var array1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	  var array2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+
+	  return array1.filter(function (value) {
+	    return array2.indexOf(value) !== -1;
+	  }).filter(function (element, index, arr) {
+	    return arr.indexOf(element) === index;
+	  });
+	}
+
+	function ensureNotRevoked(revokedAddresses, keys) {
+	  if (!revokedAddresses || !keys) {
 	    // nothing to do
 	    return;
 	  }
-	  var revokedAddresses = revokedAssertions.map(function (output) {
-	    return output.id;
-	  });
-	  var revokedAssertionId = revokedAddresses.findIndex(function (id) {
-	    return id === assertionUid;
-	  });
-	  var isRevokedByIssuer = revokedAssertionId !== -1;
 
-	  if (isRevokedByIssuer) {
-	    throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAssertions[revokedAssertionId].revocationReason));
+	  if (!Array.isArray(keys)) {
+	    keys = [keys];
 	  }
-	}
 
-	function ensureNotRevokedBySpentOutput(revokedAddresses, issuerRevocationKey, recipientRevocationKey) {
-	  if (issuerRevocationKey) {
-	    var revokedAssertionId = revokedAddresses.findIndex(function (address) {
-	      return address === issuerRevocationKey;
+	  keys = keys.filter(function (key) {
+	    return key != null;
+	  });
+
+	  var matches = intersect(keys, revokedAddresses.map(function (assertion) {
+	    return assertion.id;
+	  }));
+
+	  if (matches.length > 0) {
+	    var indexOfMatch = revokedAddresses.findIndex(function (address) {
+	      return address.id === matches[0];
 	    });
-	    var isRevokedByIssuer = revokedAssertionId !== -1;
-	    if (isRevokedByIssuer) {
-	      throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAddresses[revokedAssertionId].revocationReason));
-	    }
-	  }
-	  if (recipientRevocationKey) {
-	    var _revokedAssertionId = revokedAddresses.findIndex(function (address) {
-	      return address === recipientRevocationKey;
-	    });
-	    var isRevokedByRecipient = _revokedAssertionId !== -1;
-	    if (isRevokedByRecipient) {
-	      throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAddresses[_revokedAssertionId].revocationReason));
+
+	    if (indexOfMatch > -1) {
+	      throw new VerifierError(checkRevokedStatus, domain$1.certificates.generateRevocationReason(revokedAddresses[indexOfMatch].revocationReason));
 	    }
 	  }
 	}
@@ -33401,21 +33409,9 @@ var Verifier = (function (exports) {
 	                erroredStep = this._stepsStatuses.find(function (step) {
 	                  return step.status === FAILURE;
 	                });
+	                return _context.abrupt('return', erroredStep ? this._failed(erroredStep.message) : this._succeed());
 
-	                if (!erroredStep) {
-	                  _context.next = 15;
-	                  break;
-	                }
-
-	                return _context.abrupt('return', this._failed({
-	                  status: FINAL,
-	                  errorMessage: erroredStep.message
-	                }));
-
-	              case 15:
-	                return _context.abrupt('return', this._succeed());
-
-	              case 16:
+	              case 12:
 	              case 'end':
 	                return _context.stop();
 	            }
@@ -33553,7 +33549,7 @@ var Verifier = (function (exports) {
 	      var _ref4 = _asyncToGenerator$2( /*#__PURE__*/regeneratorRuntime.mark(function _callee7() {
 	        var _this = this;
 
-	        var localHash, txData, issuerProfileJson, issuerKeyMap, revokedAssertions;
+	        var localHash, txData, issuerProfileJson, issuerKeyMap, keys, revokedAddresses;
 	        return regeneratorRuntime.wrap(function _callee7$(_context7) {
 	          while (1) {
 	            switch (_context7.prev = _context7.next) {
@@ -33588,7 +33584,7 @@ var Verifier = (function (exports) {
 	                    while (1) {
 	                      switch (_context4.prev = _context4.next) {
 	                        case 0:
-	                          return _context4.abrupt('return', lookForTx(_this.transactionId, _this.chain.code, _this.version));
+	                          return _context4.abrupt('return', domain$1.verifier.lookForTx(_this.transactionId, _this.chain.code, _this.version));
 
 	                        case 1:
 	                        case 'end':
@@ -33642,21 +33638,22 @@ var Verifier = (function (exports) {
 	                  return ensureValidReceipt(_this.receipt);
 	                });
 
-	                // Check revoke status
+	                // Check revoked status
+	                keys = void 0;
+	                revokedAddresses = void 0;
 
 	                if (!(this.version === CERTIFICATE_VERSIONS.V1_2)) {
-	                  _context7.next = 20;
+	                  _context7.next = 23;
 	                  break;
 	                }
 
-	                this._doAction(checkRevokedStatus, function () {
-	                  return ensureNotRevokedBySpentOutput(txData.revokedAddresses, domain$1.verifier.parseRevocationKey(issuerProfileJson), _this.revocationKey);
-	                });
-	                _context7.next = 24;
+	                revokedAddresses = txData.revokedAddresses;
+	                keys = [domain$1.verifier.parseRevocationKey(issuerProfileJson), this.revocationKey];
+	                _context7.next = 27;
 	                break;
 
-	              case 20:
-	                _context7.next = 22;
+	              case 23:
+	                _context7.next = 25;
 	                return this._doAsyncAction(null, _asyncToGenerator$2( /*#__PURE__*/regeneratorRuntime.mark(function _callee6() {
 	                  return regeneratorRuntime.wrap(function _callee6$(_context6) {
 	                    while (1) {
@@ -33672,16 +33669,16 @@ var Verifier = (function (exports) {
 	                  }, _callee6, _this);
 	                })));
 
-	              case 22:
-	                revokedAssertions = _context7.sent;
+	              case 25:
+	                revokedAddresses = _context7.sent;
 
+	                keys = this.id;
 
-	                // Check revoked status
+	              case 27:
+
 	                this._doAction(checkRevokedStatus, function () {
-	                  return ensureNotRevokedByList(revokedAssertions, _this.id);
+	                  return ensureNotRevoked(revokedAddresses, keys);
 	                });
-
-	              case 24:
 
 	                // Check authenticity
 	                this._doAction(checkAuthenticity, function () {
@@ -33693,7 +33690,7 @@ var Verifier = (function (exports) {
 	                  return ensureNotExpired(_this.expires);
 	                });
 
-	              case 26:
+	              case 30:
 	              case 'end':
 	                return _context7.stop();
 	            }
@@ -33780,20 +33777,18 @@ var Verifier = (function (exports) {
 	    /**
 	     * _failed
 	     *
-	     * @param stepCode
+	     * Returns a failure final step message
+	     *
 	     * @param errorMessage
-	     * @returns {{code: string, status: string, errorMessage: string}}
+	     * @returns {{code: string, status: string, errorMessage: *}}
 	     * @private
 	     */
 
 	  }, {
 	    key: '_failed',
-	    value: function _failed(_ref11) {
-	      var step = _ref11.step,
-	          errorMessage = _ref11.errorMessage;
-
+	    value: function _failed(errorMessage) {
 	      log$4('failure:' + errorMessage);
-	      return { code: step, status: FAILURE, errorMessage: errorMessage };
+	      return { code: final, status: FAILURE, errorMessage: errorMessage };
 	    }
 
 	    /**
@@ -33815,21 +33810,16 @@ var Verifier = (function (exports) {
 
 	    /**
 	     * _succeed
+	     *
+	     * Returns a final success message
 	     */
 
 	  }, {
 	    key: '_succeed',
 	    value: function _succeed() {
-	      var status = void 0;
-	      if (domain$1.chains.isTestChain(this.chain)) {
-	        log$4('This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.');
-	        status = MOCK_SUCCESS;
-	      } else {
-	        log$4('success');
-	        status = SUCCESS;
-	      }
-
-	      return { status: status };
+	      var logMessage = domain$1.chains.isTestChain(this.chain) ? 'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.' : 'Success';
+	      log$4(logMessage);
+	      return { code: final, status: SUCCESS };
 	    }
 
 	    /**
@@ -33871,36 +33861,36 @@ var Verifier = (function (exports) {
 	function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Certificate = function () {
-	  function Certificate(certificateContent) {
+	  function Certificate(certificateDefinition) {
 	    _classCallCheck$5(this, Certificate);
 
-	    if ((typeof certificateContent === 'undefined' ? 'undefined' : _typeof$1(certificateContent)) !== 'object') {
+	    if ((typeof certificateDefinition === 'undefined' ? 'undefined' : _typeof$1(certificateDefinition)) !== 'object') {
 	      try {
-	        certificateContent = JSON.parse(certificateContent);
+	        certificateDefinition = JSON.parse(certificateDefinition);
 	      } catch (err) {
 	        throw new Error('This is not a valid certificate');
 	      }
 	    }
 
 	    // Keep certificate JSON object
-	    this.certificateJson = JSON.parse(JSON.stringify(certificateContent));
+	    this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
 
 	    // Parse certificate
-	    this.parseJson(certificateContent);
+	    this.parseJson(certificateDefinition);
 	  }
 
 	  /**
 	   * parseJson
 	   *
-	   * @param certificateContent
+	   * @param certificateDefinition
 	   * @returns {*}
 	   */
 
 
 	  _createClass$1(Certificate, [{
 	    key: 'parseJson',
-	    value: function parseJson(certificateContent) {
-	      var parsedCertificate = parseJSON(certificateContent);
+	    value: function parseJson(certificateDefinition) {
+	      var parsedCertificate = parseJSON(certificateDefinition);
 	      this._setProperties(parsedCertificate);
 	    }
 

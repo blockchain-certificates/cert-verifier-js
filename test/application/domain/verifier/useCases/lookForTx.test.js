@@ -1,6 +1,5 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS } from '../../../../../src/constants';
-import { CERTIFICATE_VERSIONS } from '../../../../../dist/verifier-es';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../../src/constants';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';

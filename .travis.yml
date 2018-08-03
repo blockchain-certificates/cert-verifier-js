@@ -1,0 +1,17 @@
+language: node_js
+cache:
+  directories:
+    - "node_modules"
+branches:
+  only:
+    - master
+before_install:
+  - npm i -g npm@6
+before_script:
+  - npm run test
+  - npm run lint
+script:
+  - echo "Build complete"
+after_script:
+  - npm run test:coverage
+  - npm run test:coverage:report

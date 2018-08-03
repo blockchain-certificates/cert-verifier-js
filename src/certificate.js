@@ -75,7 +75,8 @@ export default class Certificate {
    * @param version
    * @private
    */
-  _setProperties ({certificateImage, chain, description, expires, id, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
+  _setProperties ({certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version}) {
+    this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
     this.description = description;

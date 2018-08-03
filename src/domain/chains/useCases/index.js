@@ -1,5 +1,5 @@
-import isTestChain from './isTestChain';
+import isMockChain from './isMockChain';
 
 export {
-  isTestChain
+  isMockChain
 };

@@ -45,7 +45,7 @@ export default class Verifier {
       );
     }
 
-    if (domain.chains.isTestChain(this.chain)) {
+    if (domain.chains.isMockChain(this.chain)) {
       await this._verifyV2Mock();
     } else {
       await this._verifyMain();
@@ -278,7 +278,7 @@ export default class Verifier {
    * Returns a final success message
    */
   _succeed () {
-    const logMessage = domain.chains.isTestChain(this.chain)
+    const logMessage = domain.chains.isMockChain(this.chain)
       ? 'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
       : 'Success';
     log(logMessage);

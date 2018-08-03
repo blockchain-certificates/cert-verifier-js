@@ -1,6 +1,6 @@
 import { BLOCKCHAINS } from '../../../constants';
 
-export default function isTestChain (chain) {
+export default function isMockChain (chain) {
   if (chain) {
     const chainCode = typeof chain === 'string' ? chain : chain.code;
     const isChainValid = Object.keys(BLOCKCHAINS).find(chainObj => chainObj === chainCode);

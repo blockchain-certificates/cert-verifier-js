@@ -80,7 +80,7 @@ export default function getVerificationMap (chain) {
     return [];
   }
 
-  let network = chainsService.isTestChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
+  let network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
   return getFullStepsFromSubSteps(verificationMap[network]);
 }

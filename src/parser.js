@@ -152,10 +152,19 @@ function parseV2 (certificateJson) {
  * @returns {*}
  */
 export default function parseJSON (certificateJson) {
-  const version = certificateJson['@context'];
-  if (version instanceof Array) {
-    return parseV2(certificateJson);
-  } else {
-    return parseV1(certificateJson);
+  let parsedCertificate;
+  try {
+    const version = certificateJson['@context'];
+    if (version instanceof Array) {
+      parsedCertificate = parseV2(certificateJson);
+    } else {
+      parsedCertificate = parseV1(certificateJson);
+    }
+    parsedCertificate.isFormatValid = true;
+    return parsedCertificate;
+  } catch (err) {
+    return {
+      isFormatValid: false
+    };
   }
 }

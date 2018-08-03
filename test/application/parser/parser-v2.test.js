@@ -3,6 +3,15 @@ import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
 import parseJSON from '../../../src/parser';
 
 describe('Parser test suite', function () {
+  describe('given it is called with a invalid format v2 certificate data', () => {
+    it('should set whether or not the certificate format is valid', () => {
+      const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+      delete fixtureCopy.verification;
+      let parsedCertificate = parseJSON(fixtureCopy);
+      expect(parsedCertificate.isFormatValid).toBe(false);
+    });
+  });
+
   describe('given it is called with valid v2 certificate data', function () {
     let parsedCertificate;
 

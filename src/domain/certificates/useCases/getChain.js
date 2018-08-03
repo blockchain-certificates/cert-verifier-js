@@ -17,7 +17,6 @@ export default function getChain (address, signature = null) {
     let anchor = anchors[0];
     if (anchor.chain) {
       let signature = anchor.chain;
-      // TODO put in a separate function (did this way for now since I couldn't find a way to test a private function with Jest, and it's getting late)
       let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === signature);
       if (typeof chainObject === 'undefined') {
         throw new Error('Didn\'t recognize chain value');

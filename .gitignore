@@ -1,10 +1,4 @@
-.idea/*
-*.ini*
-
-.DS_Store
-
 node_modules/*
-bower_components/*
-
-bundle*.js
-.babel*
+.idea/*
+.DS_Store
+/coverage

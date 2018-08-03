@@ -1,0 +1,21 @@
+<html>
+<head>
+
+</head>
+<body>
+  <script src="../../dist/verifier-iife.js"></script>
+  <script>
+    let request = new XMLHttpRequest();
+    request.open('GET', '../fixtures/mainnet-valid-2.0.json');
+    request.responseType = 'json';
+    request.onload = async () => {
+      const certificate = new Verifier.Certificate(request.response);
+
+      // Verify
+      const result = await certificate.verify();
+      console.log('Certificate verification:', result.status);
+    };
+    request.send();
+  </script>
+</body>
+</html>

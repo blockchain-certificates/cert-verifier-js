@@ -1,6 +1,6 @@
 {
   "name": "cert-verifier-js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Javascript library for verifying Blockcerts",
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",

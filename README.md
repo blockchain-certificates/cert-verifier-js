@@ -1,5 +1,8 @@
 # cert-verifier-js
 
+[![Build Status](https://travis-ci.com/blockchain-certificates/cert-verifier-js.svg?branch=master)](https://travis-ci.com/blockchain-certificates/cert-verifier-js)
+[![codecov](https://codecov.io/gh/blockchain-certificates/cert-verifier-js/branch/master/graph/badge.svg)](https://codecov.io/gh/blockchain-certificates/cert-verifier-js)
+
 A library to parse and verify [Blockcerts](https://www.blockcerts.org/) certificates.
 
 # Usage

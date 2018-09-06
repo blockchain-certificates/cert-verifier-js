@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.1](https://github.com/blockchain-certificates/cert-verifier-js/releases/tag/v2.0.1) - 2018-09-06
+### Added
+- Updated README file with third party details
+
+### Changed
+- Updated vulnerable dependencies
+
 ## [2.0.0](https://github.com/blockchain-certificates/cert-verifier-js/releases/tag/v2.0.0) - 2018-08-03
 **Complete re-write of the API.** Please check the [examples](https://github.com/blockchain-certificates/cert-verifier-js/tree/master#examples) and [API doc](https://github.com/blockchain-certificates/cert-verifier-js/tree/master#api) for more details.
 ### Added

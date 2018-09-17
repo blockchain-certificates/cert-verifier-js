@@ -16,6 +16,9 @@
     "prepush": "npm run test && npm run lint",
     "semantic-release": "semantic-release"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "babel": {
     "presets": [
       [

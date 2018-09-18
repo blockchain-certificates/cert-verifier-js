@@ -1,7 +1,11 @@
 {
-  "name": "cert-verifier-js",
-  "version": "2.0.1",
+  "name": "@blockcerts/cert-verifier-js",
+  "version": "2.0.2",
   "description": "Javascript library for verifying Blockcerts",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/blockchain-certificates/cert-verifier-js.git"
+  },
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",
   "scripts": {
@@ -14,6 +18,9 @@
     "build:es5": "rollup -c rollup-es5.config.js",
     "lint": "semistandard --verbose | snazzy",
     "prepush": "npm run test && npm run lint"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "babel": {
     "presets": [

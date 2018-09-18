@@ -227,7 +227,7 @@ Lastly, it is a best practice with blockchain transactions to factor in the numb
 
 ## Experimenting with and applying better blockchain transaction API practices
 
-`cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply better practices when relying on blockchain APIs:
+`@blockcerts/cert-verifier-js` has 2 configuration settings (see config/default.js) to help you experiment with and apply better practices when relying on blockchain APIs:
 
 ```
 MininumConfirmations: 6,
@@ -239,7 +239,7 @@ MinimumBlockchainExplorers: 2,
   - remoteHash
   - issuingAddress
   
-`cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
+`@blockcerts/cert-verifier-js` currently includes only 2 blockchain connectors so `MinimumBlockchainExplorers` cannot currently be set above 2. We welcome contributions of additional connectors to the open source.
   
 See `lib\blockchainConnectors.js` for details on how they are used. 
 

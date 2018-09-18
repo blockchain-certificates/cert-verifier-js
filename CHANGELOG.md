@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.2](https://github.com/blockchain-certificates/cert-verifier-js/releases/tag/v2.0.2) - 2018-09-18
+### Changed
+- Moved NPM package to scoped package **BREAKING CHANGE**
+  
+  You should now install `@blockcerts/cert-verifier-js` package, which will be the only one maintained from now on.
+  
+
 ## [2.0.1](https://github.com/blockchain-certificates/cert-verifier-js/releases/tag/v2.0.1) - 2018-09-06
 ### Added
 - Updated README file with third party details

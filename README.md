@@ -1,4 +1,4 @@
-# cert-verifier-js
+# @blockcerts/cert-verifier-js
 
 [![Build Status](https://travis-ci.com/blockchain-certificates/cert-verifier-js.svg?branch=master)](https://travis-ci.com/blockchain-certificates/cert-verifier-js)
 [![codecov](https://codecov.io/gh/blockchain-certificates/cert-verifier-js/branch/master/graph/badge.svg)](https://codecov.io/gh/blockchain-certificates/cert-verifier-js)
@@ -10,7 +10,7 @@ A library to parse and verify [Blockcerts](https://www.blockcerts.org/) certific
 ## Install
 
 ```shell
-$ npm i cert-verifier-js
+$ npm i @blockcerts/cert-verifier-js
 ```
 
 ## Import
@@ -19,20 +19,20 @@ $ npm i cert-verifier-js
 Exposed by default:
 
 ```javascript
-var Certificate = require('cert-verifier-js');
+var Certificate = require('@blockcerts/cert-verifier-js');
 var certificate = new Certificate(certificateDefinition);
 ```
 
 #### ES module
 ```javascript
-import Certificate from 'cert-verifier-js';
+import Certificate from '@blockcerts/cert-verifier-js';
 let certificate = new Certificate(certificateDefinition);
 ```
 
 #### Script tag (iife)
-[Check an example here](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/test/e2e/script-tag.html)
+[Check an example here](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/test/e2e/script-tag.html)
 ```html
-<script src='node_modules/cert-verifier-js/dist/verifier-iife.js'></script>
+<script src='node_modules/@blockcerts/cert-verifier-js/dist/verifier-iife.js'></script>
 <script>
   var certificate = new Verifier.Certificate(certificateDefinition);
 </script>
@@ -120,7 +120,7 @@ The certificate instance has the following properties:
 - `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link
 - `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
-- `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js)
+- `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/certificateVersions.js)
 
 **Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
 
@@ -171,13 +171,13 @@ The final verification status:
 ### Constants
 Several constants are being exposed:
 ```javascript
-import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from 'cert-verifier-js';
+import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js';
 ```
-- [`BLOCKCHAINS`]https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/blockchains.js: descriptive object of all blockchains supported by the library
-- [`STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
-- [`SUB_STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
-- [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions
-- [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationStatuses.js)
+- [`BLOCKCHAINS`]https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/blockchains.js: descriptive object of all blockchains supported by the library
+- [`STEPS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
+- [`SUB_STEPS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
+- [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions
+- [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationStatuses.js)
 
 ## Contribute
 

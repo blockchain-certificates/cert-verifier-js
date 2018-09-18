@@ -1,10 +1,10 @@
 {
-  "name": "cert-verifier-js",
+  "name": "@blockcerts/cert-verifier-js",
   "version": "0.0.0-dev",
   "description": "Javascript library for verifying Blockcerts",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/blockchain-certificates/cert-verifier-js.git"
+    "type": "git",
+    "url": "https://github.com/blockchain-certificates/cert-verifier-js.git"
   },
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",

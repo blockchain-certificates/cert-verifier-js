@@ -25,7 +25,7 @@ var certificate = new Certificate(certificateDefinition);
 
 #### ES module
 ```javascript
-import Certificate from '@blockcerts/cert-verifier-js';
+import { Certificate } from '@blockcerts/cert-verifier-js';
 let certificate = new Certificate(certificateDefinition);
 ```
 
@@ -173,7 +173,7 @@ Several constants are being exposed:
 ```javascript
 import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js';
 ```
-- [`BLOCKCHAINS`]https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/blockchains.js: descriptive object of all blockchains supported by the library
+- [`BLOCKCHAINS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/blockchains.js): descriptive object of all blockchains supported by the library
 - [`STEPS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
 - [`SUB_STEPS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
 - [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions

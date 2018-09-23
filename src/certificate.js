@@ -1,9 +1,10 @@
 import domain from './domain';
 import parseJSON from './parser';
 import Verifier from './verifier';
+import { DEFAULT_OPTIONS } from './constants';
 
 export default class Certificate {
-  constructor (certificateDefinition) {
+  constructor (certificateDefinition, options = {}) {
     if (typeof certificateDefinition !== 'object') {
       try {
         certificateDefinition = JSON.parse(certificateDefinition);
@@ -14,6 +15,9 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
+
+    // Options
+    this._setOptions(options);
 
     // Parse certificate
     this.parseJson(certificateDefinition);
@@ -52,6 +56,19 @@ export default class Certificate {
   }
 
   /**
+   * _setOptions
+   *
+   * @param options
+   * @private
+   */
+  _setOptions (options) {
+    this.options = Object.assign(DEFAULT_OPTIONS, options);
+
+    // Set locale
+    this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
+  }
+
+  /**
    * _setProperties
    *
    * @param certificateImage
@@ -59,6 +76,7 @@ export default class Certificate {
    * @param description
    * @param expires
    * @param id
+   * @param isFormatValid
    * @param issuedOn
    * @param issuer
    * @param metadataJson

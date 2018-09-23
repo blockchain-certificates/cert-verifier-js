@@ -1,10 +1,6 @@
 import domain from '../../../../../src/domain';
 
 describe('domain i18n detectLocale use case test suite', function () {
-  afterEach(function () {
-
-  });
-
   describe('given it detected the navigator locale', function () {
     beforeEach(function () {
       navigator.__defineGetter__('language', function(){

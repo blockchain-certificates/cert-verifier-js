@@ -1,0 +1,27 @@
+{
+  "en-US": {
+    "steps": {
+      "formatValidation": {
+        "label": "Format validation",
+        "labelPending": "Validating format"
+      },
+      "hashComparison": {
+        "label": "Hash comparison",
+        "labelPending": "Comparing hash"
+      },
+      "statusCheck": {
+        "label": "Status check",
+        "labelPending": "Checking record status"
+      }
+    },
+    "subSteps": {
+
+    }
+  },
+  "es-ES": {
+
+  },
+  "mt": {
+
+  }
+}

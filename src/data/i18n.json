@@ -1,68 +1,38 @@
 {
   "en-US": {
     "steps": {
-      "formatValidation": {
-        "label": "Format validation",
-        "labelPending": "Validating format"
-      },
-      "hashComparison": {
-        "label": "Hash comparison",
-        "labelPending": "Comparing hash"
-      },
-      "statusCheck": {
-        "label": "Status check",
-        "labelPending": "Checking record status"
-      }
+      "formatValidationLabel": "Format validation",
+      "formatValidationLabelPending": "Validating format",
+      "hashComparisonLabel": "Hash comparison",
+      "hashComparisonLabelPending": "Comparing hash",
+      "statusCheckLabel": "Status check",
+      "statusCheckLabelPending": "Checking record status"
     },
     "subSteps": {
-      "getTransactionId": {
-        "label": "Get transaction ID",
-        "labelPending": "Getting transaction ID"
-      },
-      "computeLocalHash": {
-        "label": "Compute local hash",
-        "labelPending": "Computing local hash"
-      },
-      "fetchRemoteHash": {
-        "label": "Fetch remote hash",
-        "labelPending": "Fetching remote hash"
-      },
-      "getIssuerProfile": {
-        "label": "Get issuer profile",
-        "labelPending": "Getting issuer profile"
-      },
-      "parseIssuerKeys": {
-        "label": "Parse issuer keys",
-        "labelPending": "Parsing issuer keys"
-      },
-      "compareHashes": {
-        "label": "Compare hashes",
-        "labelPending": "Comparing hashes"
-      },
-      "checkMerkleRoot": {
-        "label": "Check Merkle Root",
-        "labelPending": "Checking Merkle Root"
-      },
-      "checkReceipt": {
-        "label": "Check Receipt",
-        "labelPending": "Checking Receipt"
-      },
-      "checkIssuerSignature": {
-        "label": "Check Issuer Signature",
-        "labelPending": "Checking Issuer Signature"
-      },
-      "checkAuthenticity": {
-        "label": "Check Authenticity",
-        "labelPending": "Checking Authenticity"
-      },
-      "checkRevokedStatus": {
-        "label": "Check Revoked Status",
-        "labelPending": "Checking Revoked Status"
-      },
-      "checkExpiresDate": {
-        "label": "Check Expires Date",
-        "labelPending": "Checking Expires Date"
-      }
+      "getTransactionIdLabel": "Get transaction ID",
+      "getTransactionIdLabelPending": "Getting transaction ID",
+      "computeLocalHashLabel": "Compute local hash",
+      "computeLocalHashLabelPending": "Computing local hash",
+      "fetchRemoteHashLabel": "Fetch remote hash",
+      "fetchRemoteHashLabelPending": "Fetching remote hash",
+      "getIssuerProfileLabel": "Get issuer profile",
+      "getIssuerProfileLabelPending": "Getting issuer profile",
+      "parseIssuerKeysLabel": "Parse issuer keys",
+      "parseIssuerKeysLabelPending": "Parsing issuer keys",
+      "compareHashesLabel": "Compare hashes",
+      "compareHashesLabelPending": "Comparing hashes",
+      "checkMerkleRootLabel": "Check Merkle Root",
+      "checkMerkleRootLabelPending": "Checking Merkle Root",
+      "checkReceiptLabel": "Check Receipt",
+      "checkReceiptLabelPending": "Checking Receipt",
+      "checkIssuerSignatureLabel": "Check Issuer Signature",
+      "checkIssuerSignatureLabelPending": "Checking Issuer Signature",
+      "checkAuthenticityLabel": "Check Authenticity",
+      "checkAuthenticityLabelPending": "Checking Authenticity",
+      "checkRevokedStatusLabel": "Check Revoked Status",
+      "checkRevokedStatusLabelPending": "Checking Revoked Status",
+      "checkExpiresDateLabel": "Check Expires Date",
+      "checkExpiresDateLabelPending": "Checking Expires Date"
     },
     "revocation": {
       "preReason": "Reason given:",

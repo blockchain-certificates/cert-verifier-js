@@ -15,7 +15,91 @@
       }
     },
     "subSteps": {
-
+      "getTransactionId": {
+        "label": "Get transaction ID",
+        "labelPending": "Getting transaction ID"
+      },
+      "computeLocalHash": {
+        "label": "Compute local hash",
+        "labelPending": "Computing local hash"
+      },
+      "fetchRemoteHash": {
+        "label": "Fetch remote hash",
+        "labelPending": "Fetching remote hash"
+      },
+      "getIssuerProfile": {
+        "label": "Get issuer profile",
+        "labelPending": "Getting issuer profile"
+      },
+      "parseIssuerKeys": {
+        "label": "Parse issuer keys",
+        "labelPending": "Parsing issuer keys"
+      },
+      "compareHashes": {
+        "label": "Compare hashes",
+        "labelPending": "Comparing hashes"
+      },
+      "checkMerkleRoot": {
+        "label": "Check Merkle Root",
+        "labelPending": "Checking Merkle Root"
+      },
+      "checkReceipt": {
+        "label": "Check Receipt",
+        "labelPending": "Checking Receipt"
+      },
+      "checkIssuerSignature": {
+        "label": "Check Issuer Signature",
+        "labelPending": "Checking Issuer Signature"
+      },
+      "checkAuthenticity": {
+        "label": "Check Authenticity",
+        "labelPending": "Checking Authenticity"
+      },
+      "checkRevokedStatus": {
+        "label": "Check Revoked Status",
+        "labelPending": "Checking Revoked Status"
+      },
+      "checkExpiresDate": {
+        "label": "Check Expires Date",
+        "labelPending": "Checking Expires Date"
+      }
+    },
+    "revocation": {
+      "preReason": "Reason given:",
+      "reason": "This certificate has been revoked by the issuer."
+    },
+    "success": {
+      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
+      "blockchain": "Success"
+    },
+    "errors": {
+      "certificateNotValid": "This is not a valid certificate",
+      "getChain": "Didn't recognize chain value",
+      "getTransactionId": "Cannot verify this certificate without a transaction ID to compare against.",
+      "getIssuerProfile": "Unable to get issuer profile",
+      "getRevokedAssertions": "Unable to get revocation assertions",
+      "lookForTxInvalidChain": "Invalid chain; does not map to known BlockchainExplorers.",
+      "lookForTxInvalidAppConfig": "Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value",
+      "lookForTxCouldNotConfirm": "Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.",
+      "lookForTxDifferentAddresses": "Issuing addresses returned by the blockchain APIs were different",
+      "lookForTxDifferentRemoteHashes": "Remote hashes returned by the blockchain APIs were different",
+      "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
+      "getBlockcypherFetcher": "Unable to get remote hash",
+      "getChainSoFetcher": "Unable to get remote hash",
+      "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
+      "parseChainSoResponse": "Number of transaction confirmations were less than the minimum required, according to Chain.so API",
+      "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",
+      "couldNotConfirmTx": "Could not confirm the transaction",
+      "failedJsonLdNormalization": "Failed JSON-LD normalization",
+      "foundUnmappedFields": "Found unmapped fields during JSON-LD normalization",
+      "ensureHashesEqual": "Computed hash does not match remote hash",
+      "ensureIssuerSignature": "Issuer key does not match derived address.",
+      "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
+      "ensureNotExpired": "This certificate has expired.",
+      "getCaseInsensitiveKey": "Transaction occurred at time when issuing address was not considered valid.",
+      "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
+      "invalidMerkleReceipt": "Invalid Merkle Receipt. Proof hash did not match Merkle root",
+      "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against."
     }
   },
   "es-ES": {

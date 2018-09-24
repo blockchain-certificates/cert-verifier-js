@@ -62,7 +62,7 @@ export default class Certificate {
    * @private
    */
   _setOptions (options) {
-    this.options = Object.assign(DEFAULT_OPTIONS, options);
+    this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);

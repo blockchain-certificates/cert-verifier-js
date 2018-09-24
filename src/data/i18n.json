@@ -73,9 +73,149 @@
     }
   },
   "es-ES": {
-
+    "steps": {
+      "formatValidationLabel": "Format validation",
+      "formatValidationLabelPending": "Validando el formato",
+      "hashComparisonLabel": "Comparación de cadena binaria",
+      "hashComparisonLabelPending": "Comparando cadena binaria",
+      "statusCheckLabel": "Estado de Verificación",
+      "statusCheckLabelPending": "Verificando Estado de Grabación"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "Obtener Identificación de Transacción",
+      "getTransactionIdLabelPending": "Obteniendo Identificación de Transacción",
+      "computeLocalHashLabel": "Calcular cadena binaria local",
+      "computeLocalHashLabelPending": "Calculando cadena binaria local",
+      "fetchRemoteHashLabel": "Obtener cadena binaria remota",
+      "fetchRemoteHashLabelPending": "Obeniendo cadena binaria remota",
+      "getIssuerProfileLabel": "Obtener perfil de emisor",
+      "getIssuerProfileLabelPending": "Obteniendo perfil de emisor",
+      "parseIssuerKeysLabel": "Analizar claves del emisor",
+      "parseIssuerKeysLabelPending": "Analizando claves del emisor",
+      "compareHashesLabel": "Comparar cadenas binarias",
+      "compareHashesLabelPending": "Comparando cadenas binarias",
+      "checkMerkleRootLabel": "Verificar Merkle Root",
+      "checkMerkleRootLabelPending": "Verificando Merkle Root",
+      "checkReceiptLabel": "Verificar Recibo",
+      "checkReceiptLabelPending": "Verificando Recibo",
+      "checkIssuerSignatureLabel": "Verificar Firma del Emisor",
+      "checkIssuerSignatureLabelPending": "Verificando Firma del Emisor",
+      "checkAuthenticityLabel": "Verificar Autenticidad",
+      "checkAuthenticityLabelPending": "Verificando Autenticidad",
+      "checkRevokedStatusLabel": "Verificar Estado de Revocación",
+      "checkRevokedStatusLabelPending": "Verificando Estado de Revocación",
+      "checkExpiresDateLabel": "Verificar Fechas de Expiración",
+      "checkExpiresDateLabelPending": "Verificando Fechas de Expiración"
+    },
+    "revocation": {
+      "preReason": "Reason given:",
+      "reason": "This certificate has been revoked by the issuer."
+    },
+    "success": {
+      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
+      "blockchain": "Success"
+    },
+    "errors": {
+      "certificateNotValid": "This is not a valid certificate",
+      "getChain": "Didn't recognize chain value",
+      "getTransactionId": "Cannot verify this certificate without a transaction ID to compare against.",
+      "getIssuerProfile": "Unable to get issuer profile",
+      "getRevokedAssertions": "Unable to get revocation assertions",
+      "lookForTxInvalidChain": "Invalid chain; does not map to known BlockchainExplorers.",
+      "lookForTxInvalidAppConfig": "Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value",
+      "lookForTxCouldNotConfirm": "Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.",
+      "lookForTxDifferentAddresses": "Issuing addresses returned by the blockchain APIs were different",
+      "lookForTxDifferentRemoteHashes": "Remote hashes returned by the blockchain APIs were different",
+      "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
+      "getBlockcypherFetcher": "Unable to get remote hash",
+      "getChainSoFetcher": "Unable to get remote hash",
+      "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
+      "parseChainSoResponse": "Number of transaction confirmations were less than the minimum required, according to Chain.so API",
+      "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",
+      "couldNotConfirmTx": "Could not confirm the transaction",
+      "failedJsonLdNormalization": "Failed JSON-LD normalization",
+      "foundUnmappedFields": "Found unmapped fields during JSON-LD normalization",
+      "ensureHashesEqual": "Computed hash does not match remote hash",
+      "ensureIssuerSignature": "Issuer key does not match derived address.",
+      "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
+      "ensureNotExpired": "This certificate has expired.",
+      "getCaseInsensitiveKey": "Transaction occurred at time when issuing address was not considered valid.",
+      "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
+      "invalidMerkleReceipt": "Invalid Merkle Receipt. Proof hash did not match Merkle root",
+      "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against."
+    }
   },
   "mt": {
-
+    "steps": {
+      "formatValidationLabel": "Format validation",
+      "formatValidationLabelPending": "Il-format qed jiġi vvalidat",
+      "hashComparisonLabel": "Paragun tal-Hash",
+      "hashComparisonLabelPending": "Il-hash qed jiġi pparagunat",
+      "statusCheckLabel": "Status check",
+      "statusCheckLabelPending": "Ir-record status qed jiġi ċċekkjat"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "Ikseb l-ID ta' tranżazzjoni",
+      "getTransactionIdLabelPending": "L-ID ta' tranżazzjoni qed tiġi mniżżla",
+      "computeLocalHashLabel": "Ikkalkula l-hash lokali",
+      "computeLocalHashLabelPending": "Il-hash lokali qed jiġi kkalkulat",
+      "fetchRemoteHashLabel": "Fittex ir-remote hash",
+      "fetchRemoteHashLabelPending": "Ir-remote hash qed jiġi mfittex",
+      "getIssuerProfileLabel": "Ikseb il-profil tal-emittent",
+      "getIssuerProfileLabelPending": "Il-profil tal-emittent qed jiġi mniżżel",
+      "parseIssuerKeysLabel": "Estratta ċ-ċwievet tal-emittent",
+      "parseIssuerKeysLabelPending": "Iċ-ċwievet tal-emittent qed jiġu estratti",
+      "compareHashesLabel": "Ikkumpara l-hashes",
+      "compareHashesLabelPending": "Il-hashes qed jiġu kkomparati",
+      "checkMerkleRootLabel": "Iċċekkja l-Merkle Root",
+      "checkMerkleRootLabelPending": "Il-Merkle Root Qed Tiġi Ċċekkjata",
+      "checkReceiptLabel": "Iċċekkja l-Irċevuta",
+      "checkReceiptLabelPending": "L-Irċevuta Qed Tiġi Ċċekkjata",
+      "checkIssuerSignatureLabel": "Iċċekkja l-Firma tal-Emittent",
+      "checkIssuerSignatureLabelPending": "Il-Firma tal-Emittent Qed Tiġi Ċċekkjata",
+      "checkAuthenticityLabel": "Iċċekkja l-Awtentiċità",
+      "checkAuthenticityLabelPending": "L-Awtentiċità Qed Tiġi Ċċekkjata",
+      "checkRevokedStatusLabel": "Iċċekkja l-Istatus Revokat",
+      "checkRevokedStatusLabelPending": "L-Istatus Revokat Qed Jiġi Ċċekkjat",
+      "checkExpiresDateLabel": "Iċċekkja d-Data ta' Skadenza",
+      "checkExpiresDateLabelPending": "Id-Data ta' Skadenza Qed Tiġi Ċċekkjata"
+    },
+    "revocation": {
+      "preReason": "Reason given:",
+      "reason": "This certificate has been revoked by the issuer."
+    },
+    "success": {
+      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
+      "blockchain": "Success"
+    },
+    "errors": {
+      "certificateNotValid": "This is not a valid certificate",
+      "getChain": "Didn't recognize chain value",
+      "getTransactionId": "Cannot verify this certificate without a transaction ID to compare against.",
+      "getIssuerProfile": "Unable to get issuer profile",
+      "getRevokedAssertions": "Unable to get revocation assertions",
+      "lookForTxInvalidChain": "Invalid chain; does not map to known BlockchainExplorers.",
+      "lookForTxInvalidAppConfig": "Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value",
+      "lookForTxCouldNotConfirm": "Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.",
+      "lookForTxDifferentAddresses": "Issuing addresses returned by the blockchain APIs were different",
+      "lookForTxDifferentRemoteHashes": "Remote hashes returned by the blockchain APIs were different",
+      "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
+      "getBlockcypherFetcher": "Unable to get remote hash",
+      "getChainSoFetcher": "Unable to get remote hash",
+      "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
+      "parseChainSoResponse": "Number of transaction confirmations were less than the minimum required, according to Chain.so API",
+      "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",
+      "couldNotConfirmTx": "Could not confirm the transaction",
+      "failedJsonLdNormalization": "Failed JSON-LD normalization",
+      "foundUnmappedFields": "Found unmapped fields during JSON-LD normalization",
+      "ensureHashesEqual": "Computed hash does not match remote hash",
+      "ensureIssuerSignature": "Issuer key does not match derived address.",
+      "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
+      "ensureNotExpired": "This certificate has expired.",
+      "getCaseInsensitiveKey": "Transaction occurred at time when issuing address was not considered valid.",
+      "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
+      "invalidMerkleReceipt": "Invalid Merkle Receipt. Proof hash did not match Merkle root",
+      "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against."
+    }
   }
 }

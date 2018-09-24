@@ -3,25 +3,34 @@ import { DEFAULT_OPTIONS } from '../../../constants';
 
 export function setLocaleValidCase (locale) {
   const localeParts = locale.split('-');
-  return `${localeParts[0].toLowerCase()}-${localeParts[1].toUpperCase()}`;
+  return localeParts.length > 1
+    ? `${localeParts[0].toLowerCase()}-${localeParts[1].toUpperCase()}`
+    : localeParts[0].toLowerCase();
 }
 
 export default function ensureIsSupported (locale) {
   let isSupported;
 
-  const supportedLanguages = domain.i18n.getSupportedLanguages();
+  const supportedLanguages = domain.i18n.getSupportedLanguages().map(language => language.toLowerCase());
 
-  // Test language tag (xx-XX)
-  isSupported = supportedLanguages.map(language => language.toLowerCase()).indexOf(locale.toLowerCase()) > -1;
+  // Test RFC 3066 language
+  isSupported = supportedLanguages.indexOf(locale.toLowerCase()) > -1;
 
-  // Test on ISO 639-1 format (xx)
+  // Test RFC 3066 language-country
   if (!isSupported) {
     const isoLocale = locale.substr(0, 2).toLowerCase();
-    const indexIsoLocale = supportedLanguages.map(language => language.substr(0, 2)).indexOf(isoLocale);
+    const indexIsoLocale = supportedLanguages.map(language => language.split('-')[0]).indexOf(isoLocale);
     isSupported = indexIsoLocale > -1;
-    locale = supportedLanguages[indexIsoLocale];
+
+    if (isSupported) {
+      locale = supportedLanguages[indexIsoLocale];
+    }
+  }
+
+  if (!isSupported) {
+    locale = DEFAULT_OPTIONS.locale;
   }
 
   // Get default locale otherwise
-  return !isSupported ? DEFAULT_OPTIONS.locale : setLocaleValidCase(locale);
+  return setLocaleValidCase(locale);
 }

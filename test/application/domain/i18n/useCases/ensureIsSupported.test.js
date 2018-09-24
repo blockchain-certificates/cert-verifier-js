@@ -39,7 +39,7 @@ describe('domain i18n ensureIsSupported use case test suite', function () {
     });
   });
 
-  describe('given the set locale is ISO format', () => {
+  describe('given the set locale is RFC 3066 language format', () => {
     it('should return the language tag that first matches', () => {
       instance = domain.i18n.ensureIsSupported(fixtureIsoLocale);
       expect(instance).toBe(fixtureSupportedLocale);

@@ -2,22 +2,23 @@ import domain from './domain';
 import parseJSON from './parser';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
+import currentLocale from './constants/currentLocale';
 
 export default class Certificate {
   constructor (certificateDefinition, options = {}) {
+    // Options
+    this._setOptions(options);
+
     if (typeof certificateDefinition !== 'object') {
       try {
         certificateDefinition = JSON.parse(certificateDefinition);
       } catch (err) {
-        throw new Error('This is not a valid certificate');
+        throw new Error(domain.i18n.getText('errors', 'certificateNotValid'));
       }
     }
 
     // Keep certificate JSON object
     this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
-
-    // Options
-    this._setOptions(options);
 
     // Parse certificate
     this.parseJson(certificateDefinition);
@@ -66,6 +67,8 @@ export default class Certificate {
 
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
+
+    currentLocale.locale = this.locale;
   }
 
   /**

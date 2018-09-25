@@ -1,6 +1,7 @@
 import { BLOCKCHAINS } from '../constants';
 import bitcoin from 'bitcoinjs-lib';
 import VerifierError from '../models/verifierError';
+import { getText } from '../domain/i18n/useCases';
 
 export default function ensureIssuerSignature (
   issuerKey,
@@ -20,6 +21,6 @@ export default function ensureIssuerSignature (
       bitcoinChain
     )
   ) {
-    throw new VerifierError('Issuer key does not match derived address.');
+    throw new VerifierError(getText('errors', 'ensureIssuerSignature'));
   }
 }

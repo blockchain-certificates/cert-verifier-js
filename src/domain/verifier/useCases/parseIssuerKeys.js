@@ -1,6 +1,7 @@
 import { dateToUnixTimestamp } from '../../../helpers/date';
 import { SUB_STEPS } from '../../../constants';
 import { Key, VerifierError } from '../../../models';
+import { getText } from '../../i18n/useCases';
 
 /**
  * createKeyObject
@@ -47,7 +48,7 @@ export default function parseIssuerKeys (issuerProfileJson) {
   } catch (e) {
     throw new VerifierError(
       SUB_STEPS.parseIssuerKeys,
-      'Unable to parse JSON out of issuer identification data.'
+      getText('errors', 'parseIssuerKeys')
     );
   }
 }

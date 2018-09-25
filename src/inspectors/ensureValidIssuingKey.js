@@ -1,6 +1,7 @@
 import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { getText } from '../domain/i18n/useCases';
 
 function getCaseInsensitiveKey (obj, value) {
   let key = null;
@@ -33,7 +34,7 @@ export default function ensureValidIssuingKey (keyMap, txIssuingAddress, txTime)
   if (!validKey) {
     throw new VerifierError(
       SUB_STEPS.checkAuthenticity,
-      'Transaction occurred at time when issuing address was not considered valid.'
+      getText('errors', 'getCaseInsensitiveKey')
     );
   }
 }

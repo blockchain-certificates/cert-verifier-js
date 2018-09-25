@@ -1,5 +1,6 @@
 import { NETWORKS, STEPS, SUB_STEPS } from '../../../constants';
 import chainsService from '../../chains';
+import { getText } from '../../i18n/useCases';
 
 const versionVerificationMap = {
   [NETWORKS.mainnet]: [
@@ -33,7 +34,12 @@ const versionVerificationMap = {
  */
 function stepsObjectToArray (stepsObject) {
   return Object.keys(stepsObject).map(stepCode => {
-    return {...stepsObject[stepCode], code: stepCode};
+    return {
+      ...stepsObject[stepCode],
+      code: stepCode,
+      label: getText('steps', `${stepCode}Label`),
+      labelPending: getText('steps', `${stepCode}LabelPending`)
+    };
   });
 }
 
@@ -60,7 +66,14 @@ function setSubStepsToSteps (subSteps) {
  * @returns {Array}
  */
 function getFullStepsFromSubSteps (subStepMap) {
-  let subSteps = subStepMap.map(stepCode => Object.assign({}, SUB_STEPS.language[stepCode]));
+  let subSteps = subStepMap.map(stepCode => {
+    const subStep = Object.assign({}, SUB_STEPS.language[stepCode]);
+    return {
+      ...subStep,
+      label: getText('subSteps', `${stepCode}Label`),
+      labelPending: getText('subSteps', `${stepCode}LabelPending`)
+    };
+  });
 
   const steps = setSubStepsToSteps(subSteps);
 

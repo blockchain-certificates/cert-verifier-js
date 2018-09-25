@@ -1,5 +1,6 @@
 import { BLOCKCHAINS } from '../../../constants/blockchains';
 import addresses from '../../addresses';
+import { getText } from '../../i18n/useCases';
 
 /**
  * getChain
@@ -19,7 +20,7 @@ export default function getChain (address, signature = null) {
       let signature = anchor.chain;
       let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === signature);
       if (typeof chainObject === 'undefined') {
-        throw new Error('Didn\'t recognize chain value');
+        throw new Error(getText('errors', 'getChain'));
       }
       return chainObject[1];
     }

@@ -6,6 +6,7 @@ import * as SUB_STEPS from '../constants/verificationSubSteps';
 import sha256 from 'sha256';
 import { CONTEXTS as ContextsMap } from '../constants';
 import { toUTF8Data } from '../helpers/data';
+import { getText } from '../domain/i18n/useCases';
 
 const {
   obi: OBI_CONTEXT,
@@ -71,10 +72,7 @@ export default function computeLocalHash (document, version) {
       const isErr = !!err;
       if (isErr) {
         reject(
-          new VerifierError(
-            SUB_STEPS.computeLocalHash,
-            'Failed JSON-LD normalization'
-          )
+          new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'))
         );
       } else {
         let unmappedFields = getUnmappedFields(normalized);
@@ -82,7 +80,7 @@ export default function computeLocalHash (document, version) {
           reject(
             new VerifierError(
               SUB_STEPS.computeLocalHash,
-              'Found unmapped fields during JSON-LD normalization'
+              getText('errors', 'foundUnmappedFields')
             )
           ); // + unmappedFields.join(",")
         } else {

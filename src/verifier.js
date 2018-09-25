@@ -71,7 +71,7 @@ export default class Verifier {
 
     let label;
     if (step) {
-      label = SUB_STEPS.language[step].labelPending;
+      label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
       this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
@@ -111,7 +111,7 @@ export default class Verifier {
 
     let label;
     if (step) {
-      label = SUB_STEPS.language[step].labelPending;
+      label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
       this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
     }
@@ -279,8 +279,8 @@ export default class Verifier {
    */
   _succeed () {
     const logMessage = domain.chains.isMockChain(this.chain)
-      ? 'This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.'
-      : 'Success';
+      ? domain.i18n.getText('success', 'mocknet')
+      : domain.i18n.getText('success', 'blockchain');
     log(logMessage);
     return {code: STEPS.final, status: VERIFICATION_STATUSES.SUCCESS};
   }

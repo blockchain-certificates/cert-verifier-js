@@ -85,7 +85,7 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
 
 ## `Certificate`
 
-### `new Certificate(certificateDefinition)`
+### `new Certificate(certificateDefinition, options)`
 ```javascript
 const certificate = new Certificate(certificateDefinition);
 ```
@@ -93,6 +93,8 @@ The constructor automatically parses a certificate.
 
 #### Parameter
 - `certificateDefinition` (`String|Object`): the certificate definition. Can either be a string or a JSON object.
+- `options`: (`Object`): an object of options. The following properties are used:
+    - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`.
 
 #### Returns
 The certificate instance has the following properties:
@@ -105,6 +107,7 @@ The certificate instance has the following properties:
 - `isFormatValid`: `Boolean`. Indicates whether or not the certificate has a valid format
 - `issuedOn`: `String`. Datetime of issuance (ISO-8601)
 - `issuer`: `Object`. Certificate issuer
+- `locale`: `String`. Language code used by the verifier
 - `metadataJson`: `Object`. Certificate metadata object
 - `name`: `String`. Name of the certificate
 - `publicKey`: `String`. Certificate's public key
@@ -178,6 +181,16 @@ import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATU
 - [`SUB_STEPS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
 - [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions
 - [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/@blockcerts/cert-verifier-js/blob/master/src/constants/verificationStatuses.js)
+
+### i18n
+The exposed function `getSupportedLanguages()` returns an array of language codes supported by the library.
+```javascript
+import { getSupportedLanguages } from '@blockcerts/cert-verifier-js';
+getSupportedLanguages(); // ['en-US', 'es-ES', 'mt', ...]
+```
+You can use the codes for the `locale` option.
+
+Please note that while we are working to add new languages, any new translation is welcome through forking & PR.
 
 ## Contribute
 

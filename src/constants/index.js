@@ -7,6 +7,7 @@ import { BLOCKCHAINS } from './blockchains';
 import { NETWORKS } from './networks';
 import CONFIG from './config';
 import CONTEXTS from './contexts';
+import { DEFAULT_OPTIONS } from './options';
 
 export {
   API_URLS,
@@ -14,6 +15,7 @@ export {
   CERTIFICATE_VERSIONS,
   CONFIG,
   CONTEXTS,
+  DEFAULT_OPTIONS,
   NETWORKS,
   STEPS,
   SUB_STEPS,

@@ -1,10 +1,7 @@
-const REVOCATION_LANGUAGE = {
-  PRE_REASON: 'Reason given:',
-  REVOCATION: 'This certificate has been revoked by the issuer.'
-};
+import { getText } from '../../i18n/useCases';
 
 export default function generateRevocationReason (reason) {
   reason = reason.trim();
-  reason = reason.length > 0 ? ` ${REVOCATION_LANGUAGE.PRE_REASON} ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
-  return `${REVOCATION_LANGUAGE.REVOCATION}${reason}`;
+  reason = reason.length > 0 ? ` ${getText('revocation', 'preReason')} ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
+  return `${getText('revocation', 'reason')}${reason}`;
 }

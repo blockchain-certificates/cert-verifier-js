@@ -1,5 +1,6 @@
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { getText } from '../domain/i18n/useCases';
 
 /**
  * isTransactionIdValid
@@ -13,7 +14,7 @@ export default function isTransactionIdValid (transactionId) {
   } else {
     throw new VerifierError(
       SUB_STEPS.getTransactionId,
-      'Cannot verify this certificate without a transaction ID to compare against.'
+      getText('errors', 'isTransactionIdValid')
     );
   }
 }

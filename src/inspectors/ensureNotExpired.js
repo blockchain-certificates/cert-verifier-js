@@ -1,6 +1,7 @@
 import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { getText } from '../domain/i18n/useCases';
 
 export default function ensureNotExpired (expires = null) {
   if (!expires) {
@@ -10,7 +11,7 @@ export default function ensureNotExpired (expires = null) {
   if (new Date() >= expiryDate) {
     throw new VerifierError(
       SUB_STEPS.checkExpiresDate,
-      'This certificate has expired.'
+      getText('errors', 'ensureNotExpired')
     );
   }
 }

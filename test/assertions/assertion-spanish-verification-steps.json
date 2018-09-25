@@ -1,0 +1,89 @@
+[
+  {
+    "code": "formatValidation",
+    "label": "Validación de formato",
+    "labelPending": "Validando el formato",
+    "subSteps": [
+      {
+        "code": "getTransactionId",
+        "label": "Obtener Identificación de Transacción",
+        "labelPending": "Obteniendo Identificación de Transacción",
+        "parentStep": "formatValidation"
+      },
+      {
+        "code": "computeLocalHash",
+        "label": "Calcular cadena binaria local",
+        "labelPending": "Calculando cadena binaria local",
+        "parentStep": "formatValidation"
+      },
+      {
+        "code": "fetchRemoteHash",
+        "label": "Obtener cadena binaria remota",
+        "labelPending": "Obeniendo cadena binaria remota",
+        "parentStep": "formatValidation"
+      },
+      {
+        "code": "getIssuerProfile",
+        "label": "Obtener perfil de emisor",
+        "labelPending": "Obteniendo perfil de emisor",
+        "parentStep": "formatValidation"
+      },
+      {
+        "code": "parseIssuerKeys",
+        "label": "Analizar claves del emisor",
+        "labelPending": "Analizando claves del emisor",
+        "parentStep": "formatValidation"
+      }
+    ]
+  },
+  {
+    "code": "hashComparison",
+    "label": "Comparación de cadena binaria",
+    "labelPending": "Comparando cadena binaria",
+    "subSteps": [
+      {
+        "code": "compareHashes",
+        "label": "Comparar cadenas binarias",
+        "labelPending": "Comparando cadenas binarias",
+        "parentStep": "hashComparison"
+      },
+      {
+        "code": "checkMerkleRoot",
+        "label": "Verificar Merkle Root",
+        "labelPending": "Verificando Merkle Root",
+        "parentStep": "hashComparison"
+      },
+      {
+        "code": "checkReceipt",
+        "label": "Verificar Recibo",
+        "labelPending": "Verificando Recibo",
+        "parentStep": "hashComparison"
+      }
+    ]
+  },
+  {
+    "code": "statusCheck",
+    "label": "Estado de Verificación",
+    "labelPending": "Verificando Estado de Grabación",
+    "subSteps": [
+      {
+        "code": "checkRevokedStatus",
+        "label": "Verificar Estado de Revocación",
+        "labelPending": "Verificando Estado de Revocación",
+        "parentStep": "statusCheck"
+      },
+      {
+        "code": "checkAuthenticity",
+        "label": "Verificar Autenticidad",
+        "labelPending": "Verificando Autenticidad",
+        "parentStep": "statusCheck"
+      },
+      {
+        "code": "checkExpiresDate",
+        "label": "Verificar Fechas de Expiración",
+        "labelPending": "Verificando Fechas de Expiración",
+        "parentStep": "statusCheck"
+      }
+    ]
+  }
+]

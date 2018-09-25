@@ -2,6 +2,7 @@ import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
 import { toByteArray } from '../helpers/data';
+import { getText } from '../domain/i18n/useCases';
 
 export default function ensureValidReceipt (receipt) {
   let proofHash = receipt.targetHash;
@@ -30,14 +31,14 @@ export default function ensureValidReceipt (receipt) {
   } catch (e) {
     throw new VerifierError(
       SUB_STEPS.checkReceipt,
-      'The receipt is malformed. There was a problem navigating the merkle tree in the receipt.'
+      getText('errors', 'ensureValidReceipt')
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       SUB_STEPS.checkReceipt,
-      'Invalid Merkle Receipt. Proof hash did not match Merkle root'
+      getText('errors', 'invalidMerkleReceipt')
     );
   }
 }

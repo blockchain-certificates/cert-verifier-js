@@ -1,3 +1,3 @@
 export default {
-  locale: ''
+  locale: 'en-US'
 };

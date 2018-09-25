@@ -1,5 +1,5 @@
 import currentLocale from '../../../constants/currentLocale';
-import i18n from '../../../data/i18n';
+import i18n from '../../../data/i18n.json';
 
 export default function getText (group, item) {
   if (!group || !item) {

@@ -22,7 +22,9 @@ const LABEL = 'Label';
 const LABEL_PENDING = 'LabelPending';
 
 const subStepsMap = {
-  [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys]
+  [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys],
+  [STEPS.hashComparison]: [compareHashes, checkMerkleRoot, checkReceipt],
+  [STEPS.statusCheck]: [checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
 };
 
 const generateSubsteps = (substeps, parentKey) => {
@@ -39,48 +41,8 @@ const generateSubsteps = (substeps, parentKey) => {
 
 const language = {
   ...generateSubsteps(subStepsMap[STEPS.formatValidation], STEPS.formatValidation),
-  [compareHashes]: {
-    code: compareHashes,
-    label: 'Compare hashes',
-    labelPending: 'Comparing hashes',
-    parentStep: STEPS.hashComparison
-  },
-  [checkMerkleRoot]: {
-    code: checkMerkleRoot,
-    label: 'Check Merkle Root',
-    labelPending: 'Checking Merkle Root',
-    parentStep: STEPS.hashComparison
-  },
-  [checkReceipt]: {
-    code: checkReceipt,
-    label: 'Check Receipt',
-    labelPending: 'Checking Receipt',
-    parentStep: STEPS.hashComparison
-  },
-  [checkIssuerSignature]: {
-    code: checkIssuerSignature,
-    label: 'Check Issuer Signature',
-    labelPending: 'Checking Issuer Signature',
-    parentStep: STEPS.statusCheck
-  },
-  [checkAuthenticity]: {
-    code: checkAuthenticity,
-    label: 'Check Authenticity',
-    labelPending: 'Checking Authenticity',
-    parentStep: STEPS.statusCheck
-  },
-  [checkRevokedStatus]: {
-    code: checkRevokedStatus,
-    label: 'Check Revoked Status',
-    labelPending: 'Checking Revoked Status',
-    parentStep: STEPS.statusCheck
-  },
-  [checkExpiresDate]: {
-    code: checkExpiresDate,
-    label: 'Check Expiration Date',
-    labelPending: 'Checking Expiration Date',
-    parentStep: STEPS.statusCheck
-  }
+  ...generateSubsteps(subStepsMap[STEPS.hashComparison], STEPS.hashComparison),
+  ...generateSubsteps(subStepsMap[STEPS.statusCheck], STEPS.statusCheck)
 };
 
 export {

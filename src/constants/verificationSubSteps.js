@@ -1,4 +1,5 @@
 import * as STEPS from './verificationSteps';
+import i18n from '../data/i18n';
 
 const getTransactionId = 'getTransactionId';
 const computeLocalHash = 'computeLocalHash';
@@ -11,40 +12,33 @@ const checkReceipt = 'checkReceipt';
 const checkIssuerSignature = 'checkIssuerSignature';
 const checkAuthenticity = 'checkAuthenticity';
 const checkRevokedStatus = 'checkRevokedStatus';
-const
-  checkExpiresDate = 'checkExpiresDate';
+const checkExpiresDate = 'checkExpiresDate';
+
+function getTextFor (subStep, status) {
+  return i18n['en-US'].subSteps[`${subStep}${status}`];
+}
+
+const LABEL = 'Label';
+const LABEL_PENDING = 'LabelPending';
+
+const subStepsMap = {
+  [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys]
+};
+
+const generateSubsteps = (substeps, parentKey) => {
+  return substeps.reduce((acc, curr) => {
+    acc[curr] = {
+      code: curr,
+      label: getTextFor(curr, LABEL),
+      labelPending: getTextFor(curr, LABEL_PENDING),
+      parentStep: parentKey
+    };
+    return acc;
+  }, {});
+}
 
 const language = {
-  [getTransactionId]: {
-    code: getTransactionId,
-    label: 'Get transaction ID',
-    labelPending: 'Getting transaction ID',
-    parentStep: STEPS.formatValidation
-  },
-  [computeLocalHash]: {
-    code: computeLocalHash,
-    label: 'Compute local hash',
-    labelPending: 'Computing local hash',
-    parentStep: STEPS.formatValidation
-  },
-  [fetchRemoteHash]: {
-    code: fetchRemoteHash,
-    label: 'Fetch remote hash',
-    labelPending: 'Fetching remote hash',
-    parentStep: STEPS.formatValidation
-  },
-  [getIssuerProfile]: {
-    code: getIssuerProfile,
-    label: 'Get issuer profile',
-    labelPending: 'Getting issuer profile',
-    parentStep: STEPS.formatValidation
-  },
-  [parseIssuerKeys]: {
-    code: parseIssuerKeys,
-    label: 'Parse issuer keys',
-    labelPending: 'Parsing issuer keys',
-    parentStep: STEPS.formatValidation
-  },
+  ...generateSubsteps(subStepsMap[STEPS.formatValidation], STEPS.formatValidation),
   [compareHashes]: {
     code: compareHashes,
     label: 'Compare hashes',

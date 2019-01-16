@@ -31,8 +31,8 @@
       "checkAuthenticityLabelPending": "Checking Authenticity",
       "checkRevokedStatusLabel": "Check Revoked Status",
       "checkRevokedStatusLabelPending": "Checking Revoked Status",
-      "checkExpiresDateLabel": "Check Expires Date",
-      "checkExpiresDateLabelPending": "Checking Expires Date"
+      "checkExpiresDateLabel": "Check Expiration Date",
+      "checkExpiresDateLabelPending": "Checking Expiration Date"
     },
     "revocation": {
       "preReason": "Reason given:",

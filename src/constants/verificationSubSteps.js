@@ -11,7 +11,8 @@ const checkReceipt = 'checkReceipt';
 const checkIssuerSignature = 'checkIssuerSignature';
 const checkAuthenticity = 'checkAuthenticity';
 const checkRevokedStatus = 'checkRevokedStatus';
-const checkExpiresDate = 'checkExpiresDate';
+const
+  checkExpiresDate = 'checkExpiresDate';
 
 const language = {
   [getTransactionId]: {
@@ -82,8 +83,8 @@ const language = {
   },
   [checkExpiresDate]: {
     code: checkExpiresDate,
-    label: 'Check Expires Date',
-    labelPending: 'Checking Expires Date',
+    label: 'Check Expiration Date',
+    labelPending: 'Checking Expiration Date',
     parentStep: STEPS.statusCheck
   }
 };

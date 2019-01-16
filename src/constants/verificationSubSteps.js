@@ -27,8 +27,8 @@ const subStepsMap = {
   [STEPS.statusCheck]: [checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
 };
 
-const generateSubsteps = (substeps, parentKey) => {
-  return substeps.reduce((acc, curr) => {
+function generateSubsteps (parentKey) {
+  return subStepsMap[parentKey].reduce((acc, curr) => {
     acc[curr] = {
       code: curr,
       label: getTextFor(curr, LABEL),
@@ -39,11 +39,9 @@ const generateSubsteps = (substeps, parentKey) => {
   }, {});
 }
 
-const language = {
-  ...generateSubsteps(subStepsMap[STEPS.formatValidation], STEPS.formatValidation),
-  ...generateSubsteps(subStepsMap[STEPS.hashComparison], STEPS.hashComparison),
-  ...generateSubsteps(subStepsMap[STEPS.statusCheck], STEPS.statusCheck)
-};
+const language = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
+  return Object.assign(acc, generateSubsteps(parentStepKey));
+}, {});
 
 export {
   getTransactionId,

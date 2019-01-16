@@ -19,7 +19,8 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true
+      preferBuiltins: true,
+      extensions: [ '.js', '.json' ]
     }),
     // https://github.com/rollup/rollup-plugin-commonjs/issues/166
     // fix issue with jsonld

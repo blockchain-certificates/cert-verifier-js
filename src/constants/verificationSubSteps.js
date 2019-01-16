@@ -1,4 +1,5 @@
 import * as STEPS from './verificationSteps';
+import i18n from '../data/i18n';
 
 const getTransactionId = 'getTransactionId';
 const computeLocalHash = 'computeLocalHash';
@@ -13,80 +14,34 @@ const checkAuthenticity = 'checkAuthenticity';
 const checkRevokedStatus = 'checkRevokedStatus';
 const checkExpiresDate = 'checkExpiresDate';
 
-const language = {
-  [getTransactionId]: {
-    code: getTransactionId,
-    label: 'Get transaction ID',
-    labelPending: 'Getting transaction ID',
-    parentStep: STEPS.formatValidation
-  },
-  [computeLocalHash]: {
-    code: computeLocalHash,
-    label: 'Compute local hash',
-    labelPending: 'Computing local hash',
-    parentStep: STEPS.formatValidation
-  },
-  [fetchRemoteHash]: {
-    code: fetchRemoteHash,
-    label: 'Fetch remote hash',
-    labelPending: 'Fetching remote hash',
-    parentStep: STEPS.formatValidation
-  },
-  [getIssuerProfile]: {
-    code: getIssuerProfile,
-    label: 'Get issuer profile',
-    labelPending: 'Getting issuer profile',
-    parentStep: STEPS.formatValidation
-  },
-  [parseIssuerKeys]: {
-    code: parseIssuerKeys,
-    label: 'Parse issuer keys',
-    labelPending: 'Parsing issuer keys',
-    parentStep: STEPS.formatValidation
-  },
-  [compareHashes]: {
-    code: compareHashes,
-    label: 'Compare hashes',
-    labelPending: 'Comparing hashes',
-    parentStep: STEPS.hashComparison
-  },
-  [checkMerkleRoot]: {
-    code: checkMerkleRoot,
-    label: 'Check Merkle Root',
-    labelPending: 'Checking Merkle Root',
-    parentStep: STEPS.hashComparison
-  },
-  [checkReceipt]: {
-    code: checkReceipt,
-    label: 'Check Receipt',
-    labelPending: 'Checking Receipt',
-    parentStep: STEPS.hashComparison
-  },
-  [checkIssuerSignature]: {
-    code: checkIssuerSignature,
-    label: 'Check Issuer Signature',
-    labelPending: 'Checking Issuer Signature',
-    parentStep: STEPS.statusCheck
-  },
-  [checkAuthenticity]: {
-    code: checkAuthenticity,
-    label: 'Check Authenticity',
-    labelPending: 'Checking Authenticity',
-    parentStep: STEPS.statusCheck
-  },
-  [checkRevokedStatus]: {
-    code: checkRevokedStatus,
-    label: 'Check Revoked Status',
-    labelPending: 'Checking Revoked Status',
-    parentStep: STEPS.statusCheck
-  },
-  [checkExpiresDate]: {
-    code: checkExpiresDate,
-    label: 'Check Expires Date',
-    labelPending: 'Checking Expires Date',
-    parentStep: STEPS.statusCheck
-  }
+function getTextFor (subStep, status) {
+  return i18n['en-US'].subSteps[`${subStep}${status}`];
+}
+
+const LABEL = 'Label';
+const LABEL_PENDING = 'LabelPending';
+
+const subStepsMap = {
+  [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys],
+  [STEPS.hashComparison]: [compareHashes, checkMerkleRoot, checkReceipt],
+  [STEPS.statusCheck]: [checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
 };
+
+function generateSubsteps (parentKey) {
+  return subStepsMap[parentKey].reduce((acc, curr) => {
+    acc[curr] = {
+      code: curr,
+      label: getTextFor(curr, LABEL),
+      labelPending: getTextFor(curr, LABEL_PENDING),
+      parentStep: parentKey
+    };
+    return acc;
+  }, {});
+}
+
+const language = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
+  return Object.assign(acc, generateSubsteps(parentStepKey));
+}, {});
 
 export {
   getTransactionId,

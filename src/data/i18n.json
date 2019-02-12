@@ -217,5 +217,78 @@
       "invalidMerkleReceipt": "Irċevuta Merkle invalida. Il-proof hash ma kienx jaqbel mal-Merkle root",
       "isTransactionIdValid": "Dan iċ-ċertifikat ma jistax jiġi vverifikat mingħajr ID ta' tranżazzjoni mqabbla miegħu"
     }
+  },
+  "it-IT": {
+    "steps": {
+      "formatValidationLabel": "Convalidare formato",
+      "formatValidationLabelPending": "Convalida formato",
+      "hashComparisonLabel": "Confrontare hash",
+      "hashComparisonLabelPending": "Confronta hash",
+      "statusCheckLabel": "Verificare stato",
+      "statusCheckLabelPending": "Verifica stato del record"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "Ottenere ID transazione",
+      "getTransactionIdLabelPending": "Ottieni ID transazione",
+      "computeLocalHashLabel": "Calcolare hash locale",
+      "computeLocalHashLabelPending": "Calcola hash locale",
+      "fetchRemoteHashLabel": "Recuperare hash remoto",
+      "fetchRemoteHashLabelPending": "Recupera hash remoto",
+      "getIssuerProfileLabel": "Ottenere profilo issuer",
+      "getIssuerProfileLabelPending": "Ottieni profilo issuer",
+      "parseIssuerKeysLabel": "Analizzare chiavi issuer",
+      "parseIssuerKeysLabelPending": "Analizza chiavi issuer",
+      "compareHashesLabel": "Confrontare gli hash",
+      "compareHashesLabelPending": "Confronto hash",
+      "checkMerkleRootLabel": "Controllare radice di Merkle",
+      "checkMerkleRootLabelPending": "Controllo radice di Merkle",
+      "checkReceiptLabel": "Verificare ricevuta",
+      "checkReceiptLabelPending": "Verifica ricevuta",
+      "checkIssuerSignatureLabel": "Verificare firma Issuer",
+      "checkIssuerSignatureLabelPending": "Verifica firma Issuer",
+      "checkAuthenticityLabel": "Verificare autenticità",
+      "checkAuthenticityLabelPending": "Verifica autenticità",
+      "checkRevokedStatusLabel": "Verificare stato revocato",
+      "checkRevokedStatusLabelPending": "Verifica stato revocato",
+      "checkExpiresDateLabel": "Verificare data di scadenza",
+      "checkExpiresDateLabelPending": "Verifica data di scadenza"
+    },
+    "revocation": {
+      "preReason": "Motivo indicato:",
+      "reason": "Questo certificato è stato revocato dall'emittente."
+    },
+    "success": {
+      "mocknet": "Questo Blockcert simulato ha superato tutti i controlli. La modalità Mocknet è utilizzata solo dagli emittenti per testare il loro flusso di lavoro localmente. Questo Blockcert non è stato registrato su una blockchain e non dovrebbe essere considerato un Blockcert verificato.",
+      "blockchain": "Successo"
+    },
+    "errors": {
+      "certificateNotValid": "Questo non è un certificato valido",
+      "getChain": "Il valore della catena non è stato riconosciuto",
+      "getTransactionId": "Impossibile verificare questo certificato senza un ID transazione da confrontare.",
+      "getIssuerProfile": "Impossibile ottenere il profilo dell'emittente",
+      "getRevokedAssertions": "Impossibile ottenere le asserzioni di revoca",
+      "lookForTxInvalidChain": "Catena non valida; non mappa BlockchainExplorers noti.",
+      "lookForTxInvalidAppConfig": "Configurazione dell'applicazione non valida, verificare il valore di configurazione di CONFIG.MinimumBlockchainExplorers",
+      "lookForTxCouldNotConfirm": "Impossibile confermare la transazione. Nessuna API blockchain ha risposto. Potrebbe essere a causa della limitazione della velocità.",
+      "lookForTxDifferentAddresses": "Gli indirizzi di emissione restituiti dalle API blockchain erano diversi",
+      "lookForTxDifferentRemoteHashes": "Gli hash remoti restituiti dalle API blockchain erano diversi",
+      "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
+      "getBlockcypherFetcher": "Impossibile ottenere l'hash remoto",
+      "getChainSoFetcher": "Impossibile ottenere l'hash remoto",
+      "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
+      "parseChainSoResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Chain.so",
+      "checkEtherScanConfirmations": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API EtherScan",
+      "couldNotConfirmTx": "Impossibile confermare la transazione",
+      "failedJsonLdNormalization": "Normalizzazione JSON-LD fallita",
+      "foundUnmappedFields": "Campi non mappati trovati durante la normalizzazione JSON-LD",
+      "ensureHashesEqual": "L'hash calcolato non corrisponde all'hash remoto",
+      "ensureIssuerSignature": "La chiave dell'issuer non corrisponde all'indirizzo derivato.",
+      "ensureMerkleRootEqual": "La radice di Merkle non corrisponde all'hash remoto.",
+      "ensureNotExpired": "Questo certificato è scaduto.",
+      "getCaseInsensitiveKey": "La transazione è avvenuta nel momento in cui l'indirizzo di emissione non era considerato valido.",
+      "ensureValidReceipt": "La ricevuta è malformata. C'è stato un problema nella navigazione dell'albero di Merkle nella ricevuta.",
+      "invalidMerkleReceipt": "Ricevuta Merkle non valida. L'hash di prova non corrisponde alla radice di Merkle",
+      "isTransactionIdValid": "Impossibile verificare questo certificato senza un ID transazione da confrontare."
+    }
   }
 }

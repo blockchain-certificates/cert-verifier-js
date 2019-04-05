@@ -290,5 +290,78 @@
       "invalidMerkleReceipt": "Ricevuta Merkle non valida. L'hash di prova non corrisponde alla radice di Merkle",
       "isTransactionIdValid": "Impossibile verificare questo certificato senza un ID transazione da confrontare."
     }
+  },
+  "ja": {
+    "steps": {
+      "formatValidationLabel": "フォーマットの検証",
+      "formatValidationLabelPending": "フォーマットを検証しています",
+      "hashComparisonLabel": "ハッシュの照合",
+      "hashComparisonLabelPending": "ハッシュを照合しています",
+      "statusCheckLabel": "ステータスの確認",
+      "statusCheckLabelPending": "ステータスを確認しています"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "取引IDの取得",
+      "getTransactionIdLabelPending": "取引IDを取得しています",
+      "computeLocalHashLabel": "ローカルハッシュの算出",
+      "computeLocalHashLabelPending": "ローカルハッシュを算出しています",
+      "fetchRemoteHashLabel": "リモートハッシュのフェッチ",
+      "fetchRemoteHashLabelPending": "リモートハッシュをフェッチしています",
+      "getIssuerProfileLabel": "発行者プロフィールの取得",
+      "getIssuerProfileLabelPending": "発行者プロフィールを取得しています",
+      "parseIssuerKeysLabel": "発行者の鍵のパース",
+      "parseIssuerKeysLabelPending": "発行者の鍵をパースしています",
+      "compareHashesLabel": "ハッシュの照合",
+      "compareHashesLabelPending": "ハッシュを照合しています",
+      "checkMerkleRootLabel": "Merkle Rootの確認",
+      "checkMerkleRootLabelPending": "Merkle Rootを確認しています",
+      "checkReceiptLabel": "レシートの確認",
+      "checkReceiptLabelPending": "レシートを確認しています",
+      "checkIssuerSignatureLabel": "発行者の署名の確認",
+      "checkIssuerSignatureLabelPending": "発行者の署名を確認しています",
+      "checkAuthenticityLabel": "真正性の確認",
+      "checkAuthenticityLabelPending": "真正性を確認しています",
+      "checkRevokedStatusLabel": "取消ステータスの確認",
+      "checkRevokedStatusLabelPending": "取消ステータスを確認しています",
+      "checkExpiresDateLabel": "有効期限の確認",
+      "checkExpiresDateLabelPending": "有効期限を確認しています"
+    },
+    "revocation": {
+      "preReason": "理由：",
+      "reason": "この証明書は発行者によって取り消されました。"
+    },
+    "success": {
+      "mocknet": "この模擬Blockcertは全てのチェックを通過しました。Mocknetモードは発行者がローカル環境でワークフローを確認するためのものです。このBlockcertはブロックチェーンに記録されていなく、認証済みのBlockcertとして扱われません。",
+      "blockchain": "成功"
+    },
+    "errors": {
+      "certificateNotValid": "この証明書は有効ではありません",
+      "getChain": "チェーンの値を認識できませんでした",
+      "getTransactionId": "照合のための取引IDがないため、この証明書を認証できません。",
+      "getIssuerProfile": "発行者プロフィールを取得できません",
+      "getRevokedAssertions": "取消assertionsを取得できません",
+      "lookForTxInvalidChain": "チェーンが無効です。既知のBlockchainExplorersにマップできません。",
+      "lookForTxInvalidAppConfig": "アプリケーション設定が無効です。CONFIG.MinimumBlockchainExplorersの設定値を確認して下さい。",
+      "lookForTxCouldNotConfirm": "取引を確認できませんでした。全てのブロックチェーンAPIが返信しませんでした。 レート制限が原因になっている可能性があります。",
+      "lookForTxDifferentAddresses": "ブロックチェーンAPIから返された発行者アドレスが異なっていました",
+      "lookForTxDifferentRemoteHashes": "ブロックチェーンAPIから返されたリモートハッシュが異なっていました",
+      "parseIssuerKeys": "発行者識別データからJSONをパースできません",
+      "getBlockcypherFetcher": "リモートハッシュを取得できません",
+      "getChainSoFetcher": "リモートハッシュを取得できません",
+      "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
+      "parseChainSoResponse": "Chain.so APIによると、必要最小限の取引確認の数に達しませんでした",
+      "checkEtherScanConfirmations": "EtherScan APIによると、必要最小限の取引確認の数に達しませんでした",
+      "couldNotConfirmTx": "取引を確認できませんでした",
+      "failedJsonLdNormalization": "JSON-LDの正規化に失敗しました",
+      "foundUnmappedFields": "JSON-LDの正規化時にマップされていないフィールドを検出しました",
+      "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
+      "ensureIssuerSignature": "発行者の鍵が得られたアドレスと一致しませんでした",
+      "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",
+      "ensureNotExpired": "この証明書の有効期限が切れています",
+      "getCaseInsensitiveKey": "取引が発行アドレスの有効期間外に行われました",
+      "ensureValidReceipt": "レシートが異常です。レシート内のMerkle treeを辿る際に問題が発生しました。",
+      "invalidMerkleReceipt": "Merkleレシートが無効です。証明ハッシュがMerkle rootと一致しませんでした。",
+      "isTransactionIdValid": "照合するための取引IDがないため、この証明書を認証できません。"
+    }
   }
 }

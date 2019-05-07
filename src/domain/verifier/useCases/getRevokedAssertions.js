@@ -10,7 +10,7 @@ export default async function getRevokedAssertions (revocationListUrl) {
 
   const errorMessage = getText('errors', 'getRevokedAssertions');
 
-  const response = await request({url: revocationListUrl}).catch(() => {
+  const response = await request({ url: revocationListUrl }).catch(() => {
     throw new VerifierError(SUB_STEPS.parseIssuerKeys, errorMessage);
   });
 

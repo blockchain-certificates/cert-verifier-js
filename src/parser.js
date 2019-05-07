@@ -56,7 +56,7 @@ function parseV1 (certificateJson) {
   const receipt = certificateJson.receipt;
   const version = typeof receipt === 'undefined' ? CERTIFICATE_VERSIONS.V1_1 : CERTIFICATE_VERSIONS.V1_2;
 
-  let {image: certificateImage, description, issuer, subtitle} = fullCertificateObject;
+  let { image: certificateImage, description, issuer, subtitle } = fullCertificateObject;
 
   const publicKey = recipient.publicKey;
   const chain = domain.certificates.getChain(publicKey);
@@ -106,8 +106,8 @@ function parseV1 (certificateJson) {
  * @returns {Certificate}
  */
 function parseV2 (certificateJson) {
-  const {id, expires, signature: receipt, badge} = certificateJson;
-  const {image: certificateImage, name, description, subtitle, issuer} = badge;
+  const { id, expires, signature: receipt, badge } = certificateJson;
+  const { image: certificateImage, name, description, subtitle, issuer } = badge;
   const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
   const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 

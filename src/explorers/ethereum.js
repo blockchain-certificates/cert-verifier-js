@@ -14,7 +14,7 @@ export function getEtherScanFetcher (transactionId, chain) {
   }
 
   let etherScanFetcher = new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request({ url: etherScanUrl })
       .then(function (response) {
         const responseTxData = JSON.parse(response);
         try {
@@ -62,7 +62,7 @@ function getEtherScanBlock (jsonResponse, chain) {
   }
 
   return new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request({ url: etherScanUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         const blockData = responseData.result;
@@ -95,7 +95,7 @@ function checkEtherScanConfirmations (chain, blockNumber) {
   }
 
   return new Promise((resolve, reject) => {
-    return request({url: etherScanUrl})
+    return request({ url: etherScanUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         const currentBlockCount = responseData.result;

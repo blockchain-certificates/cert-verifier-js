@@ -15,7 +15,7 @@ export default async function getIssuerProfile (issuerId) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   }
 
-  const response = await request({url: issuerId}).catch(() => {
+  const response = await request({ url: issuerId }).catch(() => {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   });
 

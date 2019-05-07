@@ -13,7 +13,7 @@ export function getBlockcypherFetcher (transactionId, chain) {
     blockCypherUrl = API_URLS.blockCypherTestUrl + transactionId + '?limit=500';
   }
   let blockcypherFetcher = new Promise((resolve, reject) => {
-    return request({url: blockCypherUrl})
+    return request({ url: blockCypherUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         try {
@@ -40,7 +40,7 @@ export function getChainSoFetcher (transactionId, chain) {
   }
 
   let chainSoFetcher = new Promise((resolve, reject) => {
-    return request({url: chainSoUrl})
+    return request({ url: chainSoUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         try {

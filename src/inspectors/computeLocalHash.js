@@ -44,7 +44,7 @@ export default function computeLocalHash (document, version) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {
-      expandContext.push({'@vocab': 'http://fallback.org/'});
+      expandContext.push({ '@vocab': 'http://fallback.org/' });
     }
   }
   const nodeDocumentLoader = jsonld.documentLoaders.node();

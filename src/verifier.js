@@ -80,7 +80,7 @@ export default class Verifier {
       let res = action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
+        this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
       }
       return res;
     } catch (err) {
@@ -120,7 +120,7 @@ export default class Verifier {
       let res = await action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({step, label, status: VERIFICATION_STATUSES.SUCCESS});
+        this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
       }
       return res;
     } catch (err) {
@@ -257,7 +257,7 @@ export default class Verifier {
    */
   _failed (errorMessage) {
     log(`failure:${errorMessage}`);
-    return {code: STEPS.final, status: VERIFICATION_STATUSES.FAILURE, errorMessage};
+    return { code: STEPS.final, status: VERIFICATION_STATUSES.FAILURE, errorMessage };
   }
 
   /**
@@ -282,7 +282,7 @@ export default class Verifier {
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
     log(logMessage);
-    return {code: STEPS.final, status: VERIFICATION_STATUSES.SUCCESS};
+    return { code: STEPS.final, status: VERIFICATION_STATUSES.SUCCESS };
   }
 
   /**
@@ -298,7 +298,7 @@ export default class Verifier {
    */
   _updateStatusCallback (code, label, status, errorMessage = '') {
     if (code != null) {
-      let update = {code, label, status};
+      let update = { code, label, status };
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

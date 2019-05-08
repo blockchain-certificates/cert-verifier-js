@@ -70,7 +70,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "bigi": "^1.4.2",
-    "bitcoinjs-lib": "^2.3.0",
+    "bitcoinjs-lib": "^5.0.3",
     "bs58": "^3.0.0",
     "buffer": "^5.1.0",
     "debug": "^4.1.1",

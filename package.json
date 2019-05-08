@@ -79,7 +79,7 @@
     "eslint-plugin-import": "^2.13.0",
     "jsonld": "^0.4.11",
     "sha256": "^0.2.0",
-    "tsify": "^3.0.4",
+    "tsify": "^4.0.1",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

@@ -63,6 +63,17 @@ describe('Certificate test suite', function () {
           const comparisonStep = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
           expect(comparisonStep).toEqual(assertionStep);
         });
+
+        it('should return the failure finalStep', async function () {
+          const expectedFinalStep = {
+            code: STEPS.final,
+            status: VERIFICATION_STATUSES.FAILURE,
+            message: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
+          };
+
+          const finalStep = await certificate.verify();
+          expect(finalStep).toEqual(expectedFinalStep);
+        });
       });
     });
   });

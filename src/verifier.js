@@ -53,7 +53,7 @@ export default class Verifier {
 
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
-    return erroredStep ? this._failed(erroredStep.message) : this._succeed();
+    return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
   /**
@@ -255,9 +255,10 @@ export default class Verifier {
    * @returns {{code: string, status: string, errorMessage: *}}
    * @private
    */
-  _failed (errorMessage) {
-    log(`failure:${errorMessage}`);
-    return { code: STEPS.final, status: VERIFICATION_STATUSES.FAILURE, errorMessage };
+  _failed (errorStep) {
+    const message = errorStep.errorMessage;
+    log(`failure:${message}`);
+    return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
 
   /**

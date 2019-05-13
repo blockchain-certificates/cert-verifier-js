@@ -119,8 +119,15 @@
       "reason": "Ce certificat a été révoqué par l'émetteur."
     },
     "success": {
-      "mocknet": "Ce Blockcert de test a été vérifié. Le mode Mocknet est utilisé uniquement par les émetteurs afin de tester leur pré-émission. Ce Blockcert n'a pas été enregistré sur une blockchain, et en tant que tel ne peut pas être considéré un Blockcert valide.",
-      "blockchain": "Valide"
+      "mocknet": {
+        "label": "Cet enregistrement Mocknet a été vérifié",
+        "description": "Le mode Mocknet est utilisé à des fins de tests uniquement. Ce Blockcert n'a pas été enregistré sur une blockchain, et en tant que tel ne peut pas être considéré un Blockcert valide."
+      },
+      "blockchain": {
+        "label": "Vérifié",
+        "description": "Ceci est un certificat ${chain} valid.",
+        "linkText": "Voir la transaction"
+      }
     },
     "errors": {
       "certificateNotValid": "Certificat invalide",

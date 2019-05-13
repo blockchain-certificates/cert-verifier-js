@@ -170,12 +170,10 @@ The final verification status:
 ```
 - `code`: code of the final step (`final`)
 - `status`: final verification status (`success`, `failure`)
-- `message` string | Object: status message. It is internationalized in case of success, in case of failure it returns the error message of the failed step. When an object, it takes the following shape:
-  - `mocknet` Object: case of a test issuance (`mocknet`, `regtest`)
-  - `blockchain` Object: case of an actual issuance. For now `testnet` is also considered an actual issuance, TBC.
-    - `label`: Main label of the final step
-    - `description`: further details about the issuance
-    - `linkText`: translation provided for a link text towards the transaction
+- `message` string | Object: status message. It is internationalized and in case of failure it returns the error message of the failed step. When an object, it takes the following shape:
+  - `label`: Main label of the final step
+  - `description`: further details about the issuance
+  - `linkText`: translation provided for a link text towards the transaction
 
 Shape of the returned object can be checked here: https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/data/i18n.json#L41
 

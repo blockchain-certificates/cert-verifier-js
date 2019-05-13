@@ -278,11 +278,15 @@ export default class Verifier {
    * Returns a final success message
    */
   _succeed () {
-    const logMessage = domain.chains.isMockChain(this.chain)
+    const message = domain.chains.isMockChain(this.chain)
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
-    log(logMessage);
-    return { code: STEPS.final, status: VERIFICATION_STATUSES.SUCCESS };
+    log(message);
+    return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
+  }
+
+  _setFinalStep ({ status, message }) {
+    return { code: STEPS.final, status, message };
   }
 
   /**

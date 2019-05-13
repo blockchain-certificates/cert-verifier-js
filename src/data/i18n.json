@@ -39,8 +39,15 @@
       "reason": "This certificate has been revoked by the issuer."
     },
     "success": {
-      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
-      "blockchain": "Success"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "This is not a valid certificate",

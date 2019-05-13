@@ -1,6 +1,7 @@
 import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
+import domain from '../../../src/domain';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -29,9 +30,11 @@ describe('Certificate test suite', function () {
         });
 
         it('should return the success finalStep', async function () {
+          const successMessage = domain.i18n.getText('success', 'blockchain');
           const expectedFinalStep = {
             code: STEPS.final,
-            status: VERIFICATION_STATUSES.SUCCESS
+            status: VERIFICATION_STATUSES.SUCCESS,
+            message: successMessage
           };
 
           const finalStep = await certificate.verify();

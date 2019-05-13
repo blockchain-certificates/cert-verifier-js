@@ -40,13 +40,10 @@ describe('Certificate test suite', function () {
       });
 
       describe('when the certificate is invalid', function () {
-        it.only('should call it with the step, the text, the status & the error message', async function () {
-          const updates = [];
-          const certificate = new Certificate(FIXTURES.MainnetV2Revoked);
-          await certificate.verify(update => {
-            updates.push(update);
-          });
+        let certificate;
 
+        it('should call it with the step, the text, the status & the error message', async function () {
+          let updates = [];
           let assertionStep = {
             code: SUB_STEPS.checkRevokedStatus,
             label: SUB_STEPS.language.checkRevokedStatus.labelPending,
@@ -54,7 +51,13 @@ describe('Certificate test suite', function () {
             errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
           };
 
-          const comparisonStep = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus);
+          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+
+          await certificate.verify(update => {
+            updates.push(update);
+          });
+
+          const comparisonStep = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
           expect(comparisonStep).toEqual(assertionStep);
         });
       });

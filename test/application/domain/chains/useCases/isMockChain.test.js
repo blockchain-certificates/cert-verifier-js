@@ -29,10 +29,10 @@ describe('domain chains isMockChain use case test suite', function () {
       });
 
       describe('given the chain is Testnet', function () {
-        it('should return true', function () {
+        it('should return false', function () {
           const assertionTestChain = BLOCKCHAINS.testnet;
           const result = domain.chains.isMockChain(assertionTestChain);
-          expect(result).toBe(true);
+          expect(result).toBe(false);
         });
       });
 

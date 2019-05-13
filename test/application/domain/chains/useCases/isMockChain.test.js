@@ -20,10 +20,28 @@ describe('domain chains isMockChain use case test suite', function () {
     });
 
     describe('given the chain is passed as an object and is a valid test chain', function () {
-      it('should return true', function () {
-        const assertionTestChain = BLOCKCHAINS.mocknet;
-        const result = domain.chains.isMockChain(assertionTestChain);
-        expect(result).toBe(true);
+      describe('given the chain is Mocknet', function () {
+        it('should return true', function () {
+          const assertionTestChain = BLOCKCHAINS.mocknet;
+          const result = domain.chains.isMockChain(assertionTestChain);
+          expect(result).toBe(true);
+        });
+      });
+
+      describe('given the chain is Testnet', function () {
+        it('should return true', function () {
+          const assertionTestChain = BLOCKCHAINS.testnet;
+          const result = domain.chains.isMockChain(assertionTestChain);
+          expect(result).toBe(true);
+        });
+      });
+
+      describe('given the chain is Regtest', function () {
+        it('should return true', function () {
+          const assertionTestChain = BLOCKCHAINS.regtest;
+          const result = domain.chains.isMockChain(assertionTestChain);
+          expect(result).toBe(true);
+        });
       });
     });
 

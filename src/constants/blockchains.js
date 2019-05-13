@@ -33,6 +33,7 @@ export const BLOCKCHAINS = {
   mocknet: {
     code: 'mocknet',
     name: 'Mocknet',
+    test: true,
     signatureValue: 'mockchain',
     transactionTemplates: {
       full: '',
@@ -42,6 +43,7 @@ export const BLOCKCHAINS = {
   regtest: {
     code: 'regtest',
     name: 'Mocknet',
+    test: true,
     signatureValue: 'bitcoinRegtest',
     transactionTemplates: {
       full: '',
@@ -51,6 +53,7 @@ export const BLOCKCHAINS = {
   testnet: {
     code: 'testnet',
     name: 'Mocknet',
+    test: true,
     signatureValue: 'bitcoinTestnet',
     transactionTemplates: {
       full: `https://testnet.blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,

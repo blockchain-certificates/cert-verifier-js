@@ -6,52 +6,56 @@ describe('Certificate test suite', function () {
   describe('verify method', function () {
     describe('given the callback parameter is passed', function () {
       describe('when the certificate is valid', function () {
-        let finalStep;
         let certificate;
-        let callbackSpy = sinon.spy();
-        let assertionStep = {
-          code: SUB_STEPS.getTransactionId,
-          label: SUB_STEPS.language.getTransactionId.labelPending,
-          status: VERIFICATION_STATUSES.SUCCESS
-        };
-        const assertionFinalStep = {
-          code: STEPS.final,
-          status: VERIFICATION_STATUSES.SUCCESS
-        };
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.MainnetV2Valid);
         });
 
         afterEach(function () {
-          callbackSpy = null;
           certificate = null;
         });
 
         it('should call it with the step, the text and the status', async function () {
-          finalStep = await certificate.verify(callbackSpy);
+          const callbackSpy = sinon.spy();
+          const assertionStep = {
+            code: SUB_STEPS.getTransactionId,
+            label: SUB_STEPS.language.getTransactionId.labelPending,
+            status: VERIFICATION_STATUSES.SUCCESS
+          };
+
+          await certificate.verify(callbackSpy);
           expect(callbackSpy.calledWith(sinon.match(assertionStep))).toBe(true);
-          expect(finalStep).toEqual(assertionFinalStep);
+        });
+
+        it('should return the success finalStep', async function () {
+          const expectedFinalStep = {
+            code: STEPS.final,
+            status: VERIFICATION_STATUSES.SUCCESS
+          };
+
+          const finalStep = await certificate.verify();
+          expect(finalStep).toEqual(expectedFinalStep);
         });
       });
 
       describe('when the certificate is invalid', function () {
-        let certificate;
-        let updates = [];
-        let assertionStep = {
-          code: SUB_STEPS.checkRevokedStatus,
-          label: SUB_STEPS.language.checkRevokedStatus.labelPending,
-          status: VERIFICATION_STATUSES.FAILURE,
-          errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
-        };
-
-        it('should call it with the step, the text, the status & the error message', async function () {
-          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+        it.only('should call it with the step, the text, the status & the error message', async function () {
+          const updates = [];
+          const certificate = new Certificate(FIXTURES.MainnetV2Revoked);
           await certificate.verify(update => {
             updates.push(update);
           });
-          const updateToLook = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
-          expect(updateToLook).toEqual(assertionStep);
+
+          let assertionStep = {
+            code: SUB_STEPS.checkRevokedStatus,
+            label: SUB_STEPS.language.checkRevokedStatus.labelPending,
+            status: VERIFICATION_STATUSES.FAILURE,
+            errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
+          };
+
+          const comparisonStep = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus);
+          expect(comparisonStep).toEqual(assertionStep);
         });
       });
     });

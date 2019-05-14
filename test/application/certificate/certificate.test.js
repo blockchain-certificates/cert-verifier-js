@@ -73,7 +73,7 @@ describe('Certificate entity test suite', function () {
 
     describe('given locale option is passed', function () {
       let instance;
-      const fixtureOptions = { locale: 'es-ES' };
+      const fixtureOptions = { locale: 'es' };
       const fixtureInvalidLocaleOptions = { locale: 'az-az' };
 
       afterEach(function () {

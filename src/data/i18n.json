@@ -39,8 +39,15 @@
       "reason": "This certificate has been revoked by the issuer."
     },
     "success": {
-      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
-      "blockchain": "Success"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "This is not a valid certificate",
@@ -72,7 +79,87 @@
       "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against."
     }
   },
-  "es-ES": {
+  "fr": {
+    "steps": {
+      "formatValidationLabel": "Validation du format",
+      "formatValidationLabelPending": "Validation du format",
+      "hashComparisonLabel": "Comparaison du hash",
+      "hashComparisonLabelPending": "Comparaison du hash",
+      "statusCheckLabel": "Vérification du status",
+      "statusCheckLabelPending": "Vérification du status"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "Obtention de l'identifiant de transaction",
+      "getTransactionIdLabelPending": "Obtention de l'identifiant de transaction",
+      "computeLocalHashLabel": "Calcul du hash local",
+      "computeLocalHashLabelPending": "Calcul du hash local",
+      "fetchRemoteHashLabel": "Récupération du hash distant",
+      "fetchRemoteHashLabelPending": "Récupération du hash distant",
+      "getIssuerProfileLabel": "Obtention du profil de l'émetteur",
+      "getIssuerProfileLabelPending": "Obtention du profil de l'émetteur",
+      "parseIssuerKeysLabel": "Traitement des clés de l'émetteur",
+      "parseIssuerKeysLabelPending": "Traitement des clés de l'émetteur",
+      "compareHashesLabel": "Comparaison des hash",
+      "compareHashesLabelPending": "Comparaison des hashs",
+      "checkMerkleRootLabel": "Vérification du Merkle Root",
+      "checkMerkleRootLabelPending": "Vérification du  Merkle Root",
+      "checkReceiptLabel": "Vérification du reçu",
+      "checkReceiptLabelPending": "Vérification du reçu",
+      "checkIssuerSignatureLabel": "Vérification de la signature de l'émetteur",
+      "checkIssuerSignatureLabelPending": "Vérification de la signature de l'émetteur",
+      "checkAuthenticityLabel": "Vérification de l'authenticité",
+      "checkAuthenticityLabelPending": "Vérification de l'authenticité",
+      "checkRevokedStatusLabel": "Vérification du status de révocation",
+      "checkRevokedStatusLabelPending": "Vérification du status de révocation",
+      "checkExpiresDateLabel": "Vérification de la date d'expiration",
+      "checkExpiresDateLabelPending": "Vérification de la date d'expiration"
+    },
+    "revocation": {
+      "preReason": "Raison :",
+      "reason": "Ce certificat a été révoqué par l'émetteur."
+    },
+    "success": {
+      "mocknet": {
+        "label": "Cet enregistrement Mocknet a été vérifié",
+        "description": "Le mode Mocknet est utilisé à des fins de tests uniquement. Ce Blockcert n'a pas été enregistré sur une blockchain, et en tant que tel ne peut pas être considéré un Blockcert valide."
+      },
+      "blockchain": {
+        "label": "Vérifié",
+        "description": "Ceci est un certificat ${chain} valid.",
+        "linkText": "Voir la transaction"
+      }
+    },
+    "errors": {
+      "certificateNotValid": "Certificat invalide",
+      "getChain": "Valeur de chaine non reconnue",
+      "getTransactionId": "Impossible de vérifier ce certificat sans un identifiant de transaction valide",
+      "getIssuerProfile": "Profil de l'émetteur indisponible",
+      "getRevokedAssertions": "Impossible d'obtenir les raisons de revocation",
+      "lookForTxInvalidChain": "Chaine invalide : non liée à un BlockchainExplorers connu",
+      "lookForTxInvalidAppConfig": "Configuration de l'application invalide : vérifiez la valeur de configuration de CONFIG.MinimumBlockchainExplorers",
+      "lookForTxCouldNotConfirm": "Impossible de confirmer la transaction. Aucune API blockchain n'a répondu. Potentiellement dû à une limite de débit réseau.",
+      "lookForTxDifferentAddresses": "Les adresses d'émission reçues de l'API blockchain ne concordent pas",
+      "lookForTxDifferentRemoteHashes": "Les hashs distants reçus de l'API blockchain ne concordent pas",
+      "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
+      "getBlockcypherFetcher": "Impossible d'obtenir le hash distant",
+      "getChainSoFetcher": "Impossible d'obtenir le hash distant",
+      "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
+      "parseChainSoResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Chain.so",
+      "checkEtherScanConfirmations": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API EtherScan",
+      "couldNotConfirmTx": "Impossible de confirmer la transaction",
+      "failedJsonLdNormalization": "Erreur de normalisation JSON-LD",
+      "foundUnmappedFields": "Champs non liés découverts durant la normalisation JSON-LD",
+      "ensureHashesEqual": "Calcul du hash local différent du hash distant",
+      "ensureIssuerSignature": "La clé de l'émetteur ne correspond pas à l'adresse dérivée",
+      "ensureMerkleRootEqual": "Le Merkle root ne correspond pas au hash distant",
+      "ensureNotExpired": "Certificat expiré",
+      "getCaseInsensitiveKey": "Transaction émise lorsque l'adresse de l'émetteur était considérée invalide",
+      "ensureValidReceipt": "Erreur d'écriture du reçu. Un problème est survenu lors de la navigation de l'arbre Merkle du reçu.",
+      "invalidMerkleReceipt": "Reçu Merkle invalid. Hash de preuve différent du Merkle root",
+      "isTransactionIdValid": "Impossible de vérifier ce certificat sans un identifiant de transaction valide"
+    }
+  },
+  "es": {
     "steps": {
       "formatValidationLabel": "Validación de formato",
       "formatValidationLabelPending": "Validando el formato",
@@ -112,8 +199,15 @@
       "reason": "Este certificado ha sido revocado por el emisor"
     },
     "success": {
-      "mocknet": "Este Blockcert de prueba pasó todas los controles. El modo Mocknet es utilizado solamente para que los emisores prueben su flujo de trabajo localmente",
-      "blockchain": "Éxito"
+      "mocknet": {
+        "label": "Esta credencial de Mocknet pasó todas las comprobaciones",
+        "description": "Las credenciales de Mocknet se usan solo con fines de prueba. No se graban en una cadena de bloques, y no se deben considerar Blockcerts Verificados."
+      },
+      "blockchain": {
+        "label": "Verificado",
+        "description": "Este es un certificado válido de ${chain}.",
+        "linkText": "Ver enlace de transacción"
+      }
     },
     "errors": {
       "certificateNotValid": "Este no es un certificado válido",
@@ -185,8 +279,15 @@
       "reason": "Dan iċ-ċertifikat ġie revokat mill-emittent."
     },
     "success": {
-      "mocknet": "Dan il-mock Blockcert għadda mill-verifiki kollha. Il-Mocknet mode jintuża biss sabiex l-emittenti jittestjaw il-workflow lokalment.",
-      "blockchain": "Suċċess"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "Dan mhux ċertifikat validu",
@@ -258,8 +359,15 @@
       "reason": "Questo certificato è stato revocato dall'emittente."
     },
     "success": {
-      "mocknet": "Questo Blockcert simulato ha superato tutti i controlli. La modalità Mocknet è utilizzata solo dagli emittenti per testare il loro flusso di lavoro localmente. Questo Blockcert non è stato registrato su una blockchain e non dovrebbe essere considerato un Blockcert verificato.",
-      "blockchain": "Successo"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "Questo non è un certificato valido",
@@ -289,6 +397,86 @@
       "ensureValidReceipt": "La ricevuta è malformata. C'è stato un problema nella navigazione dell'albero di Merkle nella ricevuta.",
       "invalidMerkleReceipt": "Ricevuta Merkle non valida. L'hash di prova non corrisponde alla radice di Merkle",
       "isTransactionIdValid": "Impossibile verificare questo certificato senza un ID transazione da confrontare."
+    }
+  },
+  "ja": {
+    "steps": {
+      "formatValidationLabel": "フォーマットの検証",
+      "formatValidationLabelPending": "フォーマットを検証しています",
+      "hashComparisonLabel": "ハッシュの照合",
+      "hashComparisonLabelPending": "ハッシュを照合しています",
+      "statusCheckLabel": "ステータスの確認",
+      "statusCheckLabelPending": "ステータスを確認しています"
+    },
+    "subSteps": {
+      "getTransactionIdLabel": "取引IDの取得",
+      "getTransactionIdLabelPending": "取引IDを取得しています",
+      "computeLocalHashLabel": "ローカルハッシュの算出",
+      "computeLocalHashLabelPending": "ローカルハッシュを算出しています",
+      "fetchRemoteHashLabel": "リモートハッシュのフェッチ",
+      "fetchRemoteHashLabelPending": "リモートハッシュをフェッチしています",
+      "getIssuerProfileLabel": "発行者プロフィールの取得",
+      "getIssuerProfileLabelPending": "発行者プロフィールを取得しています",
+      "parseIssuerKeysLabel": "発行者の鍵のパース",
+      "parseIssuerKeysLabelPending": "発行者の鍵をパースしています",
+      "compareHashesLabel": "ハッシュの照合",
+      "compareHashesLabelPending": "ハッシュを照合しています",
+      "checkMerkleRootLabel": "Merkle Rootの確認",
+      "checkMerkleRootLabelPending": "Merkle Rootを確認しています",
+      "checkReceiptLabel": "レシートの確認",
+      "checkReceiptLabelPending": "レシートを確認しています",
+      "checkIssuerSignatureLabel": "発行者の署名の確認",
+      "checkIssuerSignatureLabelPending": "発行者の署名を確認しています",
+      "checkAuthenticityLabel": "真正性の確認",
+      "checkAuthenticityLabelPending": "真正性を確認しています",
+      "checkRevokedStatusLabel": "取消ステータスの確認",
+      "checkRevokedStatusLabelPending": "取消ステータスを確認しています",
+      "checkExpiresDateLabel": "有効期限の確認",
+      "checkExpiresDateLabelPending": "有効期限を確認しています"
+    },
+    "revocation": {
+      "preReason": "理由：",
+      "reason": "この証明書は発行者によって取り消されました。"
+    },
+    "success": {
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
+    },
+    "errors": {
+      "certificateNotValid": "この証明書は有効ではありません",
+      "getChain": "チェーンの値を認識できませんでした",
+      "getTransactionId": "照合のための取引IDがないため、この証明書を認証できません。",
+      "getIssuerProfile": "発行者プロフィールを取得できません",
+      "getRevokedAssertions": "取消assertionsを取得できません",
+      "lookForTxInvalidChain": "チェーンが無効です。既知のBlockchainExplorersにマップできません。",
+      "lookForTxInvalidAppConfig": "アプリケーション設定が無効です。CONFIG.MinimumBlockchainExplorersの設定値を確認して下さい。",
+      "lookForTxCouldNotConfirm": "取引を確認できませんでした。全てのブロックチェーンAPIが返信しませんでした。 レート制限が原因になっている可能性があります。",
+      "lookForTxDifferentAddresses": "ブロックチェーンAPIから返された発行者アドレスが異なっていました",
+      "lookForTxDifferentRemoteHashes": "ブロックチェーンAPIから返されたリモートハッシュが異なっていました",
+      "parseIssuerKeys": "発行者識別データからJSONをパースできません",
+      "getBlockcypherFetcher": "リモートハッシュを取得できません",
+      "getChainSoFetcher": "リモートハッシュを取得できません",
+      "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
+      "parseChainSoResponse": "Chain.so APIによると、必要最小限の取引確認の数に達しませんでした",
+      "checkEtherScanConfirmations": "EtherScan APIによると、必要最小限の取引確認の数に達しませんでした",
+      "couldNotConfirmTx": "取引を確認できませんでした",
+      "failedJsonLdNormalization": "JSON-LDの正規化に失敗しました",
+      "foundUnmappedFields": "JSON-LDの正規化時にマップされていないフィールドを検出しました",
+      "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
+      "ensureIssuerSignature": "発行者の鍵が得られたアドレスと一致しませんでした",
+      "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",
+      "ensureNotExpired": "この証明書の有効期限が切れています",
+      "getCaseInsensitiveKey": "取引が発行アドレスの有効期間外に行われました",
+      "ensureValidReceipt": "レシートが異常です。レシート内のMerkle treeを辿る際に問題が発生しました。",
+      "invalidMerkleReceipt": "Merkleレシートが無効です。証明ハッシュがMerkle rootと一致しませんでした。",
+      "isTransactionIdValid": "照合するための取引IDがないため、この証明書を認証できません。"
     }
   }
 }

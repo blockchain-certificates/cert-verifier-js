@@ -67,16 +67,16 @@ describe('Verifier entity test suite', function () {
 
     describe('when all checks are successful', function () {
       it('should return false', function () {
-        verifierInstance._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        verifierInstance._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2'});
+        verifierInstance._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
+        verifierInstance._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(false);
       });
     });
     describe('when one check is failing', function () {
       it('should return true', function () {
-        verifierInstance._stepsStatuses.push({step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1'});
-        verifierInstance._stepsStatuses.push({step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2'});
+        verifierInstance._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
+        verifierInstance._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(true);
       });

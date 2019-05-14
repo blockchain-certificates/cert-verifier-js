@@ -159,7 +159,7 @@
       "isTransactionIdValid": "Impossible de vérifier ce certificat sans un identifiant de transaction valide"
     }
   },
-  "es-ES": {
+  "es": {
     "steps": {
       "formatValidationLabel": "Validación de formato",
       "formatValidationLabelPending": "Validando el formato",

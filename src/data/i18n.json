@@ -200,13 +200,13 @@
     },
     "success": {
       "mocknet": {
-        "label": "This Mocknet credential passed all checks",
-        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+        "label": "Esta credencial de Mocknet pasó todas las comprobaciones",
+        "description": "Las credenciales de Mocknet se usan solo con fines de prueba. No se graban en una cadena de bloques, y no se deben considerar Blockcerts Verificados."
       },
       "blockchain": {
-        "label": "Verified",
-        "description": "This is a valid ${chain} certificate.",
-        "linkText": "View transaction link"
+        "label": "Verificado",
+        "description": "Este es un certificado válido de ${chain}.",
+        "linkText": "Ver enlace de transacción"
       }
     },
     "errors": {

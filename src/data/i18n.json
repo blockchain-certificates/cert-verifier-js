@@ -280,13 +280,13 @@
     },
     "success": {
       "mocknet": {
-        "label": "This Mocknet credential passed all checks",
-        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+        "label": "Din il-kredenzjali tal-Mocknet għaddiet il-kontrolli kollha",
+        "description": "Il-kredenzjali tal-Mocknet jintużaw biss għal skopijiet ta 'ttestjar. Dawn mhumiex irreġistrati fuq blockchain, u ma għandhomx jiġu kkunsidrati bħala blockcerts verifikati."
       },
       "blockchain": {
-        "label": "Verified",
-        "description": "This is a valid ${chain} certificate.",
-        "linkText": "View transaction link"
+        "label": "Ivverifikat",
+        "description": "Dan huwa ċertifikat ${chain} huwa validu.",
+        "linkText": "Ara l-link tat-transazzjoni"
       }
     },
     "errors": {

@@ -39,8 +39,15 @@
       "reason": "This certificate has been revoked by the issuer."
     },
     "success": {
-      "mocknet": "This mock Blockcert passed all checks. Mocknet mode is only used for issuers to test their workflow locally. This Blockcert was not recorded on a blockchain, and it should not be considered a verified Blockcert.",
-      "blockchain": "Success"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "This is not a valid certificate",
@@ -112,8 +119,15 @@
       "reason": "Ce certificat a été révoqué par l'émetteur."
     },
     "success": {
-      "mocknet": "Ce Blockcert de test a été vérifié. Le mode Mocknet est utilisé uniquement par les émetteurs afin de tester leur pré-émission. Ce Blockcert n'a pas été enregistré sur une blockchain, et en tant que tel ne peut pas être considéré un Blockcert valide.",
-      "blockchain": "Valide"
+      "mocknet": {
+        "label": "Cet enregistrement Mocknet a été vérifié",
+        "description": "Le mode Mocknet est utilisé à des fins de tests uniquement. Ce Blockcert n'a pas été enregistré sur une blockchain, et en tant que tel ne peut pas être considéré un Blockcert valide."
+      },
+      "blockchain": {
+        "label": "Vérifié",
+        "description": "Ceci est un certificat ${chain} valide.",
+        "linkText": "Voir la transaction"
+      }
     },
     "errors": {
       "certificateNotValid": "Certificat invalide",
@@ -145,7 +159,7 @@
       "isTransactionIdValid": "Impossible de vérifier ce certificat sans un identifiant de transaction valide"
     }
   },
-  "es-ES": {
+  "es": {
     "steps": {
       "formatValidationLabel": "Validación de formato",
       "formatValidationLabelPending": "Validando el formato",
@@ -185,8 +199,15 @@
       "reason": "Este certificado ha sido revocado por el emisor"
     },
     "success": {
-      "mocknet": "Este Blockcert de prueba pasó todas los controles. El modo Mocknet es utilizado solamente para que los emisores prueben su flujo de trabajo localmente",
-      "blockchain": "Éxito"
+      "mocknet": {
+        "label": "Esta credencial de Mocknet pasó todas las comprobaciones",
+        "description": "Las credenciales de Mocknet se usan solo con fines de prueba. No se graban en una cadena de bloques, y no se deben considerar Blockcerts Verificados."
+      },
+      "blockchain": {
+        "label": "Verificado",
+        "description": "Este es un certificado válido de ${chain}.",
+        "linkText": "Ver enlace de transacción"
+      }
     },
     "errors": {
       "certificateNotValid": "Este no es un certificado válido",
@@ -258,8 +279,15 @@
       "reason": "Dan iċ-ċertifikat ġie revokat mill-emittent."
     },
     "success": {
-      "mocknet": "Dan il-mock Blockcert għadda mill-verifiki kollha. Il-Mocknet mode jintuża biss sabiex l-emittenti jittestjaw il-workflow lokalment.",
-      "blockchain": "Suċċess"
+      "mocknet": {
+        "label": "Din il-kredenzjali tal-Mocknet għaddiet il-kontrolli kollha",
+        "description": "Il-kredenzjali tal-Mocknet jintużaw biss għal skopijiet ta 'ttestjar. Dawn mhumiex irreġistrati fuq blockchain, u ma għandhomx jiġu kkunsidrati bħala blockcerts verifikati."
+      },
+      "blockchain": {
+        "label": "Ivverifikat",
+        "description": "Dan huwa ċertifikat ${chain} huwa validu.",
+        "linkText": "Ara l-link tat-transazzjoni"
+      }
     },
     "errors": {
       "certificateNotValid": "Dan mhux ċertifikat validu",
@@ -331,8 +359,15 @@
       "reason": "Questo certificato è stato revocato dall'emittente."
     },
     "success": {
-      "mocknet": "Questo Blockcert simulato ha superato tutti i controlli. La modalità Mocknet è utilizzata solo dagli emittenti per testare il loro flusso di lavoro localmente. Questo Blockcert non è stato registrato su una blockchain e non dovrebbe essere considerato un Blockcert verificato.",
-      "blockchain": "Successo"
+      "mocknet": {
+        "label": "This Mocknet credential passed all checks",
+        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+      },
+      "blockchain": {
+        "label": "Verified",
+        "description": "This is a valid ${chain} certificate.",
+        "linkText": "View transaction link"
+      }
     },
     "errors": {
       "certificateNotValid": "Questo non è un certificato valido",
@@ -404,8 +439,15 @@
       "reason": "この証明書は発行者によって取り消されました。"
     },
     "success": {
-      "mocknet": "この模擬Blockcertは全てのチェックを通過しました。Mocknetモードは発行者がローカル環境でワークフローを確認するためのものです。このBlockcertはブロックチェーンに記録されていなく、認証済みのBlockcertとして扱われません。",
-      "blockchain": "成功"
+      "mocknet": {
+        "label": "このMocknetの証明書は全てのチェックを通過しました。",
+        "description": "Mocknetの証明書はテスト用のものです。ブロックチェーンに記録されませんし、認証済みのBlockcertとして扱われません。"
+      },
+      "blockchain": {
+        "label": "認証されました",
+        "description": "この証明書は有効な${chain}証明書です。",
+        "linkText": "取引を確認する"
+      }
     },
     "errors": {
       "certificateNotValid": "この証明書は有効ではありません",

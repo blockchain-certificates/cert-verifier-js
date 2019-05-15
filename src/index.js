@@ -1,4 +1,3 @@
-import 'babel-polyfill';
 import Certificate from './certificate';
 import { getSupportedLanguages } from './domain/i18n/useCases';
 

@@ -6,8 +6,8 @@
     "type": "git",
     "url": "https://github.com/blockchain-certificates/cert-verifier-js.git"
   },
-  "main": "dist/verifier.js",
-  "module": "dist/verifier-es.js",
+  "main": "dist/verifier-iife.js",
+  "module": "dist/verifier-iife.js",
   "scripts": {
     "test": "jest --runInBand",
     "test:watch": "jest --watch --runInBand",
@@ -23,21 +23,6 @@
   },
   "publishConfig": {
     "access": "public"
-  },
-  "babel": {
-    "presets": [
-      [
-        "env",
-        {
-          "targets": {
-            "browsers": [
-              "> 1%",
-              "ie >= 10"
-            ]
-          }
-        }
-      ]
-    ]
   },
   "author": "Kim Duffy",
   "license": "MIT",
@@ -69,7 +54,6 @@
     ]
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^5.0.3",
     "bs58": "^3.0.0",
@@ -84,17 +68,16 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.40",
-    "@babel/core": "^7.0.0-beta.40",
-    "babel-core": "^6.26.3",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "husky": "^2.2.0",
-    "jest": "^23.4.1",
+    "jest": "^24.8.0",
     "rollup": "^1.11.3",
-    "rollup-plugin-babel": "^3.0.5",
+    "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",

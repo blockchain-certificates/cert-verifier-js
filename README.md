@@ -153,7 +153,7 @@ This will run the verification of a certificate. The function is asynchronous.
 const certificateVerification = await certificate.verify(({code, label, status, errorMessage}) => {
     console.log('Sub step update:', code, label, status);
 }));
-console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.errorMessage);
+console.log(`Verification was a ${certificateVerification.status}:`, certificateVerification.message);
 ```
 
 #### Parameters
@@ -166,11 +166,16 @@ console.log(`Verification was a ${certificateVerification.status}:`, certificate
 #### Returns
 The final verification status:
 ```javascript
-{ code, status, errorMessage }
+{ code, status, message }
 ```
 - `code`: code of the final step (`final`)
 - `status`: final verification status (`success`, `failure`)
-- `errorMessage`: error message (optional)
+- `message` string | Object: status message. It is internationalized and in case of failure it returns the error message of the failed step. When an object, it takes the following shape:
+  - `label`: Main label of the final step
+  - `description`: further details about the issuance
+  - `linkText`: translation provided for a link text towards the transaction
+
+Shape of the returned object can be checked here: https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/data/i18n.json#L41
 
 ### Constants
 Several constants are being exposed:

@@ -9,14 +9,15 @@
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",
   "scripts": {
-    "test": "jest --maxWorkers=4",
-    "test:watch": "jest --watch",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
     "build": "npm run build:esm && npm run build:es5",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
     "lint": "semistandard --verbose | snazzy",
+    "precommit": "npm run lint",
     "prepush": "npm run test && npm run lint",
     "semantic-release": "semantic-release"
   },

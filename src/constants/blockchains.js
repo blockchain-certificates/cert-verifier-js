@@ -23,7 +23,7 @@ export const BLOCKCHAINS = {
   },
   ethropst: {
     code: 'ethropst',
-    name: 'Ethereum',
+    name: 'Ethereum Testnet',
     signatureValue: 'ethereumRopsten',
     transactionTemplates: {
       full: `https://ropsten.etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
@@ -52,7 +52,7 @@ export const BLOCKCHAINS = {
   },
   testnet: {
     code: 'testnet',
-    name: 'Mocknet',
+    name: 'Bitcoin Testnet',
     signatureValue: 'bitcoinTestnet',
     transactionTemplates: {
       full: `https://testnet.blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,

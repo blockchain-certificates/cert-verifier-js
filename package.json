@@ -80,7 +80,6 @@
     "eslint-plugin-import": "^2.13.0",
     "jsonld": "^0.4.11",
     "sha256": "^0.2.0",
-    "tsify": "^3.0.4",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
@@ -105,7 +104,6 @@
     "semantic-release": "^15.9.15",
     "semistandard": "^13.0.1",
     "sinon": "^7.3.2",
-    "snazzy": "^7.1.1",
-    "uglify-js": "^3.3.14"
+    "snazzy": "^7.1.1"
   }
 }

@@ -440,13 +440,13 @@
     },
     "success": {
       "mocknet": {
-        "label": "This Mocknet credential passed all checks",
-        "description": "Mocknet credentials are used for test purposes only. They are not recorded on a blockchain, and they should not be considered verified Blockcerts."
+        "label": "このMocknetの証明書は全てのチェックを通過しました。",
+        "description": "Mocknetの証明書はテスト用のものです。ブロックチェーンに記録されませんし、認証済みのBlockcertとして扱われません。"
       },
       "blockchain": {
-        "label": "Verified",
-        "description": "This is a valid ${chain} certificate.",
-        "linkText": "View transaction link"
+        "label": "認証されました",
+        "description": "この証明書は有効な${chain}証明書です。",
+        "linkText": "取引を確認する"
       }
     },
     "errors": {

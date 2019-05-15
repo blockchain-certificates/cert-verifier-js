@@ -45,7 +45,8 @@
       "it",
       "xit",
       "xdescribe",
-      "XMLHttpRequest"
+      "XMLHttpRequest",
+      "jest"
     ],
     "ignore": [
       "dist/verifier.js",

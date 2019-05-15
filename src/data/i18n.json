@@ -125,7 +125,7 @@
       },
       "blockchain": {
         "label": "Vérifié",
-        "description": "Ceci est un certificat ${chain} valid.",
+        "description": "Ceci est un certificat ${chain} valide.",
         "linkText": "Voir la transaction"
       }
     },

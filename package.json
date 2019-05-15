@@ -9,7 +9,7 @@
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",
   "scripts": {
-    "test": "jest --maxWorkers=4 --runInBand",
+    "test": "jest --runInBand",
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",

@@ -67,9 +67,7 @@ export default {
     globals(),
     babel({
       exclude: 'node_modules/**',
-      babelrc: false,
-      presets: [['env', { modules: false }]],
-      plugins: ['transform-object-rest-spread']
+      runtimeHelpers: true
     }),
     terser()
   ]

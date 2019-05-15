@@ -1,0 +1,14 @@
+{
+  "presets": [
+    ["@babel/preset-env",
+    {
+      "targets": {
+        "browsers": [
+          "> 1%",
+          "ie >= 10"
+        ]
+      }
+    }]
+  ],
+  "plugins": ["@babel/plugin-transform-runtime"]
+}

@@ -18,7 +18,8 @@
     "build:es5": "rollup -c rollup-es5.config.js",
     "lint": "semistandard --verbose | snazzy",
     "precommit": "npm run lint",
-    "prepush": "npm run test && npm run lint",
+    "prepush": "npm run lint && npm run test",
+    "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
     "semantic-release": "semantic-release"
   },
   "publishConfig": {
@@ -73,6 +74,8 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/runtime": "^7.4.4",
+    "@commitlint/cli": "^7.6.1",
+    "@commitlint/config-conventional": "^7.6.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "husky": "^2.2.0",

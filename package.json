@@ -73,7 +73,7 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/runtime": "^7.4.4",
     "@commitlint/cli": "^8.0.0",
-    "@commitlint/config-conventional": "^7.6.0",
+    "@commitlint/config-conventional": "^8.0.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "eslint-config-semistandard": "^13.0.0",

@@ -118,13 +118,15 @@ The certificate instance has the following properties:
 - `revocationKey`: `String|null`. Revocation key (if any)
 - `sealImage`: `String`. Raw data of the seal's image;
 - `signature`: `String`. Certificate's signature
-- `signatureImage`: `String`. Raw data of the certificate's signature image;
+- `signatureImage`: [`SignatureImage[]`][signatureLineModel]. Array of certificate [signature lines][signatureLineModel].
 - `subtitle`: `String`. Subtitle of the certificate
 - `transactionId`: `String`. Transaction ID
 - `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link
 - `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
 - `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js)
+
+[signatureLineModel]: src/models/signatureImage.js
 
 **Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
 

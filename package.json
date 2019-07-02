@@ -86,7 +86,7 @@
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.2.1",
-    "rollup-plugin-node-resolve": "^4.2.4",
+    "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-terser": "^4.0.4",
     "semantic-release": "^15.9.15",

@@ -103,7 +103,7 @@ The certificate instance has the following properties:
 - `certificateJson`: `Object`. Certificate JSON object
 - `chain`: `Object`. Chain the certificate was issued on
 - `description`: `String`. Description of the certificate
-- `expires`: `String`. Expiration date
+- `expires`: `String|null`. Expiration date
 - `id`: `String`. Certificate's ID
 - `isFormatValid`: `Boolean`. Indicates whether or not the certificate has a valid format
 - `issuedOn`: `String`. Datetime of issuance (ISO-8601)

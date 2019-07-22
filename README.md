@@ -112,14 +112,14 @@ The certificate instance has the following properties:
 - `metadataJson`: `Object`. Certificate metadata object
 - `name`: `String`. Name of the certificate
 - `publicKey`: `String`. Certificate's public key
-- `receipt`: `String`. Certificate's receipt
+- `receipt`: `Object`. Certificate's receipt
 - `recipientFullName`: `String`. Full name of recipient
 - `recordLink`: `String`. Link to the certificate record
 - `revocationKey`: `String|null`. Revocation key (if any)
 - `sealImage`: `String`. Raw data of the seal's image;
-- `signature`: `String`. Certificate's signature
+- `signature`: `String|null`. Certificate's signature
 - `signatureImage`: [`SignatureImage[]`][signatureLineModel]. Array of certificate [signature lines][signatureLineModel].
-- `subtitle`: `String`. Subtitle of the certificate
+- `subtitle`: `String|null`. Subtitle of the certificate
 - `transactionId`: `String`. Transaction ID
 - `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link

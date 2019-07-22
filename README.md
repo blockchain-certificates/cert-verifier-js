@@ -109,7 +109,7 @@ The certificate instance has the following properties:
 - `issuedOn`: `String`. Datetime of issuance (ISO-8601)
 - `issuer`: `Object`. Certificate issuer
 - `locale`: `String`. Language code used by the verifier
-- `metadataJson`: `Object`. Certificate metadata object
+- `metadataJson`: `Object|null `. Certificate metadata object
 - `name`: `String`. Name of the certificate
 - `publicKey`: `String`. Certificate's public key
 - `receipt`: `Object`. Certificate's receipt

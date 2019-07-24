@@ -103,23 +103,23 @@ The certificate instance has the following properties:
 - `certificateJson`: `Object`. Certificate JSON object
 - `chain`: `Object`. Chain the certificate was issued on
 - `description`: `String`. Description of the certificate
-- `expires`: `String`. Expiration date
+- `expires`: `String|null`. Expiration date
 - `id`: `String`. Certificate's ID
 - `isFormatValid`: `Boolean`. Indicates whether or not the certificate has a valid format
 - `issuedOn`: `String`. Datetime of issuance (ISO-8601)
 - `issuer`: `Object`. Certificate issuer
 - `locale`: `String`. Language code used by the verifier
-- `metadataJson`: `Object`. Certificate metadata object
+- `metadataJson`: `Object|null `. Certificate metadata object
 - `name`: `String`. Name of the certificate
 - `publicKey`: `String`. Certificate's public key
-- `receipt`: `String`. Certificate's receipt
+- `receipt`: `Object`. Certificate's receipt
 - `recipientFullName`: `String`. Full name of recipient
 - `recordLink`: `String`. Link to the certificate record
 - `revocationKey`: `String|null`. Revocation key (if any)
 - `sealImage`: `String`. Raw data of the seal's image;
-- `signature`: `String`. Certificate's signature
+- `signature`: `String|null`. Certificate's signature
 - `signatureImage`: [`SignatureImage[]`][signatureLineModel]. Array of certificate [signature lines][signatureLineModel].
-- `subtitle`: `String`. Subtitle of the certificate
+- `subtitle`: `String|null`. Subtitle of the certificate
 - `transactionId`: `String`. Transaction ID
 - `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link

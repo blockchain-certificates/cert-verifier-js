@@ -76,7 +76,7 @@
     "@commitlint/config-conventional": "^8.0.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
-    "eslint-config-semistandard": "^13.0.0",
+    "eslint-config-semistandard": "^14.0.0",
     "eslint-plugin-import": "^2.17.2",
     "husky": "^3.0.0",
     "jest": "^24.8.0",

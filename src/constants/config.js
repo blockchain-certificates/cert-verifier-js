@@ -7,7 +7,7 @@ const MininumConfirmations = 1;
 const MinimumBlockchainExplorers = 1;
 
 // Try all blockchain explorers (even > MinimumBlockchainExplorers) to increase the chance of a successful query.
-const Race = false;
+const Race = true;
 
 const CheckForUnmappedFields = true;
 

@@ -63,7 +63,7 @@
     "debug": "^4.1.1",
     "ecurve": "^1.0.4",
     "elliptic": "github:xg-wang/elliptic",
-    "jsonld": "^0.4.12",
+    "jsonld": "^1.8.0",
     "sha256": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   },

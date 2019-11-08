@@ -1,8 +1,7 @@
 import { getEtherScanFetcher } from './ethereum';
-import { getBlockcypherFetcher, getChainSoFetcher } from './bitcoin';
+import { getBlockcypherFetcher } from './bitcoin';
 
 const BitcoinExplorers = [
-  (transactionId, chain) => getChainSoFetcher(transactionId, chain),
   (transactionId, chain) => getBlockcypherFetcher(transactionId, chain)
 ];
 

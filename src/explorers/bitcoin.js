@@ -1,3 +1,4 @@
-import { getBlockcypherFetcher } from './bitcoin/blockcypher';
+import { getBlockcypherTransaction } from './bitcoin/blockcypher';
+import { getBitpayTransaction } from './bitcoin/bitpay';
 
-export { getBlockcypherFetcher };
+export { getBlockcypherTransaction, getBitpayTransaction };

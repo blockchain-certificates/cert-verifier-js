@@ -62,5 +62,5 @@ export function dateToUnixTimestamp (date) {
   if (date === '') {
     return '';
   }
-  return dateFromIso(date);
+  return dateFromIso(`${date}`);
 }

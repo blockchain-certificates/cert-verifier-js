@@ -63,6 +63,8 @@
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
       "getBlockcypherFetcher": "Unable to get remote hash",
       "getChainSoFetcher": "Unable to get remote hash",
+      "unableToGetRemoteHash": "Unable to get remote hash",
+      "parseBitpayResponse": "Number of transaction confirmations were less than the minimum required, according to Bitpay API",
       "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
       "parseChainSoResponse": "Number of transaction confirmations were less than the minimum required, according to Chain.so API",
       "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",

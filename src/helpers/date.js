@@ -64,3 +64,7 @@ export function dateToUnixTimestamp (date) {
   }
   return dateFromIso(`${date}`);
 }
+
+export function timestampToDateObject (timestamp) {
+  return new Date(timestamp * 1000);
+}

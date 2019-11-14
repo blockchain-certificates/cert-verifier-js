@@ -1,26 +1,9 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
-import { request } from '../../services/request';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
 import { TransactionData, VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
-import { buildTransactionApiUrl } from '../../services/transaction-apis';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 
-export async function getBitpayTransaction (transactionId, chain) {
-  const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;
-  const requestUrl = buildTransactionApiUrl(TRANSACTION_APIS.Bitpay, transactionId, isTestnet);
-  let response = await request({ url: requestUrl }).catch(() => {
-    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
-  });
-
-  try {
-    const jsonResponse = JSON.parse(response);
-    return generateTransactionDataFromBitpayResponse(jsonResponse);
-  } catch (err) {
-    throw new Error(err.message);
-  }
-}
-
-function generateTransactionDataFromBitpayResponse (jsonResponse) {
+export function generateTransactionDataFromBitpayResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBitpayResponse'));
   }

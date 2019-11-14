@@ -1,16 +1,17 @@
 import { request } from '../services';
-import { API_URLS, BLOCKCHAINS, CONFIG, SUB_STEPS } from '../constants';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../constants';
 import { TransactionData, VerifierError } from '../models';
 import { stripHashPrefix } from './utils/stripHashPrefix';
 import { getText } from '../domain/i18n/useCases';
+import { TRANSACTIONS_APIS_URLS } from '../constants/api';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';
   let etherScanUrl;
   if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = API_URLS.etherScanMainUrl + action + transactionId;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + transactionId;
   } else {
-    etherScanUrl = API_URLS.etherScanRopstenUrl + action + transactionId;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action + transactionId;
   }
 
   let etherScanFetcher = new Promise((resolve, reject) => {
@@ -56,9 +57,9 @@ function getEtherScanBlock (jsonResponse, chain) {
   const action = '&action=eth_getBlockByNumber&boolean=true&tag=';
   let etherScanUrl;
   if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = API_URLS.etherScanMainUrl + action + blockNumber;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + blockNumber;
   } else {
-    etherScanUrl = API_URLS.etherScanRopstenUrl + action + blockNumber;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action + blockNumber;
   }
 
   return new Promise((resolve, reject) => {
@@ -89,9 +90,9 @@ function checkEtherScanConfirmations (chain, blockNumber) {
   const action = '&action=eth_blockNumber';
   let etherScanUrl;
   if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = API_URLS.etherScanMainUrl + action;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action;
   } else {
-    etherScanUrl = API_URLS.etherScanRopstenUrl + action;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action;
   }
 
   return new Promise((resolve, reject) => {

@@ -5,7 +5,8 @@ import { TRANSACTION_APIS } from '../constants';
 const BitcoinExplorers = [
   (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockcypher, transactionId, chain),
   (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, transactionId, chain),
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.BlockchainInfo, transactionId, chain)
+  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.BlockchainInfo, transactionId, chain),
+  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockexplorer, transactionId, chain)
 ];
 
 const EthereumExplorers = [

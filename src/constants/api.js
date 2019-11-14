@@ -15,7 +15,8 @@ const TRANSACTIONS_APIS_URLS = {
     mainnet: `https://api-r.bitcoinchain.com/v1/tx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   [TRANSACTION_APIS.Bitpay]: {
-    mainnet: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
+    mainnet: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+    testnet: `https://api.bitcore.io/api/BTC/testnet/tx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   [TRANSACTION_APIS.BlockchainInfo]: {
     mainnet: `https://blockchain.info/rawtx/${TRANSACTION_ID_PLACEHOLDER}`
@@ -25,10 +26,12 @@ const TRANSACTIONS_APIS_URLS = {
     testnet: `https://api.blockcypher.com/v1/btc/test3/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`
   },
   [TRANSACTION_APIS.Blockexplorer]: {
-    mainnet: `https://blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
+    mainnet: `https://blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+    testnet: `https://testnet.blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   [TRANSACTION_APIS.Blockstream]: {
-    mainnet: `https://blockstream.info/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
+    mainnet: `https://blockstream.info/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+    testnet: `https://blockstream.info/testnet/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   // Add &apikey={key} to EtherScan URL's if getting rate limited
   [TRANSACTION_APIS.Etherscan]: {

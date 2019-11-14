@@ -3,8 +3,8 @@ import { buildTransactionApiUrl } from '../../services/transaction-apis';
 import { request } from '../../services/request';
 import { VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
-import { generateTransactionDataFromBitpayResponse } from './bitpay';
-import { generateTransactionDataFromBlockcypherResponse } from './blockcypher';
+import { generateTransactionDataFromBitpayResponse } from './apis/bitpay';
+import { generateTransactionDataFromBlockcypherResponse } from './apis/blockcypher';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;

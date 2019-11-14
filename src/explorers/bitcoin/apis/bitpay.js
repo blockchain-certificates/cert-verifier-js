@@ -1,7 +1,7 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
-import { TransactionData, VerifierError } from '../../models';
-import { getText } from '../../domain/i18n/useCases';
-import { stripHashPrefix } from '../utils/stripHashPrefix';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
+import { TransactionData, VerifierError } from '../../../models';
+import { getText } from '../../../domain/i18n/useCases';
+import { stripHashPrefix } from '../../utils/stripHashPrefix';
 
 export function generateTransactionDataFromBitpayResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {

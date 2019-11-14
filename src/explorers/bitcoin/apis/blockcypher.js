@@ -1,8 +1,8 @@
-import { dateToUnixTimestamp } from '../../helpers/date';
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
-import { TransactionData, VerifierError } from '../../models';
-import { stripHashPrefix } from './../utils/stripHashPrefix';
-import { getText } from '../../domain/i18n/useCases';
+import { dateToUnixTimestamp } from '../../../helpers/date';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
+import { TransactionData, VerifierError } from '../../../models';
+import { stripHashPrefix } from '../../utils/stripHashPrefix';
+import { getText } from '../../../domain/i18n/useCases';
 
 export function generateTransactionDataFromBlockcypherResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {

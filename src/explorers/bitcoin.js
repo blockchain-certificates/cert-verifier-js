@@ -1,4 +1,4 @@
-import { getBlockcypherTransaction } from './bitcoin/blockcypher';
-import { getBitpayTransaction } from './bitcoin/bitpay';
+import { getBlockcypherTransaction } from './bitcoin/apis/blockcypher';
+import { getBitpayTransaction } from './bitcoin/apis/bitpay';
 
 export { getBlockcypherTransaction, getBitpayTransaction };

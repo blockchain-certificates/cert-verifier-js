@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import * as RequestService from '../../../../src/services';
+import * as RequestService from '../../../../src/services/request';
 import * as mockBitpayResponse from '../mocks/mockBitpayResponse';
 import { getBitcoinTransactionFromApi } from '../../../../src/explorers/bitcoin/bitcoin-explorer';
 import { TRANSACTION_APIS } from '../../../../src/constants';

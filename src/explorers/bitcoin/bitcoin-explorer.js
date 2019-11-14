@@ -1,6 +1,6 @@
 import { BLOCKCHAINS, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
 import { buildTransactionApiUrl } from '../../services/transaction-apis';
-import { request } from '../../services';
+import { request } from '../../services/request';
 import { VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
 import { generateTransactionDataFromBitpayResponse } from './bitpay';

@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import * as RequestService from '../../../../src/services/request';
 import * as mockBitpayResponse from '../mocks/mockBitpayResponse';
 import { getBitcoinTransactionFromApi } from '../../../../src/explorers/bitcoin/bitcoin-explorer';
-import { TRANSACTION_APIS } from '../../../../src/constants';
+import { BLOCKCHAINS, TRANSACTION_APIS } from '../../../../src/constants';
 
 describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
@@ -12,7 +12,7 @@ describe('Bitcoin Explorer test suite', function () {
     'issuingAddress': '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
     'remoteHash': 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
     'revokedAddresses': ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
-    'time': 1518049414
+    'time': new Date(1518049414 * 1000)
   };
 
   beforeEach(function () {
@@ -25,7 +25,7 @@ describe('Bitcoin Explorer test suite', function () {
 
   describe('getBitcoinTransactionFromApi method', function () {
     it('should call the right request API', function () {
-      getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId).then(() => {
+      getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(() => {
         expect(stubRequest.getCall(0).args).toEqual([{ url: assertionRequestUrl }]);
       });
     });
@@ -34,7 +34,7 @@ describe('Bitcoin Explorer test suite', function () {
       it('should throw the right error', async function () {
         const fixtureError = new Error('Unable to get remote hash');
         stubRequest.rejects(fixtureError);
-        await getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId).catch(err => {
+        await getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).catch(err => {
           expect(err).toEqual(fixtureError);
         });
       });
@@ -43,7 +43,7 @@ describe('Bitcoin Explorer test suite', function () {
     describe('given the request is successful', function () {
       describe('and the transaction data is generated from the response', function () {
         it('should return a correct transaction data', async function () {
-          getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId).then(res => {
+          getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(res => {
             expect(res).toEqual(assertionResponse);
           });
         });

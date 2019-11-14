@@ -5,6 +5,7 @@ import { VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
 import { generateTransactionDataFromBitpayResponse } from './apis/bitpay';
 import { generateTransactionDataFromBlockcypherResponse } from './apis/blockcypher';
+import { generateTransactionDataFromBlockchainInfoResponse } from './apis/blockchain-info';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;
@@ -27,7 +28,7 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
 const API_TRANSACTION_DATA_GENERATORS = {
   [TRANSACTION_APIS.Bitcoinchain]: {},
   [TRANSACTION_APIS.Bitpay]: generateTransactionDataFromBitpayResponse,
-  [TRANSACTION_APIS.Blockchaininfo]: {},
+  [TRANSACTION_APIS.BlockchainInfo]: generateTransactionDataFromBlockchainInfoResponse,
   [TRANSACTION_APIS.Blockcypher]: generateTransactionDataFromBlockcypherResponse,
   [TRANSACTION_APIS.Blockexplorer]: {},
   [TRANSACTION_APIS.Blockstream]: {}

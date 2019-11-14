@@ -1,7 +1,7 @@
 const TRANSACTION_APIS = {
   Bitcoinchain: 'bitcoinchain',
   Bitpay: 'bitpay',
-  Blockchaininfo: 'blockchain.info',
+  BlockchainInfo: 'blockchain.info',
   Blockcypher: 'blockcypher',
   Blockexplorer: 'Blockexplorer',
   Blockstream: 'blockstream',
@@ -17,7 +17,7 @@ const TRANSACTIONS_APIS_URLS = {
   [TRANSACTION_APIS.Bitpay]: {
     mainnet: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
   },
-  [TRANSACTION_APIS.Blockchaininfo]: {
+  [TRANSACTION_APIS.BlockchainInfo]: {
     mainnet: `https://blockchain.info/rawtx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   [TRANSACTION_APIS.Blockcypher]: {

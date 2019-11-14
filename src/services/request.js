@@ -3,7 +3,7 @@ import debug from 'debug';
 
 const log = debug('request');
 
-export function request (obj) {
+export default function request (obj) {
   return new Promise((resolve, reject) => {
     let url = obj.url;
 

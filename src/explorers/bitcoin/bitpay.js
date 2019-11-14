@@ -5,8 +5,9 @@ import { getText } from '../../domain/i18n/useCases';
 import { buildTransactionApiUrl } from '../../services/transaction-apis';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 
-export async function getBitpayTransaction (transactionId) {
-  const requestUrl = buildTransactionApiUrl(TRANSACTION_APIS.Bitpay, transactionId);
+export async function getBitpayTransaction (transactionId, chain) {
+  const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;
+  const requestUrl = buildTransactionApiUrl(TRANSACTION_APIS.Bitpay, transactionId, isTestnet);
   let response = await request({ url: requestUrl }).catch(() => {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
   });

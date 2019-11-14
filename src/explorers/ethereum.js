@@ -27,14 +27,14 @@ export function getEtherScanFetcher (transactionId, chain) {
               resolve(txData);
             })
             .catch(function () {
-              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
             });
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
         }
       }).catch(function () {
-        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
       });
   });
   return etherScanFetcher;
@@ -74,14 +74,14 @@ function getEtherScanBlock (jsonResponse, chain) {
               resolve(blockData);
             })
             .catch(function () {
-              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
             });
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
         }
       }).catch(function () {
-        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
       });
   });
 }
@@ -107,10 +107,10 @@ function checkEtherScanConfirmations (chain, blockNumber) {
           resolve(currentBlockCount);
         } catch (err) {
           // don't need to wrap this exception
-          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
         }
       }).catch(function () {
-        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'getBlockcypherFetcher')));
+        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
       });
   });
 }

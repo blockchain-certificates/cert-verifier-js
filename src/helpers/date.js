@@ -62,5 +62,9 @@ export function dateToUnixTimestamp (date) {
   if (date === '') {
     return '';
   }
-  return dateFromIso(date);
+  return dateFromIso(`${date}`);
+}
+
+export function timestampToDateObject (timestamp) {
+  return new Date(timestamp * 1000);
 }

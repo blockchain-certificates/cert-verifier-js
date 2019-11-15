@@ -1,11 +1,19 @@
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
-import { request } from '../../../../../src/services';
+import * as RequestServices from '../../../../../src/services/request';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
-
-jest.mock('../../../../../src/services/request', () => jest.fn(() => undefined));
+import sinon from 'sinon';
 
 describe('Verifier domain getRevokedAssertions use case test suite', function () {
   const errorMessageAssertion = 'Unable to get revocation assertions';
+  let stubRequest;
+
+  beforeEach(function () {
+    stubRequest = sinon.stub(RequestServices, 'request').resolves(undefined);
+  });
+
+  afterEach(function () {
+    stubRequest.restore();
+  });
 
   describe('given it is called without an revocationListUrl parameter', function () {
     it('should throw an error', async function () {
@@ -21,7 +29,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
 
     describe('when the request is successful', function () {
       it('should return the revoked assertions JSON object', async function () {
-        request.mockResolvedValue(revokedAssertionsAssertionString);
+        stubRequest.resolves(revokedAssertionsAssertionString);
         const result = await getRevokedAssertions(issuerIdFixture);
         expect(result).toEqual(revokedAssertionsFixture.revokedAssertions);
       });
@@ -29,7 +37,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
 
     describe('when the request fails', function () {
       it('should throw an error', async function () {
-        request.mockRejectedValue(errorMessageAssertion);
+        stubRequest.rejects(errorMessageAssertion);
         await getRevokedAssertions(issuerIdFixture).catch(e => {
           expect(e.message).toBe(errorMessageAssertion);
         });

@@ -1,4 +1,4 @@
-import API_URLS from './api';
+import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api';
 import CERTIFICATE_VERSIONS from './certificateVersions';
 import * as STEPS from './verificationSteps';
 import * as SUB_STEPS from './verificationSubSteps';
@@ -10,7 +10,8 @@ import CONTEXTS from './contexts';
 import { DEFAULT_OPTIONS } from './options';
 
 export {
-  API_URLS,
+  TRANSACTION_APIS,
+  TRANSACTION_ID_PLACEHOLDER,
   BLOCKCHAINS,
   CERTIFICATE_VERSIONS,
   CONFIG,

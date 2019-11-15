@@ -33,17 +33,8 @@ describe('Transaction APIs test suite', function () {
       });
 
       describe('and testApi is set to true', function () {
-        describe('and the testnet address exists', function () {
-          it('should return the testnet address with the transaction ID', function () {
-            expect(buildTransactionApiUrl(fixtureApiName, fixtureTransactionId, true)).toEqual(`https://api.blockcypher.com/v1/btc/test3/txs/${fixtureTransactionId}?limit=500`);
-          });
-        });
-
-        describe('and the testnet address does not exist', function () {
-          it('should return the mainnet address with the transaction ID as a fallback', function () {
-            fixtureApiName = TRANSACTION_APIS.Bitcoinchain;
-            expect(buildTransactionApiUrl(fixtureApiName, fixtureTransactionId, true)).toEqual(`https://api-r.bitcoinchain.com/v1/tx/${fixtureTransactionId}`);
-          });
+        it('should return the testnet address with the transaction ID', function () {
+          expect(buildTransactionApiUrl(fixtureApiName, fixtureTransactionId, true)).toEqual(`https://api.blockcypher.com/v1/btc/test3/txs/${fixtureTransactionId}?limit=500`);
         });
       });
     });

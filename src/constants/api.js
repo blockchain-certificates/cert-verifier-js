@@ -1,7 +1,5 @@
 const TRANSACTION_APIS = {
-  Bitcoinchain: 'bitcoinchain',
   Bitpay: 'bitpay',
-  BlockchainInfo: 'blockchain.info',
   Blockcypher: 'blockcypher',
   Blockexplorer: 'blockexplorer',
   Blockstream: 'blockstream',
@@ -11,15 +9,9 @@ const TRANSACTION_APIS = {
 const TRANSACTION_ID_PLACEHOLDER = '{transaction_id}';
 
 const TRANSACTIONS_APIS_URLS = {
-  [TRANSACTION_APIS.Bitcoinchain]: {
-    mainnet: `https://api-r.bitcoinchain.com/v1/tx/${TRANSACTION_ID_PLACEHOLDER}`
-  },
   [TRANSACTION_APIS.Bitpay]: {
     mainnet: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
     testnet: `https://api.bitcore.io/api/BTC/testnet/tx/${TRANSACTION_ID_PLACEHOLDER}`
-  },
-  [TRANSACTION_APIS.BlockchainInfo]: {
-    mainnet: `https://blockchain.info/rawtx/${TRANSACTION_ID_PLACEHOLDER}`
   },
   [TRANSACTION_APIS.Blockcypher]: {
     mainnet: `https://api.blockcypher.com/v1/btc/main/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`,

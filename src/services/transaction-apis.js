@@ -6,6 +6,6 @@ export function buildTransactionApiUrl (apiName, transactionId, testApi = false)
   if (!api) {
     throw new Error(`API ${apiName} is not listed`);
   }
-  const apiUrl = testApi ? (api.testnet ? api.testnet : api.mainnet) : api.mainnet;
+  const apiUrl = testApi ? api.testnet : api.mainnet;
   return apiUrl.replace(TRANSACTION_ID_PLACEHOLDER, transactionId);
 }

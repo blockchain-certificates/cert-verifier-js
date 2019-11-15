@@ -3,7 +3,7 @@ const TRANSACTION_APIS = {
   Bitpay: 'bitpay',
   BlockchainInfo: 'blockchain.info',
   Blockcypher: 'blockcypher',
-  Blockexplorer: 'Blockexplorer',
+  Blockexplorer: 'blockexplorer',
   Blockstream: 'blockstream',
   Etherscan: 'etherscan'
 };

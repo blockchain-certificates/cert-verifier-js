@@ -1,8 +1,8 @@
 import sinon from 'sinon';
-import * as RequestService from '../../../../src/services/request';
-import * as mockBitpayResponse from '../mocks/mockBitpayResponse';
-import { getBlockchainTransactionFromApi } from '../../../../src/explorers/blockchain-explorer';
-import { BLOCKCHAINS, TRANSACTION_APIS } from '../../../../src/constants';
+import * as RequestService from '../../../src/services/request';
+import * as mockBitpayResponse from './mocks/mockBitpayResponse';
+import { getBlockchainTransactionFromApi } from '../../../src/explorers/blockchain-explorer';
+import { BLOCKCHAINS, TRANSACTION_APIS } from '../../../src/constants';
 
 describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';

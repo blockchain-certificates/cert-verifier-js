@@ -1,4 +1,4 @@
-import { isTestChain } from '../../src/constants/api';
+import { isTestChain } from '../../src/constants/blockchains';
 import { BLOCKCHAINS } from '../../src/constants';
 
 describe('isTestChain method', function () {

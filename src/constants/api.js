@@ -1,5 +1,3 @@
-import { BLOCKCHAINS } from './blockchains';
-
 const TRANSACTION_APIS = {
   Bitpay: 'bitpay',
   Blockcypher: 'blockcypher',
@@ -45,14 +43,9 @@ const TRANSACTIONS_APIS_URLS = {
   }
 };
 
-function isTestChain (chain) {
-  return chain !== BLOCKCHAINS.bitcoin.code && chain !== BLOCKCHAINS.ethmain.code;
-}
-
 export {
   TRANSACTION_APIS,
   TRANSACTIONS_APIS_URLS,
   TRANSACTION_ID_PLACEHOLDER,
-  BLOCK_NUMBER_PLACEHOLDER,
-  isTestChain
+  BLOCK_NUMBER_PLACEHOLDER
 };

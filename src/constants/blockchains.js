@@ -1,6 +1,5 @@
-export const TRANSACTION_TEMPLATE_ID_PLACEHOLDER = '{TRANSACTION_ID}';
-
-export const BLOCKCHAINS = {
+const TRANSACTION_TEMPLATE_ID_PLACEHOLDER = '{TRANSACTION_ID}';
+const BLOCKCHAINS = {
   bitcoin: {
     code: 'bitcoin',
     name: 'Bitcoin',
@@ -59,4 +58,14 @@ export const BLOCKCHAINS = {
       raw: `https://testnet.blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   }
+};
+
+function isTestChain (chain) {
+  return chain !== BLOCKCHAINS.bitcoin.code && chain !== BLOCKCHAINS.ethmain.code;
+}
+
+export {
+  BLOCKCHAINS,
+  TRANSACTION_TEMPLATE_ID_PLACEHOLDER,
+  isTestChain
 };

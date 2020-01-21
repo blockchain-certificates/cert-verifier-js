@@ -1,15 +1,15 @@
-import * as mockBlockexplorerResponse from '../../mocks/mockBlockexplorerResponse';
-import { generateTransactionDataFromBlockexplorerResponse } from '../../../../../src/explorers/bitcoin/blockexplorer';
+import * as mockBitpayResponse from '../mocks/mockBitpayResponse';
+import { generateTransactionDataFromBitpayResponse } from '../../../../src/explorers/bitcoin/bitpay';
 
-function getMockBlockexplorerResponse () {
-  return JSON.parse(JSON.stringify(mockBlockexplorerResponse));
+function getMockBitpayResponse () {
+  return JSON.parse(JSON.stringify(mockBitpayResponse));
 }
 
-describe('Blockexplorer Explorer test suite', function () {
+describe('Bitpay Explorer test suite', function () {
   let mockResponse;
 
   beforeEach(function () {
-    mockResponse = getMockBlockexplorerResponse();
+    mockResponse = getMockBitpayResponse();
   });
 
   describe('given the transaction has enough confirmations', function () {
@@ -21,7 +21,7 @@ describe('Blockexplorer Explorer test suite', function () {
     };
 
     it('should return the transaction data', function () {
-      expect(generateTransactionDataFromBlockexplorerResponse(mockResponse)).toEqual(assertionTransactionData);
+      expect(generateTransactionDataFromBitpayResponse(mockResponse)).toEqual(assertionTransactionData);
     });
   });
 
@@ -29,8 +29,8 @@ describe('Blockexplorer Explorer test suite', function () {
     it('should throw the right error', async function () {
       mockResponse.confirmations = 0;
       expect(() => {
-        generateTransactionDataFromBlockexplorerResponse(mockResponse);
-      }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Blockexplorer API');
+        generateTransactionDataFromBitpayResponse(mockResponse);
+      }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Bitpay API');
     });
   });
 });

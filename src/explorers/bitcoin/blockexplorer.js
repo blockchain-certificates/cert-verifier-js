@@ -1,12 +1,12 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
-import { TransactionData, VerifierError } from '../../../models';
-import { getText } from '../../../domain/i18n/useCases';
-import { stripHashPrefix } from '../../utils/stripHashPrefix';
-import { timestampToDateObject } from '../../../helpers/date';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
+import { TransactionData, VerifierError } from '../../models';
+import { getText } from '../../domain/i18n/useCases';
+import { stripHashPrefix } from '../utils/stripHashPrefix';
+import { timestampToDateObject } from '../../helpers/date';
 
-export function generateTransactionDataFromBitpayResponse (jsonResponse) {
+export function generateTransactionDataFromBlockexplorerResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
-    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBitpayResponse'));
+    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockexplorerResponse'));
   }
   const time = timestampToDateObject(jsonResponse.blocktime);
   const outputs = jsonResponse.vout;

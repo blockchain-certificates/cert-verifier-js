@@ -1,5 +1,5 @@
 import * as mockBlockexplorerResponse from '../../mocks/mockBlockexplorerResponse';
-import { generateTransactionDataFromBlockexplorerResponse } from '../../../../../src/explorers/bitcoin/apis/blockexplorer';
+import { generateTransactionDataFromBlockexplorerResponse } from '../../../../../src/explorers/bitcoin/blockexplorer';
 
 function getMockBlockexplorerResponse () {
   return JSON.parse(JSON.stringify(mockBlockexplorerResponse));

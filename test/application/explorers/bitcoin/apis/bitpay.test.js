@@ -1,5 +1,5 @@
 import * as mockBitpayResponse from '../../mocks/mockBitpayResponse';
-import { generateTransactionDataFromBitpayResponse } from '../../../../../src/explorers/bitcoin/apis/bitpay';
+import { generateTransactionDataFromBitpayResponse } from '../../../../../src/explorers/bitcoin/bitpay';
 
 function getMockBitpayResponse () {
   return JSON.parse(JSON.stringify(mockBitpayResponse));

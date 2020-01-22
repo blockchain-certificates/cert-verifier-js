@@ -5,7 +5,8 @@ const TRANSACTION_APIS = {
   Blockstream: 'blockstream',
   Etherscan: 'etherscan',
   EtherscanBlockNumber: 'etherscanBlockNumber',
-  EtherscanScanBlock: 'etherscanScanBlock'
+  EtherscanScanBlock: 'etherscanScanBlock',
+  BlockcypherEthereum: 'blockcypherEthereum'
 };
 
 const TRANSACTION_ID_PLACEHOLDER = '{transaction_id}';
@@ -40,6 +41,10 @@ const TRANSACTIONS_APIS_URLS = {
   [TRANSACTION_APIS.EtherscanScanBlock]: {
     main: `https://api.etherscan.io/api?module=proxy&action=eth_getBlockByNumber&boolean=true&tag=${BLOCK_NUMBER_PLACEHOLDER}`,
     test: `https://api-ropsten.etherscan.io/api?module=proxy&action=eth_getBlockByNumber&boolean=true&tag=${BLOCK_NUMBER_PLACEHOLDER}`
+  },
+  [TRANSACTION_APIS.BlockcypherEthereum]: {
+    main: `https://api.blockcypher.com/v1/eth/main/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`,
+    test: `https://api.blockcypher.com/v1/beth/test/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`
   }
 };
 

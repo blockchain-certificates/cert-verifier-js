@@ -9,6 +9,7 @@ import { generateTransactionDataFromBlockexplorerResponse } from './bitcoin/bloc
 import { generateTransactionDataFromBlockstreamResponse } from './bitcoin/blockstream';
 import { generateTransactionDataFromEtherscanResponse } from './ethereum/etherscan';
 import { isTestChain } from '../constants/blockchains';
+import { generateTransactionDataFromBlockcypherEthereumResponse } from './ethereum/blockcypher-ethereum';
 
 function isTransactionGeneratorAsync (chain) {
   return chain === TRANSACTION_APIS.Etherscan;
@@ -49,7 +50,8 @@ const API_TRANSACTION_DATA_GENERATORS = {
   [TRANSACTION_APIS.Blockcypher]: generateTransactionDataFromBlockcypherResponse,
   [TRANSACTION_APIS.Blockexplorer]: generateTransactionDataFromBlockexplorerResponse,
   [TRANSACTION_APIS.Blockstream]: generateTransactionDataFromBlockstreamResponse,
-  [TRANSACTION_APIS.Etherscan]: generateTransactionDataFromEtherscanResponse
+  [TRANSACTION_APIS.Etherscan]: generateTransactionDataFromEtherscanResponse,
+  [TRANSACTION_APIS.BlockcypherEthereum]: generateTransactionDataFromBlockcypherEthereumResponse
 };
 
 function getTransactionDataGeneratorPerApi (apiName) {

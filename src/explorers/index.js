@@ -9,7 +9,8 @@ const BitcoinExplorers = [
 ];
 
 const EthereumExplorers = [
-  (transactionId, chain) => getBlockchainTransactionFromApi(TRANSACTION_APIS.Etherscan, transactionId, chain)
+  (transactionId, chain) => getBlockchainTransactionFromApi(TRANSACTION_APIS.Etherscan, transactionId, chain),
+  (transactionId, chain) => getBlockchainTransactionFromApi(TRANSACTION_APIS.BlockcypherEthereum, transactionId, chain)
 ];
 
 // for legacy (pre-v2) Blockcerts

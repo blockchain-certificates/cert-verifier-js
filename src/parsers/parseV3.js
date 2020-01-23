@@ -7,9 +7,9 @@ function parseSignature (signature) {
 }
 
 export default function parseV3 (certificateJson) {
-  const signature = parseSignature(certificateJson.signature);
+  const receipt = parseSignature(certificateJson.signature);
   return {
     version: CERTIFICATE_VERSIONS.V3_0_alpha,
-    signature
+    receipt
   };
 }

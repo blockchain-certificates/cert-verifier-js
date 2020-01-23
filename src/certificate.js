@@ -123,11 +123,8 @@ export default class Certificate {
 
     this.version = version;
 
-    // TODO: temp until full V3 support
-    if (this.version !== CERTIFICATE_VERSIONS.V3_0_alpha) {
-      // Transaction ID, link & raw link
-      this._setTransactionDetails();
-    }
+    // Transaction ID, link & raw link
+    this._setTransactionDetails();
   }
 
   /**

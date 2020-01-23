@@ -1,6 +1,7 @@
 import { CERTIFICATE_VERSIONS } from './constants';
 import domain from './domain';
 import { SignatureImage } from './models';
+import parseV3 from './parsers/parseV3';
 
 /**
  * _getSignatureImages
@@ -142,12 +143,6 @@ function parseV2 (certificateJson) {
     signatureImage,
     subtitle,
     version
-  };
-}
-
-function parseV3 (certificateJson) {
-  return {
-    version: CERTIFICATE_VERSIONS.V3_0_alpha
   };
 }
 

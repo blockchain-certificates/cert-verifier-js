@@ -22,6 +22,14 @@ describe('Certificate entity test suite', function () {
       it('should set the decoded signature as the receipt to the certificate object', function () {
         expect(certificate.receipt).toEqual(signatureAssertion);
       });
+
+      it('should set the transactionId to the certificate object', function () {
+        expect(certificate.transactionId).toEqual('0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a');
+      });
+
+      it.todo('chain');
+      it.todo('rawTransactionLink');
+      it.todo('transactionLink');
     });
   });
 });

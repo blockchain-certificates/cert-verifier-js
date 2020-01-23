@@ -1,0 +1,12 @@
+{
+  "path": [
+    {
+      "left": "6ad52e9db922e0c2648ce8f88f94b7e376daf9af60a7c782db75011f3783ea0a"
+    }
+  ],
+  "merkleRoot": "5f716a8bf010e8db59bf8d51bf6b4628f74bf4055ad53f089f8ad0dad2397d7e",
+  "targetHash": "3c38bb2f9ff7227a5979f1f543655717f3b24d3435ff565fb04f0db06bc0fc49",
+  "anchors": [
+    "blink:eth:ropsten:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+  ]
+}

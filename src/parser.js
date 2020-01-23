@@ -151,6 +151,12 @@ function parseV3 (certificateJson) {
   };
 }
 
+const versionParserMap = {
+  '1': parseV1,
+  '2': parseV2,
+  '3': parseV3
+};
+
 /**
  *
  * @param array: string[]
@@ -175,7 +181,7 @@ function retrieveBlockcertsVersion (context) {
   const blockcertsContext = context.filter(ctx => typeof ctx === 'string').find(ctx => ctx.toLowerCase().indexOf('blockcerts') > 0);
   const blockcertsContextArray = blockcertsContext.split('/').filter(str => str !== '');
 
-  const availableVersions = ['3', '2', '1'];
+  const availableVersions = Object.keys(versionParserMap);
 
   return availableVersions.filter(version => lookupVersion(blockcertsContextArray, version))[0];
 }
@@ -187,11 +193,6 @@ function retrieveBlockcertsVersion (context) {
  * @returns {*}
  */
 export default function parseJSON (certificateJson) {
-  const versionParserMap = {
-    '1': parseV1,
-    '2': parseV2,
-    '3': parseV3
-  };
   try {
     const version = retrieveBlockcertsVersion(certificateJson['@context']);
     const parsedCertificate = versionParserMap[version](certificateJson);

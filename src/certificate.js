@@ -3,6 +3,7 @@ import parseJSON from './parser';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
+import CERTIFICATE_VERSIONS from './constants/certificateVersions';
 
 export default class Certificate {
   constructor (certificateDefinition, options = {}) {
@@ -122,8 +123,11 @@ export default class Certificate {
 
     this.version = version;
 
-    // Transaction ID, link & raw link
-    this._setTransactionDetails();
+    // TODO: temp until full V3 support
+    if (this.version !== CERTIFICATE_VERSIONS.V3_0_alpha) {
+      // Transaction ID, link & raw link
+      this._setTransactionDetails();
+    }
   }
 
   /**

@@ -145,6 +145,47 @@ function parseV2 (certificateJson) {
   };
 }
 
+function parseV3 (certificateJson) {
+  return {
+    version: CERTIFICATE_VERSIONS.V3_0_alpha
+  };
+}
+
+const versionParserMap = {
+  '1': parseV1,
+  '2': parseV2,
+  '3': parseV3
+};
+
+/**
+ *
+ * @param array: string[]
+ * @param v: string
+ * @returns boolean
+ */
+function lookupVersion (array, v) {
+  return array.some(str => str.indexOf(`v${v}`) > -1 || str.indexOf(`${v}.`) > -1);
+}
+
+/**
+ *
+ * @param context: string | Context[]
+ * @returns {string}
+ */
+
+function retrieveBlockcertsVersion (context) {
+  if (typeof context === 'string') {
+    context = [context];
+  }
+
+  const blockcertsContext = context.filter(ctx => typeof ctx === 'string').find(ctx => ctx.toLowerCase().indexOf('blockcerts') > 0);
+  const blockcertsContextArray = blockcertsContext.split('/').filter(str => str !== '');
+
+  const availableVersions = Object.keys(versionParserMap);
+
+  return availableVersions.filter(version => lookupVersion(blockcertsContextArray, version))[0];
+}
+
 /**
  * parseJson
  *
@@ -152,14 +193,9 @@ function parseV2 (certificateJson) {
  * @returns {*}
  */
 export default function parseJSON (certificateJson) {
-  let parsedCertificate;
   try {
-    const version = certificateJson['@context'];
-    if (version instanceof Array) {
-      parsedCertificate = parseV2(certificateJson);
-    } else {
-      parsedCertificate = parseV1(certificateJson);
-    }
+    const version = retrieveBlockcertsVersion(certificateJson['@context']);
+    const parsedCertificate = versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (err) {

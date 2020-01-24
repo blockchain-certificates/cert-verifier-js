@@ -8,7 +8,7 @@ export default function ensureValidReceipt (receipt) {
   let proofHash = receipt.targetHash;
   const merkleRoot = receipt.merkleRoot;
   try {
-    const proof = receipt.proof;
+    const proof = receipt.proof || receipt.path;
     const isProof = !!proof;
     if (isProof) {
       for (let index in proof) {

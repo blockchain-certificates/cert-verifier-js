@@ -1,4 +1,4 @@
-import { Certificate, CERTIFICATE_VERSIONS } from '../../../src';
+import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import fixture from '../../fixtures/blockcerts-3.0-alpha';
 import signatureAssertion from '../../assertions/v3.0-alpha-signature-merkle2019';
 
@@ -27,7 +27,10 @@ describe('Certificate entity test suite', function () {
         expect(certificate.transactionId).toEqual('0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a');
       });
 
-      it.todo('chain');
+      it('should set the chain property', function () {
+        expect(certificate.chain).toEqual(BLOCKCHAINS.ethropst);
+      });
+
       it.todo('rawTransactionLink');
       it.todo('transactionLink');
     });

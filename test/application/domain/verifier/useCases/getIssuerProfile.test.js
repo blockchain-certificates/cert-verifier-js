@@ -27,13 +27,14 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
   describe('given it is called with an issuerAddress parameter', function () {
     const issuerProfileFixtureString = JSON.stringify(issuerProfileV2JsonFixture);
     const issuerAddressV2Fixture = fixtureBlockcertsV2.badge.issuer;
-    const issuerAddressV3AlphaFixture = fixtureBlockcertsV3Alpha.issuer;
 
     beforeEach(function () {
       stubRequest.resolves(issuerProfileFixtureString);
     });
 
     describe('and the Blockcerts version is 3.0-alpha', function () {
+      const issuerAddressV3AlphaFixture = fixtureBlockcertsV3Alpha.issuer;
+      
       it('should request the profile address', async function () {
         await getIssuerProfile(issuerAddressV3AlphaFixture);
         expect(stubRequest.getCall(0).args).toEqual([{ url: fixtureBlockcertsV3Alpha.issuer }]);

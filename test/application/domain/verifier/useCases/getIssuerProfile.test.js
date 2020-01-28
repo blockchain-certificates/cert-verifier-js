@@ -1,7 +1,9 @@
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import * as RequestServices from '../../../../../src/services/request';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
-import sinon from 'sinon';
+import fixtureBlockcertsV3Alpha from '../../../../fixtures/blockcerts-3.0-alpha';
+import fixtureBlockcertsV2 from '../../../../fixtures/mainnet-valid-2.0';
+import sinon, { stub } from 'sinon';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   let stubRequest;
@@ -14,7 +16,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
     stubRequest.restore();
   });
 
-  describe('given it is called without an issuerId parameter', function () {
+  describe('given it is called without an issuerAddress parameter', function () {
     it('should throw an error', async function () {
       await getIssuerProfile().catch(e => {
         expect(e.message).toBe('Unable to get issuer profile');
@@ -22,14 +24,33 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
     });
   });
 
-  describe('given it is called with an issuerId', function () {
+  describe('given it is called with an issuerAddress parameter', function () {
     const issuerProfileFixtureString = JSON.stringify(issuerProfileV2JsonFixture);
-    const issuerIdFixture = 'http://domain.tld';
+    const issuerAddressV2Fixture = fixtureBlockcertsV2.badge.issuer;
+    const issuerAddressV3AlphaFixture = fixtureBlockcertsV3Alpha.issuer;
+
+    beforeEach(function () {
+      stubRequest.resolves(issuerProfileFixtureString);
+    });
+
+    describe('and the Blockcerts version is 3.0-alpha', function () {
+      it('should request the profile address', async function () {
+        await getIssuerProfile(issuerAddressV3AlphaFixture);
+        expect(stubRequest.getCall(0).args).toEqual([{ url: fixtureBlockcertsV3Alpha.issuer }]);
+      });
+    });
+
+    describe('and the Blockcerts version is not 3.0-alpha', function () {
+      it('should request the profile address from the issuer object', async function () {
+        await getIssuerProfile(issuerAddressV2Fixture);
+        expect(stubRequest.getCall(0).args).toEqual([{ url: issuerAddressV2Fixture.id }]);
+      });
+    });
 
     describe('when the request is successful', function () {
       it('should return the issuer profile JSON object', async function () {
         stubRequest.resolves(issuerProfileFixtureString);
-        const result = await getIssuerProfile(issuerIdFixture);
+        const result = await getIssuerProfile(issuerAddressV2Fixture);
         expect(result).toEqual(issuerProfileV2JsonFixture);
       });
     });
@@ -38,7 +59,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
       it('should throw an error', async function () {
         const errorMessageFixture = 'Unable to get issuer profile';
         stubRequest.rejects(errorMessageFixture);
-        await getIssuerProfile(issuerIdFixture).catch(e => {
+        await getIssuerProfile(issuerAddressV2Fixture).catch(e => {
           expect(e.message).toBe(errorMessageFixture);
         });
       });

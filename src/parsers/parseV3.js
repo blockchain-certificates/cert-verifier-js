@@ -12,8 +12,8 @@ export default function parseV3 (certificateJson) {
   const { issuer } = certificateJson;
   return {
     chain: domain.certificates.getChain('', receipt),
-    version: CERTIFICATE_VERSIONS.V3_0_alpha,
+    issuer,
     receipt,
-    issuer
+    version: CERTIFICATE_VERSIONS.V3_0_alpha
   };
 }

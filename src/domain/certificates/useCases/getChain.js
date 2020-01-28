@@ -1,6 +1,42 @@
 import { BLOCKCHAINS } from '../../../constants/blockchains';
 import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
+import { capitalize } from '../../../helpers/string';
+
+
+// merkleRoot2019: see https://w3c-dvcg.github.io/lds-merkle-proof-2019/#blockchain-keymap
+function getMerkleRoot2019Chain (anchor) {
+  const supportedChainsMap = {
+    'btc': {
+      chainName: BLOCKCHAINS.bitcoin.name
+    },
+    'eth': {
+      chainName: BLOCKCHAINS.ethmain.name
+    }
+  };
+  const dataArray = anchor.split(':');
+  const chainIndex = dataArray.findIndex(data => Object.keys(supportedChainsMap).indexOf(data) > -1);
+  if (chainIndex > -1) {
+    const chainCode = dataArray[chainIndex];
+    const network = dataArray[chainIndex + 1];
+    const chainCodeSignatureValue = supportedChainsMap[chainCode].chainName.toLowerCase() + capitalize(network);
+    return getChainObject(chainCodeSignatureValue);
+  } else {
+    return defaultChainAssumption();
+  }
+}
+
+function defaultChainAssumption (address = '') {
+  return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+}
+
+function getChainObject (chainCodeSignatureValue) {
+  let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === chainCodeSignatureValue);
+  if (typeof chainObject === 'undefined') {
+    throw new Error(getText('errors', 'getChain'));
+  }
+  return chainObject[1];
+}
 
 /**
  * getChain
@@ -17,16 +53,14 @@ export default function getChain (address, signature = null) {
     let anchors = cleanedSignature.anchors;
     let anchor = anchors[0];
     if (anchor.chain) {
-      let signature = anchor.chain;
-      let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === signature);
-      if (typeof chainObject === 'undefined') {
-        throw new Error(getText('errors', 'getChain'));
-      }
-      return chainObject[1];
+      let chainCodeSignatureValue = anchor.chain;
+      return getChainObject(chainCodeSignatureValue);
+    } else if (typeof anchor === 'string') {
+      return getMerkleRoot2019Chain(anchor);
     }
   }
 
   // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
   // otherwise try to determine the chain from a bitcoin address
-  return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+  return defaultChainAssumption(address);
 }

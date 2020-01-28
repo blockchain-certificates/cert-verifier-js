@@ -1,0 +1,16 @@
+{
+  "type": [
+    "MerkleProof2017",
+    "Extension"
+  ],
+  "merkleRoot": "ec049a808a09f3e8e257401e0898aa3d32a733706fd7d16aacf0ba95f7b42c0c",
+  "targetHash": "ec049a808a09f3e8e257401e0898aa3d32a733706fd7d16aacf0ba95f7b42c0c",
+  "proof": [],
+  "anchors": [
+    {
+      "sourceId": "0xa12c498c8fcf59ee2fe785c94c38be4797fb027e6450439a7ef30ad61d7616d3",
+      "type": "ETHData",
+      "chain": "ethereumMainnet"
+    }
+  ]
+}

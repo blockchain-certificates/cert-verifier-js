@@ -77,6 +77,7 @@
       "getCaseInsensitiveKey": "Transaction occurred at time when issuing address was not considered valid.",
       "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
       "invalidMerkleReceipt": "Invalid Merkle Receipt. Proof hash did not match Merkle root",
+      "invalidMerkleVersion": "Merkle version used for signature is incompatible with Blockcerts version.",
       "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against."
     }
   },
@@ -157,7 +158,8 @@
       "ensureNotExpired": "Certificat expiré",
       "getCaseInsensitiveKey": "Transaction émise lorsque l'adresse de l'émetteur était considérée invalide",
       "ensureValidReceipt": "Erreur d'écriture du reçu. Un problème est survenu lors de la navigation de l'arbre Merkle du reçu.",
-      "invalidMerkleReceipt": "Reçu Merkle invalid. Hash de preuve différent du Merkle root",
+      "invalidMerkleReceipt": "Reçu Merkle invalide. Hash de preuve différent du Merkle root",
+      "invalidMerkleVersion": "La version du Merkle utilisé est incompatible avec la version Blockcerts.",
       "isTransactionIdValid": "Impossible de vérifier ce certificat sans un identifiant de transaction valide"
     }
   },
@@ -239,6 +241,7 @@
       "getCaseInsensitiveKey": "La dirección emisora no era considerada válida cuando la transacción ocurrió",
       "ensureValidReceipt": "El recibo está malformado. Hubo un problema navegando el árbol Merkle en el recibo",
       "invalidMerkleReceipt": "Recibo Merkle inválido. La cadena binaria de prueba no corresponde con la raíz Merkle",
+      "invalidMerkleVersion": "Merkle version used for signature is incompatible with Blockcerts version.",
       "isTransactionIdValid": "No se puede verificar este certificado sin una identificación de transacción que sirva como comparación"
     }
   },
@@ -320,6 +323,7 @@
       "getCaseInsensitiveKey": "It-tranżazzjoni seħħet fi żmiem meta l-indirizz tal-ħruġ ma tqiesx validu",
       "ensureValidReceipt": "L-irċevuta hija malformata. Kien hemm problema fin-navigazzjoni tal-merkle tree fl-irċevuta",
       "invalidMerkleReceipt": "Irċevuta Merkle invalida. Il-proof hash ma kienx jaqbel mal-Merkle root",
+      "invalidMerkleVersion": "Merkle version used for signature is incompatible with Blockcerts version.",
       "isTransactionIdValid": "Dan iċ-ċertifikat ma jistax jiġi vverifikat mingħajr ID ta' tranżazzjoni mqabbla miegħu"
     }
   },
@@ -401,6 +405,7 @@
       "getCaseInsensitiveKey": "La transazione è avvenuta nel momento in cui l'indirizzo di emissione non era considerato valido.",
       "ensureValidReceipt": "La ricevuta è malformata. C'è stato un problema nella navigazione dell'albero di Merkle nella ricevuta.",
       "invalidMerkleReceipt": "Ricevuta Merkle non valida. L'hash di prova non corrisponde alla radice di Merkle",
+      "invalidMerkleVersion": "Merkle version used for signature is incompatible with Blockcerts version.",
       "isTransactionIdValid": "Impossibile verificare questo certificato senza un ID transazione da confrontare."
     }
   },
@@ -482,6 +487,7 @@
       "getCaseInsensitiveKey": "取引が発行アドレスの有効期間外に行われました",
       "ensureValidReceipt": "レシートが異常です。レシート内のMerkle treeを辿る際に問題が発生しました。",
       "invalidMerkleReceipt": "Merkleレシートが無効です。証明ハッシュがMerkle rootと一致しませんでした。",
+      "invalidMerkleVersion": "Merkle version used for signature is incompatible with Blockcerts version.",
       "isTransactionIdValid": "照合するための取引IDがないため、この証明書を認証できません。"
     }
   }

@@ -179,7 +179,7 @@ export default class Verifier {
 
     // Check receipt
     this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt)
+      inspectors.ensureValidReceipt(this.receipt, this.version)
     );
 
     // Check revoked status

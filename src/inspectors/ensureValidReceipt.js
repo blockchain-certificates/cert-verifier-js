@@ -1,12 +1,18 @@
 import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { isV3 } from '../constants/certificateVersions';
 import { toByteArray } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 
-export default function ensureValidReceipt (receipt) {
+export default function ensureValidReceipt (receipt, version) {
   let proofHash = receipt.targetHash;
   const merkleRoot = receipt.merkleRoot;
+
+  if (isV3(version) && !!receipt.proof) {
+    throw new VerifierError(SUB_STEPS.checkReceipt, getText('errors', 'invalidMerkleVersion'));
+  }
+
   try {
     const proof = receipt.proof || receipt.path;
     const isProof = !!proof;
@@ -23,7 +29,7 @@ export default function ensureValidReceipt (receipt) {
         } else {
           throw new VerifierError(
             SUB_STEPS.checkReceipt,
-            'We should never get here.'
+            'Trigger catch error.'
           );
         }
       }

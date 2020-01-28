@@ -8,7 +8,7 @@
   "type": [
     "VerifiableCredential"
   ],
-  "issuer": "did:example:23adb1f712ebc6f1c276eba4dfa",
+  "issuer": "https://www.blockcerts.org/samples/2.0/issuer-testnet.json",
   "issuanceDate": "2010-01-01T19:73:24Z",
   "credentialSubject": {
     "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",

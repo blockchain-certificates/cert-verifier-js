@@ -3,7 +3,6 @@ import parseJSON from './parser';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
-import CERTIFICATE_VERSIONS from './constants/certificateVersions';
 
 export default class Certificate {
   constructor (certificateDefinition, options = {}) {

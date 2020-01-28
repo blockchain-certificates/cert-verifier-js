@@ -158,7 +158,7 @@ export default class Verifier {
     // Get issuer profile
     let issuerProfileJson = await this._doAsyncAction(
       SUB_STEPS.getIssuerProfile,
-      async () => domain.verifier.getIssuerProfile(this.issuer.id)
+      async () => domain.verifier.getIssuerProfile(this.issuer)
     );
 
     // Parse issuer keys

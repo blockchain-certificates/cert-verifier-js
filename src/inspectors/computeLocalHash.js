@@ -79,7 +79,6 @@ export default function computeLocalHash (document, version) {
 
   return new Promise((resolve, reject) => {
     jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
-      console.log(err);
       const isErr = !!err;
       if (isErr) {
         reject(
@@ -95,7 +94,6 @@ export default function computeLocalHash (document, version) {
             )
           ); // + unmappedFields.join(",")
         } else {
-          console.log(normalized);
           resolve(sha256(toUTF8Data(normalized)));
         }
       }

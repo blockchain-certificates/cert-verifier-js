@@ -2,7 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
-import builtins from 'rollup-plugin-node-builtins';
+// import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
@@ -19,7 +19,7 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true,
+      // preferBuiltins: true,
       extensions: [ '.js', '.json' ]
     }),
     // https://github.com/rollup/rollup-plugin-commonjs/issues/166
@@ -63,7 +63,7 @@ export default {
       }
     }),
     json(),
-    builtins(),
+    // builtins(),
     globals(),
     babel({
       exclude: 'node_modules/**',

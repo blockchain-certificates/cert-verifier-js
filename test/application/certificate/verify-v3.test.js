@@ -41,6 +41,54 @@ describe('Certificate test suite', function () {
           expect(finalStep).toEqual(expectedFinalStep);
         });
       });
+
+      describe('when the certificate has been tampered with', function () {
+        let certificate;
+
+        beforeEach(async function () {
+          certificate = new Certificate(FIXTURES.BlockcertsV3_alpha_tampered);
+        });
+
+        afterEach(function () {
+          certificate = null;
+        });
+
+        it('should return the error finalStep', async function () {
+          const errorMessage = domain.i18n.getText('errors', 'ensureHashesEqual');
+          const expectedFinalStep = {
+            code: STEPS.final,
+            status: VERIFICATION_STATUSES.FAILURE,
+            message: errorMessage
+          };
+
+          const finalStep = await certificate.verify();
+          expect(finalStep).toEqual(expectedFinalStep);
+        });
+      });
+
+      describe('when the certificate does not have an issuer profile', function () {
+        let certificate;
+
+        beforeEach(async function () {
+          certificate = new Certificate(FIXTURES.BlockcertsV3_alpha_noIssuerProfile);
+        });
+
+        afterEach(function () {
+          certificate = null;
+        });
+
+        it('should return the error finalStep', async function () {
+          const errorMessage = domain.i18n.getText('errors', 'getIssuerProfile');
+          const expectedFinalStep = {
+            code: STEPS.final,
+            status: VERIFICATION_STATUSES.FAILURE,
+            message: errorMessage
+          };
+
+          const finalStep = await certificate.verify();
+          expect(finalStep).toEqual(expectedFinalStep);
+        });
+      });
     });
   });
 });

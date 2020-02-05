@@ -70,8 +70,7 @@ export default function computeLocalHash (document, version) {
   jsonld.documentLoader = customLoader;
   let normalizeArgs = {
     algorithm: 'URDNA2015',
-    format: 'application/nquads',
-    // protectedMode: 'warn'
+    format: 'application/nquads'
   };
   if (expandContext) {
     normalizeArgs.expandContext = expandContext;

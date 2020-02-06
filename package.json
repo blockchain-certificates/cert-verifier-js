@@ -59,7 +59,8 @@
   "dependencies": {
     "bitcoinjs-lib": "^5.0.3",
     "debug": "^4.1.1",
-    "jsonld": "^0.4.12",
+    "jsonld": "^1.8.1",
+    "rdf-canonize-native": "^1.1.2",
     "sha256": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   },

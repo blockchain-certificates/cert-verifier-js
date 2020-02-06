@@ -2,7 +2,6 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
-import globals from 'rollup-plugin-node-globals';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
@@ -14,6 +13,7 @@ export default {
       name: 'Verifier'
     }
   ],
+  external: 'bindings',
   plugins: [
     resolve({
       extensions: [ '.js', '.json' ],
@@ -38,29 +38,28 @@ export default {
           test: 'global = $;',
           replace: ''
         },
-        // fix jsonld|jsonldjs is not defined
-        {
-          match: /jsonld.js/,
-          test: 'if(typeof jsonld === \'undefined\') {',
-          replace: 'if(typeof window.jsonld === \'undefined\') {'
-        },
-        {
-          match: /jsonld.js/,
-          test: 'jsonld = jsonldjs = factory;',
-          replace: 'window.jsonld = window.jsonldjs = factory;'
-        }
+        // // fix jsonld|jsonldjs is not defined
+        // {
+        //   match: /jsonld.js/,
+        //   test: 'if(typeof jsonld === \'undefined\') {',
+        //   replace: 'if(typeof window.jsonld === \'undefined\') {'
+        // },
+        // {
+        //   match: /jsonld.js/,
+        //   test: 'jsonld = jsonldjs = factory;',
+        //   replace: 'window.jsonld = window.jsonldjs = factory;'
+        // }
       ]
 
     }),
     commonjs({
       namedExports: {
         'debug': ['debug'],
-        'bitcoinjs-lib': ['bitcoin'],
-        'jsonld': ['jsonld']
+        // 'bitcoinjs-lib': ['bitcoin'],
+        // 'jsonld': ['jsonld']
       }
     }),
     json(),
-    globals(),
-    terser()
+    // terser()
   ]
 };

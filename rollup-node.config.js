@@ -2,25 +2,22 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import replace from 'rollup-plugin-re';
-import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
-import babel from 'rollup-plugin-babel';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
   input: 'src/index.js',
   output: [
     {
-      file: 'dist/verifier-iife.js',
-      format: 'iife',
+      file: 'dist/verifier-node.js',
+      format: 'cjs',
       name: 'Verifier'
     }
   ],
   plugins: [
     resolve({
-      browser: true,
-      preferBuiltins: true,
-      extensions: [ '.js', '.json' ]
+      extensions: [ '.js', '.json' ],
+      preferBuiltins: true
     }),
     // https://github.com/rollup/rollup-plugin-commonjs/issues/166
     // fix issue with jsonld
@@ -63,12 +60,7 @@ export default {
       }
     }),
     json(),
-    builtins(),
     globals(),
-    babel({
-      exclude: 'node_modules/**',
-      runtimeHelpers: true
-    }),
     terser()
   ]
 };

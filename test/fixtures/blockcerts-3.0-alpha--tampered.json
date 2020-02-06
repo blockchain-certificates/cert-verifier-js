@@ -11,9 +11,9 @@
   "issuer": "https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json",
   "issuanceDate": "2010-01-01T19:73:24Z",
   "credentialSubject": {
-    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "id": "did:tampered:ebfeb1f712ebc6f1c276e12ec21",
     "alumniOf": {
-      "id": "did:example:c276e12ec21ebfeb1f712ebc6f1"
+      "id": "did:tampered:c276e12ec21ebfeb1f712ebc6f1"
     }
   },
   "signature": {

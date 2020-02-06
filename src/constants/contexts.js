@@ -456,7 +456,7 @@ export default {
       }
     }
   },
-  vc: {
+  verifiableCredential: {
     "@context": {
       "@version": 1.1,
 
@@ -686,7 +686,7 @@ export default {
       "proof": {"@id": "https://w3id.org/security#proof", "@type": "@id", "@container": "@graph"}
     }
   },
-  vc_exp: {
+  verifiableCredentialExample: {
     "@context": [{
       "@version": 1.1
     },"https://www.w3.org/ns/odrl.jsonld", {
@@ -732,5 +732,35 @@ export default {
       "subjectPresence": "ex:subjectPresence",
       "verifier": {"@id": "ex:verifier", "@type": "@id"}
     }]
+  },
+  merkleProof2019: {
+    "@id": "https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Schema.json",
+    "@context": {
+      "@version": 1.1,
+      "challenge": "sec:challenge",
+      "created": {"@id": "http://purl.org/dc/terms/created", "@type": "xsd:dateTime"},
+      "domain": "sec:domain",
+      "expires": {"@id": "sec:expiration", "@type": "xsd:dateTime"},
+      "jws": "sec:jws",
+      "nonce": "sec:nonce",
+      "proofPurpose": {
+        "@id": "sec:proofPurpose",
+        "@type": "@vocab",
+        "@context": {
+          "@version": 1.1,
+
+
+          "id": "@id",
+          "type": "@type",
+
+          "sec": "https://w3id.org/security#",
+
+          "assertionMethod": {"@id": "sec:assertionMethod", "@type": "@id", "@container": "@set"},
+          "authentication": {"@id": "sec:authenticationMethod", "@type": "@id", "@container": "@set"}
+        }
+      },
+      "proofValue": "sec:proofValue",
+      "verificationMethod": {"@id": "sec:verificationMethod", "@type": "@id"}
+    }
   }
 };

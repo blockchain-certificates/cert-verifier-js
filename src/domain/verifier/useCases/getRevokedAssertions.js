@@ -14,7 +14,7 @@ export default async function getRevokedAssertions (revocationListUrl) {
     throw new VerifierError(SUB_STEPS.parseIssuerKeys, errorMessage);
   });
 
-  let issuerRevocationJson = JSON.parse(response);
+  const issuerRevocationJson = JSON.parse(response);
   return issuerRevocationJson.revokedAssertions
     ? issuerRevocationJson.revokedAssertions
     : [];

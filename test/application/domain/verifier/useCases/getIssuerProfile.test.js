@@ -3,7 +3,7 @@ import * as RequestServices from '../../../../../src/services/request';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
 import fixtureBlockcertsV3Alpha from '../../../../fixtures/blockcerts-3.0-alpha';
 import fixtureBlockcertsV2 from '../../../../fixtures/mainnet-valid-2.0';
-import sinon, { stub } from 'sinon';
+import sinon from 'sinon';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   let stubRequest;
@@ -34,7 +34,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
 
     describe('and the Blockcerts version is 3.0-alpha', function () {
       const issuerAddressV3AlphaFixture = fixtureBlockcertsV3Alpha.issuer;
-      
+
       it('should request the profile address', async function () {
         await getIssuerProfile(issuerAddressV3AlphaFixture);
         expect(stubRequest.getCall(0).args).toEqual([{ url: fixtureBlockcertsV3Alpha.issuer }]);

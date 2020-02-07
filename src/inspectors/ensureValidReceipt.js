@@ -17,7 +17,7 @@ export default function ensureValidReceipt (receipt, version) {
     const proof = receipt.proof || receipt.path;
     const isProof = !!proof;
     if (isProof) {
-      for (let index in proof) {
+      for (const index in proof) {
         const node = proof[index];
         let appendedBuffer;
         if (typeof node.left !== 'undefined') {

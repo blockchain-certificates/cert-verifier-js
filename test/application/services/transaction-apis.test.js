@@ -3,7 +3,7 @@ import { TRANSACTION_APIS } from '../../../src/constants';
 
 describe('Transaction APIs test suite', function () {
   let fixtureApiName;
-  let fixtureTransactionId = 'fixture-transaction-id';
+  const fixtureTransactionId = 'fixture-transaction-id';
 
   describe('buildTransactionApiUrl method', function () {
     describe('given the apiName is not found', function () {

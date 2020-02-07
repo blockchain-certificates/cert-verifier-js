@@ -13,7 +13,7 @@ export default function getTransactionId (certificateReceipt = {}) {
       const dataArray = anchor.split(':');
       return dataArray.pop();
     }
-  } catch {
+  } catch (err) {
     throw new VerifierError('', getText('errors', 'getTransactionId'));
   }
 }

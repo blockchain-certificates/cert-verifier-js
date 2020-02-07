@@ -14,10 +14,10 @@ describe('Bitpay Explorer test suite', function () {
 
   describe('given the transaction has enough confirmations', function () {
     const assertionTransactionData = {
-      'issuingAddress': '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-      'remoteHash': 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-      'revokedAddresses': ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
-      'time': new Date(1518049414 * 1000)
+      issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+      remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+      revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
+      time: new Date(1518049414 * 1000)
     };
 
     it('should return the transaction data', function () {

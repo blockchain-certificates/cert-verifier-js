@@ -3,14 +3,13 @@ import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
 import { capitalize } from '../../../helpers/string';
 
-
 // merkleRoot2019: see https://w3c-dvcg.github.io/lds-merkle-proof-2019/#blockchain-keymap
 function getMerkleRoot2019Chain (anchor) {
   const supportedChainsMap = {
-    'btc': {
+    btc: {
       chainName: BLOCKCHAINS.bitcoin.name
     },
-    'eth': {
+    eth: {
       chainName: BLOCKCHAINS.ethmain.name
     }
   };
@@ -31,7 +30,7 @@ function defaultChainAssumption (address = '') {
 }
 
 function getChainObject (chainCodeSignatureValue) {
-  let chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === chainCodeSignatureValue);
+  const chainObject = Object.entries(BLOCKCHAINS).find(entry => entry[1].signatureValue === chainCodeSignatureValue);
   if (typeof chainObject === 'undefined') {
     throw new Error(getText('errors', 'getChain'));
   }
@@ -48,12 +47,12 @@ function getChainObject (chainCodeSignatureValue) {
  * @returns {*}
  */
 export default function getChain (address, signature = null) {
-  let cleanedSignature = signature || {};
+  const cleanedSignature = signature || {};
   if (cleanedSignature.anchors) {
-    let anchors = cleanedSignature.anchors;
-    let anchor = anchors[0];
+    const anchors = cleanedSignature.anchors;
+    const anchor = anchors[0];
     if (anchor.chain) {
-      let chainCodeSignatureValue = anchor.chain;
+      const chainCodeSignatureValue = anchor.chain;
       return getChainObject(chainCodeSignatureValue);
     } else if (typeof anchor === 'string') {
       return getMerkleRoot2019Chain(anchor);

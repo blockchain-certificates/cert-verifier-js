@@ -9,7 +9,7 @@ export default function ensureIssuerSignature (
   certificateSignature,
   chain
 ) {
-  let bitcoinChain =
+  const bitcoinChain =
     chain === BLOCKCHAINS.bitcoin.code
       ? bitcoin.networks.bitcoin
       : bitcoin.networks.testnet;

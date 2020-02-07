@@ -30,7 +30,7 @@ function createKeyObject (rawKeyObject, finalPublicKey = null) {
  */
 export default function parseIssuerKeys (issuerProfileJson) {
   try {
-    let keyMap = {};
+    const keyMap = {};
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
       const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;

@@ -1,6 +1,6 @@
-import BlockcertsV3_alpha from './blockcerts-3.0-alpha';
-import BlockcertsV3_alpha_tampered from './blockcerts-3.0-alpha--tampered';
-import BlockcertsV3_alpha_noIssuerProfile from './blockcerts-3.0-alpha--no-issuer-profile';
+import BlockcertsV3Alpha from './blockcerts-3.0-alpha';
+import BlockcertsV3AlphaTampered from './blockcerts-3.0-alpha--tampered';
+import BlockcertsV3AlphaNoIssuerProfile from './blockcerts-3.0-alpha--no-issuer-profile';
 import EthereumMainV2Valid from './ethereum-main-valid-2.0';
 import EthereumMainInvalidMerkleRoot from './ethereum-merkle-root-unmatch-2.0';
 import EthereumMainRevoked from './ethereum-revoked-2.0';
@@ -22,9 +22,9 @@ import TestnetV2Valid from './testnet-valid-2.0';
 import TestnetV2ValidV1Issuer from './testnet-valid-v1-issuer-2.0';
 
 export default {
-  BlockcertsV3_alpha,
-  BlockcertsV3_alpha_tampered,
-  BlockcertsV3_alpha_noIssuerProfile,
+  BlockcertsV3Alpha,
+  BlockcertsV3AlphaTampered,
+  BlockcertsV3AlphaNoIssuerProfile,
   EthereumMainV2Valid,
   EthereumMainInvalidMerkleRoot,
   EthereumMainRevoked,

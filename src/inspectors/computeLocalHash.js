@@ -72,7 +72,7 @@ export default function computeLocalHash (document, version) {
     return nodeDocumentLoader(url, callback);
   };
   jsonld.documentLoader = customLoader;
-  let normalizeArgs = {
+  const normalizeArgs = {
     algorithm: 'URDNA2015',
     format: 'application/nquads'
   };
@@ -88,7 +88,7 @@ export default function computeLocalHash (document, version) {
           new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'))
         );
       } else {
-        let unmappedFields = getUnmappedFields(normalized);
+        const unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
           reject(
             new VerifierError(

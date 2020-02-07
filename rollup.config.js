@@ -24,7 +24,7 @@ export default {
     resolve({
       browser: true,
       preferBuiltins: true,
-      extensions: [ '.js', '.json' ]
+      extensions: ['.js', '.json']
     }),
     // https://github.com/rollup/rollup-plugin-commonjs/issues/166
     // fix issue with jsonld
@@ -61,9 +61,9 @@ export default {
     }),
     commonjs({
       namedExports: {
-        'debug': ['debug'],
+        debug: ['debug'],
         'bitcoinjs-lib': ['bitcoin'],
-        'jsonld': ['jsonld']
+        jsonld: ['jsonld']
       }
     }),
     json(),

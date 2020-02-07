@@ -6,7 +6,7 @@ function noOffset (s) {
   });
   day[1] -= 1;
   day = new Date(Date.UTC.apply(Date, day));
-  let offsetString = s.slice(-5);
+  const offsetString = s.slice(-5);
   let offset = parseInt(offsetString, 10) / 100;
   if (offsetString.slice(0, 1) === '+') offset *= -1;
   day.setHours(day.getHours() + offset);
@@ -16,8 +16,8 @@ function noOffset (s) {
 function dateFromRegex (s) {
   let day;
   let tz;
-  let rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
-  let p = rx.exec(s) || [];
+  const rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
+  const p = rx.exec(s) || [];
   if (p[1]) {
     day = p[1].split(/\D/).map(function (itm) {
       return parseInt(itm, 10) || 0;
@@ -38,13 +38,13 @@ function dateFromRegex (s) {
 
 function dateFromIso (isoDate) {
   // Chrome
-  let diso = Date.parse(isoDate);
+  const diso = Date.parse(isoDate);
   if (diso) {
     return new Date(diso);
   }
 
   // JS 1.8 gecko
-  let offsetDate = noOffset(isoDate);
+  const offsetDate = noOffset(isoDate);
   if (offsetDate) {
     return offsetDate;
   }

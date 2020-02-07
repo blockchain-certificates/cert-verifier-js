@@ -6,10 +6,10 @@ describe('domain certificates get chain use case test suite', function () {
     describe('given the first anchor has a chain property', function () {
       const addressFixture = '';
       const signatureFixture = {
-        'anchors': [{
-          'sourceId': '0xa12c498c8fcf59ee2fe785c94c38be4797fb027e6450439a7ef30ad61d7616d3',
-          'type': 'ETHData',
-          'chain': 'ethereumMainnet'
+        anchors: [{
+          sourceId: '0xa12c498c8fcf59ee2fe785c94c38be4797fb027e6450439a7ef30ad61d7616d3',
+          type: 'ETHData',
+          chain: 'ethereumMainnet'
         }]
       };
 
@@ -33,11 +33,11 @@ describe('domain certificates get chain use case test suite', function () {
 
     describe('given the first anchor does not have a chain property', function () {
       it('should return the correct chain object', function () {
-        let addressFixture = '3608e5e893a4edb8634e79b43ceae4bd30153b80a7e91e3b9d65b1bd16485433';
-        let signatureFixture = {
-          'anchors': [{
-            'type': 'BTCOpReturn',
-            'sourceId': '3608e5e893a4edb8634e79b43ceae4bd30153b80a7e91e3b9d65b1bd16485433'
+        const addressFixture = '3608e5e893a4edb8634e79b43ceae4bd30153b80a7e91e3b9d65b1bd16485433';
+        const signatureFixture = {
+          anchors: [{
+            type: 'BTCOpReturn',
+            sourceId: '3608e5e893a4edb8634e79b43ceae4bd30153b80a7e91e3b9d65b1bd16485433'
           }]
         };
 
@@ -54,8 +54,8 @@ describe('domain certificates get chain use case test suite', function () {
       describe('and the network is mainnet', function () {
         it('should return bitcoin mainnet value', function () {
           const fixtureSignature = {
-            "anchors": [
-              "blink:btc:mainnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+            anchors: [
+              'blink:btc:mainnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
             ]
           };
           const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
@@ -67,8 +67,8 @@ describe('domain certificates get chain use case test suite', function () {
       describe('and the network is testnet', function () {
         it('should return bitcoin testnet value', function () {
           const fixtureSignature = {
-            "anchors": [
-              "blink:btc:testnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+            anchors: [
+              'blink:btc:testnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
             ]
           };
           const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
@@ -82,8 +82,8 @@ describe('domain certificates get chain use case test suite', function () {
       describe('and the network is mainnet', function () {
         it('should return ethereum mainnet value', function () {
           const fixtureSignature = {
-            "anchors": [
-              "blink:eth:mainnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+            anchors: [
+              'blink:eth:mainnet:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
             ]
           };
           const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
@@ -95,8 +95,8 @@ describe('domain certificates get chain use case test suite', function () {
       describe('and the network is ropsten', function () {
         it('should return ethereum ropsten value', function () {
           const fixtureSignature = {
-            "anchors": [
-              "blink:eth:ropsten:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+            anchors: [
+              'blink:eth:ropsten:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
             ]
           };
           const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
@@ -108,8 +108,8 @@ describe('domain certificates get chain use case test suite', function () {
       describe('and the network is rinkeby', function () {
         it('should return ethereum rinkeby value', function () {
           const fixtureSignature = {
-            "anchors": [
-              "blink:eth:rinkeby:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a"
+            anchors: [
+              'blink:eth:rinkeby:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
             ]
           };
           const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);

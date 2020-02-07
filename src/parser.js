@@ -12,29 +12,29 @@ import parseV3 from './parsers/parseV3';
  * @private
  */
 function getSignatureImages (signatureRawObject, certificateVersion) {
-  let signatureImageObjects = [];
+  const signatureImageObjects = [];
 
   switch (certificateVersion) {
     case CERTIFICATE_VERSIONS.V1_1:
     case CERTIFICATE_VERSIONS.V1_2:
       if (signatureRawObject.constructor === Array) {
-        for (let index in signatureRawObject) {
-          let signatureLine = signatureRawObject[index];
-          let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-          let signerName = 'name' in signatureLine ? signatureLine.name : null;
-          let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+        for (const index in signatureRawObject) {
+          const signatureLine = signatureRawObject[index];
+          const jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+          const signerName = 'name' in signatureLine ? signatureLine.name : null;
+          const signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
           signatureImageObjects.push(signatureObject);
         }
       } else {
-        let signatureObject = new SignatureImage(signatureRawObject, null, null);
+        const signatureObject = new SignatureImage(signatureRawObject, null, null);
         signatureImageObjects.push(signatureObject);
       }
       break;
 
     case CERTIFICATE_VERSIONS.V2_0:
-      for (let index in signatureRawObject) {
-        let signatureLine = signatureRawObject[index];
-        let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+      for (const index in signatureRawObject) {
+        const signatureLine = signatureRawObject[index];
+        const signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
         signatureImageObjects.push(signatureObject);
       }
       break;
@@ -75,7 +75,7 @@ function parseV1 (certificateJson) {
   if (typeof subtitle === 'object') {
     subtitle = subtitle.display ? subtitle.content : '';
   }
-  let name = fullCertificateObject.title || fullCertificateObject.name;
+  const name = fullCertificateObject.title || fullCertificateObject.name;
 
   return {
     certificateImage,
@@ -147,9 +147,9 @@ function parseV2 (certificateJson) {
 }
 
 const versionParserMap = {
-  '1': parseV1,
-  '2': parseV2,
-  '3': parseV3
+  1: parseV1,
+  2: parseV2,
+  3: parseV3
 };
 
 /**

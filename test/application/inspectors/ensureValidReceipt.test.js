@@ -54,7 +54,7 @@ describe('ensureValidReceipt inspector test suite', function () {
 
     describe('when the left path is invalid', function () {
       it('should throw an error', function () {
-        invalidFixture.proof.push({left: 'fonky'});
+        invalidFixture.proof.push({ left: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture, certificateVersions.V2_0);
         }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
@@ -63,7 +63,7 @@ describe('ensureValidReceipt inspector test suite', function () {
 
     describe('when the right path is invalid', function () {
       it('should throw an error', function () {
-        invalidFixture.proof.push({right: 'fonky'});
+        invalidFixture.proof.push({ right: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture, certificateVersions.V2_0);
         }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
@@ -102,7 +102,7 @@ describe('ensureValidReceipt inspector test suite', function () {
 
     describe('when the left path is invalid', function () {
       it('should throw an error', function () {
-        invalidFixture.path.push({left: 'fonky'});
+        invalidFixture.path.push({ left: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture, certificateVersions.V3_0_alpha);
         }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
@@ -111,7 +111,7 @@ describe('ensureValidReceipt inspector test suite', function () {
 
     describe('when the right path is invalid', function () {
       it('should throw an error', function () {
-        invalidFixture.path.push({right: 'fonky'});
+        invalidFixture.path.push({ right: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture, certificateVersions.V3_0_alpha);
         }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));

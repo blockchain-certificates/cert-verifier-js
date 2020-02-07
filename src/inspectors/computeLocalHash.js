@@ -61,7 +61,8 @@ export default function computeLocalHash (document, version) {
   jsonld.documentLoader = customLoader;
   let normalizeArgs = {
     algorithm: 'URDNA2015',
-    format: 'application/nquads'
+    format: 'application/nquads',
+    useNative: false
   };
   if (expandContext) {
     normalizeArgs.expandContext = expandContext;

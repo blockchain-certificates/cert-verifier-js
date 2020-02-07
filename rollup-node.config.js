@@ -13,7 +13,6 @@ export default {
       name: 'Verifier'
     }
   ],
-  external: 'bindings',
   plugins: [
     resolve({
       extensions: [ '.js', '.json' ],

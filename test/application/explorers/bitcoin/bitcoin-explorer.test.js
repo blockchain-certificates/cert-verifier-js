@@ -8,11 +8,11 @@ describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
   const assertionRequestUrl = `https://insight.bitpay.com/api/tx/${fixtureTransactionId}`;
   let stubRequest;
-  let assertionResponse = {
-    'issuingAddress': '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-    'remoteHash': 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-    'revokedAddresses': ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
-    'time': new Date(1518049414 * 1000)
+  const assertionResponse = {
+    issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+    remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+    revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
+    time: new Date(1518049414 * 1000)
   };
 
   beforeEach(function () {

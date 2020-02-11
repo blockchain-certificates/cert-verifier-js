@@ -14,10 +14,10 @@ describe('Blockcypher Explorer test suite', function () {
 
   describe('given the transaction has enough confirmations', function () {
     const assertionTransactionData = {
-      'issuingAddress': '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-      'remoteHash': 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-      'revokedAddresses': ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
-      'time': new Date('2018-02-08T00:23:03.358Z')
+      issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+      remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+      revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'],
+      time: new Date('2018-02-08T00:23:03.358Z')
     };
 
     it('should return the transaction data', function () {

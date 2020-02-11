@@ -1,6 +1,7 @@
 import { CERTIFICATE_VERSIONS } from './constants';
 import domain from './domain';
 import { SignatureImage } from './models';
+import parseV3 from './parsers/parseV3';
 
 /**
  * _getSignatureImages
@@ -11,29 +12,29 @@ import { SignatureImage } from './models';
  * @private
  */
 function getSignatureImages (signatureRawObject, certificateVersion) {
-  let signatureImageObjects = [];
+  const signatureImageObjects = [];
 
   switch (certificateVersion) {
     case CERTIFICATE_VERSIONS.V1_1:
     case CERTIFICATE_VERSIONS.V1_2:
       if (signatureRawObject.constructor === Array) {
-        for (let index in signatureRawObject) {
-          let signatureLine = signatureRawObject[index];
-          let jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
-          let signerName = 'name' in signatureLine ? signatureLine.name : null;
-          let signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
+        for (const index in signatureRawObject) {
+          const signatureLine = signatureRawObject[index];
+          const jobTitle = 'jobTitle' in signatureLine ? signatureLine.jobTitle : null;
+          const signerName = 'name' in signatureLine ? signatureLine.name : null;
+          const signatureObject = new SignatureImage(signatureLine.image, jobTitle, signerName);
           signatureImageObjects.push(signatureObject);
         }
       } else {
-        let signatureObject = new SignatureImage(signatureRawObject, null, null);
+        const signatureObject = new SignatureImage(signatureRawObject, null, null);
         signatureImageObjects.push(signatureObject);
       }
       break;
 
     case CERTIFICATE_VERSIONS.V2_0:
-      for (let index in signatureRawObject) {
-        let signatureLine = signatureRawObject[index];
-        let signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+      for (const index in signatureRawObject) {
+        const signatureLine = signatureRawObject[index];
+        const signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
         signatureImageObjects.push(signatureObject);
       }
       break;
@@ -74,7 +75,7 @@ function parseV1 (certificateJson) {
   if (typeof subtitle === 'object') {
     subtitle = subtitle.display ? subtitle.content : '';
   }
-  let name = fullCertificateObject.title || fullCertificateObject.name;
+  const name = fullCertificateObject.title || fullCertificateObject.name;
 
   return {
     certificateImage,
@@ -145,6 +146,41 @@ function parseV2 (certificateJson) {
   };
 }
 
+const versionParserMap = {
+  1: parseV1,
+  2: parseV2,
+  3: parseV3
+};
+
+/**
+ *
+ * @param array: string[]
+ * @param v: string
+ * @returns boolean
+ */
+function lookupVersion (array, v) {
+  return array.some(str => str.indexOf(`v${v}`) > -1 || str.indexOf(`${v}.`) > -1);
+}
+
+/**
+ *
+ * @param context: string | Context[]
+ * @returns {string}
+ */
+
+function retrieveBlockcertsVersion (context) {
+  if (typeof context === 'string') {
+    context = [context];
+  }
+
+  const blockcertsContext = context.filter(ctx => typeof ctx === 'string').find(ctx => ctx.toLowerCase().indexOf('blockcerts') > 0);
+  const blockcertsContextArray = blockcertsContext.split('/').filter(str => str !== '');
+
+  const availableVersions = Object.keys(versionParserMap);
+
+  return availableVersions.filter(version => lookupVersion(blockcertsContextArray, version))[0];
+}
+
 /**
  * parseJson
  *
@@ -152,14 +188,9 @@ function parseV2 (certificateJson) {
  * @returns {*}
  */
 export default function parseJSON (certificateJson) {
-  let parsedCertificate;
   try {
-    const version = certificateJson['@context'];
-    if (version instanceof Array) {
-      parsedCertificate = parseV2(certificateJson);
-    } else {
-      parsedCertificate = parseV1(certificateJson);
-    }
+    const version = retrieveBlockcertsVersion(certificateJson['@context']);
+    const parsedCertificate = versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (err) {

@@ -30,6 +30,15 @@ export const BLOCKCHAINS = {
       raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
+  ethrinkeby: {
+    code: 'ethrinkeby',
+    name: 'Ethereum Testnet',
+    signatureValue: 'ethereumRinkeby',
+    transactionTemplates: {
+      full: `https://rinkeby.etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
+      raw: `https://rinkeby.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+    }
+  },
   mocknet: {
     code: 'mocknet',
     name: 'Mocknet',

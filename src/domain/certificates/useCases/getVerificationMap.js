@@ -66,7 +66,7 @@ function setSubStepsToSteps (subSteps) {
  * @returns {Array}
  */
 function getFullStepsFromSubSteps (subStepMap) {
-  let subSteps = subStepMap.map(stepCode => {
+  const subSteps = subStepMap.map(stepCode => {
     const subStep = Object.assign({}, SUB_STEPS.language[stepCode]);
     return {
       ...subStep,
@@ -93,7 +93,7 @@ export default function getVerificationMap (chain) {
     return [];
   }
 
-  let network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
+  const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
   return getFullStepsFromSubSteps(verificationMap[network]);
 }

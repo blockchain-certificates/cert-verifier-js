@@ -21,7 +21,7 @@ export default class Verifier {
     let document = certificateJson.document;
     if (!document) {
       const certificateCopy = Object.assign({}, certificateJson);
-      delete certificateCopy['signature'];
+      delete certificateCopy.signature;
       document = certificateCopy;
     }
 
@@ -77,7 +77,7 @@ export default class Verifier {
     }
 
     try {
-      let res = action();
+      const res = action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
         this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
@@ -117,7 +117,7 @@ export default class Verifier {
     }
 
     try {
-      let res = await action();
+      const res = await action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
         this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
@@ -144,25 +144,25 @@ export default class Verifier {
     );
 
     // Compute local hash
-    let localHash = await this._doAsyncAction(
+    const localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
       async () => inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
-    let txData = await this._doAsyncAction(
+    const txData = await this._doAsyncAction(
       SUB_STEPS.fetchRemoteHash,
       async () => domain.verifier.lookForTx(this.transactionId, this.chain.code, this.version)
     );
 
     // Get issuer profile
-    let issuerProfileJson = await this._doAsyncAction(
+    const issuerProfileJson = await this._doAsyncAction(
       SUB_STEPS.getIssuerProfile,
-      async () => domain.verifier.getIssuerProfile(this.issuer.id)
+      async () => domain.verifier.getIssuerProfile(this.issuer)
     );
 
     // Parse issuer keys
-    let issuerKeyMap = await this._doAsyncAction(
+    const issuerKeyMap = await this._doAsyncAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(issuerProfileJson)
     );
@@ -179,7 +179,7 @@ export default class Verifier {
 
     // Check receipt
     this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt)
+      inspectors.ensureValidReceipt(this.receipt, this.version)
     );
 
     // Check revoked status
@@ -224,7 +224,7 @@ export default class Verifier {
    */
   async _verifyV2Mock () {
     // Compute local hash
-    let localHash = await this._doAsyncAction(
+    const localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
       async () =>
         inspectors.computeLocalHash(this.documentToVerify, this.version)
@@ -303,7 +303,7 @@ export default class Verifier {
    */
   _updateStatusCallback (code, label, status, errorMessage = '') {
     if (code != null) {
-      let update = { code, label, status };
+      const update = { code, label, status };
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

@@ -27,8 +27,8 @@ const TRANSACTIONS_APIS_URLS = {
   },
   // Add &apikey={key} to EtherScan URL's if getting rate limited
   [TRANSACTION_APIS.Etherscan]: {
-    main: `https://api.etherscan.io/api?module=proxy`,
-    ropsten: `https://api-ropsten.etherscan.io/api?module=proxy`
+    main: 'https://api.etherscan.io/api?module=proxy',
+    ropsten: 'https://api-ropsten.etherscan.io/api?module=proxy'
   }
 };
 

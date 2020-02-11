@@ -31,7 +31,7 @@ export default function lookForTx (transactionId, chain, certificateVersion) {
   }
 
   // Queue up blockchain explorer APIs
-  let promises = [];
+  const promises = [];
   let limit;
   if (certificateVersion === CERTIFICATE_VERSIONS.V1_1 || certificateVersion === CERTIFICATE_VERSIONS.V1_2) {
     limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;

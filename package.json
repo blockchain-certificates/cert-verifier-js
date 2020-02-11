@@ -56,6 +56,7 @@
     ]
   },
   "dependencies": {
+    "@vaultie/lds-merkle-proof-2019": "0.0.6",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^5.0.3",
     "bs58": "^4.0.1",
@@ -63,7 +64,7 @@
     "debug": "^4.1.1",
     "ecurve": "^1.0.4",
     "elliptic": "github:xg-wang/elliptic",
-    "jsonld": "^0.4.12",
+    "jsonld": "^1.8.1",
     "sha256": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   },

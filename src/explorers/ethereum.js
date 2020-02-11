@@ -14,13 +14,13 @@ export function getEtherScanFetcher (transactionId, chain) {
     etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action + transactionId;
   }
 
-  let etherScanFetcher = new Promise((resolve, reject) => {
+  const etherScanFetcher = new Promise((resolve, reject) => {
     return request({ url: etherScanUrl })
       .then(function (response) {
         const responseTxData = JSON.parse(response);
         try {
           // Parse block to get timestamp first, then create TransactionData
-          let blockFetcher = getEtherScanBlock(responseTxData, chain);
+          const blockFetcher = getEtherScanBlock(responseTxData, chain);
           blockFetcher
             .then(function (blockResponse) {
               const txData = parseEtherScanResponse(responseTxData, blockResponse);
@@ -68,7 +68,7 @@ function getEtherScanBlock (jsonResponse, chain) {
         const responseData = JSON.parse(response);
         const blockData = responseData.result;
         try {
-          let checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
+          const checkConfirmationsFetcher = checkEtherScanConfirmations(chain, blockNumber);
           checkConfirmationsFetcher
             .then(function () {
               resolve(blockData);

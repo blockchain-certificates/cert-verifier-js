@@ -6,16 +6,20 @@ import { getText } from '../../i18n/useCases';
 /**
  * getIssuerProfile
  *
- * @param issuerId
+ * @param issuerAddress
  * @returns {Promise<any>}
  */
-export default async function getIssuerProfile (issuerId) {
+export default async function getIssuerProfile (issuerAddress) {
   const errorMessage = getText('errors', 'getIssuerProfile');
-  if (!issuerId) {
+  if (!issuerAddress) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   }
 
-  const response = await request({ url: issuerId }).catch(() => {
+  if (typeof issuerAddress === 'object') {
+    issuerAddress = issuerAddress.id;
+  }
+
+  const response = await request({ url: issuerAddress }).catch(() => {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   });
 

@@ -12,7 +12,11 @@ const {
   obi: OBI_CONTEXT,
   blockcerts: BLOCKCERTS_CONTEXT,
   blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
-  blockcertsv2: BLOCKCERTSV2_CONTEXT
+  blockcertsv2: BLOCKCERTSV2_CONTEXT,
+  blockcertsV3: BLOCKCERTSV3_CONTEXT,
+  verifiableCredential: VERIFIABLE_CREDENTIAL_CONTEXT,
+  verifiableCredentialExample: VERIFIABLE_CREDENTIAL_EXAMPLE,
+  merkleProof2019: MERKLE_PROOF_2019
 } = ContextsMap;
 const CONTEXTS = {};
 // Preload contexts
@@ -23,6 +27,14 @@ CONTEXTS['https://openbadgespec.org/v2/context.json'] = OBI_CONTEXT;
 CONTEXTS['https://w3id.org/blockcerts/v2'] = BLOCKCERTSV2_CONTEXT;
 CONTEXTS['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = BLOCKCERTSV2_CONTEXT;
 CONTEXTS['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
+
+// V3
+CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
+CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
+CONTEXTS['https://www.w3.org/2018/credentials/v1'] = VERIFIABLE_CREDENTIAL_CONTEXT;
+CONTEXTS['https://www.w3.org/2018/credentials/examples/v1'] = VERIFIABLE_CREDENTIAL_EXAMPLE;
+CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
+CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 
 function getUnmappedFields (normalized) {
   const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
@@ -47,6 +59,7 @@ export default function computeLocalHash (document, version) {
       expandContext.push({ '@vocab': 'http://fallback.org/' });
     }
   }
+
   const nodeDocumentLoader = jsonld.documentLoaders.node();
   const customLoader = function (url, callback) {
     if (url in CONTEXTS) {
@@ -59,7 +72,7 @@ export default function computeLocalHash (document, version) {
     return nodeDocumentLoader(url, callback);
   };
   jsonld.documentLoader = customLoader;
-  let normalizeArgs = {
+  const normalizeArgs = {
     algorithm: 'URDNA2015',
     format: 'application/nquads'
   };
@@ -75,7 +88,7 @@ export default function computeLocalHash (document, version) {
           new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'))
         );
       } else {
-        let unmappedFields = getUnmappedFields(normalized);
+        const unmappedFields = getUnmappedFields(normalized);
         if (unmappedFields) {
           reject(
             new VerifierError(

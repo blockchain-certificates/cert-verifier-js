@@ -46,8 +46,8 @@ describe('Certificate test suite', function () {
         let certificate;
 
         it('should call it with the step, the text, the status & the error message', async function () {
-          let updates = [];
-          let assertionStep = {
+          const updates = [];
+          const assertionStep = {
             code: SUB_STEPS.checkRevokedStatus,
             label: SUB_STEPS.language.checkRevokedStatus.labelPending,
             status: VERIFICATION_STATUSES.FAILURE,

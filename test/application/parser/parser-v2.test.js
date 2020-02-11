@@ -7,7 +7,7 @@ describe('Parser test suite', function () {
     it('should set whether or not the certificate format is valid', () => {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
       delete fixtureCopy.verification;
-      let parsedCertificate = parseJSON(fixtureCopy);
+      const parsedCertificate = parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });
   });

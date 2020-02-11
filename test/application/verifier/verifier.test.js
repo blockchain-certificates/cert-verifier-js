@@ -17,7 +17,7 @@ describe('Verifier entity test suite', function () {
 
   describe('constructor method', function () {
     describe('given all parameters are passed', function () {
-      let verifierInstance = new Verifier(verifierParamFixture);
+      const verifierInstance = new Verifier(verifierParamFixture);
 
       it('should set the chain to the verifier object', function () {
         expect(verifierInstance.chain).toEqual(verifierParamFixture.chain);

@@ -8,6 +8,8 @@ const TRANSACTION_APIS = {
 
 const TRANSACTION_ID_PLACEHOLDER = '{transaction_id}';
 
+const ETHERSCAN_API_KEY = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
+
 const TRANSACTIONS_APIS_URLS = {
   [TRANSACTION_APIS.Bitpay]: {
     mainnet: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
@@ -27,8 +29,8 @@ const TRANSACTIONS_APIS_URLS = {
   },
   // Add &apikey={key} to EtherScan URL's if getting rate limited
   [TRANSACTION_APIS.Etherscan]: {
-    main: 'https://api.etherscan.io/api?module=proxy',
-    ropsten: 'https://api-ropsten.etherscan.io/api?module=proxy'
+    main: `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`,
+    ropsten: `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`
   }
 };
 

@@ -63,8 +63,8 @@ export default {
       }
     }),
     json(),
-    builtins(),
     globals(),
+    builtins(),
     babel({
       exclude: 'node_modules/**',
       runtimeHelpers: true

@@ -1,3 +1,5 @@
+/* eslint no-undef: 0 */
+// TODO remove above eslint rule
 import '../../dist/verifier-iife';
 import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';

@@ -1,6 +1,6 @@
-const verifier = require('../../dist/verifier');
 import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
+const verifier = require('../../dist/verifier');
 
 describe('verifier build test suite', function () {
   it('works as expected', async function () {

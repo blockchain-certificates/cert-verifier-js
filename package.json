@@ -10,10 +10,11 @@
   "module": "dist/verifier-es.js",
   "scripts": {
     "test": "jest --runInBand",
+    "test:build": "jest --testRegex \"/*(.test.build.js)\" --runInBand",
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
-    "build": "npm run build:esm && npm run build:es5",
+    "build": "npm run build:esm && npm run build:es5 && npm run test:build",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
     "lint": "semistandard --verbose | snazzy",
@@ -64,7 +65,7 @@
     "debug": "^4.1.1",
     "ecurve": "^1.0.4",
     "elliptic": "github:xg-wang/elliptic",
-    "jsonld": "^1.8.1",
+    "jsonld": "^0.4.12",
     "sha256": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   },

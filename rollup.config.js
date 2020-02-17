@@ -57,7 +57,6 @@ export default {
           replace: 'window.jsonld = window.jsonldjs = factory;'
         }
       ]
-
     }),
     commonjs({
       namedExports: {
@@ -67,8 +66,8 @@ export default {
       }
     }),
     json(),
-    builtins(),
     globals(),
+    builtins(),
     terser()
   ]
 };

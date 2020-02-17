@@ -18,9 +18,6 @@
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
     "lint": "semistandard --verbose | snazzy",
-    "precommit": "npm run lint",
-    "prepush": "npm run lint && npm run test",
-    "commitmsg": "commitlint -E HUSKY_GIT_PARAMS",
     "semantic-release": "semantic-release"
   },
   "publishConfig": {
@@ -55,6 +52,13 @@
       "dist/verifier-es.js",
       "dist/verifier-iife.js"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "npm run lint",
+      "pre-push": "npm run lint && npm run test"
+    }
   },
   "dependencies": {
     "@vaultie/lds-merkle-proof-2019": "0.0.6",

@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
 
-xdescribe('Certificate test suite', function () {
+describe('Certificate test suite', function () {
   describe('verify method', function () {
     describe('given it is called with a Blockcerts v3', function () {
       describe('when the certificate is valid', function () {

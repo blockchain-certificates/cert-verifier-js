@@ -55,6 +55,10 @@ export default {
           match: /jsonld.js/,
           test: 'jsonld = jsonldjs = factory;',
           replace: 'window.jsonld = window.jsonldjs = factory;'
+        },
+        {
+          test: 'var version = \'\'',
+          replace: 'var version = \'11.0.0\''
         }
       ]
     }),

@@ -38,16 +38,9 @@
   },
   "semistandard": {
     "globals": [
-      "afterEach",
-      "describe",
-      "beforeEach",
-      "expect",
-      "it",
-      "xit",
-      "xdescribe",
-      "XMLHttpRequest",
-      "jest"
+      "XMLHttpRequest"
     ],
+    "env": "jest",
     "ignore": [
       "dist/verifier.js",
       "dist/verifier-es.js",

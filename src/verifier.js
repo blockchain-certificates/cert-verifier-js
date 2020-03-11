@@ -22,6 +22,7 @@ export default class Verifier {
     if (!document) {
       const certificateCopy = Object.assign({}, certificateJson);
       delete certificateCopy.signature;
+      delete certificateCopy.proof;
       document = certificateCopy;
     }
 

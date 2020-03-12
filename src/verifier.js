@@ -1,6 +1,6 @@
 import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
-import CERTIFICATE_VERSIONS from './constants/certificateVersions';
+import CERTIFICATE_VERSIONS, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
@@ -20,10 +20,7 @@ export default class Verifier {
 
     let document = certificateJson.document;
     if (!document) {
-      const certificateCopy = Object.assign({}, certificateJson);
-      delete certificateCopy.signature;
-      delete certificateCopy.proof;
-      document = certificateCopy;
+      document = this._retrieveDocumentBeforeIssuance(certificateJson);
     }
 
     this.documentToVerify = Object.assign({}, document);
@@ -272,6 +269,16 @@ export default class Verifier {
    */
   _isFailing () {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
+  }
+
+  _retrieveDocumentBeforeIssuance (certificateJson) {
+    const certificateCopy = Object.assign({}, certificateJson);
+    if (isV3(this.version)) {
+      delete certificateCopy.proof;
+    } else {
+      delete certificateCopy.signature;
+    }
+    return certificateCopy;
   }
 
   /**

@@ -42,9 +42,7 @@
     ],
     "env": "jest",
     "ignore": [
-      "dist/verifier.js",
-      "dist/verifier-es.js",
-      "dist/verifier-iife.js"
+      "dist/"
     ]
   },
   "husky": {
@@ -76,6 +74,7 @@
     "@commitlint/config-conventional": "^8.0.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
+    "core-js": "^3.6.4",
     "eslint-config-semistandard": "^13.0.0",
     "eslint-plugin-import": "^2.17.2",
     "husky": "^4.0.0",

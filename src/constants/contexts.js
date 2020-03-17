@@ -420,38 +420,30 @@ export default {
   },
   blockcertsV3: {
     '@context': {
-      id: '@id',
-      type: '@type',
-      bc: 'https://w3id.org/blockcerts#',
-      cp: 'https://w3id.org/chainpoint#',
-      schema: 'http://schema.org/',
-      sec: 'https://w3id.org/security#',
-      xsd: 'http://www.w3.org/2001/XMLSchema#',
+      'id': '@id',
+      'type': '@type',
+      'bc': 'https://w3id.org/blockcerts#',
+      'cp': 'https://w3id.org/chainpoint#',
+      'schema': 'http://schema.org/',
+      'sec': 'https://w3id.org/security#',
+      'xsd': 'http://www.w3.org/2001/XMLSchema#',
 
-      MerkleProof2019: 'sec:MerkleProof2019',
+      'MerkleProof2019': 'sec:MerkleProof2019',
 
-      introductionUrl: { '@id': 'bc:introductionUrl', '@type': '@id' },
+      'BlockcertsCredential': 'bc:BlockcertsCredential',
+      'introductionUrl': { '@id': 'bc:introductionUrl', '@type': '@id' },
 
-      CryptographicKey: 'sec:Key',
+      'CryptographicKey': 'sec:Key',
 
-      BTCOpReturn: 'cp:BTCOpReturn',
-      targetHash: 'cp:targetHash',
-      merkleRoot: 'cp:merkleRoot',
-      proofOfWork: 'cp:proof',
-      anchors: 'cp:anchors',
-      sourceId: 'cp:sourceId',
-      right: 'cp:right',
-      left: 'cp:left',
+      'domain': 'sec:domain',
+      'nonce': 'sec:nonce',
+      'proofValue': 'sec:proofValue',
+      'assertionMethod': { '@id': 'sec:assertionMethod', '@type': '@id', '@container': '@set' },
+      'proofPurpose': { '@id': 'sec:proofPurpose', '@type': '@vocab' },
+      'verificationMethod': { '@id': 'sec:verificationMethod', '@type': '@id' },
+      'created': { '@id': 'bc:created', '@type': 'xsd:dateTime' },
 
-      created: 'sec:created',
-      creator: 'sec:creator',
-      domain: 'sec:domain',
-      nonce: 'sec:nonce',
-      proofValue: 'sec:proofValue',
-      proofPurpose: 'sec:proofPurpose',
-      verificationMethod: 'sec:verificationMethod',
-
-      name: {
+      'name': {
         '@id': 'schema:name'
       }
     }

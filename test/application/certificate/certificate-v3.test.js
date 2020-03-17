@@ -2,7 +2,7 @@ import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import fixture from '../../fixtures/blockcerts-3.0-alpha';
 import signatureAssertion from '../../assertions/v3.0-alpha-signature-merkle2019';
 
-const assertionTransactionId = '0x0927853a1a8283ad2e49e13902b008662dc923bc093d37b72b6f7c9d13f5dd95';
+const assertionTransactionId = '0xfdc9956953feee55a356b828a81791c6b8f1c743cc918457b7dc6ccf810544a1';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {

@@ -6,20 +6,21 @@
   ],
   "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
   "type": [
-    "VerifiableCredential"
+    "VerifiableCredential",
+    "BlockcertsCredential"
   ],
   "issuer": "https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json",
-  "issuanceDate": "2010-01-01T19:73:24Z",
+  "issuanceDate": "2010-01-01T19:33:24Z",
   "credentialSubject": {
-    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "id": "did:key:z6Mkq3L1jEDDZ5R7eT523FMLxC4k6MCpzqD7ff1CrkWpoJwM",
     "alumniOf": {
       "id": "did:example:c276e12ec21ebfeb1f712ebc6f1"
     }
   },
-  "signature": {
+  "proof": {
     "type": "MerkleProof2019",
-    "created": "2020-02-04T07:52:09.653174",
-    "proofValue": "z2LuLBVSfnVzaQtvzuA7EaPQsGEgYWeaMTH1p3uqAG3ESx9HYyFzFFrYsyPkZSbn1Ji5LN76jw6HBr3oiaa8KsQenCPqKk7dJvxEXsDnYvhuDHu35jeEg7TZhtcDc8TiG9Dz8Uokv7kvfzf7vZUMx5U3eBYnH7ixWia7fEfEx8QwxdxoqqAzm6tcRGF4uGyq9szysf1mmaijLVW1UZYDF98veVNvbNdCnj2BkT1ER863qtXVq1PfJ7A1ygavq82Ucy2yDx3tXozCQqWQiuR61itPeydg9LGt2urYdRTFcUuCCz5inmanM72Fib4PdN5hya4PvNuQmc5tgEfY4fP6qfgziPfMzmRn4uKMZTgLhGWbeNtwTFeraUNqhqH5zN4Q1BELgM4Gy7cHjy8o45qJ1r",
+    "created": "2020-03-11T09:48:20.304161",
+    "proofValue": "z2LuLBVSfnVzaQtvzuA7EaPQsGEgYWeaMTH1p3uqAG3ESx9HYyFzFFrYsyPkZSbn1Ji5LN76jw6HBr3oiaa8KsQenCPqKk7dJvxEXsDnYvhuDHtsDaQdmCyvpTR9oH46UZcCZ1UY7uZrgHmzf3J8Mzpp5Nnzd4SWiVN4RDWfxSkKmcoXywZ1pTm5bhbKAx1Xeydjwf7T7gcSSkUxQJmfJrWKdyiBjU1vt4oZxwbeTRQ9TfojiDRKJ6RPNsVPpkcDqGvPoaF58SQJG9xr8ACAAH9ZhYXJhRwW2zLpHGdRgyFGdxrcNiBVJ1o1TLcwLsfXTdRZLV2gW5yPLbEui6yBsmHtw9pQkWtfMxGBLzHk5ZRVLMdgUKatiV2QS4oE9N2GyiVnmQomApdS8R2cDSbQdn",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "ecdsa-koblitz-pubkey:0x7e30a37763e6Ba1fFeDE1750bBeFB4c60b17a1B3"
   }

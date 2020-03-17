@@ -14,11 +14,6 @@ export default {
       file: 'dist/verifier-iife.js',
       format: 'iife',
       name: 'Verifier'
-    },
-    {
-      file: 'dist/verifier-cjs.js',
-      format: 'cjs',
-      name: 'Verifier'
     }
   ],
   plugins: [
@@ -79,8 +74,7 @@ export default {
       runtimeHelpers: true,
       presets: [['@babel/env', {
         targets: {
-          ie: '11',
-          node: '10'
+          ie: '11'
         },
         debug: false,
         useBuiltIns: 'usage',

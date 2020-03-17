@@ -1,14 +1,16 @@
 {
   "presets": [
-    ["@babel/preset-env",
-    {
-      "targets": {
-        "browsers": [
-          "> 1%",
-          "ie >= 10"
-        ]
+    ["@babel/env",
+      {
+        "targets": {
+          "node": "10"
+        },
+        "debug": false,
+        "useBuiltIns": "usage",
+        "corejs": 3,
+        "shippedProposals": true
       }
-    }]
+    ]
   ],
   "plugins": ["@babel/plugin-transform-runtime"]
 }

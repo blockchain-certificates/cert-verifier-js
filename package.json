@@ -15,7 +15,7 @@
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
-    "build": "npm run build:esm && npm run build:es5 && npm run test:build",
+    "build": "npm run build:esm && npm run build:es5 && npm run transpile:node && npm run test:build",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
     "transpile:node": "npx babel src -d lib --copy-files",

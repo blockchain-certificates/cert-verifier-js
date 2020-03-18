@@ -20,7 +20,13 @@ $ npm i @blockcerts/cert-verifier-js
 Exposed by default:
 
 ```javascript
-var Certificate = require('@blockcerts/cert-verifier-js');
+const { Certificate } = require('@blockcerts/cert-verifier-js');
+var certificate = new Certificate(certificateDefinition);
+```
+
+### Running in Nodejs
+```javascript
+const { Certificate } = require('@blockcerts/cert-verifier-js/lib');
 var certificate = new Certificate(certificateDefinition);
 ```
 

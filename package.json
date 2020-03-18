@@ -15,9 +15,10 @@
     "test:watch": "jest --watch --runInBand",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
-    "build": "npm run build:esm && npm run build:es5 && npm run test:build",
+    "build": "npm run build:esm && npm run build:es5 && npm run transpile:node && npm run test:build",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
+    "transpile:node": "npx babel src -d lib --copy-files",
     "lint": "semistandard --verbose | snazzy",
     "semantic-release": "semantic-release"
   },
@@ -42,9 +43,7 @@
     ],
     "env": "jest",
     "ignore": [
-      "dist/verifier.js",
-      "dist/verifier-es.js",
-      "dist/verifier-iife.js"
+      "dist/"
     ]
   },
   "husky": {
@@ -68,7 +67,8 @@
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.7",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/runtime": "^7.4.4",
@@ -76,6 +76,7 @@
     "@commitlint/config-conventional": "^8.0.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
+    "core-js": "^3.6.4",
     "eslint-config-semistandard": "^13.0.0",
     "eslint-plugin-import": "^2.17.2",
     "husky": "^4.0.0",

@@ -71,7 +71,16 @@ export default {
     builtins(),
     babel({
       exclude: 'node_modules/**',
-      runtimeHelpers: true
+      runtimeHelpers: true,
+      presets: [['@babel/env', {
+        targets: {
+          ie: '11'
+        },
+        debug: false,
+        useBuiltIns: 'usage',
+        corejs: 3,
+        shippedProposals: true
+      }]]
     }),
     terser()
   ]

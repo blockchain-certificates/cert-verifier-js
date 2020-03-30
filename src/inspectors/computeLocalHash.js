@@ -36,6 +36,14 @@ CONTEXTS['https://www.w3.org/2018/credentials/examples/v1'] = VERIFIABLE_CREDENT
 CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 
+function setJsonLdDocumentLoader () {
+  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined') {
+    return jsonld.documentLoaders.xhr();
+  }
+
+  return jsonld.documentLoaders.node();
+}
+
 function getUnmappedFields (normalized) {
   const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
   const matches = myRegexp.exec(normalized);
@@ -60,7 +68,7 @@ export default function computeLocalHash (document, version) {
     }
   }
 
-  const nodeDocumentLoader = jsonld.documentLoaders.node();
+  const jsonldDocumentLoader = setJsonLdDocumentLoader();
   const customLoader = function (url, callback) {
     if (url in CONTEXTS) {
       return callback(null, {
@@ -69,7 +77,7 @@ export default function computeLocalHash (document, version) {
         documentUrl: url
       });
     }
-    return nodeDocumentLoader(url, callback);
+    return jsonldDocumentLoader(url, callback);
   };
   jsonld.documentLoader = customLoader;
   const normalizeArgs = {

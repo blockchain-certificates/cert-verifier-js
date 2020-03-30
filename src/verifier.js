@@ -171,7 +171,6 @@ export default class Verifier {
     });
 
     // Check merkle root
-    console.log(txData);
     this._doAction(SUB_STEPS.checkMerkleRoot, () =>
       inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );

@@ -1,15 +1,30 @@
+/* eslint camelcase: 0 */
+import sinon from 'sinon';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import blockcypherResponse from '../../data/v1.2-blockcypher-response';
-import stubRequest from '../../__helpers/stubRequest';
+import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
+import * as getIssuerProfile from '../../../src/domain/verifier/useCases/getIssuerProfile';
+import v1_2IssuerProfile from '../../data/v1.2-issuer-profile';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
-  stubRequest('https://api.blockcypher.com/v1/btc/main/txs/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d?limit=500', blockcypherResponse);
+  beforeEach(function () {
+    sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+      remoteHash:
+        '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+      issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
+      time: '2016-10-03T19:37:59.141Z',
+      revokedAddresses: [ '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619' ]
+    });
+    sinon.stub(getIssuerProfile, 'default').resolves(v1_2IssuerProfile);
+  });
+
+  afterEach(function () {
+    sinon.restore();
+  });
 
   it('should verify successfully', async function () {
     const certificate = new Certificate(FIXTURES.TestnetV1Valid);
     const result = await certificate.verify();
-    console.log(result);
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
 });

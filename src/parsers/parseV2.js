@@ -20,7 +20,6 @@ export default function parseV2 (certificateJson) {
   const metadataJson = certificateJson.metadataJson;
   const publicKey = recipientProfile.publicKey;
   const recipientFullName = recipientProfile.name;
-  const recordLink = certificateJson.id;
   const revocationKey = null;
   const sealImage = issuer.image;
   const signatureImage = getSignatureImages(badge.signatureLines, version);
@@ -38,7 +37,7 @@ export default function parseV2 (certificateJson) {
     publicKey,
     receipt,
     recipientFullName,
-    recordLink,
+    recordLink: id,
     revocationKey,
     sealImage,
     signature: null,

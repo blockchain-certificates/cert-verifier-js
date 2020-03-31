@@ -41,6 +41,10 @@ describe('Certificate entity test suite', function () {
         expect(certificate.issuedOn).toEqual(fixture.issuanceDate);
       });
 
+      it('should set the id property', function () {
+        expect(certificate.id).toEqual(fixture.id);
+      });
+
       it('should set the recordLink property', function () {
         expect(certificate.recordLink).toEqual(fixture.id);
       });

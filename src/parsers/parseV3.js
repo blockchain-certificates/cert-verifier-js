@@ -18,6 +18,7 @@ export default function parseV3 (certificateJson) {
   return {
     chain: domain.certificates.getChain('', receipt),
     issuedOn: issuanceDate,
+    id,
     issuer,
     metadataJson,
     receipt,

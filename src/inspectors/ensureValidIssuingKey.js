@@ -6,7 +6,7 @@ import { getText } from '../domain/i18n/useCases';
 function getCaseInsensitiveKey (obj, value) {
   let key = null;
   for (const prop in obj) {
-    if (obj.hasOwnProperty(prop)) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
       if (prop.toLowerCase() === value.toLowerCase()) {
         key = prop;
       }

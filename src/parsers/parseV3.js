@@ -9,10 +9,11 @@ function parseSignature (signature) {
 
 export default function parseV3 (certificateJson) {
   const receipt = parseSignature(certificateJson.proof);
-  const { issuer } = certificateJson;
+  const { issuer, metadataJson } = certificateJson;
   return {
     chain: domain.certificates.getChain('', receipt),
     issuer,
+    metadataJson,
     receipt,
     version: CERTIFICATE_VERSIONS.V3_0_alpha
   };

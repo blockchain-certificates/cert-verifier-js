@@ -2,9 +2,31 @@
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
     "https://www.blockcerts.org/schema/3.0-alpha/context.json",
-    "https://www.w3.org/2018/credentials/examples/v1"
+    "https://www.w3.org/2018/credentials/examples/v1",
+    {
+      "metadataJson": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/metadata",
+        "@type": "https://schemas.learningmachine.com/2017/types/text/json"
+      },
+      "displayHtml": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/displayHtml",
+        "@type": "https://schemas.learningmachine.com/2017/types/text/html"
+      },
+      "nonce": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/nonce",
+        "@type": "https://schema.org/Text"
+      },
+      "universalIdentifier": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/identifier",
+        "@type": "https://schema.org/Text"
+      }
+    }
   ],
   "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "metadataJson": "{\"schema\":{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"displayOrder\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},\"certificate\":{\"order\":[],\"type\":\"object\",\"properties\":{\"issuingInstitution\":{\"title\":\"Issuing Institution\",\"type\":\"string\",\"default\":\"Learning Machine Technologies, Inc.\"}}},\"recipient\":{}}},\"certificate\":{\"issuingInstitution\":\"Learning Machine Technologies, Inc.\"},\"recipient\":{},\"displayOrder\":[\"certificate.issuingInstitution\"]}",
+  "displayHtml": "<b>hello world</b>",
+  "nonce": "814ce340-12f3-414b-af91-a0f9489e5dbc",
+  "universalIdentifier": "ab569127-34bb-5784-bced-00b7e0e82ac9",
   "type": [
     "VerifiableCredential",
     "BlockcertsCredential"
@@ -19,8 +41,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2020-03-11T09:48:20.304161",
-    "proofValue": "z2LuLBVSfnVzaQtvzuA7EaPQsGEgYWeaMTH1p3uqAG3ESx9HYyFzFFrYsyPkZSbn1Ji5LN76jw6HBr3oiaa8KsQenCPqKk7dJvxEXsDnYvhuDHtsDaQdmCyvpTR9oH46UZcCZ1UY7uZrgHmzf3J8Mzpp5Nnzd4SWiVN4RDWfxSkKmcoXywZ1pTm5bhbKAx1Xeydjwf7T7gcSSkUxQJmfJrWKdyiBjU1vt4oZxwbeTRQ9TfojiDRKJ6RPNsVPpkcDqGvPoaF58SQJG9xr8ACAAH9ZhYXJhRwW2zLpHGdRgyFGdxrcNiBVJ1o1TLcwLsfXTdRZLV2gW5yPLbEui6yBsmHtw9pQkWtfMxGBLzHk5ZRVLMdgUKatiV2QS4oE9N2GyiVnmQomApdS8R2cDSbQdn",
+    "created": "2020-03-23T15:38:11.804838",
+    "proofValue": "z2LuLBVSfnVzaQtvzuA7EaPQsGEgYWeaMTH1p3uqAG3ESx9HYyFzFFrYsyPkZSbn1Ji5LN76jw6HBr3oiaa8KsQenCPqKk7dJvxEXsDnYvhuDHu3ktTZuz4KL2UWU3hieKFwMG2akp4rPvYmwQDbtXNmhZgpdGpp9hiDZiz37bca2LZZG2VJ9Xen31trVG5A2SApCkFoUxYeNvXr8reqJPca1voRwFXAgo25XWV2BQ1ycQ2wM3jPz3BAx4tZuPno7Ebd5XLfroXHCaKiNadiqxLedp2SHZjDicG8kxMwPo2gR1mYeWjtQSPVMrtf6p325wCNVrQpxTAszLp4CPXSZFFYsb2dn9iRAcMTUSKYhYtsNjst2fDdPye4arHmvLL5s6pL6U8vtEEBiYJDrFj8xo",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "ecdsa-koblitz-pubkey:0x7e30a37763e6Ba1fFeDE1750bBeFB4c60b17a1B3"
   }

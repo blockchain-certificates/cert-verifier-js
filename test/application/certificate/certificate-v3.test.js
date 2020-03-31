@@ -45,6 +45,10 @@ describe('Certificate entity test suite', function () {
         expect(certificate.recordLink).toEqual(fixture.id);
       });
 
+      it('should set the recipientFullName property', function () {
+        expect(certificate.recipientFullName).toEqual(fixture.credentialSubject.name);
+      });
+
       it('should set the rawTransactionLink property', function () {
         const rawTransactionLinkAssertion = `https://ropsten.etherscan.io/getRawTx?tx=${assertionTransactionId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);

@@ -7,6 +7,11 @@ function parseSignature (signature) {
   return base58Decoder.decode();
 }
 
+function getRecipientFullName (certificateJson) {
+  const { credentialSubject } = certificateJson;
+  return credentialSubject.name;
+}
+
 export default function parseV3 (certificateJson) {
   const receipt = parseSignature(certificateJson.proof);
   const { issuer, metadataJson, issuanceDate, id } = certificateJson;
@@ -16,6 +21,7 @@ export default function parseV3 (certificateJson) {
     issuer,
     metadataJson,
     receipt,
+    recipientFullName: getRecipientFullName(certificateJson),
     recordLink: id,
     version: CERTIFICATE_VERSIONS.V3_0_alpha
   };

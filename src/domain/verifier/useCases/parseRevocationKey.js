@@ -5,7 +5,7 @@
  * @returns {*}
  */
 export default function parseRevocationKey (issuerProfileJson) {
-  if (!issuerProfileJson || !issuerProfileJson.hasOwnProperty('revocationKeys')) {
+  if (!issuerProfileJson || !Object.prototype.hasOwnProperty.call(issuerProfileJson, 'revocationKeys')) {
     return null;
   }
   if (issuerProfileJson.revocationKeys.length > 0) {

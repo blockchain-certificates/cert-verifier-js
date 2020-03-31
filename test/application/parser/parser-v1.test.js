@@ -32,7 +32,7 @@ describe('Parser test suite', function () {
     });
 
     it('should set the chain of the certificate object', function () {
-      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.testnet);
+      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.bitcoin);
     });
 
     it('should set the description of the certificate object', function () {

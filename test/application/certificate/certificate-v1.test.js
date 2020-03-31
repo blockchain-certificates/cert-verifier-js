@@ -24,7 +24,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set chain of the certificate object', function () {
-        expect(certificate.chain).toEqual(BLOCKCHAINS.testnet);
+        expect(certificate.chain).toEqual(BLOCKCHAINS.bitcoin);
       });
 
       it('should set description of the certificate object', function () {
@@ -97,12 +97,12 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set rawTransactionLink to the certificate object', function () {
-        const rawTransactionLinkAssertion = `https://testnet.blockchain.info/rawtx/${fixture.receipt.anchors[0].sourceId}`;
+        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${fixture.receipt.anchors[0].sourceId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
       });
 
       it('should set transactionLink to the certificate object', function () {
-        const transactionLinkAssertion = `https://testnet.blockchain.info/tx/${fixture.receipt.anchors[0].sourceId}`;
+        const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.receipt.anchors[0].sourceId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
 

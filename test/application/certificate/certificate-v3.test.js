@@ -37,6 +37,10 @@ describe('Certificate entity test suite', function () {
         expect(certificate.metadataJson).toEqual(fixture.metadataJson);
       });
 
+      it('should set the issuedOn property', function () {
+        expect(certificate.issuedOn).toEqual(fixture.issuanceDate);
+      });
+
       it('should set the rawTransactionLink property', function () {
         const rawTransactionLinkAssertion = `https://ropsten.etherscan.io/getRawTx?tx=${assertionTransactionId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);

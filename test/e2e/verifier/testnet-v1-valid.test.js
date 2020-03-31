@@ -13,7 +13,7 @@ describe('given the certificate is a valid testnet (v1.2)', function () {
         '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
       issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
       time: '2016-10-03T19:37:59.141Z',
-      revokedAddresses: [ '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619' ]
+      revokedAddresses: ['1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619']
     });
     sinon.stub(getIssuerProfile, 'default').resolves(v1_2IssuerProfile);
   });

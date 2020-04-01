@@ -1,6 +1,6 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
-import fixture from '../../fixtures/blockcerts-3.0-alpha';
-import signatureAssertion from '../../assertions/v3.0-alpha-signature-merkle2019';
+import fixture from '../../fixtures/blockcerts-3.0-alpha-learningmachine';
+import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019';
 
 const assertionTransactionId = '0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40';
 

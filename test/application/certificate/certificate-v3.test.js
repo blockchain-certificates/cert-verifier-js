@@ -1,8 +1,8 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
-import fixture from '../../fixtures/blockcerts-3.0-alpha';
-import signatureAssertion from '../../assertions/v3.0-alpha-signature-merkle2019';
+import fixture from '../../fixtures/blockcerts-3.0-alpha-learningmachine';
+import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019';
 
-const assertionTransactionId = '0xfdc9956953feee55a356b828a81791c6b8f1c743cc918457b7dc6ccf810544a1';
+const assertionTransactionId = '0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -31,6 +31,26 @@ describe('Certificate entity test suite', function () {
 
       it('should set the chain property', function () {
         expect(certificate.chain).toEqual(BLOCKCHAINS.ethropst);
+      });
+
+      it('should set the metadataJson property', function () {
+        expect(certificate.metadataJson).toEqual(fixture.metadataJson);
+      });
+
+      it('should set the issuedOn property', function () {
+        expect(certificate.issuedOn).toEqual(fixture.issuanceDate);
+      });
+
+      it('should set the id property', function () {
+        expect(certificate.id).toEqual(fixture.id);
+      });
+
+      it('should set the recordLink property', function () {
+        expect(certificate.recordLink).toEqual(fixture.id);
+      });
+
+      it('should set the recipientFullName property', function () {
+        expect(certificate.recipientFullName).toEqual(fixture.credentialSubject.name);
       });
 
       it('should set the rawTransactionLink property', function () {

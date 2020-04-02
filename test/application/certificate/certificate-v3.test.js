@@ -1,5 +1,5 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
-import fixture from '../../fixtures/blockcerts-3.0-alpha-learningmachine';
+import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019';
 
 const assertionTransactionId = '0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40';
@@ -8,6 +8,7 @@ describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v3 certificate data', function () {
       let certificate;
+      const fixture = FIXTURES.BlockcertsV3AlphaExampleProperties;
 
       beforeEach(function () {
         certificate = new Certificate(fixture);
@@ -31,6 +32,10 @@ describe('Certificate entity test suite', function () {
 
       it('should set the chain property', function () {
         expect(certificate.chain).toEqual(BLOCKCHAINS.ethropst);
+      });
+
+      it('should set the expires property', function () {
+        expect(certificate.expires).toEqual(fixture.expirationDate);
       });
 
       it('should set the metadataJson property', function () {

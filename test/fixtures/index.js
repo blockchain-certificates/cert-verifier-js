@@ -1,4 +1,5 @@
 import BlockcertsV3Alpha from './blockcerts-3.0-alpha';
+import BlockcertsV3AlphaExampleProperties from './blockcerts-3.0-alpha-example-properties';
 import BlockcertsV3AlphaCustomContext from './blockcerts-3.0-alpha-learningmachine';
 import BlockcertsV3AlphaTampered from './blockcerts-3.0-alpha--tampered';
 import BlockcertsV3AlphaNoIssuerProfile from './blockcerts-3.0-alpha--no-issuer-profile';
@@ -24,6 +25,7 @@ import TestnetV2ValidV1Issuer from './testnet-valid-v1-issuer-2.0';
 
 export default {
   BlockcertsV3Alpha,
+  BlockcertsV3AlphaExampleProperties,
   BlockcertsV3AlphaCustomContext,
   BlockcertsV3AlphaTampered,
   BlockcertsV3AlphaNoIssuerProfile,

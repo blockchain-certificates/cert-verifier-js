@@ -33,6 +33,7 @@
   ],
   "issuer": "https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json",
   "issuanceDate": "2010-01-01T19:33:24Z",
+  "expirationDate": "2020-03-20T12:12:12Z",
   "credentialSubject": {
     "name": "John Doe",
     "id": "did:key:z6Mkq3L1jEDDZ5R7eT523FMLxC4k6MCpzqD7ff1CrkWpoJwM",

@@ -14,9 +14,10 @@ function getRecipientFullName (certificateJson) {
 
 export default function parseV3 (certificateJson) {
   const receipt = parseSignature(certificateJson.proof);
-  const { issuer, metadataJson, issuanceDate, id } = certificateJson;
+  const { issuer, metadataJson, issuanceDate, id, expirationDate } = certificateJson;
   return {
     chain: domain.certificates.getChain('', receipt),
+    expires: expirationDate,
     issuedOn: issuanceDate,
     id,
     issuer,

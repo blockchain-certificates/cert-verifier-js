@@ -34,6 +34,10 @@ describe('Certificate entity test suite', function () {
         expect(certificate.chain).toEqual(BLOCKCHAINS.ethropst);
       });
 
+      it('should set the expires property', function () {
+        expect(certificate.expires).toEqual(fixture.expirationDate);
+      });
+
       it('should set the metadataJson property', function () {
         expect(certificate.metadataJson).toEqual(fixture.metadataJson);
       });

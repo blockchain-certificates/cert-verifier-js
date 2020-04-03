@@ -12,9 +12,15 @@ function getRecipientFullName (certificateJson) {
   return credentialSubject.name;
 }
 
-export default function parseV3 (certificateJson) {
+async function getIssuerProfile (issuer) {
+  const profile = await domain.verifier.getIssuerProfile(issuer);
+  return profile;
+}
+
+export default async function parseV3 (certificateJson) {
   const receipt = parseSignature(certificateJson.proof);
-  const { issuer, metadataJson, issuanceDate, id, expirationDate } = certificateJson;
+  const { issuer: issuerProfileUrl, metadataJson, issuanceDate, id, expirationDate } = certificateJson;
+  const issuer = await getIssuerProfile(issuerProfileUrl);
   return {
     chain: domain.certificates.getChain('', receipt),
     expires: expirationDate,

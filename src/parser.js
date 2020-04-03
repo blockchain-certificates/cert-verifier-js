@@ -28,10 +28,10 @@ function retrieveBlockcertsVersion (context) {
  * @param certificateJson
  * @returns {*}
  */
-export default function parseJSON (certificateJson) {
+export default async function parseJSON (certificateJson) {
   try {
     const version = retrieveBlockcertsVersion(certificateJson['@context']);
-    const parsedCertificate = versionParserMap[version](certificateJson);
+    const parsedCertificate = await versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (err) {

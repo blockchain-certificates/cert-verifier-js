@@ -19,9 +19,11 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
+  }
 
+  async init () {
     // Parse certificate
-    this.parseJson(certificateDefinition);
+    await this.parseJson(this.certificateJson);
   }
 
   /**
@@ -30,8 +32,8 @@ export default class Certificate {
    * @param certificateDefinition
    * @returns {*}
    */
-  parseJson (certificateDefinition) {
-    const parsedCertificate = parseJSON(certificateDefinition);
+  async parseJson (certificateDefinition) {
+    const parsedCertificate = await parseJSON(certificateDefinition);
     this._setProperties(parsedCertificate);
   }
 

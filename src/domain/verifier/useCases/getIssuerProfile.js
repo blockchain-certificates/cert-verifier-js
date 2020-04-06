@@ -19,7 +19,7 @@ function isValidProfile (profile) {
 export default async function getIssuerProfile (issuerAddress) {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - no issuer address given`);
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
   if (typeof issuerAddress === 'object') {
@@ -33,7 +33,7 @@ export default async function getIssuerProfile (issuerAddress) {
   response = JSON.parse(response);
 
   if (!isValidProfile(response)) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - retrieved file does not seem to be a valid profile`);
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
   }
 
   return response;

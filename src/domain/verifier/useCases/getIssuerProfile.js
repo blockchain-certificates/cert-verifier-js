@@ -3,6 +3,13 @@ import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';
 
+function isValidProfile (profile) {
+  if (!profile.type) {
+    return false;
+  }
+  return profile.type.toLowerCase() === 'profile';
+}
+
 /**
  * getIssuerProfile
  *
@@ -12,16 +19,22 @@ import { getText } from '../../i18n/useCases';
 export default async function getIssuerProfile (issuerAddress) {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - no issuer address given`);
   }
 
   if (typeof issuerAddress === 'object') {
     issuerAddress = issuerAddress.id;
   }
 
-  const response = await request({ url: issuerAddress }).catch(() => {
+  let response = await request({ url: issuerAddress }).catch(() => {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   });
 
-  return JSON.parse(response);
+  response = JSON.parse(response);
+
+  if (!isValidProfile(response)) {
+    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - retrieved file does not seem to be a valid profile`);
+  }
+
+  return response;
 }

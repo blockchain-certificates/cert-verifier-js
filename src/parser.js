@@ -34,9 +34,10 @@ export default async function parseJSON (certificateJson) {
     const parsedCertificate = await versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
-  } catch (err) {
+  } catch (error) {
     return {
-      isFormatValid: false
+      isFormatValid: false,
+      error
     };
   }
 }

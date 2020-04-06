@@ -110,6 +110,17 @@ describe('Certificate entity test suite', function () {
         });
       });
 
+      describe('when the issuer profile is not a valid URL', function () {
+        it('should throw an error', async function () {
+          const failingFixture = JSON.parse(JSON.stringify(fixture));
+          failingFixture.issuer = 'this is not a URL';
+          const certificate = new Certificate(failingFixture);
+          await expect(certificate.init())
+            .rejects
+            .toThrow(/^Error: Unable to get issuer profile - no issuer address given$/);
+        });
+      });
+
       describe('when the issuer profile URL yields a server error', function () {
         it('should throw an error', async function () {
           const failingFixture = JSON.parse(JSON.stringify(fixture));

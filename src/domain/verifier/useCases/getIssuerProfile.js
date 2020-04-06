@@ -4,10 +4,17 @@ import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';
 
 function isValidProfile (profile) {
-  if (!profile.type) {
+  const validTypes = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
+  const { type } = profile;
+  if (!type) {
     return false;
   }
-  return profile.type.toLowerCase() === 'profile';
+
+  if (Array.isArray(type)) {
+    return type.some(type => validTypes.indexOf(type.toLowerCase()) > -1);
+  }
+
+  return validTypes.indexOf(type.toLowerCase()) > -1;
 }
 
 /**

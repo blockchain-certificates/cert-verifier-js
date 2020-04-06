@@ -9,6 +9,23 @@ function isValidUrl (url) {
   return regex.test(url);
 }
 
+function isValidV1Profile (profile) {
+  // eslint-disable-next-line camelcase
+  const { issuer_key, revocation_key, issuerKeys, revocationKeys } = profile;
+  // eslint-disable-next-line camelcase
+  if (!!issuer_key && !!revocation_key) {
+    // https://github.com/blockchain-certificates/cert-schema/blob/master/cert_schema/1.1/issuer-schema-v1-1.json
+    return true;
+  }
+
+  if (issuerKeys && revocationKeys) {
+    // https://github.com/blockchain-certificates/cert-schema/blob/master/cert_schema/1.2/issuer-id-1.2.json
+    return true;
+  }
+
+  return false;
+}
+
 function isValidProfile (profile) {
   const validTypes = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
   const { type } = profile;
@@ -49,7 +66,7 @@ export default async function getIssuerProfile (issuerAddress) {
 
   response = JSON.parse(response);
 
-  if (!isValidProfile(response)) {
+  if (!isValidProfile(response) && !isValidV1Profile(response)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
   }
 

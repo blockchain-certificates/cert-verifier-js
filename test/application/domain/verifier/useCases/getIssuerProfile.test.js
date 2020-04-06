@@ -19,7 +19,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
   describe('given it is called without an issuerAddress parameter', function () {
     it('should throw an error', async function () {
       await getIssuerProfile().catch(e => {
-        expect(e.message).toBe('Unable to get issuer profile');
+        expect(e.message).toBe('Unable to get issuer profile - no issuer address given');
       });
     });
   });

@@ -11,6 +11,7 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.MainnetV2Valid);
+          await certificate.init();
         });
 
         afterEach(function () {
@@ -55,6 +56,7 @@ describe('Certificate test suite', function () {
           };
 
           certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+          await certificate.init();
 
           await certificate.verify(update => {
             updates.push(update);

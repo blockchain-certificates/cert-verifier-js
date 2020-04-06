@@ -11,6 +11,7 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.BlockcertsV3Alpha);
+          await certificate.init();
         });
 
         afterEach(function () {
@@ -47,6 +48,7 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered);
+          await certificate.init();
         });
 
         afterEach(function () {
@@ -71,6 +73,7 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.BlockcertsV3AlphaNoIssuerProfile);
+          await certificate.init();
         });
 
         afterEach(function () {
@@ -97,6 +100,7 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
+          await certificate.init();
         });
 
         afterEach(function () {

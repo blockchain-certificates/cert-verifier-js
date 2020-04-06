@@ -7,8 +7,9 @@ describe('Certificate entity test suite', function () {
     describe('given it is called with valid v1 certificate data', function () {
       let certificate;
 
-      beforeEach(function () {
+      beforeEach(async function () {
         certificate = new Certificate(fixture);
+        await certificate.init();
       });
 
       afterEach(function () {

@@ -191,9 +191,10 @@ export default class Verifier {
       ];
     } else {
       // Get revoked assertions
+      const revocationList = this.issuer.revocationList || issuerProfileJson.revocationList;
       revokedAddresses = await this._doAsyncAction(
         null,
-        async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
+        async () => domain.verifier.getRevokedAssertions(revocationList)
       );
       keys = this.id;
     }

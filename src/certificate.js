@@ -123,7 +123,7 @@ export default class Certificate {
     this.subtitle = subtitle;
 
     // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 
     this.version = version;
 

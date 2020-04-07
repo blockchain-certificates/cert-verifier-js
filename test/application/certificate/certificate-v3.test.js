@@ -2,6 +2,7 @@ import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile';
+import verificationStepsV3 from '../../assertions/verification-steps-v3';
 
 const assertionTransactionId = '0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40';
 
@@ -73,6 +74,10 @@ describe('Certificate entity test suite', function () {
       it('should set the transactionLink property', function () {
         const transactionLinkAssertion = `https://ropsten.etherscan.io/tx/${assertionTransactionId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
+      });
+
+      it('should set the verificationSteps property', function () {
+        expect(certificate.verificationSteps).toEqual(verificationStepsV3);
       });
     });
 

@@ -154,10 +154,13 @@ export default class Verifier {
     );
 
     // Get issuer profile
-    const issuerProfileJson = await this._doAsyncAction(
-      SUB_STEPS.getIssuerProfile,
-      async () => domain.verifier.getIssuerProfile(this.issuer)
-    );
+    let issuerProfileJson = this.issuer;
+    if (!isV3(this.version)) {
+      issuerProfileJson = await this._doAsyncAction(
+        SUB_STEPS.getIssuerProfile,
+        async () => domain.verifier.getIssuerProfile(this.issuer)
+      );
+    }
 
     // Parse issuer keys
     const issuerKeyMap = await this._doAsyncAction(

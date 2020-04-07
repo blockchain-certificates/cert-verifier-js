@@ -67,31 +67,6 @@ describe('Certificate test suite', function () {
           expect(finalStep).toEqual(expectedFinalStep);
         });
       });
-
-      describe('when the certificate does not have an issuer profile', function () {
-        let certificate;
-
-        beforeEach(async function () {
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaNoIssuerProfile);
-          await certificate.init();
-        });
-
-        afterEach(function () {
-          certificate = null;
-        });
-
-        it('should return the error finalStep', async function () {
-          const errorMessage = domain.i18n.getText('errors', 'getIssuerProfile');
-          const expectedFinalStep = {
-            code: STEPS.final,
-            status: VERIFICATION_STATUSES.FAILURE,
-            message: errorMessage
-          };
-
-          const finalStep = await certificate.verify();
-          expect(finalStep).toEqual(expectedFinalStep);
-        });
-      });
     });
 
     describe('given it is called with a Blockcerts v3 with custom contexts', function () {

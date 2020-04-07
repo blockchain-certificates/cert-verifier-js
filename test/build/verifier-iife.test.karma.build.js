@@ -4,6 +4,7 @@ const fixtures = { '@context': ['https://w3id.org/openbadges/v2', 'https://w3id.
 describe('verifier build test suite', function () {
   it('works as expected', async function () {
     const certificate = new Verifier.Certificate(fixtures);
+    await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe('success');
   });

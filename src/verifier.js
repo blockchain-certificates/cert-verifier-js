@@ -54,6 +54,13 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
+  _getRevocationListUrl (distantIssuerProfile) {
+    if (this.issuer && this.issuer.revocationList) {
+      return this.issuer.revocationList;
+    }
+    return distantIssuerProfile.revocationList;
+  }
+
   /**
    * doAction
    *
@@ -196,7 +203,7 @@ export default class Verifier {
       // Get revoked assertions
       revokedAddresses = await this._doAsyncAction(
         null,
-        async () => domain.verifier.getRevokedAssertions(this.issuer.revocationList)
+        async () => domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson))
       );
       keys = this.id;
     }

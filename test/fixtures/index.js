@@ -6,6 +6,7 @@ import BlockcertsV3AlphaNoIssuerProfile from './blockcerts-3.0-alpha--no-issuer-
 import EthereumMainV2Valid from './ethereum-main-valid-2.0';
 import EthereumMainInvalidMerkleRoot from './ethereum-merkle-root-unmatch-2.0';
 import EthereumMainRevoked from './ethereum-revoked-2.0';
+import EthereumRopstenRevokedNoRevocationList from './ethereum-ropsten-revoked-no-revocationlist-2.0';
 import EthereumRopstenV2Valid from './ethereum-ropsten-valid-2.0';
 import EthereumTampered from './ethereum-tampered-2.0';
 import MainnetInvalidMerkleReceipt from './mainnet-invalid-merkle-receipt-2.0';
@@ -32,6 +33,7 @@ export default {
   EthereumMainV2Valid,
   EthereumMainInvalidMerkleRoot,
   EthereumMainRevoked,
+  EthereumRopstenRevokedNoRevocationList,
   EthereumRopstenV2Valid,
   EthereumTampered,
   MainnetInvalidMerkleReceipt,

@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/testnet-valid-1.2';
+import fixture from '../../fixtures/v1/testnet-valid-1.2';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
 import parseJSON from '../../../src/parser';
 

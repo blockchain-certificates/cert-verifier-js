@@ -1,6 +1,6 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
-import fixture from '../../fixtures/mainnet-valid-2.0';
+import fixture from '../../fixtures/v2/mainnet-valid-2.0';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {

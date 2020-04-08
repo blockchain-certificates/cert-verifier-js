@@ -1,8 +1,8 @@
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import * as RequestServices from '../../../../../src/services/request';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
-import fixtureBlockcertsV3Alpha from '../../../../fixtures/blockcerts-3.0-alpha';
-import fixtureBlockcertsV2 from '../../../../fixtures/mainnet-valid-2.0';
+import fixtureBlockcertsV3Alpha from '../../../../fixtures/v3/blockcerts-3.0-alpha';
+import fixtureBlockcertsV2 from '../../../../fixtures/v2/mainnet-valid-2.0';
 import sinon from 'sinon';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {

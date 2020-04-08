@@ -4,6 +4,7 @@ import FIXTURES from '../../fixtures';
 describe('given the certificate\'s issuer profile no longer exists', function () {
   it('should fail', async function () {
     const certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
+    await certificate.init();
     let failingStep = {};
     const result = await certificate.verify(({ code, label, status, errorMessage }) => {
       if (code === SUB_STEPS.getIssuerProfile && status === VERIFICATION_STATUSES.FAILURE) {

@@ -19,9 +19,11 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
+  }
 
+  async init () {
     // Parse certificate
-    this.parseJson(certificateDefinition);
+    await this.parseJson(this.certificateJson);
   }
 
   /**
@@ -30,8 +32,11 @@ export default class Certificate {
    * @param certificateDefinition
    * @returns {*}
    */
-  parseJson (certificateDefinition) {
-    const parsedCertificate = parseJSON(certificateDefinition);
+  async parseJson (certificateDefinition) {
+    const parsedCertificate = await parseJSON(certificateDefinition);
+    if (!parsedCertificate.isFormatValid) {
+      throw new Error(parsedCertificate.error);
+    }
     this._setProperties(parsedCertificate);
   }
 
@@ -118,7 +123,7 @@ export default class Certificate {
     this.subtitle = subtitle;
 
     // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 
     this.version = version;
 

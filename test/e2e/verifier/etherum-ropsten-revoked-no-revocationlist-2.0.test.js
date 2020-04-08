@@ -5,8 +5,9 @@ describe('given the certificate is a revoked certificate', function () {
   describe('and the revocationList is not provided in the certificate', function () {
     let certificate;
 
-    beforeEach(function () {
+    beforeEach(async function () {
       certificate = new Certificate(FIXTURES.EthereumRopstenRevokedNoRevocationList);
+      await certificate.init();
     });
 
     afterEach(function () {

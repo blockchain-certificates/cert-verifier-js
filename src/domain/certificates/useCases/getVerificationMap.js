@@ -1,6 +1,8 @@
 import { NETWORKS, STEPS, SUB_STEPS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
+import { isV3 } from '../../../constants/certificateVersions';
+import { getIssuerProfile } from '../../../constants/verificationSubSteps';
 
 const versionVerificationMap = {
   [NETWORKS.mainnet]: [
@@ -88,12 +90,16 @@ function getFullStepsFromSubSteps (subStepMap) {
  * @param chain
  * @returns {Array}
  */
-export default function getVerificationMap (chain) {
+export default function getVerificationMap (chain, version) {
   if (!chain) {
     return [];
   }
 
   const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
+  if (isV3(version)) {
+    const getIssuerProfileIndex = verificationMap[network].findIndex(subStep => subStep === getIssuerProfile);
+    delete verificationMap[network][getIssuerProfileIndex];
+  }
   return getFullStepsFromSubSteps(verificationMap[network]);
 }

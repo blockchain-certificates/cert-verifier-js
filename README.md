@@ -16,6 +16,18 @@ $ npm i @blockcerts/cert-verifier-js
 
 ## Import
 
+### From version 4
+Instantiation of the certificate now becomes asynchronous.
+While you would import the `Certificate` constructor and instantiate identically (see below), consumers now need to call the async function `init`. 
+
+Example:
+```javascript
+import { Certificate } from '@blockcerts/cert-verifier-js';
+let certificate = new Certificate(certificateDefinition);
+await certificate.init();
+```  
+
+
 #### Commonjs
 Exposed by default:
 

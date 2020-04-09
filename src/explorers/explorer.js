@@ -1,4 +1,4 @@
-import { BLOCKCHAINS, SUB_STEPS, TRANSACTION_APIS } from '../constants';
+import { SUB_STEPS, TRANSACTION_APIS } from '../constants';
 import { buildTransactionApiUrl } from '../services/transaction-apis';
 import { request } from '../services/request';
 import { VerifierError } from '../models';
@@ -7,10 +7,10 @@ import { parseTransactionDataFromBitpayResponse } from './bitcoin/bitpay';
 import { parseTransactionDataFromBlockcypherResponse } from './bitcoin/blockcypher';
 import { parseTransactionDataFromBlockexplorerResponse } from './bitcoin/blockexplorer';
 import { parseTransactionDataFromBlockstreamResponse } from './bitcoin/blockstream';
+import { isTestChain } from '../constants/blockchains';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
-  const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;
-  const requestUrl = buildTransactionApiUrl(apiName, transactionId, isTestnet);
+  const requestUrl = buildTransactionApiUrl(apiName, transactionId, isTestChain(chain));
 
   return new Promise((resolve, reject) => {
     return request({ url: requestUrl }).then(response => {

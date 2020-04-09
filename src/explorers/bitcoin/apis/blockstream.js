@@ -4,7 +4,7 @@ import { getText } from '../../../domain/i18n/useCases';
 import { stripHashPrefix } from '../../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../../helpers/date';
 
-export function generateTransactionDataFromBlockstreamResponse (jsonResponse) {
+export function parseTransactionDataFromBlockstreamResponse (jsonResponse) {
   if (!jsonResponse.status.confirmed) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockstreamResponse'));
   }

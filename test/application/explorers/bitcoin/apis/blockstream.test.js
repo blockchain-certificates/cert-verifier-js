@@ -1,5 +1,5 @@
 import * as mockBlockstreamResponse from '../../mocks/mockBlockstreamResponse';
-import { generateTransactionDataFromBlockstreamResponse } from '../../../../../src/explorers/bitcoin/apis/blockstream';
+import { parseTransactionDataFromBlockstreamResponse } from '../../../../../src/explorers/bitcoin/apis/blockstream';
 
 function getMockBlockstreamResponse () {
   return JSON.parse(JSON.stringify(mockBlockstreamResponse));
@@ -21,7 +21,7 @@ describe('Blockstream Explorer test suite', function () {
     };
 
     it('should return the transaction data', function () {
-      expect(generateTransactionDataFromBlockstreamResponse(mockResponse)).toEqual(assertionTransactionData);
+      expect(parseTransactionDataFromBlockstreamResponse(mockResponse)).toEqual(assertionTransactionData);
     });
   });
 
@@ -29,7 +29,7 @@ describe('Blockstream Explorer test suite', function () {
     it('should throw the right error', async function () {
       mockResponse.status.confirmed = false;
       expect(() => {
-        generateTransactionDataFromBlockstreamResponse(mockResponse);
+        parseTransactionDataFromBlockstreamResponse(mockResponse);
       }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Blockstream API');
     });
   });

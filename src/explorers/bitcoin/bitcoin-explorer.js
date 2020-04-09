@@ -3,10 +3,10 @@ import { buildTransactionApiUrl } from '../../services/transaction-apis';
 import { request } from '../../services/request';
 import { VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
-import { generateTransactionDataFromBitpayResponse } from './apis/bitpay';
-import { generateTransactionDataFromBlockcypherResponse } from './apis/blockcypher';
-import { generateTransactionDataFromBlockexplorerResponse } from './apis/blockexplorer';
-import { generateTransactionDataFromBlockstreamResponse } from './apis/blockstream';
+import { parseTransactionDataFromBitpayResponse } from './apis/bitpay';
+import { parseTransactionDataFromBlockcypherResponse } from './apis/blockcypher';
+import { parseTransactionDataFromBlockexplorerResponse } from './apis/blockexplorer';
+import { parseTransactionDataFromBlockstreamResponse } from './apis/blockstream';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;
@@ -26,15 +26,15 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
   });
 }
 
-const API_TRANSACTION_DATA_GENERATORS = {
-  [TRANSACTION_APIS.Bitpay]: generateTransactionDataFromBitpayResponse,
-  [TRANSACTION_APIS.Blockcypher]: generateTransactionDataFromBlockcypherResponse,
-  [TRANSACTION_APIS.Blockexplorer]: generateTransactionDataFromBlockexplorerResponse,
-  [TRANSACTION_APIS.Blockstream]: generateTransactionDataFromBlockstreamResponse
+const API_TRANSACTION_PARSING_FUNCTIONS = {
+  [TRANSACTION_APIS.Bitpay]: parseTransactionDataFromBitpayResponse,
+  [TRANSACTION_APIS.Blockcypher]: parseTransactionDataFromBlockcypherResponse,
+  [TRANSACTION_APIS.Blockexplorer]: parseTransactionDataFromBlockexplorerResponse,
+  [TRANSACTION_APIS.Blockstream]: parseTransactionDataFromBlockstreamResponse
 };
 
 function getApiParsingFunction (apiName) {
-  const transactionDataGenerator = API_TRANSACTION_DATA_GENERATORS[apiName];
+  const transactionDataGenerator = API_TRANSACTION_PARSING_FUNCTIONS[apiName];
   if (!transactionDataGenerator) {
     throw new Error(`API ${apiName} is not listed`);
   }

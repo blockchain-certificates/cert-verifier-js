@@ -1,5 +1,5 @@
 import * as mockBlockcypherResponse from '../../mocks/mockBlockcypherResponse';
-import { generateTransactionDataFromBlockcypherResponse } from '../../../../../src/explorers/bitcoin/apis/blockcypher';
+import { parseTransactionDataFromBlockcypherResponse } from '../../../../../src/explorers/bitcoin/apis/blockcypher';
 
 function getMockBlockcypherResponse () {
   return JSON.parse(JSON.stringify(mockBlockcypherResponse));
@@ -21,7 +21,7 @@ describe('Blockcypher Explorer test suite', function () {
     };
 
     it('should return the transaction data', function () {
-      expect(generateTransactionDataFromBlockcypherResponse(mockResponse)).toEqual(assertionTransactionData);
+      expect(parseTransactionDataFromBlockcypherResponse(mockResponse)).toEqual(assertionTransactionData);
     });
   });
 
@@ -29,7 +29,7 @@ describe('Blockcypher Explorer test suite', function () {
     it('should throw the right error', async function () {
       mockResponse.confirmations = 0;
       expect(() => {
-        generateTransactionDataFromBlockcypherResponse(mockResponse);
+        parseTransactionDataFromBlockcypherResponse(mockResponse);
       }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Blockcypher API');
     });
   });

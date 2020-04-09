@@ -2,7 +2,7 @@
 import sinon from 'sinon';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
+import * as bitcoinExplorer from '../../../src/explorers/explorer';
 import * as getIssuerProfile from '../../../src/domain/verifier/useCases/getIssuerProfile';
 import v1_2IssuerProfile from '../../data/v1.2-issuer-profile';
 

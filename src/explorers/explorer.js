@@ -1,12 +1,12 @@
-import { BLOCKCHAINS, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
-import { buildTransactionApiUrl } from '../../services/transaction-apis';
-import { request } from '../../services/request';
-import { VerifierError } from '../../models';
-import { getText } from '../../domain/i18n/useCases';
-import { parseTransactionDataFromBitpayResponse } from './apis/bitpay';
-import { parseTransactionDataFromBlockcypherResponse } from './apis/blockcypher';
-import { parseTransactionDataFromBlockexplorerResponse } from './apis/blockexplorer';
-import { parseTransactionDataFromBlockstreamResponse } from './apis/blockstream';
+import { BLOCKCHAINS, SUB_STEPS, TRANSACTION_APIS } from '../constants';
+import { buildTransactionApiUrl } from '../services/transaction-apis';
+import { request } from '../services/request';
+import { VerifierError } from '../models';
+import { getText } from '../domain/i18n/useCases';
+import { parseTransactionDataFromBitpayResponse } from './bitcoin/bitpay';
+import { parseTransactionDataFromBlockcypherResponse } from './bitcoin/blockcypher';
+import { parseTransactionDataFromBlockexplorerResponse } from './bitcoin/blockexplorer';
+import { parseTransactionDataFromBlockstreamResponse } from './bitcoin/blockstream';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const isTestnet = chain !== BLOCKCHAINS.bitcoin.code;

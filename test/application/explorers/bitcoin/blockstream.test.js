@@ -1,5 +1,5 @@
-import * as mockBlockstreamResponse from '../../mocks/mockBlockstreamResponse';
-import { parseTransactionDataFromBlockstreamResponse } from '../../../../../src/explorers/bitcoin/apis/blockstream';
+import * as mockBlockstreamResponse from '../mocks/mockBlockstreamResponse.json';
+import { parseTransactionDataFromBlockstreamResponse } from '../../../../src/explorers/bitcoin/blockstream';
 
 function getMockBlockstreamResponse () {
   return JSON.parse(JSON.stringify(mockBlockstreamResponse));

@@ -1,8 +1,8 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
-import { TransactionData, VerifierError } from '../../../models';
-import { getText } from '../../../domain/i18n/useCases';
-import { stripHashPrefix } from '../../utils/stripHashPrefix';
-import { timestampToDateObject } from '../../../helpers/date';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
+import { TransactionData, VerifierError } from '../../models';
+import { getText } from '../../domain/i18n/useCases';
+import { stripHashPrefix } from '../utils/stripHashPrefix';
+import { timestampToDateObject } from '../../helpers/date';
 
 export function parseTransactionDataFromBlockexplorerResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {

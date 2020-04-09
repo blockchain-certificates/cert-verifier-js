@@ -1,5 +1,5 @@
 import { getEtherScanFetcher } from './ethereum';
-import { getBitcoinTransactionFromApi } from './bitcoin/bitcoin-explorer';
+import { getBitcoinTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 
 const BitcoinExplorers = [

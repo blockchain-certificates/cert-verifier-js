@@ -1,15 +1,32 @@
-import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
+import * as ethereumExplorer from '../../../src/explorers/ethereum';
 
 describe('given the certificate is an ethereum main with an invalid merkle root', function () {
-  it('should fail', async function () {
-    const certificate = new Certificate(FIXTURES.EthereumMainInvalidMerkleRoot);
-    const result = await certificate.verify(({ code, label, status, errorMessage }) => {
-      if (code === SUB_STEPS.checkMerkleRoot && status !== VERIFICATION_STATUSES.STARTING) {
-        expect(status).toBe(VERIFICATION_STATUSES.FAILURE);
-        expect(errorMessage).toBe('Merkle root does not match remote hash.');
-      }
+  let certificate;
+  let result;
+
+  beforeAll(async function () {
+    sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+      remoteHash: '4f48e91f0397a49a5b56718a78d681c51932c8bd9242442b94bcfb93434957db',
+      issuingAddress: '0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c',
+      time: '2018-05-08T18:30:34.000Z'
     });
+    certificate = new Certificate(FIXTURES.EthereumMainInvalidMerkleRoot);
+    await certificate.init();
+    result = await certificate.verify();
+  });
+
+  afterAll(function () {
+    sinon.restore();
+  });
+
+  it('should fail', async function () {
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+  });
+
+  it('should provide the error message', function () {
+    expect(result.message).toBe('Merkle root does not match remote hash.');
   });
 });

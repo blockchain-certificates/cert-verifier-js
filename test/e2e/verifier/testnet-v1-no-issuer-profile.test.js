@@ -1,17 +1,35 @@
-import { Certificate, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
+import sinon from 'sinon';
+import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
 
 describe('given the certificate\'s issuer profile no longer exists', function () {
-  it('should fail', async function () {
-    const certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
-    await certificate.init();
-    let failingStep = {};
-    const result = await certificate.verify(({ code, label, status, errorMessage }) => {
-      if (code === SUB_STEPS.getIssuerProfile && status === VERIFICATION_STATUSES.FAILURE) {
-        failingStep = { code, label, status, errorMessage };
-      }
+  let certificate;
+  let result;
+
+  beforeAll(async function () {
+    sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+      remoteHash: '2ccf4b24fe14efff27064303b153d382bb981a6481742d75d81afdc7a354eda1',
+      issuingAddress: 'mmShyF6mhf6LeQzPdEsmiCghhgMuEn9TNF',
+      time: '2016-09-29T23:46:25.000Z',
+      revokedAddresses: [
+        'mmShyF6mhf6LeQzPdEsmiCghhgMuEn9TNF'
+      ]
     });
-    expect(failingStep).toEqual({ code: SUB_STEPS.getIssuerProfile, label: 'Getting issuer profile', status: VERIFICATION_STATUSES.FAILURE, errorMessage: 'Unable to get issuer profile' });
+    certificate = new Certificate(FIXTURES.TestnetV1NoIssuerProfile);
+    await certificate.init();
+    result = await certificate.verify();
+  });
+
+  afterAll(function () {
+    sinon.restore();
+  });
+
+  it('should fail', function () {
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+  });
+
+  it('should expose the error message', function () {
+    expect(result.message).toBe('Unable to get issuer profile');
   });
 });

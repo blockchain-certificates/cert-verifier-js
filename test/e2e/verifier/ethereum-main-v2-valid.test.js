@@ -1,11 +1,19 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
+import * as ethereumExplorer from '../../../src/explorers/ethereum';
+import sinon from 'sinon';
 
 describe('given the certificate is a valid ethereum main', function () {
   it('should verify successfully', async function () {
+    sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+      remoteHash: 'ec049a808a09f3e8e257401e0898aa3d32a733706fd7d16aacf0ba95f7b42c0c',
+      issuingAddress: '0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c',
+      time: '2018-06-01T20:47:55.000Z'
+    });
     const certificate = new Certificate(FIXTURES.EthereumMainV2Valid);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    sinon.restore();
   });
 });

@@ -9,10 +9,10 @@
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",
   "scripts": {
-    "test": "jest --runInBand",
+    "test": "jest",
     "test:build": "jest --testRegex \"/*(.test.build.js)\" --runInBand && npm run test:build:iife",
     "test:build:iife": "karma start --single-run",
-    "test:watch": "jest --watch --runInBand",
+    "test:watch": "jest --watch",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
     "build": "npm run build:esm && npm run build:es5 && npm run transpile:node && npm run test:build",

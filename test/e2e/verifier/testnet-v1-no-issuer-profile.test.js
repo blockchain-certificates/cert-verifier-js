@@ -1,14 +1,14 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
-import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
+import * as explorer from '../../../src/explorers/explorer';
 
 describe('given the certificate\'s issuer profile no longer exists', function () {
   let certificate;
   let result;
 
   beforeAll(async function () {
-    sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
       remoteHash: '2ccf4b24fe14efff27064303b153d382bb981a6481742d75d81afdc7a354eda1',
       issuingAddress: 'mmShyF6mhf6LeQzPdEsmiCghhgMuEn9TNF',
       time: '2016-09-29T23:46:25.000Z',

@@ -2,13 +2,13 @@
 import sinon from 'sinon';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as bitcoinExplorer from '../../../src/explorers/explorer';
+import * as explorer from '../../../src/explorers/explorer';
 import * as getIssuerProfile from '../../../src/domain/verifier/useCases/getIssuerProfile';
 import v1_2IssuerProfile from '../../data/v1.2-issuer-profile';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   beforeEach(function () {
-    sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
       remoteHash:
         '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
       issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',

@@ -1,11 +1,11 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
-import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
+import * as explorer from '../../../src/explorers/explorer';
 
 describe('given the certificate is a valid testnet (v2.0)', function () {
   it('should verify successfully', async function () {
-    sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
       remoteHash: 'f029b45bb1a7b1f0b970f6de35344b73cccd16177b4c037acbc2541c7fc27078',
       issuingAddress: 'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj',
       time: '2017-06-29T22:10:29.000Z',

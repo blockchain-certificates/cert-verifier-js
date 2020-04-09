@@ -15,7 +15,7 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
   return new Promise((resolve, reject) => {
     return request({ url: requestUrl }).then(response => {
       try {
-        const transactionData = getTransactionDataGeneratorPerApi(apiName)(JSON.parse(response));
+        const transactionData = getApiParsingFunction(apiName)(JSON.parse(response));
         resolve(transactionData);
       } catch (err) {
         reject(err.message);
@@ -33,7 +33,7 @@ const API_TRANSACTION_DATA_GENERATORS = {
   [TRANSACTION_APIS.Blockstream]: generateTransactionDataFromBlockstreamResponse
 };
 
-function getTransactionDataGeneratorPerApi (apiName) {
+function getApiParsingFunction (apiName) {
   const transactionDataGenerator = API_TRANSACTION_DATA_GENERATORS[apiName];
   if (!transactionDataGenerator) {
     throw new Error(`API ${apiName} is not listed`);

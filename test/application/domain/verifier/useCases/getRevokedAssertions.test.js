@@ -1,5 +1,5 @@
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
-import * as RequestServices from '../../../../../src/services/request';
+import * as RequestServices from '../../../../../src/services';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
 import sinon from 'sinon';
 

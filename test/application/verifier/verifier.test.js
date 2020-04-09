@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/mainnet-valid-2.0';
+import fixture from '../../fixtures/v2/mainnet-valid-2.0';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 

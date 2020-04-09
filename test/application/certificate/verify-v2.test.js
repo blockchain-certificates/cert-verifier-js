@@ -2,6 +2,7 @@ import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../s
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
+import * as bitcoinExplorer from '../../../src/explorers/bitcoin/bitcoin-explorer';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -10,11 +11,20 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
+          sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+            remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+            issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+            time: '2018-02-08T00:23:34.000Z',
+            revokedAddresses: [
+              '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+            ]
+          });
           certificate = new Certificate(FIXTURES.MainnetV2Valid);
           await certificate.init();
         });
 
         afterEach(function () {
+          sinon.restore();
           certificate = null;
         });
 
@@ -46,6 +56,24 @@ describe('Certificate test suite', function () {
       describe('when the certificate is invalid', function () {
         let certificate;
 
+        beforeEach(async function () {
+          sinon.stub(bitcoinExplorer, 'getBitcoinTransactionFromApi').resolves({
+            remoteHash: '7570ad1a939b1d733668125df3e71ebbd593358e7d851eff3fdebd487462daab',
+            issuingAddress: 'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj',
+            time: '2017-05-03T17:06:19.000Z',
+            revokedAddresses: [
+              'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj'
+            ]
+          });
+          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+          await certificate.init();
+        });
+
+        afterEach(function () {
+          sinon.restore();
+          certificate = null;
+        });
+
         it('should call it with the step, the text, the status & the error message', async function () {
           const updates = [];
           const assertionStep = {
@@ -54,9 +82,6 @@ describe('Certificate test suite', function () {
             status: VERIFICATION_STATUSES.FAILURE,
             errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
           };
-
-          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
-          await certificate.init();
 
           await certificate.verify(update => {
             updates.push(update);

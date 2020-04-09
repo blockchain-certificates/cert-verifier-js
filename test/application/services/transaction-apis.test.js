@@ -1,5 +1,5 @@
 import { buildTransactionApiUrl } from '../../../src/services/transaction-apis';
-import { TRANSACTION_APIS } from '../../../src/constants';
+import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from '../../../src/constants';
 
 describe('Transaction APIs test suite', function () {
   let fixtureApiName;
@@ -10,7 +10,11 @@ describe('Transaction APIs test suite', function () {
       it('should return an error', function () {
         fixtureApiName = 'wrong-api-name';
         expect(() => {
-          buildTransactionApiUrl(fixtureApiName, fixtureTransactionId);
+          buildTransactionApiUrl({
+            apiName: fixtureApiName,
+            searchValue: TRANSACTION_ID_PLACEHOLDER,
+            newValue: fixtureTransactionId
+          });
         }).toThrowError(`API ${fixtureApiName} is not listed`);
       });
     });
@@ -22,19 +26,32 @@ describe('Transaction APIs test suite', function () {
 
       it('should not throw an error', function () {
         expect(() => {
-          buildTransactionApiUrl(fixtureApiName, fixtureTransactionId);
+          buildTransactionApiUrl({
+            apiName: fixtureApiName,
+            searchValue: TRANSACTION_ID_PLACEHOLDER,
+            newValue: fixtureTransactionId
+          });
         }).not.toThrowError();
       });
 
       describe('and testApi is set to false', function () {
         it('should return the mainnet address with the transaction ID', function () {
-          expect(buildTransactionApiUrl(fixtureApiName, fixtureTransactionId)).toEqual(`https://api.blockcypher.com/v1/btc/main/txs/${fixtureTransactionId}?limit=500`);
+          expect(buildTransactionApiUrl({
+            apiName: fixtureApiName,
+            searchValue: TRANSACTION_ID_PLACEHOLDER,
+            newValue: fixtureTransactionId
+          })).toEqual(`https://api.blockcypher.com/v1/btc/main/txs/${fixtureTransactionId}?limit=500`);
         });
       });
 
       describe('and testApi is set to true', function () {
         it('should return the testnet address with the transaction ID', function () {
-          expect(buildTransactionApiUrl(fixtureApiName, fixtureTransactionId, true)).toEqual(`https://api.blockcypher.com/v1/btc/test3/txs/${fixtureTransactionId}?limit=500`);
+          expect(buildTransactionApiUrl({
+            apiName: fixtureApiName,
+            searchValue: TRANSACTION_ID_PLACEHOLDER,
+            newValue: fixtureTransactionId,
+            testApi: true
+          })).toEqual(`https://api.blockcypher.com/v1/btc/test3/txs/${fixtureTransactionId}?limit=500`);
         });
       });
     });

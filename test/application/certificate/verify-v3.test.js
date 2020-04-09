@@ -1,6 +1,6 @@
 import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
-import * as ethereumExplorer from '../../../src/explorers/ethereum';
+import * as ethereumExplorer from '../../../src/explorers/ethereum/etherscan';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
 

@@ -1,9 +1,9 @@
-import { request } from '../services';
-import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../constants';
-import { TransactionData, VerifierError } from '../models';
-import { stripHashPrefix } from './utils/stripHashPrefix';
-import { getText } from '../domain/i18n/useCases';
-import { TRANSACTIONS_APIS_URLS } from '../constants/api';
+import { request } from '../../services';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
+import { TransactionData, VerifierError } from '../../models';
+import { stripHashPrefix } from '../utils/stripHashPrefix';
+import { getText } from '../../domain/i18n/useCases';
+import { TRANSACTIONS_APIS_URLS } from '../../constants/api';
 
 export function getEtherScanFetcher (transactionId, chain) {
   const action = '&action=eth_getTransactionByHash&txhash=';

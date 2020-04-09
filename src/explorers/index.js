@@ -1,4 +1,4 @@
-import { getEtherScanFetcher } from './ethereum';
+import { getEtherScanFetcher } from './ethereum/etherscan';
 import { getBitcoinTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 

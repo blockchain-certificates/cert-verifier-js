@@ -1,5 +1,6 @@
 import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
+import * as ethereumExplorer from '../../../src/explorers/ethereum';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
 
@@ -10,12 +11,18 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
+          sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+            remoteHash: '2b065c69c70432e9f082629939733afd2343e83f45939519986e9a09cf8ccd08',
+            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
+            time: '2020-03-11T14:48:23.000Z'
+          });
           certificate = new Certificate(FIXTURES.BlockcertsV3Alpha);
           await certificate.init();
         });
 
         afterEach(function () {
           certificate = null;
+          sinon.restore();
         });
 
         it('should call it with the step, the text and the status', async function () {
@@ -47,11 +54,17 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
+          sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+            remoteHash: 'a16e3677d1f0ddae82642b6995937d3082fdef3323431cf6d0ada4acb893f4cc',
+            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
+            time: '2020-02-04T13:52:09.000Z'
+          });
           certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered);
           await certificate.init();
         });
 
         afterEach(function () {
+          sinon.restore();
           certificate = null;
         });
 
@@ -74,11 +87,17 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
+          sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+            remoteHash: 'de1ddd816629c5aaecbaae7ad8ad193a9524362f8c98508bf891f2df3a8359e4',
+            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
+            time: '2020-03-23T20:38:13.000Z'
+          });
           certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
           await certificate.init();
         });
 
         afterEach(function () {
+          sinon.restore();
           certificate = null;
         });
 

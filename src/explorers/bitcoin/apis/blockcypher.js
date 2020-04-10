@@ -4,7 +4,7 @@ import { TransactionData, VerifierError } from '../../../models';
 import { stripHashPrefix } from '../../utils/stripHashPrefix';
 import { getText } from '../../../domain/i18n/useCases';
 
-export function generateTransactionDataFromBlockcypherResponse (jsonResponse) {
+export function parseTransactionDataFromBlockcypherResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockCypherResponse'));
   }

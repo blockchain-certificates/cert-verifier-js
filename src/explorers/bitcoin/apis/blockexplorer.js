@@ -4,7 +4,7 @@ import { getText } from '../../../domain/i18n/useCases';
 import { stripHashPrefix } from '../../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../../helpers/date';
 
-export function generateTransactionDataFromBlockexplorerResponse (jsonResponse) {
+export function parseTransactionDataFromBlockexplorerResponse (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockexplorerResponse'));
   }

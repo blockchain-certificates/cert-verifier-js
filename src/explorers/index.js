@@ -12,7 +12,7 @@ const BitcoinTransactionAPIArray = [
 function explorerFactory (TransactionAPIArray) {
   return TransactionAPIArray
     .map(transactionAPI =>
-      (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockexplorer, transactionId, chain)
+      (transactionId, chain) => getBitcoinTransactionFromApi(transactionAPI, transactionId, chain)
     );
 }
 

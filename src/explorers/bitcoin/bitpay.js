@@ -1,10 +1,10 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
 import { TransactionData, VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
 
-export function parseTransactionDataFromBitpayResponse (jsonResponse) {
+function parsingTransactionDataFunction (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBitpayResponse'));
   }
@@ -23,3 +23,13 @@ export function parseTransactionDataFromBitpayResponse (jsonResponse) {
     revokedAddresses
   );
 }
+
+const serviceUrls = {
+  main: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+  test: `https://api.bitcore.io/api/BTC/testnet/tx/${TRANSACTION_ID_PLACEHOLDER}`
+};
+
+export {
+  serviceUrls,
+  parsingTransactionDataFunction
+};

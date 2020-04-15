@@ -1,10 +1,10 @@
 import { dateToUnixTimestamp } from '../../helpers/date';
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
 import { TransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 
-export function parseTransactionDataFromBlockcypherResponse (jsonResponse) {
+function parsingTransactionDataFunction (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockCypherResponse'));
   }
@@ -23,3 +23,13 @@ export function parseTransactionDataFromBlockcypherResponse (jsonResponse) {
     revokedAddresses
   );
 }
+
+const serviceUrls = {
+  main: `https://api.blockcypher.com/v1/btc/main/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`,
+  test: `https://api.blockcypher.com/v1/btc/test3/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`
+};
+
+export {
+  serviceUrls,
+  parsingTransactionDataFunction
+};

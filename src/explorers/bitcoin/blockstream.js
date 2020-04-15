@@ -1,10 +1,10 @@
-import { BLOCKCHAINS, SUB_STEPS } from '../../constants';
+import { BLOCKCHAINS, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
 import { TransactionData, VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
 
-export function parseTransactionDataFromBlockstreamResponse (jsonResponse) {
+function parsingTransactionDataFunction (jsonResponse) {
   if (!jsonResponse.status.confirmed) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockstreamResponse'));
   }
@@ -23,3 +23,13 @@ export function parseTransactionDataFromBlockstreamResponse (jsonResponse) {
     revokedAddresses
   );
 }
+
+const serviceUrls = {
+  main: `https://blockstream.info/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+  test: `https://blockstream.info/testnet/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
+};
+
+export {
+  serviceUrls,
+  parsingTransactionDataFunction
+};

@@ -11,7 +11,7 @@ export function getEtherScanFetcher (transactionId, chain) {
   if (chain === BLOCKCHAINS.ethmain.code) {
     etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + transactionId;
   } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action + transactionId;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action + transactionId;
   }
 
   const etherScanFetcher = new Promise((resolve, reject) => {
@@ -59,7 +59,7 @@ function getEtherScanBlock (jsonResponse, chain) {
   if (chain === BLOCKCHAINS.ethmain.code) {
     etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + blockNumber;
   } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action + blockNumber;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action + blockNumber;
   }
 
   return new Promise((resolve, reject) => {
@@ -92,7 +92,7 @@ function checkEtherScanConfirmations (chain, blockNumber) {
   if (chain === BLOCKCHAINS.ethmain.code) {
     etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action;
   } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].ropsten + action;
+    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action;
   }
 
   return new Promise((resolve, reject) => {

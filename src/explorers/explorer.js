@@ -1,17 +1,14 @@
-import { SUB_STEPS, TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from '../constants';
-import { buildTransactionApiUrl } from '../services/transaction-apis';
+import { SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../constants';
+import { buildTransactionServiceUrl } from '../services/transaction-apis';
 import { request } from '../services';
 import { VerifierError } from '../models';
 import { getText } from '../domain/i18n/useCases';
-import { parseTransactionDataFromBitpayResponse } from './bitcoin/bitpay';
-import { parseTransactionDataFromBlockcypherResponse } from './bitcoin/blockcypher';
-import { parseTransactionDataFromBlockexplorerResponse } from './bitcoin/blockexplorer';
-import { parseTransactionDataFromBlockstreamResponse } from './bitcoin/blockstream';
+import { BitcoinAPIs } from './bitcoin';
 import { isTestChain } from '../constants/blockchains';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
-  const requestUrl = buildTransactionApiUrl({
-    apiName,
+  const requestUrl = buildTransactionServiceUrl({
+    serviceUrls: BitcoinAPIs[apiName].serviceUrls,
     searchValue: TRANSACTION_ID_PLACEHOLDER,
     newValue: transactionId,
     testApi: isTestChain(chain)
@@ -31,17 +28,10 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
   });
 }
 
-const API_TRANSACTION_PARSING_FUNCTIONS = {
-  [TRANSACTION_APIS.Bitpay]: parseTransactionDataFromBitpayResponse,
-  [TRANSACTION_APIS.Blockcypher]: parseTransactionDataFromBlockcypherResponse,
-  [TRANSACTION_APIS.Blockexplorer]: parseTransactionDataFromBlockexplorerResponse,
-  [TRANSACTION_APIS.Blockstream]: parseTransactionDataFromBlockstreamResponse
-};
-
 function getApiParsingFunction (apiName) {
-  const transactionDataGenerator = API_TRANSACTION_PARSING_FUNCTIONS[apiName];
+  const transactionDataGenerator = BitcoinAPIs[apiName];
   if (!transactionDataGenerator) {
     throw new Error(`API ${apiName} is not listed`);
   }
-  return transactionDataGenerator;
+  return transactionDataGenerator.parsingTransactionDataFunction;
 }

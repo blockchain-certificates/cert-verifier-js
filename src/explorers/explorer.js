@@ -14,18 +14,12 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
     testApi: isTestChain(chain)
   });
 
-  return new Promise((resolve, reject) => {
-    return request({ url: requestUrl }).then(response => {
-      try {
-        const transactionData = getApiParsingFunction(apiName)(JSON.parse(response), chain);
-        resolve(transactionData);
-      } catch (err) {
-        reject(err.message);
-      }
-    }).catch(() => {
-      reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
-    });
-  });
+  try {
+    const response = await request({ url: requestUrl });
+    return await getApiParsingFunction(apiName)(JSON.parse(response), chain);
+  } catch (err) {
+    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
+  }
 }
 
 function getApiParsingFunction (apiName) {

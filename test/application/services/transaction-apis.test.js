@@ -1,6 +1,6 @@
 import { buildTransactionServiceUrl } from '../../../src/services/transaction-apis';
 import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from '../../../src/constants';
-import { BitcoinAPIs } from '../../../src/explorers/bitcoin';
+import { PublicAPIs } from '../../../src/explorers/public-apis';
 
 describe('Transaction APIs test suite', function () {
   let fixtureApiName;
@@ -8,7 +8,7 @@ describe('Transaction APIs test suite', function () {
 
   describe('buildTransactionServiceUrl method', function () {
     beforeEach(function () {
-      fixtureApiName = BitcoinAPIs[TRANSACTION_APIS.Blockcypher].serviceUrls;
+      fixtureApiName = PublicAPIs[TRANSACTION_APIS.Blockcypher].serviceUrls;
     });
 
     describe('given testApi is set to false', function () {

@@ -1,6 +1,6 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as ethereumExplorer from '../../../src/explorers/ethereum/etherscan';
+import * as Explorers from '../../../src/explorers/explorer';
 import sinon from 'sinon';
 
 describe('given the certificate is a revoked certificate', function () {
@@ -9,7 +9,7 @@ describe('given the certificate is a revoked certificate', function () {
     let result;
 
     beforeAll(async function () {
-      sinon.stub(ethereumExplorer, 'getEtherScanFetcher').resolves({
+      sinon.stub(Explorers, 'getBitcoinTransactionFromApi').resolves({
         remoteHash: '6ad52e9db922e0c2648ce8f88f94b7e376daf9af60a7c782db75011f3783ea0a',
         issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
         time: '2019-10-15T09:20:24.000Z'

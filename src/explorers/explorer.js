@@ -3,12 +3,12 @@ import { buildTransactionServiceUrl } from '../services/transaction-apis';
 import { request } from '../services';
 import { VerifierError } from '../models';
 import { getText } from '../domain/i18n/useCases';
-import { BitcoinAPIs } from './bitcoin';
+import { PublicAPIs } from './public-apis';
 import { isTestChain } from '../constants/blockchains';
 
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: BitcoinAPIs[apiName].serviceUrls,
+    serviceUrls: PublicAPIs[apiName].serviceUrls,
     searchValue: TRANSACTION_ID_PLACEHOLDER,
     newValue: transactionId,
     testApi: isTestChain(chain)
@@ -17,7 +17,7 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
   return new Promise((resolve, reject) => {
     return request({ url: requestUrl }).then(response => {
       try {
-        const transactionData = getApiParsingFunction(apiName)(JSON.parse(response));
+        const transactionData = getApiParsingFunction(apiName)(JSON.parse(response), chain);
         resolve(transactionData);
       } catch (err) {
         reject(err.message);
@@ -29,9 +29,9 @@ export async function getBitcoinTransactionFromApi (apiName, transactionId, chai
 }
 
 function getApiParsingFunction (apiName) {
-  const transactionDataGenerator = BitcoinAPIs[apiName];
-  if (!transactionDataGenerator) {
+  const publicAPI = PublicAPIs[apiName];
+  if (!publicAPI) {
     throw new Error(`API ${apiName} is not listed`);
   }
-  return transactionDataGenerator.parsingTransactionDataFunction;
+  return publicAPI.parsingTransactionDataFunction;
 }

@@ -1,44 +1,26 @@
 import { request } from '../../services';
-import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
 import { TransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
-import { TRANSACTIONS_APIS_URLS } from '../../constants/api';
+import { buildTransactionServiceUrl } from '../../services/transaction-apis';
+import { isTestChain } from '../../constants/blockchains';
 
-export function getEtherScanFetcher (transactionId, chain) {
-  const action = '&action=eth_getTransactionByHash&txhash=';
-  let etherScanUrl;
-  if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + transactionId;
-  } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action + transactionId;
-  }
-
-  const etherScanFetcher = new Promise((resolve, reject) => {
-    return request({ url: etherScanUrl })
-      .then(function (response) {
-        const responseTxData = JSON.parse(response);
-        try {
-          // Parse block to get timestamp first, then create TransactionData
-          const blockFetcher = getEtherScanBlock(responseTxData, chain);
-          blockFetcher
-            .then(function (blockResponse) {
-              const txData = parseEtherScanResponse(responseTxData, blockResponse);
-              resolve(txData);
-            })
-            .catch(function () {
-              reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
-            });
-        } catch (err) {
-          // don't need to wrap this exception
-          reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
-        }
-      }).catch(function () {
-        reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash')));
-      });
-  });
-  return etherScanFetcher;
-}
+const ETHERSCAN_API_KEY = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
+const MAIN_API_BASE_URL = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
+const TEST_API_BASE_URL = `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
+const serviceUrls = {
+  main: `${MAIN_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`,
+  test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`
+};
+const getBlockByNumberServiceUrls = {
+  main: `${MAIN_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`,
+  test: `${TEST_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`
+};
+const getBlockNumberServiceUrls = {
+  main: `${MAIN_API_BASE_URL}&action=eth_blockNumber`,
+  test: `${TEST_API_BASE_URL}&action=eth_blockNumber`
+};
 
 function parseEtherScanResponse (jsonResponse, block) {
   const data = jsonResponse.result;
@@ -54,16 +36,15 @@ function parseEtherScanResponse (jsonResponse, block) {
 function getEtherScanBlock (jsonResponse, chain) {
   const data = jsonResponse.result;
   const blockNumber = data.blockNumber;
-  const action = '&action=eth_getBlockByNumber&boolean=true&tag=';
-  let etherScanUrl;
-  if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action + blockNumber;
-  } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action + blockNumber;
-  }
+  const requestUrl = buildTransactionServiceUrl({
+    serviceUrls: getBlockByNumberServiceUrls,
+    searchValue: TRANSACTION_ID_PLACEHOLDER,
+    newValue: blockNumber,
+    testApi: isTestChain(chain)
+  });
 
   return new Promise((resolve, reject) => {
-    return request({ url: etherScanUrl })
+    return request({ url: requestUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         const blockData = responseData.result;
@@ -87,16 +68,13 @@ function getEtherScanBlock (jsonResponse, chain) {
 }
 
 function checkEtherScanConfirmations (chain, blockNumber) {
-  const action = '&action=eth_blockNumber';
-  let etherScanUrl;
-  if (chain === BLOCKCHAINS.ethmain.code) {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].main + action;
-  } else {
-    etherScanUrl = TRANSACTIONS_APIS_URLS[TRANSACTION_APIS.Etherscan].test + action;
-  }
+  const requestUrl = buildTransactionServiceUrl({
+    serviceUrls: getBlockNumberServiceUrls,
+    testApi: isTestChain(chain)
+  });
 
   return new Promise((resolve, reject) => {
-    return request({ url: etherScanUrl })
+    return request({ url: requestUrl })
       .then(function (response) {
         const responseData = JSON.parse(response);
         const currentBlockCount = responseData.result;
@@ -114,3 +92,18 @@ function checkEtherScanConfirmations (chain, blockNumber) {
       });
   });
 }
+
+function parsingTransactionDataFunction (jsonResponse, chain) {
+  // Parse block to get timestamp first, then create TransactionData
+  const blockFetcher = getEtherScanBlock(jsonResponse, chain);
+  blockFetcher.then(function (blockResponse) {
+    return parseEtherScanResponse(jsonResponse, blockResponse);
+  }).catch(function () {
+    throw new Error(getText('errors', 'unableToGetRemoteHash'));
+  });
+}
+
+export {
+  serviceUrls,
+  parsingTransactionDataFunction
+};

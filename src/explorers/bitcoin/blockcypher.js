@@ -1,6 +1,6 @@
 import { dateToUnixTimestamp } from '../../helpers/date';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
-import { TransactionData, VerifierError } from '../../models';
+import { generateTransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 
@@ -16,7 +16,7 @@ function parsingTransactionDataFunction (jsonResponse) {
   const revokedAddresses = outputs
     .filter(output => !!output.spent_by)
     .map(output => output.addresses[0]);
-  return new TransactionData(
+  return generateTransactionData(
     opReturnScript,
     issuingAddress,
     time,

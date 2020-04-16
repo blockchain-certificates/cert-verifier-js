@@ -1,6 +1,6 @@
 import { request } from '../../services';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
-import { TransactionData, VerifierError } from '../../models';
+import { generateTransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { buildTransactionServiceUrl } from '../../services/transaction-apis';
@@ -30,7 +30,7 @@ function parseEtherScanResponse (jsonResponse, block) {
 
   // The method of checking revocations by output spent do not work with Ethereum.
   // There are no input/outputs, only balances.
-  return new TransactionData(opReturnScript, issuingAddress, date, undefined);
+  return generateTransactionData(opReturnScript, issuingAddress, date, undefined);
 }
 
 function getEtherScanBlock (jsonResponse, chain) {

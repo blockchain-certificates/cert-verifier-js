@@ -1,6 +1,6 @@
 import { SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../constants';
 import { buildTransactionServiceUrl } from '../services/transaction-apis';
-import { request } from '../services';
+import { request } from '../services/request';
 import { VerifierError } from '../models';
 import { getText } from '../domain/i18n/useCases';
 import { PublicAPIs } from './public-apis';

@@ -1,4 +1,4 @@
-import { request } from '../../../src/services';
+import { request } from '../../../src/services/request';
 
 describe('Services Request test suite', function () {
   describe('given it is called without a URL', function () {

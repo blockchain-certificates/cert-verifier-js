@@ -18,7 +18,7 @@
     "build": "npm run build:esm && npm run build:es5 && npm run transpile:node && npm run test:build",
     "build:esm": "rollup -c",
     "build:es5": "rollup -c rollup-es5.config.js",
-    "transpile:node": "npx babel src -d lib --copy-files",
+    "transpile:node": "npx babel src -d lib --copy-files --extensions '.ts'",
     "lint": "semistandard --verbose | snazzy",
     "semantic-release": "semantic-release"
   },
@@ -27,16 +27,6 @@
   },
   "author": "Kim Duffy",
   "license": "MIT",
-  "jest": {
-    "modulePaths": [
-      "<rootDir>/src/",
-      "<rootDir>/node_modules"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "json"
-    ]
-  },
   "semistandard": {
     "globals": [
       "XMLHttpRequest"
@@ -74,8 +64,11 @@
     "@babel/core": "^7.8.7",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
+    "@babel/preset-typescript": "^7.9.0",
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
+    "@types/jest": "^25.2.1",
+    "babel-jest": "^25.3.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "eslint-config-semistandard": "^15.0.0",
@@ -96,9 +89,12 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-re": "^1.0.7",
     "rollup-plugin-terser": "^5.1.0",
+    "rollup-plugin-typescript": "^1.0.1",
     "semantic-release": "^17.0.2",
     "semistandard": "^14.2.0",
     "sinon": "^9.0.0",
-    "snazzy": "^8.0.0"
+    "snazzy": "^8.0.0",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
   }
 }

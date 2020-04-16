@@ -1,5 +1,5 @@
 import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
-import { TransactionData, VerifierError } from '../../../models';
+import { generateTransactionData, VerifierError } from '../../../models';
 import { getText } from '../../../domain/i18n/useCases';
 import { stripHashPrefix } from '../../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../../helpers/date';
@@ -16,7 +16,7 @@ export function parseTransactionDataFromBlockexplorerResponse (jsonResponse) {
   const revokedAddresses = outputs
     .filter(output => !!output.spentTxId)
     .map(output => output.scriptPubKey.addresses[0]);
-  return new TransactionData(
+  return generateTransactionData(
     opReturnScript,
     issuingAddress,
     time,

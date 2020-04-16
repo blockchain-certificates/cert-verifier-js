@@ -1,11 +1,11 @@
 import Key from './key';
 import SignatureImage from './signatureImage';
-import TransactionData from './transactionData';
+import generateTransactionData from './TransactionData';
 import VerifierError from './verifierError';
 
 export {
   Key,
   SignatureImage,
-  TransactionData,
+  generateTransactionData,
   VerifierError
 };

@@ -15,8 +15,8 @@ describe('Transaction APIs test suite', function () {
       it('should return the mainnet address with the transaction ID', function () {
         expect(buildTransactionServiceUrl({
           serviceUrls: fixtureApiName,
-          searchValue: TRANSACTION_ID_PLACEHOLDER,
-          newValue: fixtureTransactionId
+          transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
+          transactionId: fixtureTransactionId
         })).toEqual(`https://api.blockcypher.com/v1/btc/main/txs/${fixtureTransactionId}?limit=500`);
       });
     });
@@ -25,8 +25,8 @@ describe('Transaction APIs test suite', function () {
       it('should return the testnet address with the transaction ID', function () {
         expect(buildTransactionServiceUrl({
           serviceUrls: fixtureApiName,
-          searchValue: TRANSACTION_ID_PLACEHOLDER,
-          newValue: fixtureTransactionId,
+          transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
+          transactionId: fixtureTransactionId,
           testApi: true
         })).toEqual(`https://api.blockcypher.com/v1/btc/test3/txs/${fixtureTransactionId}?limit=500`);
       });

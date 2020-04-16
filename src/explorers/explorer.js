@@ -9,8 +9,8 @@ import { isTestChain } from '../constants/blockchains';
 export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceUrls,
-    searchValue: TRANSACTION_ID_PLACEHOLDER,
-    newValue: transactionId,
+    transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
+    transactionId: transactionId,
     testApi: isTestChain(chain)
   });
 

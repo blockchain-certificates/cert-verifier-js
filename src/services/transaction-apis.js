@@ -1,4 +1,4 @@
-export function buildTransactionServiceUrl ({ serviceUrls, searchValue = '', newValue = '', testApi = false }) {
+export function buildTransactionServiceUrl ({ serviceUrls, transactionIdPlaceholder = '', transactionId = '', testApi = false }) {
   const apiUrl = testApi ? serviceUrls.test : serviceUrls.main;
-  return apiUrl.replace(searchValue, newValue);
+  return apiUrl.replace(transactionIdPlaceholder, transactionId);
 }

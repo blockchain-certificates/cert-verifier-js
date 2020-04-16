@@ -1,14 +1,22 @@
-import { getEtherScanFetcher } from './ethereum';
-import { getBitcoinTransactionFromApi } from './bitcoin/bitcoin-explorer';
+import { getEtherScanFetcher } from './ethereum/etherscan';
+import { getBitcoinTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 
-const BitcoinExplorers = [
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockcypher, transactionId, chain),
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, transactionId, chain),
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockexplorer, transactionId, chain),
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockstream, transactionId, chain)
+const BitcoinTransactionAPIArray = [
+  TRANSACTION_APIS.Blockcypher,
+  TRANSACTION_APIS.Bitpay,
+  TRANSACTION_APIS.Blockexplorer,
+  TRANSACTION_APIS.Blockstream
 ];
 
+function explorerFactory (TransactionAPIArray) {
+  return TransactionAPIArray
+    .map(transactionAPI =>
+      (transactionId, chain) => getBitcoinTransactionFromApi(transactionAPI, transactionId, chain)
+    );
+}
+
+const BitcoinExplorers = explorerFactory(BitcoinTransactionAPIArray);
 const EthereumExplorers = [
   (transactionId, chain) => getEtherScanFetcher(transactionId, chain)
 ];

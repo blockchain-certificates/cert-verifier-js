@@ -1,6 +1,6 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as ethereumExplorer from '../../../src/explorers/ethereum';
+import * as ethereumExplorer from '../../../src/explorers/ethereum/etherscan';
 import sinon from 'sinon';
 
 describe('given the certificate is a revoked certificate', function () {

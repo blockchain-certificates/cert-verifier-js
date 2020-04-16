@@ -3,9 +3,42 @@ import parseJSON from './parser';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
+import { Blockcerts } from './models/Blockcerts';
+
+interface CertificateOptions {
+  locale?: string
+}
 
 export default class Certificate {
-  constructor (certificateDefinition, options = {}) {
+  public certificateJson: Blockcerts;
+  public chain: string; // enum?
+  public expires: string;
+  public id: string;
+  public issuer: any; // TODO: define issuer interface
+  public receipt: any; // TODO: define receipt interface
+  public revocationKey: string;
+  public transactionId: string;
+  public version: string; // enum?
+  public options: CertificateOptions;
+  public locale: string; // enum?
+  public isFormatValid: boolean;
+  public certificateImage?: string;
+  public description?: string; // v1
+  public issuedOn: string;
+  public metadataJson: any; // TODO: define metadataJson interface. As abstract as can be as keys and values are open.
+  public name?: string; // TODO: not formally set in V3
+  public publicKey?: string;
+  public recipientFullName: string;
+  public recordLink: string;
+  public sealImage?: string; // v1
+  public signature?: string; // v1
+  public signatureImage?: string; // v1
+  public subtitle?: string; // v1
+  public verificationSteps: any[]; // TODO: define verificationSteps interface.
+  public rawTransactionLink: string;
+  public transactionLink: string;
+
+  constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
     this._setOptions(options);
 

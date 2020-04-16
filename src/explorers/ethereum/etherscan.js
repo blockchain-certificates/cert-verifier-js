@@ -1,6 +1,6 @@
 import { request } from '../../services';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_APIS } from '../../constants';
-import { TransactionData, VerifierError } from '../../models';
+import { generateTransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { TRANSACTIONS_APIS_URLS } from '../../constants/api';
@@ -19,7 +19,7 @@ export function getEtherScanFetcher (transactionId, chain) {
       .then(function (response) {
         const responseTxData = JSON.parse(response);
         try {
-          // Parse block to get timestamp first, then create TransactionData
+          // Parse block to get timestamp first, then create generateTransactionData
           const blockFetcher = getEtherScanBlock(responseTxData, chain);
           blockFetcher
             .then(function (blockResponse) {
@@ -48,7 +48,7 @@ function parseEtherScanResponse (jsonResponse, block) {
 
   // The method of checking revocations by output spent do not work with Ethereum.
   // There are no input/outputs, only balances.
-  return new TransactionData(opReturnScript, issuingAddress, date, undefined);
+  return generateTransactionData(opReturnScript, issuingAddress, date, undefined);
 }
 
 function getEtherScanBlock (jsonResponse, chain) {

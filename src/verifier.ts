@@ -5,6 +5,7 @@ import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
+import { ExplorerAPI } from './certificate';
 
 const log = debug('Verifier');
 
@@ -27,9 +28,10 @@ export default class Verifier {
   public version: string; // TODO: enum?
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
+  public explorerAPIs: ExplorerAPI[];
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
 
-  constructor ({ certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version }) {
+  constructor ({ certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }) {
     this.chain = chain;
     this.expires = expires;
     this.id = id;
@@ -38,6 +40,7 @@ export default class Verifier {
     this.revocationKey = revocationKey;
     this.version = version;
     this.transactionId = transactionId;
+    this.explorerAPIs = explorerAPIs || [];
 
     let document = certificateJson.document;
     if (!document) {

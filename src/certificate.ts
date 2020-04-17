@@ -103,7 +103,8 @@ export default class Certificate {
       receipt: this.receipt,
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
-      version: this.version
+      version: this.version,
+      explorerAPIs: this.explorerAPIs
     });
     return verifier.verify(stepCallback);
   }

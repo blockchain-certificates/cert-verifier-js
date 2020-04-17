@@ -5,8 +5,9 @@ import { VerifierError } from '../models';
 import { getText } from '../domain/i18n/useCases';
 import { PublicAPIs } from './public-apis';
 import { isTestChain } from '../constants/blockchains';
+import { TRANSACTION_APIS } from '../constants/api';
 
-export async function getTransactionFromApi (apiName, transactionId, chain) {
+export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain) {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceUrls,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,

@@ -6,7 +6,7 @@ import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
 import { TransactionData } from './models/TransactionData';
 
-interface ExplorerURLs {
+export interface ExplorerURLs {
   main: string;
   test: string;
 }

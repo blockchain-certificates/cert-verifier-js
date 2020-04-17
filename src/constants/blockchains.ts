@@ -1,4 +1,4 @@
-const TRANSACTION_TEMPLATE_ID_PLACEHOLDER = '{TRANSACTION_ID}';
+const TRANSACTION_TEMPLATE_ID_PLACEHOLDER: string = '{TRANSACTION_ID}';
 const BLOCKCHAINS = {
   bitcoin: {
     code: 'bitcoin',
@@ -69,7 +69,7 @@ const BLOCKCHAINS = {
   }
 };
 
-function isTestChain (chain) {
+function isTestChain (chain: string): boolean {
   return chain !== BLOCKCHAINS.bitcoin.code && chain !== BLOCKCHAINS.ethmain.code;
 }
 

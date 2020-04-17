@@ -1,6 +1,6 @@
 /* eslint no-useless-escape: "off" */
 
-function noOffset (s) {
+function noOffset (s): number {
   let day = s.slice(0, -5).split(/\D/).map(function (itm) {
     return parseInt(itm, 10) || 0;
   });
@@ -13,7 +13,7 @@ function noOffset (s) {
   return day.getTime();
 }
 
-function dateFromRegex (s) {
+function dateFromRegex (s: string) {
   let day;
   let tz;
   const rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
@@ -36,15 +36,15 @@ function dateFromRegex (s) {
   return NaN;
 }
 
-function dateFromIso (isoDate) {
+function dateFromIso (isoDate: string) {
   // Chrome
-  const diso = Date.parse(isoDate);
+  const diso: number = Date.parse(isoDate);
   if (diso) {
     return new Date(diso);
   }
 
   // JS 1.8 gecko
-  const offsetDate = noOffset(isoDate);
+  const offsetDate: number = noOffset(isoDate);
   if (offsetDate) {
     return offsetDate;
   }
@@ -52,19 +52,13 @@ function dateFromIso (isoDate) {
   return dateFromRegex(isoDate);
 }
 
-/**
- * dateToUnixTimestamp
- *
- * @param date
- * @returns {string}
- */
-export function dateToUnixTimestamp (date) {
+export function dateToUnixTimestamp (date: Date | string) {
   if (date === '') {
     return '';
   }
   return dateFromIso(`${date}`);
 }
 
-export function timestampToDateObject (timestamp) {
+export function timestampToDateObject (timestamp: number): Date {
   return new Date(timestamp * 1000);
 }

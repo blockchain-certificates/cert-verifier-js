@@ -6,7 +6,7 @@ import { timestampToDateObject } from '../../helpers/date';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerURLs } from '../../certificate';
 
-function parsingTransactionDataFunction (jsonResponse): TransactionData {
+function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockexplorerResponse'));
   }
@@ -26,12 +26,12 @@ function parsingTransactionDataFunction (jsonResponse): TransactionData {
   );
 }
 
-const serviceUrls: ExplorerURLs = {
+const serviceURL: ExplorerURLs = {
   main: `https://blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
   test: `https://testnet.blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
 };
 
 export {
-  serviceUrls,
-  parsingTransactionDataFunction
+  serviceURL,
+  parsingFunction
 };

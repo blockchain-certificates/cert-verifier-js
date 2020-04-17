@@ -6,7 +6,7 @@ import { timestampToDateObject } from '../../helpers/date';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerURLs } from '../../certificate';
 
-function parsingTransactionDataFunction (jsonResponse): TransactionData {
+function parsingFunction (jsonResponse): TransactionData {
   if (!jsonResponse.status.confirmed) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockstreamResponse'));
   }
@@ -26,12 +26,12 @@ function parsingTransactionDataFunction (jsonResponse): TransactionData {
   );
 }
 
-const serviceUrls: ExplorerURLs = {
+const serviceURL: ExplorerURLs = {
   main: `https://blockstream.info/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
   test: `https://blockstream.info/testnet/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
 };
 
 export {
-  serviceUrls,
-  parsingTransactionDataFunction
+  serviceURL,
+  parsingFunction
 };

@@ -11,7 +11,7 @@ import { ExplorerURLs } from '../../certificate';
 const ETHERSCAN_API_KEY: string = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
 const MAIN_API_BASE_URL: string = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
 const TEST_API_BASE_URL: string = `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
-const serviceUrls: ExplorerURLs = {
+const serviceURL: ExplorerURLs = {
   main: `${MAIN_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`,
   test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`
 };
@@ -79,14 +79,14 @@ async function checkEtherScanConfirmations (chain, blockNumber: number): Promise
   return currentBlockCount;
 }
 
-async function parsingTransactionDataFunction (jsonResponse, chain): Promise<TransactionData> {
+async function parsingFunction (jsonResponse, chain): Promise<TransactionData> {
   // Parse block to get timestamp first, then create TransactionData
   const blockResponse = await getEtherScanBlock(jsonResponse, chain);
   return parseEtherScanResponse(jsonResponse, blockResponse);
 }
 
 export {
-  serviceUrls,
-  parsingTransactionDataFunction,
+  serviceURL,
+  parsingFunction,
   getEtherScanBlock
 };

@@ -10,7 +10,7 @@ import { TransactionData } from '../models/TransactionData';
 
 export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: PublicAPIs[apiName].serviceUrls,
+    serviceUrls: PublicAPIs[apiName].serviceURL,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
     transactionId: transactionId,
     isTestApi: isTestChain(chain)
@@ -24,10 +24,10 @@ export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transact
   }
 }
 
-function getApiParsingFunction (apiName) {
+function getApiParsingFunction (apiName: TRANSACTION_APIS) {
   const publicAPI = PublicAPIs[apiName];
   if (!publicAPI) {
     throw new Error(`API ${apiName} is not listed`);
   }
-  return publicAPI.parsingTransactionDataFunction;
+  return publicAPI.parsingFunction;
 }

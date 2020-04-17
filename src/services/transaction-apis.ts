@@ -6,11 +6,11 @@ export function buildTransactionServiceUrl ({
   transactionId = '',
   isTestApi = false
 }: {
-  serviceUrls: ExplorerURLs,
+  serviceUrls: string | ExplorerURLs,
   transactionIdPlaceholder?: string,
   transactionId?: string,
   isTestApi?: boolean
 }): string {
-  const apiUrl = isTestApi ? serviceUrls.test : serviceUrls.main;
+  const apiUrl = typeof serviceUrls === 'string' ? serviceUrls : (isTestApi ? serviceUrls.test : serviceUrls.main);
   return apiUrl.replace(transactionIdPlaceholder, transactionId);
 }

@@ -5,7 +5,7 @@ import * as BlockstreamApi from './bitcoin/blockstream';
 import * as EtherscanApi from './ethereum/etherscan';
 import { TRANSACTION_APIS } from '../constants';
 
-const PublicAPIs = {
+const PublicAPIs: { [Api in TRANSACTION_APIS]: any } = {
   [TRANSACTION_APIS.Bitpay]: BitPayApi,
   [TRANSACTION_APIS.Blockcypher]: BlockCypherApi,
   [TRANSACTION_APIS.Blockexplorer]: BlockExplorerApi,

@@ -6,7 +6,7 @@ import { timestampToDateObject } from '../../helpers/date';
 import { ExplorerURLs } from '../../certificate';
 import { TransactionData } from '../../models/TransactionData';
 
-function parsingTransactionDataFunction (jsonResponse): TransactionData {
+function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBitpayResponse'));
   }
@@ -26,12 +26,12 @@ function parsingTransactionDataFunction (jsonResponse): TransactionData {
   );
 }
 
-const serviceUrls: ExplorerURLs = {
+const serviceURL: ExplorerURLs = {
   main: `https://insight.bitpay.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
   test: `https://api.bitcore.io/api/BTC/testnet/tx/${TRANSACTION_ID_PLACEHOLDER}`
 };
 
 export {
-  serviceUrls,
-  parsingTransactionDataFunction
+  serviceURL,
+  parsingFunction
 };

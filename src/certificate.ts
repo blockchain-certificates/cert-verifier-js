@@ -13,8 +13,8 @@ export interface ExplorerURLs {
 
 export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
-  priority: 0 | 1;
-  parsingFunction (): TransactionData
+  priority?: 0 | 1;
+  parsingFunction (jsonResponse, chain?): TransactionData
 }
 
 export interface CertificateOptions {

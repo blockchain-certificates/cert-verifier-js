@@ -8,7 +8,7 @@ describe('Transaction APIs test suite', function () {
 
   describe('buildTransactionServiceUrl method', function () {
     beforeEach(function () {
-      fixtureApiName = PublicAPIs[TRANSACTION_APIS.Blockcypher].serviceUrls;
+      fixtureApiName = PublicAPIs[TRANSACTION_APIS.Blockcypher].serviceURL;
     });
 
     describe('given isTestApi is set to false', function () {

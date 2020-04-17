@@ -6,7 +6,7 @@ import { getText } from '../../domain/i18n/useCases';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerURLs } from '../../certificate';
 
-function parsingTransactionDataFunction (jsonResponse): TransactionData {
+function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockCypherResponse'));
   }
@@ -26,12 +26,12 @@ function parsingTransactionDataFunction (jsonResponse): TransactionData {
   );
 }
 
-const serviceUrls: ExplorerURLs = {
+const serviceURL: ExplorerURLs = {
   main: `https://api.blockcypher.com/v1/btc/main/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`,
   test: `https://api.blockcypher.com/v1/btc/test3/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`
 };
 
 export {
-  serviceUrls,
-  parsingTransactionDataFunction
+  serviceURL,
+  parsingFunction
 };

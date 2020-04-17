@@ -6,8 +6,9 @@ import { getText } from '../domain/i18n/useCases';
 import { PublicAPIs } from './public-apis';
 import { isTestChain } from '../constants/blockchains';
 import { TRANSACTION_APIS } from '../constants/api';
+import { TransactionData } from '../models/TransactionData';
 
-export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain) {
+export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceUrls,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,

@@ -1,6 +1,6 @@
 import domain from './domain';
 import parseJSON from './parser';
-import Verifier from './verifier';
+import Verifier, { IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
@@ -25,7 +25,7 @@ export interface CertificateOptions {
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
-  public chain: string; // enum?
+  public chain: any; // TODO: define chain interface
   public description?: string; // v1
   public expires: string;
   public explorerAPIs: ExplorerAPI[] = [];
@@ -93,7 +93,7 @@ export default class Certificate {
    * @param stepCallback
    * @returns {Promise<*>}
    */
-  async verify (stepCallback = () => {}) {
+  async verify (stepCallback?: IVerificationStepCallbackFn) {
     const verifier = new Verifier({
       certificateJson: this.certificateJson,
       chain: this.chain,

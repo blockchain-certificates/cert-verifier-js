@@ -4,7 +4,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import * as explorer from '../../../src/explorers/explorer';
 import * as getIssuerProfile from '../../../src/domain/verifier/useCases/getIssuerProfile';
-import v1_2IssuerProfile from '../../data/v1.2-issuer-profile';
+import v1_2IssuerProfile from '../../data/v1.2-issuer-profile.json';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   beforeEach(function () {

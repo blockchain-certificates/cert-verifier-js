@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/v2/mainnet-valid-2.0';
+import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 
@@ -6,7 +6,7 @@ describe('Verifier entity test suite', function () {
   const verifierParamFixture = {
     certificateJson: fixture,
     chain: BLOCKCHAINS.bitcoin,
-    expires: fixture.expires,
+    expires: '',
     id: fixture.id,
     issuer: fixture.badge.issuer,
     receipt: fixture.signature,

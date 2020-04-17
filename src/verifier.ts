@@ -4,10 +4,31 @@ import CERTIFICATE_VERSIONS, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
+import { Blockcerts } from './models/Blockcerts';
 
 const log = debug('Verifier');
 
+export interface IVerificationStepCallbackAPI {
+  code: string;
+  label: string;
+  status: string; // enum?
+  errorMessage?: string;
+}
+
+export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
+
 export default class Verifier {
+  public chain: any; // TODO: define chain interface
+  public expires: string;
+  public id: string;
+  public issuer: any; // TODO: define issuer interface
+  public receipt: any; // TODO: define receipt interface
+  public revocationKey: string;
+  public version: string; // TODO: enum?
+  public transactionId: string;
+  public documentToVerify: Blockcerts; // TODO: confirm this
+  private _stepsStatuses: any[]; // TODO: define stepStatus interface
+
   constructor ({ certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version }) {
     this.chain = chain;
     this.expires = expires;
@@ -33,7 +54,7 @@ export default class Verifier {
   /**
    * verify
    */
-  async verify (stepCallback = () => {}) {
+  async verify (stepCallback: IVerificationStepCallbackFn = () => {}) {
     this._stepCallback = stepCallback;
 
     if (this.version === CERTIFICATE_VERSIONS.V1_1) {
@@ -139,6 +160,10 @@ export default class Verifier {
         });
       }
     }
+  }
+
+  private _stepCallback (update: IVerificationStepCallbackAPI) {
+    // defined by Verifier interface
   }
 
   async _verifyMain () {
@@ -319,9 +344,9 @@ export default class Verifier {
    * @param errorMessage
    * @private
    */
-  _updateStatusCallback (code, label, status, errorMessage = '') {
+  private _updateStatusCallback (code: string, label: string, status: string, errorMessage: string = '') {
     if (code != null) {
-      const update = { code, label, status };
+      const update: IVerificationStepCallbackAPI = { code, label, status };
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

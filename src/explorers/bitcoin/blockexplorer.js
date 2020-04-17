@@ -1,10 +1,10 @@
-import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
-import { generateTransactionData, VerifierError } from '../../../models';
-import { getText } from '../../../domain/i18n/useCases';
-import { stripHashPrefix } from '../../utils/stripHashPrefix';
-import { timestampToDateObject } from '../../../helpers/date';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
+import { generateTransactionData, VerifierError } from '../../models';
+import { getText } from '../../domain/i18n/useCases';
+import { stripHashPrefix } from '../utils/stripHashPrefix';
+import { timestampToDateObject } from '../../helpers/date';
 
-export function parseTransactionDataFromBlockexplorerResponse (jsonResponse) {
+function parsingTransactionDataFunction (jsonResponse) {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'parseBlockexplorerResponse'));
   }
@@ -23,3 +23,13 @@ export function parseTransactionDataFromBlockexplorerResponse (jsonResponse) {
     revokedAddresses
   );
 }
+
+const serviceUrls = {
+  main: `https://blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+  test: `https://testnet.blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
+};
+
+export {
+  serviceUrls,
+  parsingTransactionDataFunction
+};

@@ -1,6 +1,7 @@
 import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
 import { CertificateOptions } from '../../../src/certificate';
+import generateTransactionData from '../../../src/models/TransactionData';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -40,24 +41,31 @@ describe('Certificate entity test suite', function () {
           const instance = new Certificate(FIXTURES.MainnetV2Valid);
           expect(instance.options).toEqual(assertionDefaultOptions);
         });
+
+        it('should set the locale to the default value', function () {
+          const assertionDefaultOptions: CertificateOptions = { locale: 'en-US' };
+          const instance = new Certificate(FIXTURES.MainnetV2Valid);
+          expect(instance.locale).toEqual(assertionDefaultOptions.locale);
+        });
       });
 
       describe('given the options object is passed', function () {
-        it('should override the default options', function () {
-          const fixtureOptions: CertificateOptions = { locale: 'fr-FR' };
-          const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
-          expect(instance.options).toEqual(fixtureOptions);
-        });
-
-        describe('and no locale option is passed', function () {
-          it('should set the locale on the certificate object to en-US', function () {
-            const instance = new Certificate(FIXTURES.MainnetV2Valid);
-            expect(instance.locale).toBe('en-US');
+        describe('locale option', function () {
+          it('should override the default options', function () {
+            const fixtureOptions: CertificateOptions = { locale: 'fr-FR' };
+            const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+            expect(instance.options).toEqual(fixtureOptions);
           });
-        });
 
-        describe('and locale option is passed', function () {
-          describe('and the locale is supported', function () {
+          describe('when it is not set', function () {
+            it('should set the locale on the certificate object to en-US', function () {
+              const fixtureOptions: CertificateOptions = {};
+              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              expect(instance.locale).toBe('en-US');
+            });
+          });
+
+          describe('when the locale is supported', function () {
             it('should set the locale on the certificate object', function () {
               const fixtureOptions: CertificateOptions = { locale: 'es' };
               const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
@@ -65,7 +73,7 @@ describe('Certificate entity test suite', function () {
             });
           });
 
-          describe('and the locale is not supported', function () {
+          describe('when the locale is not supported', function () {
             it('should set the locale to the default one', function () {
               const fixtureUnsupportedLocaleOptions: CertificateOptions = { locale: 'az-az' };
               const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureUnsupportedLocaleOptions);
@@ -73,7 +81,7 @@ describe('Certificate entity test suite', function () {
             });
           });
 
-          describe('and auto locale option is passed', function () {
+          describe('when the locale is set to auto', function () {
             beforeEach(function () {
               interface ExtendedNavigator extends Navigator {
                 __defineGetter__ (prop: string, cb: Function): any;
@@ -87,6 +95,32 @@ describe('Certificate entity test suite', function () {
               const fixtureOptions: CertificateOptions = { locale: 'auto' };
               const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
               expect(instance.locale).toBe('it-IT');
+            });
+          });
+        });
+
+        describe('explorerAPIs option', function () {
+          describe('when it is not set', function () {
+            it('should set the certificate explorerAPIs property to an empty array', function () {
+              const fixtureOptions: CertificateOptions = {};
+              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              expect(instance.explorerAPIs).toEqual([]);
+            });
+          });
+
+          describe('when it is set', function () {
+            it('should set the certificate explorerAPIs property to the options explorerAPIs', function () {
+              const fixtureOptions: CertificateOptions = {
+                explorerAPIs: [{
+                  serviceURL: 'https://explorer-example.com',
+                  priority: 0,
+                  parsingFunction: () => {
+                    return generateTransactionData('a','b', 'c', ['d']);
+                  }
+                }]
+              };
+              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              expect(instance.explorerAPIs).toEqual(fixtureOptions.explorerAPIs);
             });
           });
         });

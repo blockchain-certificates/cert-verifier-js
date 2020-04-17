@@ -23,33 +23,34 @@ export interface CertificateOptions {
 }
 
 export default class Certificate {
+  public certificateImage?: string;
   public certificateJson: Blockcerts;
   public chain: string; // enum?
-  public expires: string;
-  public id: string;
-  public issuer: any; // TODO: define issuer interface
-  public receipt: any; // TODO: define receipt interface
-  public revocationKey: string;
-  public transactionId: string;
-  public version: string; // enum?
-  public options: CertificateOptions;
-  public locale: string; // enum?
-  public isFormatValid: boolean;
-  public certificateImage?: string;
   public description?: string; // v1
+  public expires: string;
+  public explorerAPIs: ExplorerAPI[] = [];
+  public id: string;
+  public isFormatValid: boolean;
   public issuedOn: string;
+  public issuer: any; // TODO: define issuer interface
+  public locale: string; // enum?
   public metadataJson: any; // TODO: define metadataJson interface. As abstract as can be as keys and values are open.
   public name?: string; // TODO: not formally set in V3
+  public options: CertificateOptions;
   public publicKey?: string;
+  public rawTransactionLink: string;
+  public receipt: any; // TODO: define receipt interface
   public recipientFullName: string;
   public recordLink: string;
+  public revocationKey: string;
   public sealImage?: string; // v1
   public signature?: string; // v1
   public signatureImage?: string; // v1
   public subtitle?: string; // v1
-  public verificationSteps: any[]; // TODO: define verificationSteps interface.
-  public rawTransactionLink: string;
+  public transactionId: string;
   public transactionLink: string;
+  public verificationSteps: any[]; // TODO: define verificationSteps interface.
+  public version: string; // enum?
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -118,6 +119,7 @@ export default class Certificate {
 
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
+    this.explorerAPIs = this.options.explorerAPIs || [];
 
     currentLocale.locale = this.locale;
   }

@@ -1,5 +1,4 @@
-import { getEtherScanFetcher } from './ethereum/etherscan';
-import { getBitcoinTransactionFromApi } from './explorer';
+import { getTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 
 const BitcoinTransactionAPIArray = [
@@ -9,21 +8,21 @@ const BitcoinTransactionAPIArray = [
   TRANSACTION_APIS.Blockstream
 ];
 
+const EthereumTransactionAPIArray = [
+  TRANSACTION_APIS.Etherscan
+];
+
 function explorerFactory (TransactionAPIArray) {
   return TransactionAPIArray
     .map(transactionAPI =>
-      (transactionId, chain) => getBitcoinTransactionFromApi(transactionAPI, transactionId, chain)
+      (transactionId, chain) => getTransactionFromApi(transactionAPI, transactionId, chain)
     );
 }
 
 const BitcoinExplorers = explorerFactory(BitcoinTransactionAPIArray);
-const EthereumExplorers = [
-  (transactionId, chain) => getEtherScanFetcher(transactionId, chain)
-];
+const EthereumExplorers = explorerFactory(EthereumTransactionAPIArray);
 
 // for legacy (pre-v2) Blockcerts
-const BlockchainExplorersWithSpentOutputInfo = [
-  (transactionId, chain) => getBitcoinTransactionFromApi(TRANSACTION_APIS.Blockcypher, transactionId, chain)
-];
+const BlockchainExplorersWithSpentOutputInfo = explorerFactory([TRANSACTION_APIS.Blockcypher]);
 
 export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo };

@@ -4,9 +4,22 @@ import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
+import { TransactionData } from './models/TransactionData';
 
-interface CertificateOptions {
-  locale?: string
+interface ExplorerURLs {
+  main: string;
+  test: string;
+}
+
+export interface ExplorerAPI {
+  serviceURL: string | ExplorerURLs;
+  priority: 0 | 1;
+  parsingFunction (): TransactionData
+}
+
+export interface CertificateOptions {
+  locale?: string;
+  explorerAPIs?: ExplorerAPI[];
 }
 
 export default class Certificate {

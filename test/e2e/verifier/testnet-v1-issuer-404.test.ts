@@ -8,7 +8,7 @@ describe('given the certificate\'s issuer returns a 404', function () {
   let result;
 
   beforeAll(async function () {
-    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getTransactionFromApi').resolves({
       remoteHash: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
       issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
       time: '2016-10-03T19:37:59.141Z',

@@ -8,7 +8,7 @@ import v1_2IssuerProfile from '../../data/v1.2-issuer-profile.json';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   beforeEach(function () {
-    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getTransactionFromApi').resolves({
       remoteHash:
         '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
       issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',

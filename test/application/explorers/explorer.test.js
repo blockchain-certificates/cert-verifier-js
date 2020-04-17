@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as RequestService from '../../../src/services/request';
 import * as mockBitpayResponse from './mocks/mockBitpayResponse.json';
-import { getBitcoinTransactionFromApi } from '../../../src/explorers/explorer';
+import { getTransactionFromApi } from '../../../src/explorers/explorer';
 import { BLOCKCHAINS, TRANSACTION_APIS } from '../../../src/constants';
 
 describe('Bitcoin Explorer test suite', function () {
@@ -23,9 +23,9 @@ describe('Bitcoin Explorer test suite', function () {
     stubRequest.restore();
   });
 
-  describe('getBitcoinTransactionFromApi method', function () {
+  describe('getTransactionFromApi method', function () {
     it('should call the right request API', function () {
-      getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(() => {
+      getTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(() => {
         expect(stubRequest.getCall(0).args).toEqual([{ url: assertionRequestUrl }]);
       });
     });
@@ -34,7 +34,7 @@ describe('Bitcoin Explorer test suite', function () {
       it('should throw the right error', async function () {
         const fixtureError = new Error('Unable to get remote hash');
         stubRequest.rejects(fixtureError);
-        await getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).catch(err => {
+        await getTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).catch(err => {
           expect(err).toEqual(fixtureError);
         });
       });
@@ -43,7 +43,7 @@ describe('Bitcoin Explorer test suite', function () {
     describe('given the request is successful', function () {
       describe('and the transaction data is generated from the response', function () {
         it('should return a correct transaction data', async function () {
-          getBitcoinTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(res => {
+          getTransactionFromApi(TRANSACTION_APIS.Bitpay, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(res => {
             expect(res).toEqual(assertionResponse);
           });
         });

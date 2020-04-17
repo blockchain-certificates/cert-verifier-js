@@ -8,7 +8,7 @@ describe('given the certificate\'s issuer profile no longer exists', function ()
   let result;
 
   beforeAll(async function () {
-    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getTransactionFromApi').resolves({
       remoteHash: '2ccf4b24fe14efff27064303b153d382bb981a6481742d75d81afdc7a354eda1',
       issuingAddress: 'mmShyF6mhf6LeQzPdEsmiCghhgMuEn9TNF',
       time: '2016-09-29T23:46:25.000Z',

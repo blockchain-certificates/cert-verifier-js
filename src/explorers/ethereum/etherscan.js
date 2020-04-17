@@ -40,7 +40,7 @@ async function getEtherScanBlock (jsonResponse, chain) {
     serviceUrls: getBlockByNumberServiceUrls,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
     transactionId: blockNumber,
-    testApi: isTestChain(chain)
+    isTestApi: isTestChain(chain)
   });
 
   try {
@@ -58,7 +58,7 @@ async function getEtherScanBlock (jsonResponse, chain) {
 async function checkEtherScanConfirmations (chain, blockNumber) {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: getBlockNumberServiceUrls,
-    testApi: isTestChain(chain)
+    isTestApi: isTestChain(chain)
   });
 
   let response;
@@ -85,5 +85,6 @@ async function parsingTransactionDataFunction (jsonResponse, chain) {
 
 export {
   serviceUrls,
-  parsingTransactionDataFunction
+  parsingTransactionDataFunction,
+  getEtherScanBlock
 };

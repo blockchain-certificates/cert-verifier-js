@@ -8,7 +8,7 @@ describe('given the certificate is a revoked testnet', function () {
   let result;
 
   beforeAll(async function () {
-    sinon.stub(explorer, 'getBitcoinTransactionFromApi').resolves({
+    sinon.stub(explorer, 'getTransactionFromApi').resolves({
       remoteHash: '7570ad1a939b1d733668125df3e71ebbd593358e7d851eff3fdebd487462daab',
       issuingAddress: 'mkAvTwCYUyVk3rncFVCTJt1HUDsApVezhP',
       time: '2017-05-03T17:06:19.000Z',

@@ -1,4 +1,4 @@
-import { getBitcoinTransactionFromApi } from './explorer';
+import { getTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 
 const BitcoinTransactionAPIArray = [
@@ -15,7 +15,7 @@ const EthereumTransactionAPIArray = [
 function explorerFactory (TransactionAPIArray) {
   return TransactionAPIArray
     .map(transactionAPI =>
-      (transactionId, chain) => getBitcoinTransactionFromApi(transactionAPI, transactionId, chain)
+      (transactionId, chain) => getTransactionFromApi(transactionAPI, transactionId, chain)
     );
 }
 

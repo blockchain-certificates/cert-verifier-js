@@ -6,12 +6,12 @@ import { getText } from '../domain/i18n/useCases';
 import { PublicAPIs } from './public-apis';
 import { isTestChain } from '../constants/blockchains';
 
-export async function getBitcoinTransactionFromApi (apiName, transactionId, chain) {
+export async function getTransactionFromApi (apiName, transactionId, chain) {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceUrls,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
     transactionId: transactionId,
-    testApi: isTestChain(chain)
+    isTestApi: isTestChain(chain)
   });
 
   try {

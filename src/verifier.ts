@@ -166,7 +166,7 @@ export default class Verifier {
   }
 
   private _stepCallback (update: IVerificationStepCallbackAPI) {
-    // defined by Verifier interface
+    // defined by this.verify interface
   }
 
   async _verifyMain () {

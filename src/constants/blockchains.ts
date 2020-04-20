@@ -1,7 +1,30 @@
 const TRANSACTION_TEMPLATE_ID_PLACEHOLDER: string = '{TRANSACTION_ID}';
-const BLOCKCHAINS = {
-  bitcoin: {
-    code: 'bitcoin',
+
+export enum SupportedChains {
+  Bitcoin = 'bitcoin',
+  Ethmain = 'ethmain',
+  Ethropst = 'ethropst',
+  Ethrinkeby = 'ethrinkeby',
+  Mocknet = 'mocknet',
+  Regtest = 'regtest',
+  Testnet = 'testnet'
+}
+
+export interface IBlockchainObject {
+  code: SupportedChains;
+  name: string;
+  prefixes?: string[];
+  test?: boolean;
+  signatureValue: string;
+  transactionTemplates: {
+    full: string;
+    raw: string;
+  }
+}
+
+const BLOCKCHAINS: {[chain in SupportedChains]: IBlockchainObject} = {
+  [SupportedChains.Bitcoin]: {
+    code: SupportedChains.Bitcoin,
     name: 'Bitcoin',
     prefixes: ['6a20', 'OP_RETURN '],
     signatureValue: 'bitcoinMainnet',
@@ -10,8 +33,8 @@ const BLOCKCHAINS = {
       raw: `https://blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
-  ethmain: {
-    code: 'ethmain',
+  [SupportedChains.Ethmain]: {
+    code: SupportedChains.Ethmain,
     name: 'Ethereum',
     prefixes: ['0x'],
     signatureValue: 'ethereumMainnet',
@@ -20,8 +43,8 @@ const BLOCKCHAINS = {
       raw: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
-  ethropst: {
-    code: 'ethropst',
+  [SupportedChains.Ethropst]: {
+    code: SupportedChains.Ethropst,
     name: 'Ethereum Testnet',
     signatureValue: 'ethereumRopsten',
     transactionTemplates: {
@@ -29,8 +52,8 @@ const BLOCKCHAINS = {
       raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
-  ethrinkeby: {
-    code: 'ethrinkeby',
+  [SupportedChains.Ethrinkeby]: {
+    code: SupportedChains.Ethrinkeby,
     name: 'Ethereum Testnet',
     signatureValue: 'ethereumRinkeby',
     transactionTemplates: {
@@ -38,8 +61,8 @@ const BLOCKCHAINS = {
       raw: `https://rinkeby.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
     }
   },
-  mocknet: {
-    code: 'mocknet',
+  [SupportedChains.Mocknet]: {
+    code: SupportedChains.Mocknet,
     name: 'Mocknet',
     test: true,
     signatureValue: 'mockchain',
@@ -48,8 +71,8 @@ const BLOCKCHAINS = {
       raw: ''
     }
   },
-  regtest: {
-    code: 'regtest',
+  [SupportedChains.Regtest]: {
+    code: SupportedChains.Regtest,
     name: 'Mocknet',
     test: true,
     signatureValue: 'bitcoinRegtest',
@@ -58,8 +81,8 @@ const BLOCKCHAINS = {
       raw: ''
     }
   },
-  testnet: {
-    code: 'testnet',
+  [SupportedChains.Testnet]: {
+    code: SupportedChains.Testnet,
     name: 'Bitcoin Testnet',
     signatureValue: 'bitcoinTestnet',
     transactionTemplates: {
@@ -69,7 +92,8 @@ const BLOCKCHAINS = {
   }
 };
 
-function isTestChain (chain: string): boolean {
+// TODO: use test boolean from entry?
+function isTestChain (chain: SupportedChains): boolean {
   return chain !== BLOCKCHAINS.bitcoin.code && chain !== BLOCKCHAINS.ethmain.code;
 }
 

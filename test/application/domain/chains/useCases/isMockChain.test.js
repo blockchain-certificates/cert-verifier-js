@@ -7,7 +7,7 @@ describe('domain chains isMockChain use case test suite', function () {
       it('should return null', function () {
         const assertionInvalidChain = 'invalid-chain';
         const result = domain.chains.isMockChain(assertionInvalidChain);
-        expect(result).toBe(null);
+        expect(result).toBe(false);
       });
     });
 
@@ -56,7 +56,7 @@ describe('domain chains isMockChain use case test suite', function () {
     describe('given the chain is null', function () {
       it('should return null', function () {
         const result = domain.chains.isMockChain(null);
-        expect(result).toBe(null);
+        expect(result).toBe(false);
       });
     });
   });
@@ -64,7 +64,7 @@ describe('domain chains isMockChain use case test suite', function () {
   describe('given it is not called with a chain parameter', function () {
     it('should return null', function () {
       const result = domain.chains.isMockChain();
-      expect(result).toBe(null);
+      expect(result).toBe(false);
     });
   });
 });

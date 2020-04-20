@@ -4,13 +4,13 @@ import { request } from '../services/request';
 import { VerifierError } from '../models';
 import { getText } from '../domain/i18n/useCases';
 import { PublicAPIs } from './public-apis';
-import { isTestChain } from '../constants/blockchains';
+import { isTestChain, SupportedChains } from '../constants/blockchains';
 import { TRANSACTION_APIS } from '../constants/api';
 import { TransactionData } from '../models/TransactionData';
 
-export type TExplorerParsingFunction = (jsonResponse, chain?) => TransactionData;
+export type TExplorerParsingFunction = (jsonResponse, chain?: SupportedChains) => TransactionData;
 
-export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain): Promise<TransactionData> {
+export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain: SupportedChains): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceURL,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,

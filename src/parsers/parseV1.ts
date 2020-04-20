@@ -1,6 +1,7 @@
 import domain from '../domain';
 import getSignatureImages from './helpers/getSignatureImage';
 import { CERTIFICATE_VERSIONS } from '../constants';
+import { IBlockchainObject } from '../constants/blockchains';
 
 /**
  * parseV1
@@ -19,7 +20,7 @@ export default function parseV1 (certificateJson) {
   let { image: certificateImage, description, issuer, subtitle } = fullCertificateObject;
 
   const publicKey = recipient.publicKey;
-  const chain = domain.certificates.getChain(publicKey);
+  const chain: IBlockchainObject = domain.certificates.getChain(publicKey);
   const expires = assertion.expires;
   const id = assertion.uid;
   const issuedOn = assertion.issuedOn;

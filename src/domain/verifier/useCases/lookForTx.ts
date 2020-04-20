@@ -9,9 +9,10 @@ import {
 import PromiseProperRace from '../../../helpers/promiseProperRace';
 import { getText } from '../../i18n/useCases';
 import { TransactionData } from '../../../models/TransactionData';
-import { isV1 } from '../../../constants/certificateVersions';
+import { isV1, default as Versions } from '../../../constants/certificateVersions';
+import { SupportedChains } from '../../../constants/blockchains';
 
-export default function lookForTx (transactionId, chain, certificateVersion): Promise<TransactionData> {
+export default function lookForTx (transactionId: string, chain: SupportedChains, certificateVersion: Versions): Promise<TransactionData> {
   let BlockchainExplorers: TExplorerFunctionsArray;
   switch (chain) {
     case BLOCKCHAINS.bitcoin.code:

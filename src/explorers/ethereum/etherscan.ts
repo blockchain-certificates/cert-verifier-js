@@ -4,7 +4,7 @@ import { generateTransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { buildTransactionServiceUrl } from '../../services/transaction-apis';
-import { isTestChain } from '../../constants/blockchains';
+import { isTestChain, SupportedChains } from '../../constants/blockchains';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerURLs } from '../../certificate';
 
@@ -35,7 +35,7 @@ function parseEtherScanResponse (jsonResponse, block): TransactionData {
   return generateTransactionData(opReturnScript, issuingAddress, date, undefined);
 }
 
-async function getEtherScanBlock (jsonResponse, chain) {
+async function getEtherScanBlock (jsonResponse, chain: SupportedChains) {
   const data = jsonResponse.result;
   const blockNumber = data.blockNumber;
   const requestUrl = buildTransactionServiceUrl({
@@ -57,7 +57,7 @@ async function getEtherScanBlock (jsonResponse, chain) {
   }
 }
 
-async function checkEtherScanConfirmations (chain, blockNumber: number): Promise<number> {
+async function checkEtherScanConfirmations (chain: SupportedChains, blockNumber: number): Promise<number> {
   const requestUrl: string = buildTransactionServiceUrl({
     serviceUrls: getBlockNumberServiceUrls,
     isTestApi: isTestChain(chain)
@@ -79,7 +79,7 @@ async function checkEtherScanConfirmations (chain, blockNumber: number): Promise
   return currentBlockCount;
 }
 
-async function parsingFunction (jsonResponse, chain): Promise<TransactionData> {
+async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<TransactionData> {
   // Parse block to get timestamp first, then create TransactionData
   const blockResponse = await getEtherScanBlock(jsonResponse, chain);
   return parseEtherScanResponse(jsonResponse, blockResponse);

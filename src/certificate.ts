@@ -5,6 +5,7 @@ import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
 import { TExplorerParsingFunction } from './explorers/explorer';
+import { IBlockchainObject } from './constants/blockchains';
 
 export interface ExplorerURLs {
   main: string;
@@ -25,7 +26,7 @@ export interface CertificateOptions {
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
-  public chain: any; // TODO: define chain interface
+  public chain: IBlockchainObject; // TODO: define chain interface
   public description?: string; // v1
   public expires: string;
   public explorerAPIs: ExplorerAPI[] = [];

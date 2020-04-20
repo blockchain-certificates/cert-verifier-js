@@ -1,6 +1,7 @@
 import { getTransactionFromApi } from './explorer';
 import { TRANSACTION_APIS } from '../constants';
 import { TransactionData } from '../models/TransactionData';
+import { SupportedChains } from '../constants/blockchains';
 
 const BitcoinTransactionAPIArray = [
   TRANSACTION_APIS.Blockcypher,
@@ -13,7 +14,7 @@ const EthereumTransactionAPIArray = [
   TRANSACTION_APIS.Etherscan
 ];
 
-export type TExplorerFunctionsArray = {(transactionId: string, chain: any): Promise<TransactionData>}[];
+export type TExplorerFunctionsArray = {(transactionId: string, chain: SupportedChains): Promise<TransactionData>}[];
 
 function explorerFactory (TransactionAPIArray): TExplorerFunctionsArray {
   return TransactionAPIArray

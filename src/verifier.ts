@@ -6,6 +6,7 @@ import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { ExplorerAPI } from './certificate';
+import { IBlockchainObject } from './constants/blockchains';
 
 const log = debug('Verifier');
 
@@ -19,7 +20,7 @@ export interface IVerificationStepCallbackAPI {
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
 
 export default class Verifier {
-  public chain: any; // TODO: define chain interface
+  public chain: IBlockchainObject; // TODO: define chain interface
   public expires: string;
   public id: string;
   public issuer: any; // TODO: define issuer interface

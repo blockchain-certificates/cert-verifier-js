@@ -8,6 +8,8 @@ import { isTestChain } from '../constants/blockchains';
 import { TRANSACTION_APIS } from '../constants/api';
 import { TransactionData } from '../models/TransactionData';
 
+export type TExplorerParsingFunction = (jsonResponse, chain?) => TransactionData;
+
 export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: PublicAPIs[apiName].serviceURL,
@@ -24,7 +26,7 @@ export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transact
   }
 }
 
-function getApiParsingFunction (apiName: TRANSACTION_APIS) {
+function getApiParsingFunction (apiName: TRANSACTION_APIS): TExplorerParsingFunction {
   const publicAPI = PublicAPIs[apiName];
   if (!publicAPI) {
     throw new Error(`API ${apiName} is not listed`);

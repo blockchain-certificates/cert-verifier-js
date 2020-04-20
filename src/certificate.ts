@@ -4,7 +4,7 @@ import Verifier, { IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
-import { TransactionData } from './models/TransactionData';
+import { TExplorerParsingFunction } from './explorers/explorer';
 
 export interface ExplorerURLs {
   main: string;
@@ -14,7 +14,7 @@ export interface ExplorerURLs {
 export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
   priority?: 0 | 1;
-  parsingFunction (jsonResponse, chain?): TransactionData
+  parsingFunction: TExplorerParsingFunction
 }
 
 export interface CertificateOptions {

@@ -18,7 +18,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       });
 
       it('should throw an error', () => {
-        expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid chain; does not map to known BlockchainExplorers.');
+        expect(domain.verifier.lookForTx({ transactionId: MOCK_TRANSACTION_ID, chain: MOCK_CHAIN, certificateVersion: MOCK_CERTIFICATE_VERSION })).rejects.toThrow('Invalid chain; does not map to known BlockchainExplorers.');
       });
     });
 
@@ -33,7 +33,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       });
 
       it('should throw an error', function () {
-        expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
+        expect(domain.verifier.lookForTx({ transactionId: MOCK_TRANSACTION_ID, chain: MOCK_CHAIN, certificateVersion: MOCK_CERTIFICATE_VERSION })).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
       });
     });
 
@@ -48,7 +48,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       });
 
       it('should throw an error', function () {
-        expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
+        expect(domain.verifier.lookForTx({ transactionId: MOCK_TRANSACTION_ID, chain: MOCK_CHAIN, certificateVersion: MOCK_CERTIFICATE_VERSION })).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
       });
     });
 
@@ -62,7 +62,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
           CONFIG.MinimumBlockchainExplorers = originalValue;
         });
         it('should throw an error', function () {
-          expect(domain.verifier.lookForTx(MOCK_TRANSACTION_ID, MOCK_CHAIN, MOCK_CERTIFICATE_VERSION)).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
+          expect(domain.verifier.lookForTx({ transactionId: MOCK_TRANSACTION_ID, chain: MOCK_CHAIN, certificateVersion: MOCK_CERTIFICATE_VERSION })).rejects.toThrow('Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value');
         });
       });
     });

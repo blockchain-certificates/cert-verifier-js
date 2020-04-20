@@ -1,4 +1,5 @@
-const TRANSACTION_TEMPLATE_ID_PLACEHOLDER: string = '{TRANSACTION_ID}';
+import { TRANSACTION_ID_PLACEHOLDER } from './api';
+
 const BLOCKCHAINS = {
   bitcoin: {
     code: 'bitcoin',
@@ -6,8 +7,8 @@ const BLOCKCHAINS = {
     prefixes: ['6a20', 'OP_RETURN '],
     signatureValue: 'bitcoinMainnet',
     transactionTemplates: {
-      full: `https://blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
-      raw: `https://blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+      full: `https://blockchain.info/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+      raw: `https://blockchain.info/rawtx/${TRANSACTION_ID_PLACEHOLDER}`
     }
   },
   ethmain: {
@@ -16,8 +17,8 @@ const BLOCKCHAINS = {
     prefixes: ['0x'],
     signatureValue: 'ethereumMainnet',
     transactionTemplates: {
-      full: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
-      raw: `https://etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+      full: `https://etherscan.io/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+      raw: `https://etherscan.io/tx/${TRANSACTION_ID_PLACEHOLDER}`
     }
   },
   ethropst: {
@@ -25,8 +26,8 @@ const BLOCKCHAINS = {
     name: 'Ethereum Testnet',
     signatureValue: 'ethereumRopsten',
     transactionTemplates: {
-      full: `https://ropsten.etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
-      raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+      full: `https://ropsten.etherscan.io/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+      raw: `https://ropsten.etherscan.io/getRawTx?tx=${TRANSACTION_ID_PLACEHOLDER}`
     }
   },
   ethrinkeby: {
@@ -34,8 +35,8 @@ const BLOCKCHAINS = {
     name: 'Ethereum Testnet',
     signatureValue: 'ethereumRinkeby',
     transactionTemplates: {
-      full: `https://rinkeby.etherscan.io/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
-      raw: `https://rinkeby.etherscan.io/getRawTx?tx=${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+      full: `https://rinkeby.etherscan.io/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+      raw: `https://rinkeby.etherscan.io/getRawTx?tx=${TRANSACTION_ID_PLACEHOLDER}`
     }
   },
   mocknet: {
@@ -63,8 +64,8 @@ const BLOCKCHAINS = {
     name: 'Bitcoin Testnet',
     signatureValue: 'bitcoinTestnet',
     transactionTemplates: {
-      full: `https://testnet.blockchain.info/tx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`,
-      raw: `https://testnet.blockchain.info/rawtx/${TRANSACTION_TEMPLATE_ID_PLACEHOLDER}`
+      full: `https://testnet.blockchain.info/tx/${TRANSACTION_ID_PLACEHOLDER}`,
+      raw: `https://testnet.blockchain.info/rawtx/${TRANSACTION_ID_PLACEHOLDER}`
     }
   }
 };
@@ -75,6 +76,5 @@ function isTestChain (chain: string): boolean {
 
 export {
   BLOCKCHAINS,
-  TRANSACTION_TEMPLATE_ID_PLACEHOLDER,
   isTestChain
 };

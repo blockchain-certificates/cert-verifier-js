@@ -1,4 +1,4 @@
-import { TRANSACTION_TEMPLATE_ID_PLACEHOLDER } from '../../../constants/blockchains';
+import { TRANSACTION_ID_PLACEHOLDER } from '../../../constants';
 
 /**
  * getRawTransactionLink
@@ -15,5 +15,5 @@ export default function getTransactionLink (transactionId, chainObject, getRawVe
     return '';
   }
   const rawTransactionLinkTemplate = chainObject.transactionTemplates[getRawVersion ? 'raw' : 'full'];
-  return rawTransactionLinkTemplate.replace(TRANSACTION_TEMPLATE_ID_PLACEHOLDER, transactionId);
+  return rawTransactionLinkTemplate.replace(TRANSACTION_ID_PLACEHOLDER, transactionId);
 }

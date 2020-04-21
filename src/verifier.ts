@@ -7,6 +7,7 @@ import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
+import Versions from './constants/certificateVersions';
 
 const log = debug('Verifier');
 
@@ -26,13 +27,27 @@ export default class Verifier {
   public issuer: any; // TODO: define issuer interface
   public receipt: any; // TODO: define receipt interface
   public revocationKey: string;
-  public version: string; // TODO: enum?
+  public version: Versions;
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
   public explorerAPIs: ExplorerAPI[];
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
 
-  constructor ({ certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }) {
+  constructor (
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }
+    : {
+      certificateJson: Blockcerts,
+      chain: IBlockchainObject,
+      expires: string,
+      id: string,
+      issuer: any,
+      receipt: any,
+      revocationKey: string,
+      transactionId: string,
+      version: Versions,
+      explorerAPIs: ExplorerAPI[]
+    }
+  ) {
     this.chain = chain;
     this.expires = expires;
     this.id = id;
@@ -186,7 +201,12 @@ export default class Verifier {
     // Fetch remote hash
     const txData = await this._doAsyncAction(
       SUB_STEPS.fetchRemoteHash,
-      async () => domain.verifier.lookForTx(this.transactionId, this.chain.code, this.version)
+      async () => domain.verifier.lookForTx({
+        transactionId: this.transactionId,
+        chain: this.chain.code,
+        certificateVersion: this.version,
+        explorersAPIs: this.explorerAPIs
+      })
     );
 
     // Get issuer profile

@@ -6,6 +6,7 @@ import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
 import { TExplorerParsingFunction } from './explorers/explorer';
 import { IBlockchainObject } from './constants/blockchains';
+import Versions from './constants/certificateVersions';
 
 export interface ExplorerURLs {
   main: string;
@@ -51,7 +52,7 @@ export default class Certificate {
   public transactionId: string;
   public transactionLink: string;
   public verificationSteps: any[]; // TODO: define verificationSteps interface.
-  public version: string; // enum?
+  public version: Versions;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -175,7 +176,7 @@ export default class Certificate {
     // Get the full verification step-by-step map
     this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 
-    this.version = version;
+    this.version = version as Versions;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();

@@ -1,4 +1,4 @@
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG, SUB_STEPS } from '../../../constants';
+import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../../constants';
 import { VerifierError } from '../../../models';
 import {
   BitcoinExplorers,
@@ -9,47 +9,43 @@ import {
 import PromiseProperRace from '../../../helpers/promiseProperRace';
 import { getText } from '../../i18n/useCases';
 import { TransactionData } from '../../../models/TransactionData';
-import { isV1, default as Versions } from '../../../constants/certificateVersions';
+import { default as Versions, isV1 } from '../../../constants/certificateVersions';
 import { SupportedChains } from '../../../constants/blockchains';
+import { ExplorerAPI } from '../../../certificate';
 
-export default function lookForTx (transactionId: string, chain: SupportedChains, certificateVersion: Versions): Promise<TransactionData> {
-  let BlockchainExplorers: TExplorerFunctionsArray;
-  switch (chain) {
-    case BLOCKCHAINS.bitcoin.code:
-    case BLOCKCHAINS.regtest.code:
-    case BLOCKCHAINS.testnet.code:
-    case BLOCKCHAINS.mocknet.code:
-      BlockchainExplorers = BitcoinExplorers;
-      break;
-    case BLOCKCHAINS.ethmain.code:
-    case BLOCKCHAINS.ethropst.code:
-      BlockchainExplorers = EthereumExplorers;
-      break;
-    default:
-      return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidChain')));
+function getExplorersByChain (chain: SupportedChains, certificateVersion: Versions): TExplorerFunctionsArray {
+  if (isV1(certificateVersion)) {
+    return BlockchainExplorersWithSpentOutputInfo;
+  } else {
+    switch (chain) {
+      case BLOCKCHAINS.bitcoin.code:
+      case BLOCKCHAINS.regtest.code:
+      case BLOCKCHAINS.testnet.code:
+      case BLOCKCHAINS.mocknet.code:
+        return BitcoinExplorers;
+      case BLOCKCHAINS.ethmain.code:
+      case BLOCKCHAINS.ethropst.code:
+        return EthereumExplorers;
+    }
   }
 
-  // First ensure we can satisfy the MinimumBlockchainExplorers setting
+  throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidChain'));
+}
+
+export default function lookForTx (
+  { transactionId, chain, certificateVersion, explorersAPIs }:
+  { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorersAPIs: ExplorerAPI[] }
+): Promise<TransactionData> {
+  let BlockchainExplorers: TExplorerFunctionsArray = getExplorersByChain(chain, certificateVersion);
+
   if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
     return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));
   }
-  if (CONFIG.MinimumBlockchainExplorers > BlockchainExplorersWithSpentOutputInfo.length && isV1(certificateVersion)) {
-    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));
-  }
 
-  // Queue up blockchain explorer APIs
-  const promises = [];
-  let limit;
-  if (isV1(certificateVersion)) {
-    limit = CONFIG.Race ? BlockchainExplorersWithSpentOutputInfo.length : CONFIG.MinimumBlockchainExplorers;
-    for (let i = 0; i < limit; i++) {
-      promises.push(BlockchainExplorersWithSpentOutputInfo[i](transactionId, chain));
-    }
-  } else {
-    limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
-    for (let j = 0; j < limit; j++) {
-      promises.push(BlockchainExplorers[j](transactionId, chain));
-    }
+  const promises: any[] = [];
+  let limit: number = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
+  for (let i = 0; i < limit; i++) {
+    promises.push(BlockchainExplorers[i](transactionId, chain));
   }
 
   return new Promise((resolve, reject): TransactionData => {

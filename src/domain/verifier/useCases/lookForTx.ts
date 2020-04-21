@@ -3,8 +3,7 @@ import { VerifierError } from '../../../models';
 import {
   BitcoinExplorers,
   BlockchainExplorersWithSpentOutputInfo,
-  EthereumExplorers,
-  TExplorerFunctionsArray
+  EthereumExplorers
 } from '../../../explorers';
 import PromiseProperRace from '../../../helpers/promiseProperRace';
 import { getText } from '../../i18n/useCases';
@@ -12,6 +11,7 @@ import { TransactionData } from '../../../models/TransactionData';
 import { default as Versions, isV1 } from '../../../constants/certificateVersions';
 import { SupportedChains } from '../../../constants/blockchains';
 import { ExplorerAPI } from '../../../certificate';
+import { TExplorerFunctionsArray } from '../../../explorers/explorer';
 
 function getExplorersByChain (chain: SupportedChains, certificateVersion: Versions): TExplorerFunctionsArray {
   if (isV1(certificateVersion)) {

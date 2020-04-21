@@ -8,6 +8,8 @@ import { Blockcerts } from './models/Blockcerts';
 import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
+import { explorerFactory, TExplorerFunctionsArray } from './explorers/explorer';
+import { defaultExplorers } from './explorers';
 
 const log = debug('Verifier');
 
@@ -30,7 +32,7 @@ export default class Verifier {
   public version: Versions;
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
-  public explorerAPIs: ExplorerAPI[];
+  public explorerAPIs: TExplorerFunctionsArray;
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
 
   constructor (
@@ -56,7 +58,7 @@ export default class Verifier {
     this.revocationKey = revocationKey;
     this.version = version;
     this.transactionId = transactionId;
-    this.explorerAPIs = explorerAPIs || [];
+    this.setExplorerAPIs(explorerAPIs);
 
     let document = certificateJson.document;
     if (!document) {
@@ -92,6 +94,14 @@ export default class Verifier {
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     return erroredStep ? this._failed(erroredStep) : this._succeed();
+  }
+
+  setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
+    this.explorerAPIs = defaultExplorers;
+
+    if (explorerAPIs?.length) {
+      this.explorerAPIs.push(...explorerFactory(explorerAPIs));
+    }
   }
 
   _getRevocationListUrl (distantIssuerProfile) {
@@ -205,7 +215,7 @@ export default class Verifier {
         transactionId: this.transactionId,
         chain: this.chain.code,
         certificateVersion: this.version,
-        explorersAPIs: this.explorerAPIs
+        explorersAPIs: (this.explorerAPIs as any)
       })
     );
 

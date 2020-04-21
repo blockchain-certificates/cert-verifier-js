@@ -2,6 +2,9 @@ import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import generateTransactionData from '../../../src/models/TransactionData';
+import { defaultExplorers } from '../../../src/explorers';
+import { explorerFactory } from '../../../src/explorers/explorer';
+import { ExplorerAPI } from '../../../src/certificate';
 
 describe('Verifier entity test suite', function () {
   const verifierParamFixture = {
@@ -56,14 +59,14 @@ describe('Verifier entity test suite', function () {
       describe('explorerAPIs', function () {
         describe('when it is undefined or null', function () {
           it('should set the explorerAPIs as an empty array to the verifier object', function () {
-            expect(verifierInstance.explorerAPIs).toEqual([]);
+            expect(verifierInstance.explorerAPIs).toEqual(defaultExplorers);
           });
         });
 
         describe('when it is a valid explorer API object', function () {
           it('should set the explorerAPIs to the verifier object', function () {
             const fixture = Object.assign({}, verifierParamFixture);
-            const fixtureExplorerAPI = [{
+            const fixtureExplorerAPI: ExplorerAPI[] = [{
               serviceURL: 'https://explorer-example.com',
               priority: 0,
               parsingFunction: () => {
@@ -71,8 +74,10 @@ describe('Verifier entity test suite', function () {
               }
             }];
             fixture.explorerAPIs = fixtureExplorerAPI;
+            const expectedExplorers = defaultExplorers;
+            expectedExplorers.push(...explorerFactory(fixtureExplorerAPI));
             const verifierInstance = new Verifier(fixture);
-            expect(verifierInstance.explorerAPIs).toEqual(fixtureExplorerAPI);
+            expect(verifierInstance.explorerAPIs).toEqual(expectedExplorers);
           });
         });
       });

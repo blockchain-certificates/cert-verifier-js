@@ -1,3 +1,10 @@
 import { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo } from './explorer';
 
-export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo };
+const defaultExplorers = [
+  ...BitcoinExplorers,
+  ...EthereumExplorers,
+  ...BlockchainExplorersWithSpentOutputInfo
+];
+
+export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo, defaultExplorers };
+

@@ -16,7 +16,7 @@ export type TExplorerFunctionsArray = {(transactionId: string, chain: SupportedC
 export type TExplorerParsingFunction = {(jsonResponse, chain?: SupportedChains): TransactionData} |
   {(jsonResponse, chain?: SupportedChains): Promise<TransactionData>};
 
-function explorerFactory (TransactionAPIArray: ExplorerAPI[]): TExplorerFunctionsArray {
+export function explorerFactory (TransactionAPIArray: ExplorerAPI[]): TExplorerFunctionsArray {
   return TransactionAPIArray
     .map(explorerAPI =>
       (transactionId, chain) => getTransactionFromApi(explorerAPI, transactionId, chain)

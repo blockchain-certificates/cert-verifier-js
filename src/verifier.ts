@@ -72,9 +72,6 @@ export default class Verifier {
     this._stepsStatuses = [];
   }
 
-  /**
-   * verify
-   */
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}) {
     this._stepCallback = stepCallback;
 
@@ -111,13 +108,6 @@ export default class Verifier {
     return distantIssuerProfile.revocationList;
   }
 
-  /**
-   * doAction
-   *
-   * @param step
-   * @param action
-   * @returns {*}
-   */
   _doAction (step, action) {
     // If not failing already
     if (this._isFailing()) {
@@ -151,15 +141,7 @@ export default class Verifier {
     }
   }
 
-  /**
-   * doAsyncAction
-   *
-   * @param step
-   * @param action
-   * @returns {Promise<*>}
-   */
   async _doAsyncAction (step, action) {
-    // If not failing already
     if (this._isFailing()) {
       return;
     }
@@ -282,13 +264,6 @@ export default class Verifier {
     );
   }
 
-  /**
-   * verifyV2Mock
-   *
-   * Verify a v2 mock certificate
-   *
-   * @returns {Promise<void>}
-   */
   async _verifyV2Mock () {
     // Compute local hash
     const localHash = await this._doAsyncAction(
@@ -314,13 +289,7 @@ export default class Verifier {
   }
 
   /**
-   * _failed
-   *
    * Returns a failure final step message
-   *
-   * @param errorMessage
-   * @returns {{code: string, status: string, errorMessage: *}}
-   * @private
    */
   _failed (errorStep) {
     const message = errorStep.errorMessage;
@@ -329,12 +298,7 @@ export default class Verifier {
   }
 
   /**
-   * _isFailing
-   *
    * whether or not the current verification is failing
-   *
-   * @returns {boolean}
-   * @private
    */
   _isFailing () {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
@@ -351,8 +315,6 @@ export default class Verifier {
   }
 
   /**
-   * _succeed
-   *
    * Returns a final success message
    */
   _succeed () {
@@ -368,15 +330,7 @@ export default class Verifier {
   }
 
   /**
-   * _updateStatusCallback
-   *
    * calls the origin callback to update on a step status
-   *
-   * @param code
-   * @param label
-   * @param status
-   * @param errorMessage
-   * @private
    */
   private _updateStatusCallback (code: string, label: string, status: string, errorMessage: string = '') {
     if (code != null) {

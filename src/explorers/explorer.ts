@@ -17,8 +17,7 @@ export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transact
   }
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: publicAPI.serviceURL,
-    transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
-    transactionId: transactionId,
+    transactionId,
     isTestApi: isTestChain(chain)
   });
 

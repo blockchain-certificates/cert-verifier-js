@@ -40,7 +40,6 @@ async function getEtherScanBlock (jsonResponse, chain: SupportedChains) {
   const blockNumber = data.blockNumber;
   const requestUrl = buildTransactionServiceUrl({
     serviceUrls: getBlockByNumberServiceUrls,
-    transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
     transactionId: blockNumber,
     isTestApi: isTestChain(chain)
   });

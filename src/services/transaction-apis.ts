@@ -1,8 +1,9 @@
 import { ExplorerURLs } from '../certificate';
+import { TRANSACTION_ID_PLACEHOLDER } from '../constants/api';
 
 export function buildTransactionServiceUrl ({
   serviceUrls,
-  transactionIdPlaceholder = '',
+  transactionIdPlaceholder = TRANSACTION_ID_PLACEHOLDER,
   transactionId = '',
   isTestApi = false
 }: {

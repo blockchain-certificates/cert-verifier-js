@@ -87,6 +87,5 @@ async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<T
 
 export {
   serviceURL,
-  parsingFunction,
-  getEtherScanBlock
+  parsingFunction
 };

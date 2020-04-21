@@ -8,11 +8,15 @@ import { isTestChain, SupportedChains } from '../constants/blockchains';
 import { TRANSACTION_APIS } from '../constants/api';
 import { TransactionData } from '../models/TransactionData';
 
-export type TExplorerParsingFunction = (jsonResponse, chain?: SupportedChains) => TransactionData;
+export type TExplorerParsingFunction = {(jsonResponse, chain?: SupportedChains): TransactionData} | {(jsonResponse, chain?: SupportedChains): Promise<TransactionData>};
 
 export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transactionId: string, chain: SupportedChains): Promise<TransactionData> {
+  const publicAPI = PublicAPIs[apiName];
+  if (!publicAPI) {
+    throw new Error(`API ${apiName} is not listed`);
+  }
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: PublicAPIs[apiName].serviceURL,
+    serviceUrls: publicAPI.serviceURL,
     transactionIdPlaceholder: TRANSACTION_ID_PLACEHOLDER,
     transactionId: transactionId,
     isTestApi: isTestChain(chain)
@@ -20,16 +24,8 @@ export async function getTransactionFromApi (apiName: TRANSACTION_APIS, transact
 
   try {
     const response = await request({ url: requestUrl });
-    return await getApiParsingFunction(apiName)(JSON.parse(response), chain);
+    return await publicAPI.parsingFunction(JSON.parse(response), chain);
   } catch (err) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
   }
-}
-
-function getApiParsingFunction (apiName: TRANSACTION_APIS): TExplorerParsingFunction {
-  const publicAPI = PublicAPIs[apiName];
-  if (!publicAPI) {
-    throw new Error(`API ${apiName} is not listed`);
-  }
-  return publicAPI.parsingFunction;
 }

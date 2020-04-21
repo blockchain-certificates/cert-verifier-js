@@ -11,6 +11,7 @@ import { getText } from '../../i18n/useCases';
 import { TransactionData } from '../../../models/TransactionData';
 import { default as Versions, isV1 } from '../../../constants/certificateVersions';
 import { SupportedChains } from '../../../constants/blockchains';
+import { ExplorerAPI } from '../../../certificate';
 
 function getExplorersByChain (chain: SupportedChains, certificateVersion: Versions): TExplorerFunctionsArray {
   if (isV1(certificateVersion)) {
@@ -32,8 +33,8 @@ function getExplorersByChain (chain: SupportedChains, certificateVersion: Versio
 }
 
 export default function lookForTx (
-  { transactionId, chain, certificateVersion }:
-    { transactionId: string, chain: SupportedChains, certificateVersion: Versions }
+  { transactionId, chain, certificateVersion, explorersAPIs }:
+  { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorersAPIs: ExplorerAPI[] }
 ): Promise<TransactionData> {
   let BlockchainExplorers: TExplorerFunctionsArray = getExplorersByChain(chain, certificateVersion);
 
@@ -41,8 +42,8 @@ export default function lookForTx (
     return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));
   }
 
-  const promises = [];
-  let limit = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
+  const promises: any[] = [];
+  let limit: number = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
   for (let i = 0; i < limit; i++) {
     promises.push(BlockchainExplorers[i](transactionId, chain));
   }

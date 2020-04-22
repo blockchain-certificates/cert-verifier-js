@@ -1,11 +1,79 @@
 import domain from '../../../../../src/domain';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
-import { BitcoinExplorers, BlockchainExplorersWithSpentOutputInfo } from '../../../../../src/explorers';
+import {
+  BitcoinExplorers,
+  BlockchainExplorersWithSpentOutputInfo,
+  defaultExplorers, EthereumExplorers
+} from '../../../../../src/explorers';
+import { TExplorerAPIs } from '../../../../../src/verifier';
+import { getExplorersByChain } from '../../../../../src/domain/verifier/useCases/lookForTx';
+import { SupportedChains } from '../../../../../src/constants/blockchains';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
   let MOCK_CHAIN;
   const MOCK_CERTIFICATE_VERSION = CERTIFICATE_VERSIONS.V1_2;
+  const mockExplorerAPIs: TExplorerAPIs = defaultExplorers;
+
+  describe('selecting the explorers', function () {
+    describe('given the certificate is V1', function () {
+      it('should use the v1 specific explorers', function () {
+        const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V1_2);
+        expect(selectedSelectors).toEqual(BlockchainExplorersWithSpentOutputInfo);
+      });
+    });
+
+    describe('given the certificate is not V1', function () {
+      describe('and the chain is Ethereum main', function () {
+        it('should use the ethereum specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethmain, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(EthereumExplorers);
+        });
+      });
+
+      describe('and the chain is Ethereum ropsten', function () {
+        it('should use the ethereum specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethropst, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(EthereumExplorers);
+        });
+      });
+
+      describe('and the chain is Ethereum rinkeby', function () {
+        it('should use the ethereum specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethrinkeby, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(EthereumExplorers);
+        });
+      });
+
+      describe('and the chain is Bitcoin mainnet', function () {
+        it('should use the bitcoin specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Bitcoin, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(BitcoinExplorers);
+        });
+      });
+
+      describe('and the chain is Bitcoin mocknet', function () {
+        it('should use the bitcoin specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Mocknet, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(BitcoinExplorers);
+        });
+      });
+
+      describe('and the chain is Bitcoin testnet', function () {
+        it('should use the bitcoin specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(BitcoinExplorers);
+        });
+      });
+
+      describe('and the chain is Bitcoin regtest', function () {
+        it('should use the bitcoin specific explorers', function () {
+          const selectedSelectors = getExplorersByChain(SupportedChains.Regtest, CERTIFICATE_VERSIONS.V2_0);
+          expect(selectedSelectors).toEqual(BitcoinExplorers);
+        });
+      });
+    });
+  });
 
   describe('given it is called with a transactionId, a chain and a certificateVersion', function () {
     describe('given the chain is invalid', () => {
@@ -22,7 +90,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
           transactionId: MOCK_TRANSACTION_ID,
           chain: MOCK_CHAIN,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorersAPIs: []})).rejects.toThrow('Invalid chain; does not map to known' +
+          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid chain; does not map to known' +
           ' BlockchainExplorers.');
       });
     });
@@ -42,7 +110,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
           transactionId: MOCK_TRANSACTION_ID,
           chain: MOCK_CHAIN,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorersAPIs: []})).rejects.toThrow('Invalid application configuration;' +
+          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
           ' check the CONFIG.MinimumBlockchainExplorers configuration value');
       });
     });
@@ -62,7 +130,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
           transactionId: MOCK_TRANSACTION_ID,
           chain: MOCK_CHAIN,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorersAPIs: []})).rejects.toThrow('Invalid application configuration;' +
+          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
           ' check the CONFIG.MinimumBlockchainExplorers configuration value');
       });
     });
@@ -81,7 +149,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
             transactionId: MOCK_TRANSACTION_ID,
             chain: MOCK_CHAIN,
             certificateVersion: MOCK_CERTIFICATE_VERSION,
-            explorersAPIs: []})).rejects.toThrow('Invalid application configuration;' +
+            explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
             ' check the CONFIG.MinimumBlockchainExplorers configuration value');
         });
       });

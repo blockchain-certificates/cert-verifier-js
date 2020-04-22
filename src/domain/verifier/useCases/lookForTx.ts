@@ -10,21 +10,22 @@ import { getText } from '../../i18n/useCases';
 import { TransactionData } from '../../../models/TransactionData';
 import { default as Versions, isV1 } from '../../../constants/certificateVersions';
 import { SupportedChains } from '../../../constants/blockchains';
-import { ExplorerAPI } from '../../../certificate';
 import { TExplorerFunctionsArray } from '../../../explorers/explorer';
+import { TExplorerAPIs } from '../../../verifier';
 
-function getExplorersByChain (chain: SupportedChains, certificateVersion: Versions): TExplorerFunctionsArray {
+export function getExplorersByChain (chain: SupportedChains, certificateVersion: Versions): TExplorerFunctionsArray {
   if (isV1(certificateVersion)) {
     return BlockchainExplorersWithSpentOutputInfo;
   } else {
     switch (chain) {
-      case BLOCKCHAINS.bitcoin.code:
-      case BLOCKCHAINS.regtest.code:
-      case BLOCKCHAINS.testnet.code:
-      case BLOCKCHAINS.mocknet.code:
+      case BLOCKCHAINS[SupportedChains.Bitcoin].code:
+      case BLOCKCHAINS[SupportedChains.Regtest].code:
+      case BLOCKCHAINS[SupportedChains.Testnet].code:
+      case BLOCKCHAINS[SupportedChains.Mocknet].code:
         return BitcoinExplorers;
-      case BLOCKCHAINS.ethmain.code:
-      case BLOCKCHAINS.ethropst.code:
+      case BLOCKCHAINS[SupportedChains.Ethmain].code:
+      case BLOCKCHAINS[SupportedChains.Ethropst].code:
+      case BLOCKCHAINS[SupportedChains.Ethrinkeby].code:
         return EthereumExplorers;
     }
   }
@@ -33,8 +34,8 @@ function getExplorersByChain (chain: SupportedChains, certificateVersion: Versio
 }
 
 export default function lookForTx (
-  { transactionId, chain, certificateVersion, explorersAPIs }:
-  { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorersAPIs: ExplorerAPI[] }
+  { transactionId, chain, certificateVersion, explorerAPIs }:
+  { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
 ): Promise<TransactionData> {
   let BlockchainExplorers: TExplorerFunctionsArray = getExplorersByChain(chain, certificateVersion);
 

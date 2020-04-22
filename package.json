@@ -69,6 +69,7 @@
     "@commitlint/cli": "^8.0.0",
     "@commitlint/config-conventional": "^8.0.0",
     "@types/jest": "^25.2.1",
+    "@types/sinon": "^9.0.0",
     "babel-jest": "^25.3.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",

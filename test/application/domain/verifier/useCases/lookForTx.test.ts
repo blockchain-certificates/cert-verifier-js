@@ -18,7 +18,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
   describe('selecting the explorers', function () {
     describe('given the certificate is V1', function () {
       it('should use the v1 specific explorers', function () {
-        const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V1_2);
+        const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V1_2, defaultExplorers);
         expect(selectedSelectors).toEqual(BlockchainExplorersWithSpentOutputInfo);
       });
     });
@@ -26,49 +26,49 @@ describe('Verifier domain lookForTx use case test suite', function () {
     describe('given the certificate is not V1', function () {
       describe('and the chain is Ethereum main', function () {
         it('should use the ethereum specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Ethmain, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethmain, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(EthereumExplorers);
         });
       });
 
       describe('and the chain is Ethereum ropsten', function () {
         it('should use the ethereum specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Ethropst, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethropst, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(EthereumExplorers);
         });
       });
 
       describe('and the chain is Ethereum rinkeby', function () {
         it('should use the ethereum specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Ethrinkeby, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Ethrinkeby, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(EthereumExplorers);
         });
       });
 
       describe('and the chain is Bitcoin mainnet', function () {
         it('should use the bitcoin specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Bitcoin, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Bitcoin, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(BitcoinExplorers);
         });
       });
 
       describe('and the chain is Bitcoin mocknet', function () {
         it('should use the bitcoin specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Mocknet, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Mocknet, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(BitcoinExplorers);
         });
       });
 
       describe('and the chain is Bitcoin testnet', function () {
         it('should use the bitcoin specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(BitcoinExplorers);
         });
       });
 
       describe('and the chain is Bitcoin regtest', function () {
         it('should use the bitcoin specific explorers', function () {
-          const selectedSelectors = getExplorersByChain(SupportedChains.Regtest, CERTIFICATE_VERSIONS.V2_0);
+          const selectedSelectors = getExplorersByChain(SupportedChains.Regtest, CERTIFICATE_VERSIONS.V2_0, defaultExplorers);
           expect(selectedSelectors).toEqual(BitcoinExplorers);
         });
       });

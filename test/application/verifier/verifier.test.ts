@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier, { TExplorerAPIs } from '../../../src/verifier';
@@ -110,6 +111,27 @@ describe('Verifier entity test suite', function () {
         verifierInstance._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(true);
+      });
+    });
+  });
+
+  describe('_verifyMain method', function () {
+    // TODO: test other steps
+
+    describe('lookForTx step', function () {
+      it('should call the explorers sent by the verifier', async function () {
+        const mockTxData: TransactionData = {
+          revokedAddresses: [],
+          time: '2020-04-20T00:00:00Z',
+          remoteHash: 'a-remote-hash',
+          issuingAddress: 'an-issuing-address'
+        };
+        const stubbedExplorer = sinon.stub().resolves(mockTxData);
+        defaultExplorers.bitcoin[0] = stubbedExplorer;
+        const verifier = new Verifier(verifierParamFixture);
+        await verifier.verify();
+        expect(stubbedExplorer.calledOnce).toBe(true);
+        sinon.restore();
       });
     });
   });

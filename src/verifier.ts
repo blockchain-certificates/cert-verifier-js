@@ -200,7 +200,7 @@ export default class Verifier {
         transactionId: this.transactionId,
         chain: this.chain.code,
         certificateVersion: this.version,
-        explorersAPIs: (this.explorerAPIs as any)
+        explorerAPIs: this.explorerAPIs
       })
     );
 

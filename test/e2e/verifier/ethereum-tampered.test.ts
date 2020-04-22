@@ -11,7 +11,8 @@ describe('given the certificate is a tampered ethereum', function () {
     sinon.stub(Explorers, 'getTransactionFromApi').resolves({
       remoteHash: '4f48e91f0397a49a5b56718a78d681c51932c8bd9242442b94bcfb93434957db',
       issuingAddress: '0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c',
-      time: '2018-05-08T18:30:34.000Z'
+      time: '2018-05-08T18:30:34.000Z',
+      revokedAddresses: []
     });
     certificate = new Certificate(FIXTURES.EthereumTampered);
     await certificate.init();

@@ -11,7 +11,8 @@ describe('given the certificate is a revoked ethereum main', function () {
     sinon.stub(Explorers, 'getTransactionFromApi').resolves({
       remoteHash: 'd95614994157a789ae321e114c7d8b1498997212b190c628d158bbfe38c3d1bb',
       issuingAddress: '0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c',
-      time: '2018-05-09T14:23:49.000Z'
+      time: '2018-05-09T14:23:49.000Z',
+      revokedAddresses: []
     });
     certificate = new Certificate(FIXTURES.EthereumMainRevoked);
     await certificate.init();

@@ -12,7 +12,8 @@ describe('given the certificate is a revoked certificate', function () {
       sinon.stub(Explorers, 'getTransactionFromApi').resolves({
         remoteHash: '6ad52e9db922e0c2648ce8f88f94b7e376daf9af60a7c782db75011f3783ea0a',
         issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
-        time: '2019-10-15T09:20:24.000Z'
+        time: '2019-10-15T09:20:24.000Z',
+        revokedAddresses: []
       });
       certificate = new Certificate(FIXTURES.EthereumRopstenRevokedNoRevocationList);
       await certificate.init();

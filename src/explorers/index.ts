@@ -11,11 +11,13 @@ export type TDefaultExplorersPerBlockchain = {
   v1: TExplorerFunctionsArray
 };
 
-const defaultExplorers: TDefaultExplorersPerBlockchain = {
-  bitcoin: BitcoinExplorers,
-  ethereum: EthereumExplorers,
-  v1: BlockchainExplorersWithSpentOutputInfo
-};
+export function getDefaultExplorers (): TDefaultExplorersPerBlockchain {
+  return {
+    bitcoin: BitcoinExplorers,
+    ethereum: EthereumExplorers,
+    v1: BlockchainExplorersWithSpentOutputInfo
+  };
+}
 
-export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo, defaultExplorers };
+export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo };
 

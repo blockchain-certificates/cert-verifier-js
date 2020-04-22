@@ -9,7 +9,7 @@ import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { explorerFactory, TExplorerFunctionsArray } from './explorers/explorer';
-import { defaultExplorers, TDefaultExplorersPerBlockchain } from './explorers';
+import { getDefaultExplorers, TDefaultExplorersPerBlockchain } from './explorers';
 
 const log = debug('Verifier');
 
@@ -97,7 +97,7 @@ export default class Verifier {
   }
 
   setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
-    this.explorerAPIs = defaultExplorers;
+    this.explorerAPIs = getDefaultExplorers();
 
     if (explorerAPIs?.length) {
       this.explorerAPIs.custom = explorerFactory(explorerAPIs);

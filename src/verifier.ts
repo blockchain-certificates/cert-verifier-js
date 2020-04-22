@@ -26,7 +26,7 @@ export type TExplorerAPIs = TDefaultExplorersPerBlockchain & {
 }
 
 export default class Verifier {
-  public chain: IBlockchainObject; // TODO: define chain interface
+  public chain: IBlockchainObject;
   public expires: string;
   public id: string;
   public issuer: any; // TODO: define issuer interface

@@ -27,7 +27,7 @@ export interface CertificateOptions {
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
-  public chain: IBlockchainObject; // TODO: define chain interface
+  public chain: IBlockchainObject;
   public description?: string; // v1
   public expires: string;
   public explorerAPIs: ExplorerAPI[] = [];

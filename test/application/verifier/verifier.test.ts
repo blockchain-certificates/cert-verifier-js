@@ -78,7 +78,8 @@ describe('Verifier entity test suite', function () {
             const expectedExplorers: any[] = [defaultExplorers];
             expectedExplorers.splice(0, 0, explorerFactory(fixtureExplorerAPI));
             const verifierInstance = new Verifier(fixture);
-            expect(verifierInstance.explorerAPIs).toEqual(expectedExplorers);
+            // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
+            expect(JSON.stringify(verifierInstance.explorerAPIs)).toBe(JSON.stringify(expectedExplorers));
           });
         });
       });

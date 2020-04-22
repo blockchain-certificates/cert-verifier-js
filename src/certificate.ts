@@ -15,7 +15,7 @@ export interface ExplorerURLs {
 
 export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
-  priority?: 0 | 1;
+  priority?: 0 | 1; // 0 means the custom API will be ran before the public APIs listed, 1 after
   parsingFunction: TExplorerParsingFunction
 }
 

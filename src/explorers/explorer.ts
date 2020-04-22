@@ -1,4 +1,4 @@
-import { SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../constants';
+import { SUB_STEPS } from '../constants';
 import { buildTransactionServiceUrl } from '../services/transaction-apis';
 import { request } from '../services/request';
 import { VerifierError } from '../models';

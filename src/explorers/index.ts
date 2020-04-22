@@ -1,10 +1,21 @@
-import { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo } from './explorer';
+import {
+  BitcoinExplorers,
+  BlockchainExplorersWithSpentOutputInfo,
+  EthereumExplorers,
+  TExplorerFunctionsArray
+} from './explorer';
 
-const defaultExplorers = [
-  ...BitcoinExplorers,
-  ...EthereumExplorers,
-  ...BlockchainExplorersWithSpentOutputInfo
-];
+export type TDefaultExplorersPerBlockchain = {
+  bitcoin: TExplorerFunctionsArray,
+  ethereum: TExplorerFunctionsArray,
+  v1: TExplorerFunctionsArray
+};
+
+const defaultExplorers: TDefaultExplorersPerBlockchain = {
+  bitcoin: BitcoinExplorers,
+  ethereum: EthereumExplorers,
+  v1: BlockchainExplorersWithSpentOutputInfo
+};
 
 export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo, defaultExplorers };
 

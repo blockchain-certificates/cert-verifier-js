@@ -9,7 +9,7 @@ import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { explorerFactory, TExplorerFunctionsArray } from './explorers/explorer';
-import { defaultExplorers } from './explorers';
+import { defaultExplorers, TDefaultExplorersPerBlockchain } from './explorers';
 
 const log = debug('Verifier');
 
@@ -32,7 +32,7 @@ export default class Verifier {
   public version: Versions;
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
-  public explorerAPIs: TExplorerFunctionsArray;
+  public explorerAPIs: (TDefaultExplorersPerBlockchain | TExplorerFunctionsArray)[]; // TODO: come up with a better type
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
 
   constructor (
@@ -94,10 +94,12 @@ export default class Verifier {
   }
 
   setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
-    this.explorerAPIs = defaultExplorers;
+    this.explorerAPIs = [defaultExplorers];
 
     if (explorerAPIs?.length) {
-      this.explorerAPIs.push(...explorerFactory(explorerAPIs));
+      const priority: number = explorerAPIs[0].priority; // Implies that the priority is always sent in the first
+      // element
+      this.explorerAPIs.splice(priority, 0, explorerFactory(explorerAPIs));
     }
   }
 

@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import domain from '../../../../../src/domain';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
 import {
@@ -8,6 +9,7 @@ import {
 import { TExplorerAPIs } from '../../../../../src/verifier';
 import { getExplorersByChain } from '../../../../../src/domain/verifier/useCases/lookForTx';
 import { SupportedChains } from '../../../../../src/constants/blockchains';
+import { TransactionData } from '../../../../../src/models/TransactionData';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
@@ -72,6 +74,55 @@ describe('Verifier domain lookForTx use case test suite', function () {
           expect(selectedSelectors).toEqual(BitcoinExplorers);
         });
       });
+    });
+  });
+
+  describe('given there are no custom explorers', function () {
+    it('should call and resolve from the explorers passed', async function () {
+      const mockTxData: TransactionData = {
+        revokedAddresses: [],
+        time: '2020-04-20T00:00:00Z',
+        remoteHash: 'a-remote-hash',
+        issuingAddress: 'an-issuing-address'
+      };
+      const stubbedExplorer = sinon.stub().resolves(mockTxData);
+      const mockExplorers: TExplorerAPIs = {
+        bitcoin: [stubbedExplorer],
+        ethereum: [],
+        v1: []
+      };
+      const output = await domain.verifier.lookForTx({
+        transactionId: 'a-transaction-id',
+        chain: SupportedChains.Bitcoin,
+        certificateVersion: CERTIFICATE_VERSIONS.V2_0,
+        explorerAPIs: mockExplorers
+      });
+      expect(output).toEqual(mockTxData);
+    });
+  });
+
+  describe('given there are custom explorers', function () {
+    it('should call and resolve from the custom explorers passed', async function () {
+      const mockTxData: TransactionData = {
+        revokedAddresses: [],
+        time: '2020-04-20T00:00:00Z',
+        remoteHash: 'a-remote-hash',
+        issuingAddress: 'an-issuing-address'
+      };
+      const stubbedExplorer = sinon.stub().resolves(mockTxData);
+      const mockExplorers: TExplorerAPIs = {
+        bitcoin: [],
+        ethereum: [],
+        v1: [],
+        custom: [stubbedExplorer]
+      };
+      const output = await domain.verifier.lookForTx({
+        transactionId: 'a-transaction-id',
+        chain: SupportedChains.Bitcoin,
+        certificateVersion: CERTIFICATE_VERSIONS.V2_0,
+        explorerAPIs: mockExplorers
+      });
+      expect(output).toEqual(mockTxData);
     });
   });
 

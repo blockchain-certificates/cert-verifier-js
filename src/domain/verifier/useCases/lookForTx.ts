@@ -33,7 +33,12 @@ export default function lookForTx (
   { transactionId, chain, certificateVersion, explorerAPIs }:
   { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
 ): Promise<TransactionData> {
-  let BlockchainExplorers: TExplorerFunctionsArray = getExplorersByChain(chain, certificateVersion, explorerAPIs);
+  let BlockchainExplorers: TExplorerFunctionsArray;
+  if (explorerAPIs.custom?.length) {
+    BlockchainExplorers = explorerAPIs.custom;
+  } else {
+    BlockchainExplorers = getExplorersByChain(chain, certificateVersion, explorerAPIs);
+  }
 
   if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
     return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));

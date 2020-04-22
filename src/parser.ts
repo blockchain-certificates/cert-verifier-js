@@ -1,36 +1,53 @@
 import { versionParserMap } from './parsers';
 
-function lookupVersion (array, v) {
-  return array.some(str => str.indexOf(`v${v}`) > -1 || str.indexOf(`${v}.`) > -1);
+function lookupVersion (array: string[], v: string): boolean {
+  return array.some(str => str.includes(`v${v}`) || str.includes(`${v}.`));
 }
 
-/**
- *
- * @param context: string | Context[]
- * @returns {string}
- */
-function retrieveBlockcertsVersion (context) {
+function retrieveBlockcertsVersion (context): number {
   if (typeof context === 'string') {
     context = [context];
   }
 
   const blockcertsContext = context.filter(ctx => typeof ctx === 'string').find(ctx => ctx.toLowerCase().indexOf('blockcerts') > 0);
-  const blockcertsContextArray = blockcertsContext.split('/').filter(str => str !== '');
+  const blockcertsContextArray: string[] = blockcertsContext.split('/').filter(str => str !== '');
 
-  const availableVersions = Object.keys(versionParserMap);
+  const availableVersions: string[] = Object.keys(versionParserMap);
 
-  return availableVersions.filter(version => lookupVersion(blockcertsContextArray, version))[0];
+  return parseInt(availableVersions.filter(version => lookupVersion(blockcertsContextArray, version.toString()))[0], 10);
 }
 
-/**
- * parseJson
- *
- * @param certificateJson
- * @returns {*}
- */
-export default async function parseJSON (certificateJson) {
+interface ParsedCertificateValidityFormat {
+  isFormatValid: boolean;
+  error: string;
+}
+
+export interface ParsedCertificate extends ParsedCertificateValidityFormat {
+  certificateImage;
+  chain;
+  description;
+  expires;
+  id;
+  isFormatValid;
+  issuedOn;
+  issuer;
+  metadataJson;
+  name;
+  publicKey;
+  receipt;
+  recipientFullName;
+  recordLink;
+  revocationKey;
+  sealImage;
+  signature;
+  signatureImage;
+  subtitle;
+  version;
+}
+
+export default async function parseJSON (certificateJson): Promise<ParsedCertificate | ParsedCertificateValidityFormat> {
   try {
-    const version = retrieveBlockcertsVersion(certificateJson['@context']);
+    const version: number = retrieveBlockcertsVersion(certificateJson['@context']);
     const parsedCertificate = await versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;

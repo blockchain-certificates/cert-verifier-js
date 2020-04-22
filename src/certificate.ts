@@ -1,12 +1,12 @@
 import domain from './domain';
-import parseJSON from './parser';
+import parseJSON, { ParsedCertificate } from './parser';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
 
 interface CertificateOptions {
-  locale?: string
+  locale?: string;
 }
 
 export default class Certificate {
@@ -67,10 +67,10 @@ export default class Certificate {
    */
   async parseJson (certificateDefinition) {
     const parsedCertificate = await parseJSON(certificateDefinition);
-    if (!parsedCertificate.isFormatValid) {
+    if (!(parsedCertificate.isFormatValid as boolean)) {
       throw new Error(parsedCertificate.error);
     }
-    this._setProperties(parsedCertificate);
+    this._setProperties(parsedCertificate as ParsedCertificate);
   }
 
   /**
@@ -91,7 +91,7 @@ export default class Certificate {
       transactionId: this.transactionId,
       version: this.version
     });
-    return verifier.verify(stepCallback);
+    return await verifier.verify(stepCallback);
   }
 
   /**
@@ -134,7 +134,7 @@ export default class Certificate {
    * @param version
    * @private
    */
-  _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
+  _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }: ParsedCertificate) {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;

@@ -1,6 +1,6 @@
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
-import Verifier from '../../../src/verifier';
+import Verifier, { TExplorerAPIs } from '../../../src/verifier';
 import generateTransactionData, { TransactionData } from '../../../src/models/TransactionData';
 import { defaultExplorers } from '../../../src/explorers';
 import { explorerFactory } from '../../../src/explorers/explorer';
@@ -60,7 +60,7 @@ describe('Verifier entity test suite', function () {
       describe('explorerAPIs', function () {
         describe('when it is undefined or null', function () {
           it('should set the explorerAPIs as an empty array to the verifier object', function () {
-            expect(verifierInstance.explorerAPIs).toEqual([defaultExplorers]);
+            expect(verifierInstance.explorerAPIs).toEqual(defaultExplorers);
           });
         });
 
@@ -75,11 +75,10 @@ describe('Verifier entity test suite', function () {
               }
             }];
             fixture.explorerAPIs = fixtureExplorerAPI;
-            const expectedExplorers: any[] = [defaultExplorers];
-            expectedExplorers.splice(0, 0, explorerFactory(fixtureExplorerAPI));
+            const expectedExplorers: TExplorerAPIs = defaultExplorers;
+            expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
             const verifierInstance = new Verifier(fixture);
-            // https://github.com/facebook/jest/issues/8475#issuecomment-537830532
-            expect(JSON.stringify(verifierInstance.explorerAPIs)).toBe(JSON.stringify(expectedExplorers));
+            expect(verifierInstance.explorerAPIs).toEqual(expectedExplorers);
           });
         });
       });
@@ -88,53 +87,6 @@ describe('Verifier entity test suite', function () {
         const documentAssertion = JSON.parse(JSON.stringify(fixture));
         delete documentAssertion.signature;
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
-      });
-    });
-  });
-
-  describe('setExplorerAPIs method', function () {
-    let fixtureExplorerAPIs: ExplorerAPI[];
-
-    beforeEach(function () {
-      fixtureExplorerAPIs = [{
-        serviceURL: 'https://explorer-example.com',
-        priority: 0,
-        parsingFunction: (jsonResponse, chain) => {
-          return generateTransactionData('a','b', 'c', ['d']);
-        }
-      }]
-      verifierInstance = new Verifier(verifierParamFixture);
-    });
-
-    describe('given no custom explorer API has been set', function () {
-      beforeEach(function () {
-        verifierInstance.setExplorerAPIs([]);
-      });
-
-      it('should only set the public APIs as explorer APIs', function () {
-        expect(verifierInstance.explorerAPIs).toEqual([defaultExplorers]);
-      });
-    });
-
-    describe('given a custom explorer API has been set', function () {
-      describe('with priority set to 0', function () {
-        it('should set the public & custom APIs in the right order', function () {
-          verifierInstance.setExplorerAPIs(fixtureExplorerAPIs);
-          expect(verifierInstance.explorerAPIs[1]).toEqual(defaultExplorers); // TODO: we should test on the values of the
-          // array - currently when doing so we hit the `serializes to the same string` jest error (can't compare
-          // functions)
-        });
-      });
-
-      describe('with priority set to 1', function () {
-        it('should set the public & custom APIs in the right order', function () {
-          fixtureExplorerAPIs[0].priority = 1;
-          verifierInstance.setExplorerAPIs(fixtureExplorerAPIs);
-          expect(verifierInstance.explorerAPIs.length).toEqual(2); // TODO: we should test on the values of the
-          // array - currently when doing so we hit the `serializes to the same string` jest error (can't compare
-          // functions)
-          expect(verifierInstance.explorerAPIs[0]).toEqual(defaultExplorers);
-        });
       });
     });
   });

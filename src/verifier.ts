@@ -21,6 +21,9 @@ export interface IVerificationStepCallbackAPI {
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
+export type TExplorerAPIs = TDefaultExplorersPerBlockchain & {
+  custom?: TExplorerFunctionsArray
+}
 
 export default class Verifier {
   public chain: IBlockchainObject; // TODO: define chain interface
@@ -32,7 +35,7 @@ export default class Verifier {
   public version: Versions;
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
-  public explorerAPIs: (TDefaultExplorersPerBlockchain | TExplorerFunctionsArray)[]; // TODO: come up with a better type
+  public explorerAPIs: TExplorerAPIs;
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
 
   constructor (
@@ -94,12 +97,10 @@ export default class Verifier {
   }
 
   setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
-    this.explorerAPIs = [defaultExplorers];
+    this.explorerAPIs = defaultExplorers;
 
     if (explorerAPIs?.length) {
-      const priority: number = explorerAPIs[0].priority; // Implies that the priority is always sent in the first
-      // element
-      this.explorerAPIs.splice(priority, 0, explorerFactory(explorerAPIs));
+      this.explorerAPIs.custom = explorerFactory(explorerAPIs);
     }
   }
 

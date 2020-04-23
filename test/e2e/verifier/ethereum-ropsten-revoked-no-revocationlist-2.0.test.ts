@@ -24,11 +24,11 @@ describe('given the certificate is a revoked certificate', function () {
       sinon.restore();
     });
 
-    it('should fail the verification', async function () {
+    it('should fail the verification', function () {
       expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
     });
 
-    it('should report the revocation status', async function () {
+    it('should report the revocation status', function () {
       expect(result.message).toBe('This certificate has been revoked by the issuer. Reason given: Testing revocation.');
     });
   });

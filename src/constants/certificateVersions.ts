@@ -1,4 +1,4 @@
-/* eslint camelcase: 0 */
+/* eslint @typescript-eslint/camelcase: 0 */
 enum Versions {
   V1_1 = '1.1',
   V1_2 = '1.2',
@@ -7,7 +7,7 @@ enum Versions {
 }
 
 export function isV1 (version: string): boolean {
-  return version === Versions.V1_1 || version === Versions.V1_2
+  return version === Versions.V1_1 || version === Versions.V1_2;
 }
 
 export function isV3 (version: string): boolean {

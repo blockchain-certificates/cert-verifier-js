@@ -23,11 +23,11 @@ describe('given the certificate is a tampered ethereum', function () {
     sinon.restore();
   });
 
-  it('should fail', async function () {
+  it('should fail', function () {
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
   });
 
-  it('should expose the error message', async function () {
+  it('should expose the error message', function () {
     expect(result.message).toBe('Computed hash does not match remote hash');
   });
 });

@@ -3,7 +3,7 @@ import * as RequestService from '../../../src/services/request';
 import * as BitpayAPI from '../../../src/explorers/bitcoin/bitpay';
 import * as mockBitpayResponse from './mocks/mockBitpayResponse.json';
 import { getTransactionFromApi } from '../../../src/explorers/explorer';
-import { BLOCKCHAINS, TRANSACTION_APIS } from '../../../src/constants';
+import { BLOCKCHAINS } from '../../../src/constants';
 
 describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
@@ -25,28 +25,25 @@ describe('Bitcoin Explorer test suite', function () {
   });
 
   describe('getTransactionFromApi method', function () {
-    it('should call the right request API', function () {
-      getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(() => {
-        expect(stubRequest.getCall(0).args).toEqual([{ url: assertionRequestUrl }]);
-      });
+    it('should call the right request API', async function () {
+      await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code);
+      expect(stubRequest.getCall(0).args).toEqual([{ url: assertionRequestUrl }]);
     });
 
     describe('given the API request failed', function () {
       it('should throw the right error', async function () {
         const fixtureError = new Error('Unable to get remote hash');
         stubRequest.rejects(fixtureError);
-        await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).catch(err => {
-          expect(err).toEqual(fixtureError);
-        });
+        const err = await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code);
+        expect(err).toEqual(fixtureError);
       });
     });
 
     describe('given the request is successful', function () {
       describe('and the transaction data is generated from the response', function () {
         it('should return a correct transaction data', async function () {
-          getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code).then(res => {
-            expect(res).toEqual(assertionResponse);
-          });
+          const res = await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code);
+          expect(res).toEqual(assertionResponse);
         });
       });
     });

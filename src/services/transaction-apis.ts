@@ -7,10 +7,10 @@ export function buildTransactionServiceUrl ({
   transactionId = '',
   isTestApi = false
 }: {
-  serviceUrls: string | ExplorerURLs,
-  transactionIdPlaceholder?: string,
-  transactionId?: string,
-  isTestApi?: boolean
+  serviceUrls: string | ExplorerURLs;
+  transactionIdPlaceholder?: string;
+  transactionId?: string;
+  isTestApi?: boolean;
 }): string {
   const apiUrl = typeof serviceUrls === 'string' ? serviceUrls : (isTestApi ? serviceUrls.test : serviceUrls.main);
   return apiUrl.replace(transactionIdPlaceholder, transactionId);

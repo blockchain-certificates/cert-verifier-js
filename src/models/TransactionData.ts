@@ -1,4 +1,4 @@
-export type TransactionData = {
+export interface TransactionData {
   remoteHash: string;
   issuingAddress: string;
   time: string | Date;
@@ -15,5 +15,5 @@ export default function generateTransactionData (
     issuingAddress,
     time,
     revokedAddresses
-  }
+  };
 }

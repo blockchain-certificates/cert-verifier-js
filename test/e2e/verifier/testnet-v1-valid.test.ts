@@ -1,4 +1,4 @@
-/* eslint camelcase: 0 */
+/* eslint @typescript-eslint/camelcase: 0 */
 import sinon from 'sinon';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';

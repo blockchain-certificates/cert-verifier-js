@@ -1,10 +1,10 @@
 import sinon from 'sinon';
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
+import { CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
 import {
   BitcoinExplorers,
   BlockchainExplorersWithSpentOutputInfo,
-  getDefaultExplorers, EthereumExplorers,
+  getDefaultExplorers, EthereumExplorers
 } from '../../../../../src/explorers';
 import { TExplorerAPIs } from '../../../../../src/verifier';
 import { getExplorersByChain } from '../../../../../src/domain/verifier/useCases/lookForTx';
@@ -87,7 +87,9 @@ describe('Verifier domain lookForTx use case test suite', function () {
       };
       const stubbedExplorer = sinon.stub().resolves(mockTxData);
       const mockExplorers: TExplorerAPIs = {
-        bitcoin: [stubbedExplorer],
+        bitcoin: [{
+          parsingFunction: stubbedExplorer
+        }],
         ethereum: [],
         v1: []
       };
@@ -114,7 +116,9 @@ describe('Verifier domain lookForTx use case test suite', function () {
         bitcoin: [],
         ethereum: [],
         v1: [],
-        custom: [stubbedExplorer]
+        custom: [{
+          parsingFunction: stubbedExplorer
+        }]
       };
       const output = await domain.verifier.lookForTx({
         transactionId: 'a-transaction-id',
@@ -127,81 +131,61 @@ describe('Verifier domain lookForTx use case test suite', function () {
   });
 
   describe('given it is called with a transactionId, a chain and a certificateVersion', function () {
-    describe('given the chain is invalid', () => {
-      beforeEach(function () {
-        MOCK_CHAIN = 'invalid-chain';
-      });
-
-      afterEach(function () {
-        MOCK_CHAIN = BLOCKCHAINS.bitcoin.code;
-      });
-
-      it('should throw an error', () => {
-        expect(domain.verifier.lookForTx({
+    describe('given the chain is invalid', function () {
+      it('should throw an error', async function () {
+        await expect(domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
-          chain: MOCK_CHAIN,
+          chain: 'invalid-chain' as SupportedChains,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid chain; does not map to known' +
+          explorerAPIs: mockExplorerAPIs
+        })).rejects.toThrow('Invalid chain; does not map to known' +
           ' BlockchainExplorers.');
       });
     });
 
     describe('given MinimumBlockchainExplorers is less than 0', function () {
-      const originalValue = CONFIG.MinimumBlockchainExplorers;
-      beforeEach(function () {
+      it('should throw an error', async function () {
+        const originalValue = CONFIG.MinimumBlockchainExplorers;
         CONFIG.MinimumBlockchainExplorers = -1;
-      });
-
-      afterEach(function () {
-        CONFIG.MinimumBlockchainExplorers = originalValue;
-      });
-
-      it('should throw an error', function () {
-        expect(domain.verifier.lookForTx({
+        await expect(domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: MOCK_CHAIN,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
+          explorerAPIs: mockExplorerAPIs
+        })).rejects.toThrow('Invalid application configuration;' +
           ' check the CONFIG.MinimumBlockchainExplorers configuration value');
+        CONFIG.MinimumBlockchainExplorers = originalValue;
       });
     });
 
     describe('given MinimumBlockchainExplorers is higher than BlockchainExplorers length', function () {
-      const originalValue = CONFIG.MinimumBlockchainExplorers;
-      beforeEach(function () {
+      it('should throw an error', async function () {
+        const originalValue = CONFIG.MinimumBlockchainExplorers;
         CONFIG.MinimumBlockchainExplorers = BitcoinExplorers.length + 1;
-      });
-
-      afterEach(function () {
-        CONFIG.MinimumBlockchainExplorers = originalValue;
-      });
-
-      it('should throw an error', function () {
-        expect(domain.verifier.lookForTx({
+        await expect(domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: MOCK_CHAIN,
           certificateVersion: MOCK_CERTIFICATE_VERSION,
-          explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
+          explorerAPIs: mockExplorerAPIs
+        })).rejects.toThrow('Invalid application configuration;' +
           ' check the CONFIG.MinimumBlockchainExplorers configuration value');
+        CONFIG.MinimumBlockchainExplorers = originalValue;
       });
     });
 
     describe('given certificateVersion is v1', function () {
-      describe('given MinimumBlockchainExplorers is higher than BlockchainExplorersWithSpentOutputInfo length', () => {
-        const originalValue = CONFIG.MinimumBlockchainExplorers;
-        beforeEach(() => {
+      describe('given MinimumBlockchainExplorers is higher than BlockchainExplorersWithSpentOutputInfo length', function () {
+        it('should throw an error', async function () {
+          const originalValue = CONFIG.MinimumBlockchainExplorers;
           CONFIG.MinimumBlockchainExplorers = BlockchainExplorersWithSpentOutputInfo.length + 1;
-        });
-        afterEach(() => {
-          CONFIG.MinimumBlockchainExplorers = originalValue;
-        });
-        it('should throw an error', function () {
-          expect(domain.verifier.lookForTx({
+          await expect(domain.verifier.lookForTx({
             transactionId: MOCK_TRANSACTION_ID,
             chain: MOCK_CHAIN,
             certificateVersion: MOCK_CERTIFICATE_VERSION,
-            explorerAPIs: mockExplorerAPIs})).rejects.toThrow('Invalid application configuration;' +
+            explorerAPIs: mockExplorerAPIs
+          })).rejects.toThrow('Invalid application configuration;' +
             ' check the CONFIG.MinimumBlockchainExplorers configuration value');
+          CONFIG.MinimumBlockchainExplorers = originalValue;
         });
       });
     });

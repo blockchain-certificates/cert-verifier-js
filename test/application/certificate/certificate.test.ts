@@ -115,7 +115,7 @@ describe('Certificate entity test suite', function () {
                   serviceURL: 'https://explorer-example.com',
                   priority: 0,
                   parsingFunction: () => {
-                    return generateTransactionData('a','b', 'c', ['d']);
+                    return generateTransactionData('a', 'b', 'c', ['d']);
                   }
                 }]
               };

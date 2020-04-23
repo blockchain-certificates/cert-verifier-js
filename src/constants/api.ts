@@ -6,7 +6,7 @@ enum TRANSACTION_APIS {
   Etherscan = 'etherscan'
 }
 
-const TRANSACTION_ID_PLACEHOLDER: string = '{transaction_id}';
+const TRANSACTION_ID_PLACEHOLDER = '{transaction_id}';
 
 export {
   TRANSACTION_APIS,

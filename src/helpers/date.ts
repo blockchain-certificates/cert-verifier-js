@@ -1,4 +1,4 @@
-/* eslint no-useless-escape: "off" */
+/* eslint no-useless-escape: 0 prefer-spread: 0 */
 
 function noOffset (s): number {
   let day = s.slice(0, -5).split(/\D/).map(function (itm) {
@@ -56,6 +56,7 @@ export function dateToUnixTimestamp (date: Date | string) {
   if (date === '') {
     return '';
   }
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   return dateFromIso(`${date}`);
 }
 

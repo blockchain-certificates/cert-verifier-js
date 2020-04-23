@@ -9,9 +9,17 @@ import { IBlockchainObject } from '../constants/blockchains';
  * @param certificateJson
  * @returns {Certificate}
  */
+
+interface IRecipient {
+  givenName: string;
+  familyName: string;
+  publicKey: string;
+  revocationKey?: string;
+}
+
 export default function parseV1 (certificateJson) {
   const fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
-  const recipient = certificateJson.recipient || certificateJson.document.recipient;
+  const recipient: IRecipient = certificateJson.recipient || certificateJson.document.recipient;
   const assertion = certificateJson.document.assertion;
 
   const receipt = certificateJson.receipt;

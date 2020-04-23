@@ -1,5 +1,5 @@
 import domain from './domain';
-import parseJSON from './parser';
+import parseJSON, { ParsedCertificate } from './parser';
 import Verifier, { IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
@@ -16,7 +16,7 @@ export interface ExplorerURLs {
 export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
   priority?: 0 | 1; // 0 means the custom API will be ran before the public APIs listed, 1 after
-  parsingFunction: TExplorerParsingFunction
+  parsingFunction: TExplorerParsingFunction;
 }
 
 export interface CertificateOptions {
@@ -82,7 +82,7 @@ export default class Certificate {
    * @returns {*}
    */
   async parseJson (certificateDefinition) {
-    const parsedCertificate = await parseJSON(certificateDefinition);
+    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
     }
@@ -108,7 +108,7 @@ export default class Certificate {
       version: this.version,
       explorerAPIs: this.explorerAPIs
     });
-    return verifier.verify(stepCallback);
+    return await verifier.verify(stepCallback);
   }
 
   /**

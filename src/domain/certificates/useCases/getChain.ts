@@ -14,7 +14,7 @@ function getMerkleRoot2019Chain (anchor): IBlockchainObject {
     }
   };
   const dataArray = anchor.split(':');
-  const chainIndex = dataArray.findIndex(data => Object.keys(supportedChainsMap).indexOf(data) > -1);
+  const chainIndex: number = dataArray.findIndex(data => Object.keys(supportedChainsMap).includes(data));
   if (chainIndex > -1) {
     const chainCode = dataArray[chainIndex];
     const network = dataArray[chainIndex + 1];

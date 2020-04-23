@@ -8,7 +8,7 @@ import { explorerFactory } from '../../../src/explorers/explorer';
 import { ExplorerAPI } from '../../../src/certificate';
 
 describe('Verifier entity test suite', function () {
-  let verifierInstance : Verifier;
+  let verifierInstance: Verifier;
   const verifierParamFixture = {
     certificateJson: fixture,
     chain: BLOCKCHAINS.bitcoin,
@@ -78,7 +78,7 @@ describe('Verifier entity test suite', function () {
               serviceURL: 'https://explorer-example.com',
               priority: 0,
               parsingFunction: () => {
-                return generateTransactionData('a','b', 'c', ['d']);
+                return generateTransactionData('a', 'b', 'c', ['d']);
               }
             }];
             fixture.explorerAPIs = fixtureExplorerAPI;
@@ -105,7 +105,7 @@ describe('Verifier entity test suite', function () {
 
     describe('when all checks are successful', function () {
       it('should return false', function () {
-        (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
+        verifierInstance._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(false);

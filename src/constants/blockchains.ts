@@ -19,7 +19,7 @@ export interface IBlockchainObject {
   transactionTemplates: {
     full: string;
     raw: string;
-  }
+  };
 }
 
 const BLOCKCHAINS: {[chain in SupportedChains]: IBlockchainObject} = {

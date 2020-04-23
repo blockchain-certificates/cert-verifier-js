@@ -3,7 +3,7 @@ import { VerifierError } from '../../../models';
 import PromiseProperRace from '../../../helpers/promiseProperRace';
 import { getText } from '../../i18n/useCases';
 import { TransactionData } from '../../../models/TransactionData';
-import { default as Versions, isV1 } from '../../../constants/certificateVersions';
+import Versions, { isV1 } from '../../../constants/certificateVersions';
 import { SupportedChains } from '../../../constants/blockchains';
 import { TExplorerFunctionsArray } from '../../../explorers/explorer';
 import { TExplorerAPIs } from '../../../verifier';
@@ -23,16 +23,19 @@ export function getExplorersByChain (chain: SupportedChains, certificateVersion:
     case BLOCKCHAINS[SupportedChains.Ethropst].code:
     case BLOCKCHAINS[SupportedChains.Ethrinkeby].code:
       return explorerAPIs.ethereum;
-
   }
 
   throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidChain'));
 }
 
+// eslint-disable-next-line @typescript-eslint/promise-function-async
 function runPromiseRace (promises): Promise<TransactionData> {
+  // eslint-disable-next-line @typescript-eslint/return-await
   return new Promise((resolve, reject): TransactionData => {
+    // eslint-disable-next-line @typescript-eslint/promise-function-async
     return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
       if (!winners || winners.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/return-await
         return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxCouldNotConfirm')));
       }
 
@@ -62,7 +65,7 @@ function runPromiseRace (promises): Promise<TransactionData> {
   });
 }
 
-type PromiseRaceQueue = {(promises): Promise<TransactionData>}[];
+type PromiseRaceQueue = Array<(promises) => Promise<TransactionData>>;
 
 function buildQueuePromises (queue, transactionId, chain) {
   if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > queue.length) {
@@ -70,7 +73,7 @@ function buildQueuePromises (queue, transactionId, chain) {
   }
 
   const promises: any[] = [];
-  let limit: number = CONFIG.Race ? queue.length : CONFIG.MinimumBlockchainExplorers;
+  const limit: number = CONFIG.Race ? queue.length : CONFIG.MinimumBlockchainExplorers;
   for (let i = 0; i < limit; i++) {
     promises.push(queue[i].parsingFunction(transactionId, chain));
   }
@@ -78,10 +81,8 @@ function buildQueuePromises (queue, transactionId, chain) {
 }
 
 function buildPromiseRacesQueue (
-  { publicAPIs, customAPIs, transactionId, chain }
-  : { publicAPIs: TExplorerFunctionsArray, customAPIs: TExplorerFunctionsArray, transactionId, chain }): PromiseRaceQueue
-{
-  let promiseRaceQueue = [publicAPIs];
+  { publicAPIs, customAPIs, transactionId, chain }: { publicAPIs: TExplorerFunctionsArray; customAPIs: TExplorerFunctionsArray; transactionId; chain }): PromiseRaceQueue {
+  const promiseRaceQueue = [publicAPIs];
 
   if (customAPIs?.length) {
     const priority: number = customAPIs[0].priority;
@@ -93,7 +94,7 @@ function buildPromiseRacesQueue (
 
 async function runRaceByIndex (races, raceIndex: number): Promise<TransactionData> {
   try {
-    return await races[raceIndex]();
+    return races[raceIndex]();
   } catch (err) {
     if (raceIndex < races.length - 1) {
       return await runRaceByIndex(races, raceIndex++);
@@ -104,7 +105,7 @@ async function runRaceByIndex (races, raceIndex: number): Promise<TransactionDat
 
 export default async function lookForTx (
   { transactionId, chain, certificateVersion, explorerAPIs }:
-    { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
+  { transactionId: string; chain: SupportedChains; certificateVersion: Versions; explorerAPIs: TExplorerAPIs }
 ): Promise<TransactionData> {
   // Build explorers queue ordered by priority
   const racesQueue = buildPromiseRacesQueue({
@@ -115,12 +116,8 @@ export default async function lookForTx (
   });
 
   // Run queue
-  let currentQueueProcessedIndex: number = 0;
-  try {
-    return await runRaceByIndex(racesQueue, currentQueueProcessedIndex);
-  } catch (err) {
-    throw err;
-  }
+  const currentQueueProcessedIndex = 0;
+  return await runRaceByIndex(racesQueue, currentQueueProcessedIndex);
 }
 
 // TODO: to remove, only here for sanity
@@ -167,4 +164,4 @@ export default function lookForTx (
       reject(new VerifierError(SUB_STEPS.fetchRemoteHash, err.message));
     });
   });
-}*/
+} */

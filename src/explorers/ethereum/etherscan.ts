@@ -8,9 +8,9 @@ import { isTestChain, SupportedChains } from '../../constants/blockchains';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerURLs } from '../../certificate';
 
-const ETHERSCAN_API_KEY: string = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
-const MAIN_API_BASE_URL: string = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
-const TEST_API_BASE_URL: string = `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
+const ETHERSCAN_API_KEY = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
+const MAIN_API_BASE_URL = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
+const TEST_API_BASE_URL = `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
 const serviceURL: ExplorerURLs = {
   main: `${MAIN_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`,
   test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`

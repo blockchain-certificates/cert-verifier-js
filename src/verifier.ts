@@ -1,13 +1,12 @@
 import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
-import CERTIFICATE_VERSIONS, { isV3 } from './constants/certificateVersions';
+import Versions, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
-import Versions from './constants/certificateVersions';
 import { explorerFactory, TExplorerFunctionsArray } from './explorers/explorer';
 import { getDefaultExplorers, TDefaultExplorersPerBlockchain } from './explorers';
 
@@ -22,8 +21,8 @@ export interface IVerificationStepCallbackAPI {
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
 export type TExplorerAPIs = TDefaultExplorersPerBlockchain & {
-  custom?: TExplorerFunctionsArray
-}
+  custom?: TExplorerFunctionsArray;
+};
 
 export default class Verifier {
   public chain: IBlockchainObject;
@@ -36,21 +35,20 @@ export default class Verifier {
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
   public explorerAPIs: TExplorerAPIs;
-  private _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }
-    : {
-      certificateJson: Blockcerts,
-      chain: IBlockchainObject,
-      expires: string,
-      id: string,
-      issuer: any,
-      receipt: any,
-      revocationKey: string,
-      transactionId: string,
-      version: Versions,
-      explorerAPIs: ExplorerAPI[]
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
+      certificateJson: Blockcerts;
+      chain: IBlockchainObject;
+      expires: string;
+      id: string;
+      issuer: any;
+      receipt: any;
+      revocationKey: string;
+      transactionId: string;
+      version: Versions;
+      explorerAPIs: ExplorerAPI[];
     }
   ) {
     this.chain = chain;
@@ -78,7 +76,7 @@ export default class Verifier {
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}) {
     this._stepCallback = stepCallback;
 
-    if (this.version === CERTIFICATE_VERSIONS.V1_1) {
+    if (this.version === Versions.V1_1) {
       throw new VerifierError(
         '',
         'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification'
@@ -111,7 +109,7 @@ export default class Verifier {
     return distantIssuerProfile.revocationList;
   }
 
-  _doAction (step, action) {
+  _doAction (step: string, action: Function) {
     // If not failing already
     if (this._isFailing()) {
       return;
@@ -144,7 +142,7 @@ export default class Verifier {
     }
   }
 
-  async _doAsyncAction (step, action) {
+  async _doAsyncAction (step: string, action: Function) {
     if (this._isFailing()) {
       return;
     }
@@ -190,13 +188,13 @@ export default class Verifier {
     // Compute local hash
     const localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
-      async () => inspectors.computeLocalHash(this.documentToVerify, this.version)
+      async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
     const txData = await this._doAsyncAction(
       SUB_STEPS.fetchRemoteHash,
-      async () => domain.verifier.lookForTx({
+      async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
         chain: this.chain.code,
         certificateVersion: this.version,
@@ -209,7 +207,7 @@ export default class Verifier {
     if (!isV3(this.version)) {
       issuerProfileJson = await this._doAsyncAction(
         SUB_STEPS.getIssuerProfile,
-        async () => domain.verifier.getIssuerProfile(this.issuer)
+        async () => await domain.verifier.getIssuerProfile(this.issuer)
       );
     }
 
@@ -237,7 +235,7 @@ export default class Verifier {
     // Check revoked status
     let keys;
     let revokedAddresses;
-    if (this.version === CERTIFICATE_VERSIONS.V1_2) {
+    if (this.version === Versions.V1_2) {
       revokedAddresses = txData.revokedAddresses;
       keys = [
         domain.verifier.parseRevocationKey(issuerProfileJson),
@@ -247,7 +245,7 @@ export default class Verifier {
       // Get revoked assertions
       revokedAddresses = await this._doAsyncAction(
         null,
-        async () => domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson))
+        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson))
       );
       keys = this.id;
     }
@@ -272,7 +270,7 @@ export default class Verifier {
     const localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
       async () =>
-        inspectors.computeLocalHash(this.documentToVerify, this.version)
+        await inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Compare hashes
@@ -294,8 +292,8 @@ export default class Verifier {
   /**
    * Returns a failure final step message
    */
-  _failed (errorStep) {
-    const message = errorStep.errorMessage;
+  _failed (errorStep) { // TODO: define errorStep interface
+    const message: string = errorStep.errorMessage;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
@@ -335,7 +333,7 @@ export default class Verifier {
   /**
    * calls the origin callback to update on a step status
    */
-  private _updateStatusCallback (code: string, label: string, status: string, errorMessage: string = '') {
+  private _updateStatusCallback (code: string, label: string, status: string, errorMessage = '') {
     if (code != null) {
       const update: IVerificationStepCallbackAPI = { code, label, status };
       if (errorMessage) {

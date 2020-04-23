@@ -23,7 +23,7 @@ describe('given the certificate is an ethereum main with an invalid merkle root'
     sinon.restore();
   });
 
-  it('should fail', async function () {
+  it('should fail', function () {
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
   });
 

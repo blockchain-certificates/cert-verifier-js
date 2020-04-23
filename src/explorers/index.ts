@@ -5,11 +5,11 @@ import {
   TExplorerFunctionsArray
 } from './explorer';
 
-export type TDefaultExplorersPerBlockchain = {
-  bitcoin: TExplorerFunctionsArray,
-  ethereum: TExplorerFunctionsArray,
-  v1: TExplorerFunctionsArray
-};
+export interface TDefaultExplorersPerBlockchain {
+  bitcoin: TExplorerFunctionsArray;
+  ethereum: TExplorerFunctionsArray;
+  v1: TExplorerFunctionsArray;
+}
 
 export function getDefaultExplorers (): TDefaultExplorersPerBlockchain {
   return {
@@ -20,4 +20,3 @@ export function getDefaultExplorers (): TDefaultExplorersPerBlockchain {
 }
 
 export { BitcoinExplorers, EthereumExplorers, BlockchainExplorersWithSpentOutputInfo };
-

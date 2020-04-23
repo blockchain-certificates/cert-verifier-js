@@ -29,9 +29,33 @@ export function getExplorersByChain (chain: SupportedChains, certificateVersion:
 }
 
 // eslint-disable-next-line @typescript-eslint/promise-function-async
-function runPromiseRace (promises): Promise<TransactionData> {
+async function runPromiseRace (promises): Promise<TransactionData> {
+  let winners;
+  try {
+    winners = await PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers);
+  } catch (err) {
+    throw new VerifierError(SUB_STEPS.fetchRemoteHash, err.message);
+  }
+
+  if (!winners || winners.length === 0) {
+    // eslint-disable-next-line @typescript-eslint/return-await
+    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxCouldNotConfirm'));
+  }
+
+  const firstResponse = winners[0];
+  for (let i = 1; i < winners.length; i++) {
+    const thisResponse = winners[i];
+    if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
+      throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentAddresses'));
+    }
+    if (firstResponse.remoteHash !== thisResponse.remoteHash) {
+      throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentRemoteHashes'));
+    }
+  }
+  return firstResponse;
+
   // eslint-disable-next-line @typescript-eslint/return-await
-  return new Promise((resolve, reject): TransactionData => {
+  /* return new Promise((resolve, reject): TransactionData => {
     // eslint-disable-next-line @typescript-eslint/promise-function-async
     return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
       if (!winners || winners.length === 0) {
@@ -60,9 +84,10 @@ function runPromiseRace (promises): Promise<TransactionData> {
       }
       resolve(firstResponse);
     }).catch(err => {
+      // throw new VerifierError(SUB_STEPS.fetchRemoteHash, err.message);
       reject(new VerifierError(SUB_STEPS.fetchRemoteHash, err.message));
     });
-  });
+  }); */
 }
 
 type PromiseRaceQueue = any[][];
@@ -103,7 +128,8 @@ async function runRaceByIndex (races, raceIndex: number): Promise<TransactionDat
     return await runPromiseRace(races[raceIndex]);
   } catch (err) {
     if (raceIndex < races.length - 1) {
-      return await runRaceByIndex(races, raceIndex++);
+      raceIndex++;
+      return await runRaceByIndex(races, raceIndex);
     }
     throw err;
   }

@@ -12,15 +12,21 @@ import * as BlockstreamApi from './bitcoin/blockstream';
 import * as BlockCypherApi from './bitcoin/blockcypher';
 import * as BitPayApi from './bitcoin/bitpay';
 
-export type TExplorerFunctionsArray = {(transactionId: string, chain: SupportedChains): Promise<TransactionData>}[];
+export type TExplorerFunctionsArray = {
+  parsingFunction: {(transactionId: string, chain: SupportedChains): Promise<TransactionData>},
+  priority?: number
+}[];
 export type TExplorerParsingFunction = {(jsonResponse, chain?: SupportedChains): TransactionData} |
   {(jsonResponse, chain?: SupportedChains): Promise<TransactionData>};
 
 export function explorerFactory (TransactionAPIArray: ExplorerAPI[]): TExplorerFunctionsArray {
   return TransactionAPIArray
-    .map(explorerAPI =>
-      (transactionId, chain) => getTransactionFromApi(explorerAPI, transactionId, chain)
-    );
+    .map(explorerAPI => (
+      {
+        parsingFunction: (transactionId, chain) => getTransactionFromApi(explorerAPI, transactionId, chain),
+        priority: explorerAPI.priority
+      }
+    ));
 }
 
 export async function getTransactionFromApi (

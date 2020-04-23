@@ -29,27 +29,7 @@ export function getExplorersByChain (chain: SupportedChains, certificateVersion:
   throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidChain'));
 }
 
-export default function lookForTx (
-  { transactionId, chain, certificateVersion, explorerAPIs }:
-  { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
-): Promise<TransactionData> {
-  let BlockchainExplorers: TExplorerFunctionsArray;
-  if (explorerAPIs.custom?.length) {
-    BlockchainExplorers = explorerAPIs.custom;
-  } else {
-    BlockchainExplorers = getExplorersByChain(chain, certificateVersion, explorerAPIs);
-  }
-
-  if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
-    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));
-  }
-
-  const promises: any[] = [];
-  let limit: number = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
-  for (let i = 0; i < limit; i++) {
-    promises.push(BlockchainExplorers[i](transactionId, chain));
-  }
-
+function runPromiseRace (promises): Promise<TransactionData> {
   return new Promise((resolve, reject): TransactionData => {
     return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
       if (!winners || winners.length === 0) {
@@ -81,3 +61,110 @@ export default function lookForTx (
     });
   });
 }
+
+type PromiseRaceQueue = {(promises): Promise<TransactionData>}[];
+
+function buildQueuePromises (queue, transactionId, chain) {
+  if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > queue.length) {
+    throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig'));
+  }
+
+  const promises: any[] = [];
+  let limit: number = CONFIG.Race ? queue.length : CONFIG.MinimumBlockchainExplorers;
+  for (let i = 0; i < limit; i++) {
+    promises.push(queue[i].parsingFunction(transactionId, chain));
+  }
+  return async promises => await runPromiseRace(promises);
+}
+
+function buildPromiseRacesQueue (
+  { publicAPIs, customAPIs, transactionId, chain }
+  : { publicAPIs: TExplorerFunctionsArray, customAPIs: TExplorerFunctionsArray, transactionId, chain }): PromiseRaceQueue
+{
+  let promiseRaceQueue = [publicAPIs];
+
+  if (customAPIs?.length) {
+    const priority: number = customAPIs[0].priority;
+    promiseRaceQueue.splice(priority, 0, customAPIs);
+  }
+
+  return promiseRaceQueue.map(queue => buildQueuePromises(queue, transactionId, chain));
+}
+
+async function runRaceByIndex (races, raceIndex: number): Promise<TransactionData> {
+  try {
+    return await races[raceIndex]();
+  } catch (err) {
+    if (raceIndex < races.length - 1) {
+      return await runRaceByIndex(races, raceIndex++);
+    }
+    throw err;
+  }
+}
+
+export default async function lookForTx (
+  { transactionId, chain, certificateVersion, explorerAPIs }:
+    { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
+): Promise<TransactionData> {
+  // Build explorers queue ordered by priority
+  const racesQueue = buildPromiseRacesQueue({
+    publicAPIs: getExplorersByChain(chain, certificateVersion, explorerAPIs),
+    customAPIs: explorerAPIs.custom,
+    transactionId,
+    chain
+  });
+
+  // Run queue
+  let currentQueueProcessedIndex: number = 0;
+  try {
+    return await runRaceByIndex(racesQueue, currentQueueProcessedIndex);
+  } catch (err) {
+    throw err;
+  }
+}
+
+// TODO: to remove, only here for sanity
+/*
+export default function lookForTx (
+  { transactionId, chain, certificateVersion, explorerAPIs }:
+    { transactionId: string, chain: SupportedChains, certificateVersion: Versions, explorerAPIs: TExplorerAPIs }
+): Promise<TransactionData> {
+  let BlockchainExplorers: TExplorerFunctionsArray;
+  if (explorerAPIs.custom?.length) {
+    BlockchainExplorers = explorerAPIs.custom;
+  } else {
+    BlockchainExplorers = getExplorersByChain(chain, certificateVersion, explorerAPIs);
+  }
+
+  if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > BlockchainExplorers.length) {
+    return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig')));
+  }
+
+  const promises: any[] = [];
+  let limit: number = CONFIG.Race ? BlockchainExplorers.length : CONFIG.MinimumBlockchainExplorers;
+  for (let i = 0; i < limit; i++) {
+    promises.push(BlockchainExplorers[i](transactionId, chain));
+  }
+
+  return new Promise((resolve, reject): TransactionData => {
+    return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
+      if (!winners || winners.length === 0) {
+        return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxCouldNotConfirm')));
+      }
+
+      const firstResponse = winners[0];
+      for (let i = 1; i < winners.length; i++) {
+        const thisResponse = winners[i];
+        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
+          throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentAddresses'));
+        }
+        if (firstResponse.remoteHash !== thisResponse.remoteHash) {
+          throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentRemoteHashes'));
+        }
+      }
+      resolve(firstResponse);
+    }).catch(err => {
+      reject(new VerifierError(SUB_STEPS.fetchRemoteHash, err.message));
+    });
+  });
+}*/

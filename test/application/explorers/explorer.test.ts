@@ -1,9 +1,10 @@
 import sinon from 'sinon';
 import * as RequestService from '../../../src/services/request';
-import * as BitpayAPI from '../../../src/explorers/bitcoin/bitpay';
+import { explorerApi as BitpayAPI } from '../../../src/explorers/bitcoin/bitpay';
 import * as mockBitpayResponse from './mocks/mockBitpayResponse.json';
 import { getTransactionFromApi } from '../../../src/explorers/explorer';
 import { BLOCKCHAINS } from '../../../src/constants';
+import { VerifierError } from '../../../src/models';
 
 describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
@@ -32,10 +33,10 @@ describe('Bitcoin Explorer test suite', function () {
 
     describe('given the API request failed', function () {
       it('should throw the right error', async function () {
-        const fixtureError = new Error('Unable to get remote hash');
+        const fixtureError = new VerifierError('Unable to get remote hash');
         stubRequest.rejects(fixtureError);
-        const err = await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code);
-        expect(err).toEqual(fixtureError);
+        await expect(getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code))
+          .rejects.toThrow('Unable to get remote hash');
       });
     });
 

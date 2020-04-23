@@ -105,7 +105,7 @@ describe('Verifier entity test suite', function () {
 
     describe('when all checks are successful', function () {
       it('should return false', function () {
-        verifierInstance._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
+        (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(false);
@@ -132,12 +132,14 @@ describe('Verifier entity test suite', function () {
           remoteHash: 'a-remote-hash',
           issuingAddress: 'an-issuing-address'
         };
-        const stubbedExplorer = sinon.stub().resolves(mockTxData);
+        const stubbedExplorer = {
+          parsingFunction: sinon.stub().resolves(mockTxData)
+        };
         const defaultExplorers = getDefaultExplorers();
         defaultExplorers.bitcoin[0] = stubbedExplorer;
         const verifier = new Verifier(verifierParamFixture);
         await verifier.verify();
-        expect(stubbedExplorer.calledOnce).toBe(true);
+        expect(stubbedExplorer.parsingFunction.calledOnce).toBe(true);
         sinon.restore();
       });
     });

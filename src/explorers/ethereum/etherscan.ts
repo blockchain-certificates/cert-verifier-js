@@ -6,7 +6,7 @@ import { getText } from '../../domain/i18n/useCases';
 import { buildTransactionServiceUrl } from '../../services/transaction-apis';
 import { isTestChain, SupportedChains } from '../../constants/blockchains';
 import { TransactionData } from '../../models/TransactionData';
-import { ExplorerURLs } from '../../certificate';
+import { ExplorerAPI, ExplorerURLs } from '../../certificate';
 
 const ETHERSCAN_API_KEY = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
 const MAIN_API_BASE_URL = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
@@ -35,7 +35,7 @@ function parseEtherScanResponse (jsonResponse, block): TransactionData {
   return generateTransactionData(opReturnScript, issuingAddress, date, undefined);
 }
 
-async function getEtherScanBlock (jsonResponse, chain: SupportedChains) {
+async function getEtherScanBlock (jsonResponse, chain: SupportedChains): Promise<any> {
   const data = jsonResponse.result;
   const blockNumber = data.blockNumber;
   const requestUrl = buildTransactionServiceUrl({
@@ -84,7 +84,8 @@ async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<T
   return parseEtherScanResponse(jsonResponse, blockResponse);
 }
 
-export {
+export const explorerApi: ExplorerAPI = {
   serviceURL,
-  parsingFunction
+  parsingFunction,
+  priority: -1
 };

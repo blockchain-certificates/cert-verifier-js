@@ -1,5 +1,5 @@
 import * as mockEtherscanResponse from '../mocks/mockEtherscanResponse.json';
-import { parsingFunction } from '../../../../src/explorers/ethereum/etherscan';
+import { explorerApi } from '../../../../src/explorers/ethereum/etherscan';
 import { TRANSACTION_APIS } from '../../../../src/constants';
 import sinon from 'sinon';
 import * as RequestServices from '../../../../src/services/request';
@@ -24,7 +24,7 @@ describe('Etherscan Explorer test suite', function () {
         time: new Date('2019-06-02T08:38:26.000Z')
       };
 
-      const res = await parsingFunction(mockResponse, TRANSACTION_APIS.Etherscan);
+      const res = await explorerApi.parsingFunction(mockResponse, TRANSACTION_APIS.Etherscan);
       expect(res).toEqual(assertionTransactionData);
     });
 
@@ -33,7 +33,7 @@ describe('Etherscan Explorer test suite', function () {
 
       it('should throw the right error', function () {
         stubRequest = sinon.stub(RequestServices, 'request').rejects();
-        expect(parsingFunction(mockResponse, TRANSACTION_APIS.Etherscan))
+        expect(explorerApi.parsingFunction(mockResponse, TRANSACTION_APIS.Etherscan))
           .rejects.toThrow('Unable to get remote hash');
         stubRequest.restore();
       });

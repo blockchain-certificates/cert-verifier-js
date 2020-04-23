@@ -6,11 +6,11 @@ import { getText } from '../domain/i18n/useCases';
 import { isTestChain, SupportedChains } from '../constants/blockchains';
 import { TransactionData } from '../models/TransactionData';
 import { ExplorerAPI } from '../certificate';
-import * as EtherscanApi from './ethereum/etherscan';
-import * as BlockExplorerApi from './bitcoin/blockexplorer';
-import * as BlockstreamApi from './bitcoin/blockstream';
-import * as BlockCypherApi from './bitcoin/blockcypher';
-import * as BitPayApi from './bitcoin/bitpay';
+import { explorerApi as EtherscanApi } from './ethereum/etherscan';
+import { explorerApi as BlockExplorerApi } from './bitcoin/blockexplorer';
+import { explorerApi as BlockstreamApi } from './bitcoin/blockstream';
+import { explorerApi as BlockCypherApi } from './bitcoin/blockcypher';
+import { explorerApi as BitPayApi } from './bitcoin/bitpay';
 
 export type TExplorerFunctionsArray = Array<{
   parsingFunction: (transactionId: string, chain: SupportedChains) => Promise<TransactionData>;

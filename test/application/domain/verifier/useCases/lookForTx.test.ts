@@ -103,43 +103,15 @@ describe('Verifier domain lookForTx use case test suite', function () {
     });
   });
 
-  describe('given there are custom explorers', function () {
-    it('should call and resolve from the custom explorers passed', async function () {
-      const mockTxData: TransactionData = {
-        revokedAddresses: [],
-        time: '2020-04-20T00:00:00Z',
-        remoteHash: 'a-remote-hash',
-        issuingAddress: 'an-issuing-address'
-      };
-      const stubbedExplorer = sinon.stub().resolves(mockTxData);
-      const mockExplorers: TExplorerAPIs = {
-        bitcoin: [],
-        ethereum: [],
-        v1: [],
-        custom: [{
-          parsingFunction: stubbedExplorer
-        }]
-      };
-      const output = await domain.verifier.lookForTx({
-        transactionId: 'a-transaction-id',
-        chain: SupportedChains.Bitcoin,
-        certificateVersion: CERTIFICATE_VERSIONS.V2_0,
-        explorerAPIs: mockExplorers
-      });
-      expect(output).toEqual(mockTxData);
-    });
-  });
-
   describe('given it is called with a transactionId, a chain and a certificateVersion', function () {
     describe('given the chain is invalid', function () {
       it('should throw an error', async function () {
         await expect(domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: 'invalid-chain' as SupportedChains,
-          certificateVersion: MOCK_CERTIFICATE_VERSION,
+          certificateVersion: CERTIFICATE_VERSIONS.V2_0,
           explorerAPIs: mockExplorerAPIs
-        })).rejects.toThrow('Invalid chain; does not map to known' +
-          ' BlockchainExplorers.');
+        })).rejects.toThrow('Invalid chain; does not map to known BlockchainExplorers.');
       });
     });
 

@@ -3,7 +3,7 @@ import { generateTransactionData, VerifierError } from '../../models';
 import { getText } from '../../domain/i18n/useCases';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
-import { ExplorerURLs } from '../../certificate';
+import { ExplorerAPI, ExplorerURLs } from '../../certificate';
 import { TransactionData } from '../../models/TransactionData';
 
 function parsingFunction (jsonResponse): TransactionData {
@@ -31,7 +31,8 @@ const serviceURL: ExplorerURLs = {
   test: `https://api.bitcore.io/api/BTC/testnet/tx/${TRANSACTION_ID_PLACEHOLDER}`
 };
 
-export {
+export const explorerApi: ExplorerAPI = {
   serviceURL,
-  parsingFunction
+  parsingFunction,
+  priority: -1
 };

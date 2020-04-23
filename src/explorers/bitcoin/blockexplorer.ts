@@ -4,7 +4,7 @@ import { getText } from '../../domain/i18n/useCases';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
 import { TransactionData } from '../../models/TransactionData';
-import { ExplorerURLs } from '../../certificate';
+import { ExplorerAPI, ExplorerURLs } from '../../certificate';
 
 function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
@@ -31,7 +31,8 @@ const serviceURL: ExplorerURLs = {
   test: `https://testnet.blockexplorer.com/api/tx/${TRANSACTION_ID_PLACEHOLDER}`
 };
 
-export {
+export const explorerApi: ExplorerAPI = {
   serviceURL,
-  parsingFunction
+  parsingFunction,
+  priority: -1
 };

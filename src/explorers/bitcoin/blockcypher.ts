@@ -4,7 +4,7 @@ import { generateTransactionData, VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { TransactionData } from '../../models/TransactionData';
-import { ExplorerURLs } from '../../certificate';
+import { ExplorerAPI, ExplorerURLs } from '../../certificate';
 
 function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
@@ -31,7 +31,8 @@ const serviceURL: ExplorerURLs = {
   test: `https://api.blockcypher.com/v1/btc/test3/txs/${TRANSACTION_ID_PLACEHOLDER}?limit=500`
 };
 
-export {
+export const explorerApi: ExplorerAPI = {
   serviceURL,
-  parsingFunction
+  parsingFunction,
+  priority: -1
 };

@@ -1,5 +1,5 @@
 import * as mockBitpayResponse from '../mocks/mockBitpayResponse.json';
-import { parsingFunction } from '../../../../src/explorers/bitcoin/bitpay';
+import { explorerApi } from '../../../../src/explorers/bitcoin/bitpay';
 
 function getMockBitpayResponse () {
   return JSON.parse(JSON.stringify(mockBitpayResponse));
@@ -21,7 +21,7 @@ describe('Bitpay Explorer test suite', function () {
     };
 
     it('should return the transaction data', function () {
-      expect(parsingFunction(mockResponse)).toEqual(assertionTransactionData);
+      expect(explorerApi.parsingFunction(mockResponse)).toEqual(assertionTransactionData);
     });
   });
 
@@ -29,7 +29,7 @@ describe('Bitpay Explorer test suite', function () {
     it('should throw the right error', async function () {
       mockResponse.confirmations = 0;
       expect(() => {
-        parsingFunction(mockResponse);
+        explorerApi.parsingFunction(mockResponse);
       }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Bitpay API');
     });
   });

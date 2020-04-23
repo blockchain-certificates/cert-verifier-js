@@ -1,5 +1,5 @@
 import { buildTransactionServiceUrl } from '../../../src/services/transaction-apis';
-import * as Blockcypher from '../../../src/explorers/bitcoin/blockcypher';
+import { explorerApi as Blockcypher } from '../../../src/explorers/bitcoin/blockcypher';
 
 describe('Transaction APIs test suite', function () {
   let fixtureApiName;

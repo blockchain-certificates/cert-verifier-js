@@ -7,26 +7,28 @@ import { TransactionData } from '../../../../../src/models/TransactionData';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
+  const fixtureCustomTxData: TransactionData = {
+    revokedAddresses: [],
+    time: '2020-04-20T00:00:00Z',
+    remoteHash: 'a-remote-hash',
+    issuingAddress: 'from-custom-explorer'
+  };
+
+  const fixtureDefaultTxData: TransactionData = {
+    revokedAddresses: [],
+    time: '2020-04-20T00:00:00Z',
+    remoteHash: 'a-remote-hash',
+    issuingAddress: 'from-default-explorer'
+  };
 
   describe('given it is invoked with custom explorers with priority 0', function () {
-    const mockTxData: TransactionData = {
-      revokedAddresses: [],
-      time: '2020-04-20T00:00:00Z',
-      remoteHash: 'a-remote-hash',
-      issuingAddress: 'an-issuing-address'
-    };
-    let stubbedExplorer: sinon.SinonStub;
+    let stubbedCustomExplorer: sinon.SinonStub;
     let stubbedDefaultExplorer: sinon.SinonStub;
     let mockExplorers: TExplorerAPIs;
 
     beforeEach(function () {
-      stubbedExplorer = sinon.stub().resolves(mockTxData);
-      stubbedDefaultExplorer = sinon.stub().resolves({
-        revokedAddresses: [],
-        time: '2020-04-20T00:00:00Z',
-        remoteHash: 'a-remote-hash',
-        issuingAddress: 'an-issuing-address-ither'
-      });
+      stubbedCustomExplorer = sinon.stub().resolves(fixtureCustomTxData);
+      stubbedDefaultExplorer = sinon.stub().resolves(fixtureDefaultTxData);
       mockExplorers = {
         bitcoin: [{
           parsingFunction: stubbedDefaultExplorer,
@@ -35,60 +37,39 @@ describe('Verifier domain lookForTx use case test suite', function () {
         ethereum: [],
         v1: [],
         custom: [{
-          parsingFunction: stubbedExplorer,
+          parsingFunction: stubbedCustomExplorer,
           priority: 0
         }]
       };
     });
 
     afterEach(function () {
-      stubbedExplorer.resetHistory();
+      stubbedCustomExplorer.resetHistory();
       stubbedDefaultExplorer.resetHistory();
     });
 
     describe('given the custom explorers return the transaction', function () {
-      beforeEach(async function () {
-        await domain.verifier.lookForTx({
+      it('retrieve the response from the custom explorer', async function () {
+        const response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: SupportedChains.Bitcoin,
           certificateVersion: CERTIFICATE_VERSIONS.V2_0,
           explorerAPIs: mockExplorers
         });
-      });
-
-      it('should call the custom explorer', function () {
-        expect(stubbedExplorer.calledOnce).toBe(true);
-      });
-
-      // TODO fix this
-      xit('should not call the default explorer', function () {
-        expect(stubbedDefaultExplorer.calledOnce).toBe(false);
+        expect(response).toBe(fixtureCustomTxData);
       });
     });
 
     describe('given the custom explorers fail to return the transaction', function () {
-      beforeEach(function () {
-        stubbedExplorer.rejects();
-      });
-
       it('should call the custom explorer', async function () {
-        await domain.verifier.lookForTx({
+        stubbedCustomExplorer.rejects();
+        const response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: SupportedChains.Bitcoin,
           certificateVersion: CERTIFICATE_VERSIONS.V2_0,
           explorerAPIs: mockExplorers
         });
-        expect(stubbedExplorer.calledOnce).toBe(true);
-      });
-
-      it('should call the default explorer', async function () {
-        await domain.verifier.lookForTx({
-          transactionId: MOCK_TRANSACTION_ID,
-          chain: SupportedChains.Bitcoin,
-          certificateVersion: CERTIFICATE_VERSIONS.V2_0,
-          explorerAPIs: mockExplorers
-        });
-        expect(stubbedDefaultExplorer.calledOnce).toBe(true);
+        expect(response).toBe(fixtureDefaultTxData);
       });
     });
   });

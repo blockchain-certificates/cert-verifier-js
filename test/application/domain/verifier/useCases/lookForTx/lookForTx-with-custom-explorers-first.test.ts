@@ -1,9 +1,9 @@
 import sinon from 'sinon';
-import domain from '../../../../../src/domain';
-import { CERTIFICATE_VERSIONS } from '../../../../../src/constants';
-import { TExplorerAPIs } from '../../../../../src/verifier';
-import { SupportedChains } from '../../../../../src/constants/blockchains';
-import { TransactionData } from '../../../../../src/models/TransactionData';
+import domain from '../../../../../../src/domain/index';
+import { CERTIFICATE_VERSIONS } from '../../../../../../src/constants/index';
+import { TExplorerAPIs } from '../../../../../../src/verifier';
+import { SupportedChains } from '../../../../../../src/constants/blockchains';
+import { TransactionData } from '../../../../../../src/models/TransactionData';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';
@@ -49,7 +49,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
     });
 
     describe('given the custom explorers return the transaction', function () {
-      it('retrieve the response from the custom explorer', async function () {
+      it('should retrieve the response from the custom explorers', async function () {
         const response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: SupportedChains.Bitcoin,
@@ -61,7 +61,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
     });
 
     describe('given the custom explorers fail to return the transaction', function () {
-      it('should call the custom explorer', async function () {
+      it('should retrieve the response from the default explorers', async function () {
         stubbedCustomExplorer.rejects();
         const response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,

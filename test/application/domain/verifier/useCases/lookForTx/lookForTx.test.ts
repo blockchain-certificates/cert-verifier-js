@@ -1,15 +1,15 @@
 import sinon from 'sinon';
-import domain from '../../../../../src/domain';
-import { CERTIFICATE_VERSIONS, CONFIG } from '../../../../../src/constants';
+import domain from '../../../../../../src/domain/index';
+import { CERTIFICATE_VERSIONS, CONFIG } from '../../../../../../src/constants/index';
 import {
   BitcoinExplorers,
   BlockchainExplorersWithSpentOutputInfo,
   getDefaultExplorers, EthereumExplorers
-} from '../../../../../src/explorers';
-import { TExplorerAPIs } from '../../../../../src/verifier';
-import { getExplorersByChain } from '../../../../../src/domain/verifier/useCases/lookForTx';
-import { SupportedChains } from '../../../../../src/constants/blockchains';
-import { TransactionData } from '../../../../../src/models/TransactionData';
+} from '../../../../../../src/explorers/index';
+import { TExplorerAPIs } from '../../../../../../src/verifier';
+import { getExplorersByChain } from '../../../../../../src/domain/verifier/useCases/lookForTx';
+import { SupportedChains } from '../../../../../../src/constants/blockchains';
+import { TransactionData } from '../../../../../../src/models/TransactionData';
 
 describe('Verifier domain lookForTx use case test suite', function () {
   const MOCK_TRANSACTION_ID = 'mock-transaction-id';

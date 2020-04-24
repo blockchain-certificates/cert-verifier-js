@@ -90,7 +90,7 @@ async function runPromiseRace (promises): Promise<TransactionData> {
   }); */
 }
 
-type PromiseRaceQueue = any[][];
+type PromiseRaceQueue = TExplorerFunctionsArray[];
 
 function buildQueuePromises (queue, transactionId, chain): any[] {
   if (CONFIG.MinimumBlockchainExplorers < 0 || CONFIG.MinimumBlockchainExplorers > queue.length) {
@@ -107,7 +107,7 @@ function buildQueuePromises (queue, transactionId, chain): any[] {
 }
 
 function buildPromiseRacesQueue (
-  { defaultAPIs, customAPIs, transactionId, chain }: { defaultAPIs: TExplorerFunctionsArray; customAPIs: TExplorerFunctionsArray; transactionId; chain }): PromiseRaceQueue {
+  { defaultAPIs, customAPIs }: { defaultAPIs: TExplorerFunctionsArray; customAPIs: TExplorerFunctionsArray }): PromiseRaceQueue {
   const promiseRaceQueue = [defaultAPIs];
 
   if (customAPIs?.length) {
@@ -120,16 +120,17 @@ function buildPromiseRacesQueue (
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxInvalidAppConfig'));
   }
 
-  return promiseRaceQueue.map(queue => buildQueuePromises(queue, transactionId, chain));
+  return promiseRaceQueue;
 }
 
-async function runRaceByIndex (races, raceIndex: number): Promise<TransactionData> {
+async function runQueueByIndex (queues, index: number, transactionId, chain): Promise<TransactionData> {
   try {
-    return await runPromiseRace(races[raceIndex]);
+    const race = buildQueuePromises(queues[index], transactionId, chain);
+    return await runPromiseRace(race);
   } catch (err) {
-    if (raceIndex < races.length - 1) {
-      raceIndex++;
-      return await runRaceByIndex(races, raceIndex);
+    if (index < queues.length - 1) {
+      index++;
+      return await runQueueByIndex(queues, index, transactionId, chain);
     }
     throw err;
   }
@@ -140,14 +141,12 @@ export default async function lookForTx (
   { transactionId: string; chain: SupportedChains; certificateVersion: Versions; explorerAPIs: TExplorerAPIs }
 ): Promise<TransactionData> {
   // Build explorers queue ordered by priority
-  const racesQueue = buildPromiseRacesQueue({
+  const lookupQueues = buildPromiseRacesQueue({
     defaultAPIs: getExplorersByChain(chain, certificateVersion, explorerAPIs),
-    customAPIs: explorerAPIs.custom,
-    transactionId,
-    chain
+    customAPIs: explorerAPIs.custom
   });
 
   // Run queue
   const currentQueueProcessedIndex = 0;
-  return await runRaceByIndex(racesQueue, currentQueueProcessedIndex);
+  return await runQueueByIndex(lookupQueues, currentQueueProcessedIndex, transactionId, chain);
 }

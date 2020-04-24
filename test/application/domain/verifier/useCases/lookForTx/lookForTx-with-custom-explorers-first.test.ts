@@ -49,27 +49,53 @@ describe('Verifier domain lookForTx use case test suite', function () {
     });
 
     describe('given the custom explorers return the transaction', function () {
-      it('should retrieve the response from the custom explorers', async function () {
-        const response = await domain.verifier.lookForTx({
+      let response: TransactionData;
+
+      beforeEach(async function () {
+        response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: SupportedChains.Bitcoin,
           certificateVersion: CERTIFICATE_VERSIONS.V2_0,
           explorerAPIs: mockExplorers
         });
+      });
+
+      it('should retrieve the response from the custom explorers', function () {
         expect(response).toBe(fixtureCustomTxData);
+      });
+
+      it('should have called the custom explorers', function () {
+        expect(stubbedCustomExplorer.calledOnce).toBe(true);
+      });
+
+      it('should not have called the default explorers', function () {
+        expect(stubbedDefaultExplorer.calledOnce).toBe(false);
       });
     });
 
     describe('given the custom explorers fail to return the transaction', function () {
-      it('should retrieve the response from the default explorers', async function () {
+      let response: TransactionData;
+
+      beforeEach(async function () {
         stubbedCustomExplorer.rejects();
-        const response = await domain.verifier.lookForTx({
+        response = await domain.verifier.lookForTx({
           transactionId: MOCK_TRANSACTION_ID,
           chain: SupportedChains.Bitcoin,
           certificateVersion: CERTIFICATE_VERSIONS.V2_0,
           explorerAPIs: mockExplorers
         });
+      });
+
+      it('should retrieve the response from the default explorers', function () {
         expect(response).toBe(fixtureDefaultTxData);
+      });
+
+      it('should have called the custom explorers', function () {
+        expect(stubbedCustomExplorer.calledOnce).toBe(true);
+      });
+
+      it('should have called the default explorers', function () {
+        expect(stubbedDefaultExplorer.calledOnce).toBe(true);
       });
     });
   });

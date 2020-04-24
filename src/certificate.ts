@@ -15,7 +15,7 @@ export interface ExplorerURLs {
 
 export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
-  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after
+  priority: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
   parsingFunction: TExplorerParsingFunction;
 }
 
@@ -75,12 +75,6 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
   }
 
-  /**
-   * parseJson
-   *
-   * @param certificateDefinition
-   * @returns {*}
-   */
   async parseJson (certificateDefinition) {
     const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
     if (!parsedCertificate.isFormatValid) {
@@ -89,12 +83,6 @@ export default class Certificate {
     this._setProperties(parsedCertificate);
   }
 
-  /**
-   * verify
-   *
-   * @param stepCallback
-   * @returns {Promise<*>}
-   */
   async verify (stepCallback?: IVerificationStepCallbackFn) {
     const verifier = new Verifier({
       certificateJson: this.certificateJson,
@@ -111,12 +99,6 @@ export default class Certificate {
     return await verifier.verify(stepCallback);
   }
 
-  /**
-   * _setOptions
-   *
-   * @param options
-   * @private
-   */
   _setOptions (options) {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
@@ -127,31 +109,6 @@ export default class Certificate {
     currentLocale.locale = this.locale;
   }
 
-  /**
-   * _setProperties
-   *
-   * @param certificateImage
-   * @param chain
-   * @param description
-   * @param expires
-   * @param id
-   * @param isFormatValid
-   * @param issuedOn
-   * @param issuer
-   * @param metadataJson
-   * @param name
-   * @param publicKey
-   * @param receipt
-   * @param recipientFullName
-   * @param recordLink
-   * @param revocationKey
-   * @param sealImage
-   * @param signature
-   * @param signatureImage
-   * @param subtitle
-   * @param version
-   * @private
-   */
   _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
@@ -182,11 +139,6 @@ export default class Certificate {
     this._setTransactionDetails();
   }
 
-  /**
-   * _setTransactionDetails
-   *
-   * @private
-   */
   _setTransactionDetails () {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);

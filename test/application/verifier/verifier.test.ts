@@ -72,6 +72,46 @@ describe('Verifier entity test suite', function () {
         });
 
         describe('when it is a valid explorer API object', function () {
+          describe('and the explorer API has a priority set to -1', function () {
+            it('should throw an error', function () {
+              const fixture = Object.assign({}, verifierParamFixture);
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceURL: 'https://explorer-example.com',
+                priority: -1,
+                parsingFunction: () => {
+                  return generateTransactionData('a', 'b', 'c', ['d']);
+                }
+              }];
+              fixture.explorerAPIs = fixtureExplorerAPI;
+              const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
+              expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
+              let instance;
+
+              expect(() => {
+                instance = new Verifier(fixture);
+              }).toThrow('One or more of your custom explorer APIs has a priority set below zero');
+            });
+          });
+
+          describe('and the explorer API has a missing parsing function', function () {
+            it('should throw an error', function () {
+              const fixture = Object.assign({}, verifierParamFixture);
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceURL: 'https://explorer-example.com',
+                priority: 0,
+                parsingFunction: undefined
+              }];
+              fixture.explorerAPIs = fixtureExplorerAPI;
+              const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
+              expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
+              let instance;
+
+              expect(() => {
+                instance = new Verifier(fixture);
+              }).toThrow('One or more of your custom explorer APIs does not have a parsing function');
+            });
+          });
+
           it('should set the explorerAPIs to the verifier object', function () {
             const fixture = Object.assign({}, verifierParamFixture);
             const fixtureExplorerAPI: ExplorerAPI[] = [{

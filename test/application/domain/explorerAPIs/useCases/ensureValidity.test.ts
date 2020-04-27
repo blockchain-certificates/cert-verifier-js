@@ -1,5 +1,5 @@
 import { ExplorerAPI } from '../../../../../src/certificate';
-import generateTransactionData from '../../../../../src/models/TransactionData';
+import { TransactionData } from '../../../../../src/models/TransactionData';
 import ensureValidity from '../../../../../src/domain/explorerAPIs/useCases/ensureValidity';
 
 describe('Verifier domain ensureValidity use case test suite', function () {
@@ -7,8 +7,13 @@ describe('Verifier domain ensureValidity use case test suite', function () {
     const fixtureExplorerAPIs: ExplorerAPI[] = [{
       serviceURL: 'https://fixture-url.tld',
       priority: -1,
-      parsingFunction: () => {
-        return generateTransactionData('a', 'b', 'c', ['d']);
+      parsingFunction: (): TransactionData => {
+        return {
+          remoteHash: 'a',
+          issuingAddress: 'b',
+          time: 'c',
+          revokedAddresses: ['d']
+        };
       }
     }];
 

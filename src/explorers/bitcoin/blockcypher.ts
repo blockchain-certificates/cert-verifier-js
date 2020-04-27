@@ -1,6 +1,6 @@
 import { dateToUnixTimestamp } from '../../helpers/date';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
-import { generateTransactionData, VerifierError } from '../../models';
+import { VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { TransactionData } from '../../models/TransactionData';
@@ -14,16 +14,16 @@ function parsingFunction (jsonResponse): TransactionData {
   const outputs = jsonResponse.outputs;
   const lastOutput = outputs[outputs.length - 1];
   const issuingAddress: string = jsonResponse.inputs[0].addresses[0];
-  const opReturnScript: string = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
+  const remoteHash: string = stripHashPrefix(lastOutput.script, BLOCKCHAINS.bitcoin.prefixes);
   const revokedAddresses: string[] = outputs
     .filter(output => !!output.spent_by)
     .map(output => output.addresses[0]);
-  return generateTransactionData(
-    opReturnScript,
+  return {
+    remoteHash,
     issuingAddress,
     time,
     revokedAddresses
-  );
+  };
 }
 
 const serviceURL: ExplorerURLs = {

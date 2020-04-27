@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier, { TExplorerAPIs } from '../../../src/verifier';
-import generateTransactionData, { TransactionData } from '../../../src/models/TransactionData';
+import { TransactionData } from '../../../src/models/TransactionData';
 import { getDefaultExplorers } from '../../../src/explorers';
 import { explorerFactory } from '../../../src/explorers/explorer';
 import { ExplorerAPI } from '../../../src/certificate';
@@ -78,8 +78,13 @@ describe('Verifier entity test suite', function () {
               const fixtureExplorerAPI: ExplorerAPI[] = [{
                 serviceURL: 'https://explorer-example.com',
                 priority: -1,
-                parsingFunction: () => {
-                  return generateTransactionData('a', 'b', 'c', ['d']);
+                parsingFunction: (): TransactionData => {
+                  return {
+                    remoteHash: 'a',
+                    issuingAddress: 'b',
+                    time: 'c',
+                    revokedAddresses: ['d']
+                  };
                 }
               }];
               fixture.explorerAPIs = fixtureExplorerAPI;
@@ -115,8 +120,13 @@ describe('Verifier entity test suite', function () {
             const fixtureExplorerAPI: ExplorerAPI[] = [{
               serviceURL: 'https://explorer-example.com',
               priority: 0,
-              parsingFunction: () => {
-                return generateTransactionData('a', 'b', 'c', ['d']);
+              parsingFunction: (): TransactionData => {
+                return {
+                  remoteHash: 'a',
+                  issuingAddress: 'b',
+                  time: 'c',
+                  revokedAddresses: ['d']
+                };
               }
             }];
             fixture.explorerAPIs = fixtureExplorerAPI;

@@ -1,6 +1,6 @@
 import { request } from '../../services/request';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS, TRANSACTION_ID_PLACEHOLDER } from '../../constants';
-import { generateTransactionData, VerifierError } from '../../models';
+import { VerifierError } from '../../models';
 import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { buildTransactionServiceUrl } from '../../services/transaction-apis';
@@ -26,13 +26,18 @@ const getBlockNumberServiceUrls: ExplorerURLs = {
 
 function parseEtherScanResponse (jsonResponse, block): TransactionData {
   const data = jsonResponse.result;
-  const date: Date = new Date(parseInt(block.timestamp, 16) * 1000);
+  const time: Date = new Date(parseInt(block.timestamp, 16) * 1000);
   const issuingAddress: string = data.from;
-  const opReturnScript = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
+  const remoteHash = stripHashPrefix(data.input, BLOCKCHAINS.ethmain.prefixes); // remove '0x'
 
   // The method of checking revocations by output spent do not work with Ethereum.
   // There are no input/outputs, only balances.
-  return generateTransactionData(opReturnScript, issuingAddress, date, undefined);
+  return {
+    remoteHash,
+    issuingAddress,
+    time,
+    revokedAddresses: []
+  };
 }
 
 async function getEtherScanBlock (jsonResponse, chain: SupportedChains): Promise<any> {

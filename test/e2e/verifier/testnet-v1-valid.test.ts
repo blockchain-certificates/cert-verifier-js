@@ -2,28 +2,29 @@
 import sinon from 'sinon';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as explorer from '../../../src/explorers/explorer';
+import domain from '../../../src/domain';
 import * as VerifierUseCases from '../../../src/domain/verifier/useCases';
 import v1_2IssuerProfile from '../../data/v1.2-issuer-profile.json';
+import { TransactionData } from '../../../src/models/TransactionData';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   let stubGetIssuerProfile: sinon.SinonStub;
-  let stubGetTransactionFromApi: sinon.SinonStub;
+  let stubLookForTx: sinon.SinonStub;
 
   beforeEach(function () {
-    stubGetTransactionFromApi = sinon.stub(explorer, 'getTransactionFromApi').resolves({
+    const cachedTransactionData: TransactionData = {
       remoteHash:
         '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
       issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
       time: '2016-10-03T19:37:59.141Z',
       revokedAddresses: ['1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619']
-    });
+    };
+    stubLookForTx = sinon.stub(domain.verifier, 'lookForTx').resolves(cachedTransactionData);
     stubGetIssuerProfile = sinon.stub(VerifierUseCases, 'getIssuerProfile').resolves(v1_2IssuerProfile);
   });
 
   afterEach(function () {
-    stubGetTransactionFromApi.restore();
-    stubGetIssuerProfile.restore();
+    sinon.restore();
   });
 
   it('should verify successfully', async function () {

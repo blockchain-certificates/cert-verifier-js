@@ -1,7 +1,7 @@
 import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
 import { CertificateOptions } from '../../../src/certificate';
-import generateTransactionData from '../../../src/models/TransactionData';
+import { TransactionData } from '../../../src/models/TransactionData';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -114,9 +114,12 @@ describe('Certificate entity test suite', function () {
                 explorerAPIs: [{
                   serviceURL: 'https://explorer-example.com',
                   priority: 0,
-                  parsingFunction: () => {
-                    return generateTransactionData('a', 'b', 'c', ['d']);
-                  }
+                  parsingFunction: (): TransactionData => ({
+                    remoteHash: 'a',
+                    issuingAddress: 'b',
+                    time: 'c',
+                    revokedAddresses: ['d']
+                  })
                 }]
               };
               const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);

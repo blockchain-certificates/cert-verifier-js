@@ -19,7 +19,7 @@ describe('Verifier entity test suite', function () {
     revocationKey: null,
     transactionId: fixture.signature.anchors[0].sourceId,
     version: CERTIFICATE_VERSIONS.V2_0,
-    explorerAPIs: null
+    explorerAPIs: undefined
   };
 
   afterEach(function () {
@@ -85,10 +85,9 @@ describe('Verifier entity test suite', function () {
               fixture.explorerAPIs = fixtureExplorerAPI;
               const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
               expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
-              let instance;
 
               expect(() => {
-                instance = new Verifier(fixture);
+                const instance = new Verifier(fixture);
               }).toThrow('One or more of your custom explorer APIs has a priority set below zero');
             });
           });
@@ -104,10 +103,9 @@ describe('Verifier entity test suite', function () {
               fixture.explorerAPIs = fixtureExplorerAPI;
               const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
               expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
-              let instance;
 
               expect(() => {
-                instance = new Verifier(fixture);
+                const instance = new Verifier(fixture);
               }).toThrow('One or more of your custom explorer APIs does not have a parsing function');
             });
           });

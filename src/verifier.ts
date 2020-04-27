@@ -48,7 +48,7 @@ export default class Verifier {
       revocationKey: string;
       transactionId: string;
       version: Versions;
-      explorerAPIs: ExplorerAPI[];
+      explorerAPIs?: ExplorerAPI[];
     }
   ) {
     this.chain = chain;
@@ -97,7 +97,7 @@ export default class Verifier {
   setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
     this.explorerAPIs = getDefaultExplorers();
 
-    if (explorerAPIs?.length && domain.explorerAPIs.ensureValidity(explorerAPIs)) {
+    if (domain.explorerAPIs.ensureValidity(explorerAPIs)) {
       this.explorerAPIs.custom = explorerFactory(explorerAPIs);
     }
   }

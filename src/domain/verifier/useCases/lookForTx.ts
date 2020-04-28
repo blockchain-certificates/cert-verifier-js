@@ -53,41 +53,6 @@ async function runPromiseRace (promises): Promise<TransactionData> {
     }
   }
   return firstResponse;
-
-  // eslint-disable-next-line @typescript-eslint/return-await
-  /* return new Promise((resolve, reject): TransactionData => {
-    // eslint-disable-next-line @typescript-eslint/promise-function-async
-    return PromiseProperRace(promises, CONFIG.MinimumBlockchainExplorers).then(winners => {
-      if (!winners || winners.length === 0) {
-        // eslint-disable-next-line @typescript-eslint/return-await
-        return Promise.reject(new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxCouldNotConfirm')));
-      }
-
-      // Compare results returned by different blockchain apis. We pick off the first result and compare the others
-      // returned. The number of winners corresponds to the configuration setting `MinimumBlockchainExplorers`.
-      // We require that all results agree on `issuingAddress` and `remoteHash`. Not all blockchain apis return
-      // spent outputs (revoked addresses for <=v1.2), and we do not have enough coverage to compare this, but we do
-      // ensure that a TxData with revoked addresses is returned, for the rare case of legacy 1.2 certificates.
-      //
-      // Note that APIs returning results where the number of confirmations is less than `MininumConfirmations` are
-      // filtered out, but if there are at least `MinimumBlockchainExplorers` reporting that the number of confirmations
-      // are above the `MininumConfirmations` threshold, then we can proceed with verification.
-      const firstResponse = winners[0];
-      for (let i = 1; i < winners.length; i++) {
-        const thisResponse = winners[i];
-        if (firstResponse.issuingAddress !== thisResponse.issuingAddress) {
-          throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentAddresses'));
-        }
-        if (firstResponse.remoteHash !== thisResponse.remoteHash) {
-          throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'lookForTxDifferentRemoteHashes'));
-        }
-      }
-      resolve(firstResponse);
-    }).catch(err => {
-      // throw new VerifierError(SUB_STEPS.fetchRemoteHash, err.message);
-      reject(new VerifierError(SUB_STEPS.fetchRemoteHash, err.message));
-    });
-  }); */
 }
 
 type PromiseRaceQueue = TExplorerFunctionsArray[];

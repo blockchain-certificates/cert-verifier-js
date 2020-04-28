@@ -28,7 +28,7 @@ describe('Certificate entity test suite', function () {
         it('should throw an error', function () {
           expect(function () {
             /* eslint no-new: "off" */
-            new Certificate();
+            new Certificate(undefined);
           }).toThrowError('This is not a valid certificate');
         });
       });

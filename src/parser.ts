@@ -17,7 +17,7 @@ function retrieveBlockcertsVersion (context): number {
   return parseInt(availableVersions.filter(version => lookupVersion(blockcertsContextArray, version.toString()))[0], 10);
 }
 
-interface ParsedCertificateValidityFormat {
+export interface ParsedCertificateValidityFormat {
   isFormatValid: boolean;
   error: string;
 }
@@ -45,16 +45,17 @@ export interface ParsedCertificate extends ParsedCertificateValidityFormat {
   version;
 }
 
-export default async function parseJSON (certificateJson): Promise<ParsedCertificate | ParsedCertificateValidityFormat> {
+export default async function parseJSON (certificateJson): Promise<ParsedCertificate> {
   try {
     const version: number = retrieveBlockcertsVersion(certificateJson['@context']);
     const parsedCertificate = await versionParserMap[version](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return {
       isFormatValid: false,
       error
-    };
+    } as ParsedCertificate;
   }
 }

@@ -3,6 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "target": "es6",
+    "lib": ["es2018", "dom"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",

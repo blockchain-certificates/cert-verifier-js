@@ -1,42 +1,58 @@
 import domain from './domain';
 import parseJSON, { ParsedCertificate } from './parser';
-import Verifier from './verifier';
+import Verifier, { IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
+import { TExplorerParsingFunction } from './explorers/explorer';
+import { IBlockchainObject } from './constants/blockchains';
+import Versions from './constants/certificateVersions';
 
-interface CertificateOptions {
+export interface ExplorerURLs {
+  main: string;
+  test: string;
+}
+
+export interface ExplorerAPI {
+  serviceURL: string | ExplorerURLs;
+  priority: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
+  parsingFunction: TExplorerParsingFunction;
+}
+
+export interface CertificateOptions {
   locale?: string;
+  explorerAPIs?: ExplorerAPI[];
 }
 
 export default class Certificate {
-  public certificateJson: Blockcerts;
-  public chain: string; // enum?
-  public expires: string;
-  public id: string;
-  public issuer: any; // TODO: define issuer interface
-  public receipt: any; // TODO: define receipt interface
-  public revocationKey: string;
-  public transactionId: string;
-  public version: string; // enum?
-  public options: CertificateOptions;
-  public locale: string; // enum?
-  public isFormatValid: boolean;
   public certificateImage?: string;
+  public certificateJson: Blockcerts;
+  public chain: IBlockchainObject;
   public description?: string; // v1
+  public expires: string;
+  public explorerAPIs: ExplorerAPI[] = [];
+  public id: string;
+  public isFormatValid: boolean;
   public issuedOn: string;
+  public issuer: any; // TODO: define issuer interface
+  public locale: string; // enum?
   public metadataJson: any; // TODO: define metadataJson interface. As abstract as can be as keys and values are open.
   public name?: string; // TODO: not formally set in V3
+  public options: CertificateOptions;
   public publicKey?: string;
+  public rawTransactionLink: string;
+  public receipt: any; // TODO: define receipt interface
   public recipientFullName: string;
   public recordLink: string;
+  public revocationKey: string;
   public sealImage?: string; // v1
   public signature?: string; // v1
   public signatureImage?: string; // v1
   public subtitle?: string; // v1
-  public verificationSteps: any[]; // TODO: define verificationSteps interface.
-  public rawTransactionLink: string;
+  public transactionId: string;
   public transactionLink: string;
+  public verificationSteps: any[]; // TODO: define verificationSteps interface.
+  public version: Versions;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -59,27 +75,15 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
   }
 
-  /**
-   * parseJson
-   *
-   * @param certificateDefinition
-   * @returns {*}
-   */
   async parseJson (certificateDefinition) {
-    const parsedCertificate = await parseJSON(certificateDefinition);
-    if (!(parsedCertificate.isFormatValid as boolean)) {
+    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
+    if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
     }
-    this._setProperties(parsedCertificate as ParsedCertificate);
+    this._setProperties(parsedCertificate);
   }
 
-  /**
-   * verify
-   *
-   * @param stepCallback
-   * @returns {Promise<*>}
-   */
-  async verify (stepCallback = () => {}) {
+  async verify (stepCallback?: IVerificationStepCallbackFn) {
     const verifier = new Verifier({
       certificateJson: this.certificateJson,
       chain: this.chain,
@@ -89,52 +93,23 @@ export default class Certificate {
       receipt: this.receipt,
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
-      version: this.version
+      version: this.version,
+      explorerAPIs: this.explorerAPIs
     });
     return await verifier.verify(stepCallback);
   }
 
-  /**
-   * _setOptions
-   *
-   * @param options
-   * @private
-   */
   _setOptions (options) {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
+    this.explorerAPIs = this.options.explorerAPIs || [];
 
     currentLocale.locale = this.locale;
   }
 
-  /**
-   * _setProperties
-   *
-   * @param certificateImage
-   * @param chain
-   * @param description
-   * @param expires
-   * @param id
-   * @param isFormatValid
-   * @param issuedOn
-   * @param issuer
-   * @param metadataJson
-   * @param name
-   * @param publicKey
-   * @param receipt
-   * @param recipientFullName
-   * @param recordLink
-   * @param revocationKey
-   * @param sealImage
-   * @param signature
-   * @param signatureImage
-   * @param subtitle
-   * @param version
-   * @private
-   */
-  _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }: ParsedCertificate) {
+  _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -158,17 +133,12 @@ export default class Certificate {
     // Get the full verification step-by-step map
     this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 
-    this.version = version;
+    this.version = version as Versions;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();
   }
 
-  /**
-   * _setTransactionDetails
-   *
-   * @private
-   */
   _setTransactionDetails () {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);

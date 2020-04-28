@@ -1,5 +1,5 @@
 import * as mockBlockexplorerResponse from '../mocks/mockBlockexplorerResponse.json';
-import { parsingTransactionDataFunction } from '../../../../src/explorers/bitcoin/blockexplorer';
+import { explorerApi } from '../../../../src/explorers/bitcoin/blockexplorer';
 
 function getMockBlockexplorerResponse () {
   return JSON.parse(JSON.stringify(mockBlockexplorerResponse));
@@ -21,7 +21,7 @@ describe('Blockexplorer Explorer test suite', function () {
     };
 
     it('should return the transaction data', function () {
-      expect(parsingTransactionDataFunction(mockResponse)).toEqual(assertionTransactionData);
+      expect(explorerApi.parsingFunction(mockResponse)).toEqual(assertionTransactionData);
     });
   });
 
@@ -29,7 +29,7 @@ describe('Blockexplorer Explorer test suite', function () {
     it('should throw the right error', async function () {
       mockResponse.confirmations = 0;
       expect(() => {
-        parsingTransactionDataFunction(mockResponse);
+        explorerApi.parsingFunction(mockResponse);
       }).toThrowError('Number of transaction confirmations were less than the minimum required, according to Blockexplorer API');
     });
   });

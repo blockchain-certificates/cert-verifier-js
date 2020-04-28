@@ -113,7 +113,8 @@ The constructor automatically parses a certificate.
 #### Parameter
 - `certificateDefinition` (`String|Object`): the certificate definition. Can either be a string or a JSON object.
 - `options`: (`Object`): an object of options. The following properties are used:
-    - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`.
+    - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`. If set to `auto` it will use the user's browser language if available, or default to `en-US`. See the [dedicated section](#i18n) for more information.
+    - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.  
 
 #### Returns
 The certificate instance has the following properties:
@@ -217,6 +218,51 @@ getSupportedLanguages(); // ['en-US', 'es-ES', 'mt', ...]
 You can use the codes for the `locale` option.
 
 Please note that while we are working to add new languages, any new translation is welcome through forking & PR.
+
+## explorerAPIs
+As of v4.1.0, customers of this library have the ability to provide a set of blockchain explorers that will be used to retrieve the transaction data used for storing a Blockerts on a blockchain, through the `explorerAPIs` option key.
+
+NOTE: With the addition of Typescript to this library, some types are now exposed for consumers.
+
+The property is set as part of the `options` parameter of the `Certificate` constructor, as follows:
+
+```javascript
+const certificate = new Certificate(definition, options);
+```
+
+The expected shape of the object is as follows:
+```javascript
+  serviceURL: string | ExplorerURLs;
+  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after
+  parsingFunction: TExplorerParsingFunction;
+```
+
+More information on each item:
+- `serviceURL`: when set to `string` will be assumed to be set for the `mainnet` of the Blockchain.
+When set to an object, the customer will be able to provide a service url for the `mainnet` and for the `testnet` versions of the blockchain.
+The object is then shaped as such:
+```javascript
+{
+  main: 'url',
+  test: 'url'
+}
+```
+
+- `priority`: this option allows the customer to decide if they wish to see their custom explorers to be executed before/after the default ones provided by the library (see the constants/api file for a list of default explorers). If the option is set to `0`, custom explorers will be called first. If set to `1` they   will be called after the default ones. `-1` value is reserved for default explorers.
+
+- `parsingFunction`: this function is required to parse the data (server response) as returned from the API, into the `TransactionData` shape that will be used by the library.
+The expected output shape is as follows:
+
+```
+interface TransactionData {
+  remoteHash: string;
+  issuingAddress: string;
+  time: string | Date;
+  revokedAddresses: string[];
+}
+```
+
+The consumer needs to write their own function for each service used.
 
 ## Contribute
 

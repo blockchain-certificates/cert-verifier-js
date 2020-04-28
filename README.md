@@ -222,6 +222,8 @@ Please note that while we are working to add new languages, any new translation 
 ## explorerAPIs
 As of v4.1.0, customers of this library have the ability to provide a set of blockchain explorers that will be used to retrieve the transaction data used for storing a Blockerts on a blockchain, through the `explorerAPIs` option key.
 
+NOTE: With the addition of Typescript to this library, some types are now exposed for consumers.
+
 The property is set as part of the `options` parameter of the `Certificate` constructor, as follows:
 
 ```javascript

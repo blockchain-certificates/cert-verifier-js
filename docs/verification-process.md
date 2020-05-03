@@ -105,7 +105,7 @@ Blockcerts uses the Verifiable Claims MerkleProof2017 signature format, which is
 
 Blockcerts uses JSON-LD canonicalization to ensure a consistent order of the JSON input. This ensures a consistent hash for verifiers. Per the JSON-LD signature specification, this works as follows:
 
-*    Remove the `signature` portion from the Blockchain Certificate is removed
+*    Remove the `signature` portion from the Blockchain Certificate
 *    JSON-LD canonicalize the result
      *   With settings: `{'algorithm': 'URDNA2015', 'format': 'application/nquads'}`
 *    SHA-256 the result  

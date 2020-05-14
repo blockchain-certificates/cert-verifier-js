@@ -7,9 +7,10 @@ import { isTestChain, SupportedChains } from '../constants/blockchains';
 import { TransactionData } from '../models/TransactionData';
 import { ExplorerAPI } from '../certificate';
 import { explorerApi as EtherscanApi } from './ethereum/etherscan';
+import { explorerApi as BlockCypherETHApi } from './ethereum/blockcypher';
 import { explorerApi as BlockExplorerApi } from './bitcoin/blockexplorer';
 import { explorerApi as BlockstreamApi } from './bitcoin/blockstream';
-import { explorerApi as BlockCypherApi } from './bitcoin/blockcypher';
+import { explorerApi as BlockCypherBTCApi } from './bitcoin/blockcypher';
 import { explorerApi as BitPayApi } from './bitcoin/bitpay';
 
 export type TExplorerFunctionsArray = Array<{
@@ -49,18 +50,19 @@ export async function getTransactionFromApi (
 }
 
 const BitcoinTransactionAPIArray = [
-  BlockCypherApi,
+  BlockCypherBTCApi,
   BitPayApi,
   BlockExplorerApi,
   BlockstreamApi
 ];
 
 const EthereumTransactionAPIArray = [
-  EtherscanApi
+  EtherscanApi,
+  BlockCypherETHApi
 ];
 
 export const BitcoinExplorers: TExplorerFunctionsArray = explorerFactory(BitcoinTransactionAPIArray);
 export const EthereumExplorers: TExplorerFunctionsArray = explorerFactory(EthereumTransactionAPIArray);
 
 // for legacy (pre-v2) Blockcerts
-export const BlockchainExplorersWithSpentOutputInfo: TExplorerFunctionsArray = explorerFactory([BlockCypherApi]);
+export const BlockchainExplorersWithSpentOutputInfo: TExplorerFunctionsArray = explorerFactory([BlockCypherBTCApi]);

@@ -5,7 +5,7 @@ function getMockBlockcypherResponse () {
   return JSON.parse(JSON.stringify(mockBlockcypherResponse));
 }
 
-describe('Blockcypher Explorer test suite', function () {
+describe('Blockcypher Bitcoin Explorer test suite', function () {
   let mockResponse;
 
   beforeEach(function () {

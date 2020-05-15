@@ -1,6 +1,6 @@
 import { ExplorerAPI } from '../../certificate';
 import { ExplorerURLs } from '../../index';
-import { TRANSACTION_ID_PLACEHOLDER } from '../../constants/api';
+import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from '../../constants/api';
 import { TransactionData } from '../../models/TransactionData';
 import { dateToUnixTimestamp } from '../../helpers/date';
 import { BLOCKCHAINS, CONFIG, SUB_STEPS } from '../../constants';
@@ -38,6 +38,7 @@ function parsingFunction (jsonResponse): TransactionData {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
+  serviceName: TRANSACTION_APIS.Blockcypher,
   parsingFunction,
   priority: -1
 };

@@ -5,6 +5,7 @@ import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
 import { ExplorerAPI, ExplorerURLs } from '../../certificate';
 import { TransactionData } from '../../models/TransactionData';
+import { TRANSACTION_APIS } from '../../constants/api';
 
 function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
@@ -34,6 +35,7 @@ const serviceURL: ExplorerURLs = {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
+  serviceName: TRANSACTION_APIS.Bitpay,
   parsingFunction,
   priority: -1
 };

@@ -7,10 +7,10 @@ import { buildTransactionServiceUrl } from '../../services/transaction-apis';
 import { isTestChain, SupportedChains } from '../../constants/blockchains';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerAPI, ExplorerURLs } from '../../certificate';
+import { TRANSACTION_APIS } from '../../constants/api';
 
-const ETHERSCAN_API_KEY = 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D';
-const MAIN_API_BASE_URL = `https://api.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
-const TEST_API_BASE_URL = `https://api-ropsten.etherscan.io/api?module=proxy&apikey=${ETHERSCAN_API_KEY}`;
+const MAIN_API_BASE_URL = 'https://api.etherscan.io/api?module=proxy';
+const TEST_API_BASE_URL = 'https://api-ropsten.etherscan.io/api?module=proxy';
 const serviceURL: ExplorerURLs = {
   main: `${MAIN_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`,
   test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`
@@ -91,6 +91,9 @@ async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<T
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
+  serviceName: TRANSACTION_APIS.Etherscan,
   parsingFunction,
-  priority: -1
+  priority: -1,
+  key: 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D',
+  keyPropertyName: 'apikey'
 };

@@ -5,6 +5,7 @@ import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { timestampToDateObject } from '../../helpers/date';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerAPI, ExplorerURLs } from '../../certificate';
+import { TRANSACTION_APIS } from '../../constants/api';
 
 function parsingFunction (jsonResponse): TransactionData {
   if (!jsonResponse.status.confirmed) {
@@ -33,6 +34,7 @@ const serviceURL: ExplorerURLs = {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
+  serviceName: TRANSACTION_APIS.Blockstream,
   parsingFunction,
   priority: -1
 };

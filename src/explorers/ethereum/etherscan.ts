@@ -15,13 +15,17 @@ const serviceURL: ExplorerURLs = {
   main: `${MAIN_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`,
   test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`
 };
-const getBlockByNumberServiceUrls: ExplorerURLs = {
-  main: `${MAIN_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`,
-  test: `${TEST_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`
+const getBlockByNumberServiceUrls: Partial<ExplorerAPI> = {
+  serviceURL: {
+    main: `${MAIN_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`,
+    test: `${TEST_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`
+  }
 };
-const getBlockNumberServiceUrls: ExplorerURLs = {
-  main: `${MAIN_API_BASE_URL}&action=eth_blockNumber`,
-  test: `${TEST_API_BASE_URL}&action=eth_blockNumber`
+const getBlockNumberServiceUrls: Partial<ExplorerAPI> = {
+  serviceURL: {
+    main: `${MAIN_API_BASE_URL}&action=eth_blockNumber`,
+    test: `${TEST_API_BASE_URL}&action=eth_blockNumber`
+  }
 };
 
 function parseEtherScanResponse (jsonResponse, block): TransactionData {
@@ -44,7 +48,7 @@ async function getEtherScanBlock (jsonResponse, chain: SupportedChains): Promise
   const data = jsonResponse.result;
   const blockNumber = data.blockNumber;
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: getBlockByNumberServiceUrls,
+    explorerAPI: getBlockByNumberServiceUrls as ExplorerAPI,
     transactionId: blockNumber,
     isTestApi: isTestChain(chain)
   });
@@ -63,7 +67,7 @@ async function getEtherScanBlock (jsonResponse, chain: SupportedChains): Promise
 
 async function checkEtherScanConfirmations (chain: SupportedChains, blockNumber: number): Promise<number> {
   const requestUrl: string = buildTransactionServiceUrl({
-    serviceUrls: getBlockNumberServiceUrls,
+    explorerAPI: getBlockNumberServiceUrls as ExplorerAPI,
     isTestApi: isTestChain(chain)
   });
 

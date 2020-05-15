@@ -36,7 +36,7 @@ export async function getTransactionFromApi (
   chain: SupportedChains
 ): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: explorerAPI.serviceURL,
+    explorerAPI,
     transactionId,
     isTestApi: isTestChain(chain)
   });

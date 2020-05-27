@@ -5,7 +5,7 @@ import sinon from 'sinon';
 import * as RequestServices from '../../../../src/services/request';
 import { TransactionData } from '../../../../src/models/TransactionData';
 
-function getMockEtherscanResponse () {
+function getMockEtherscanResponse (): typeof mockEtherscanResponse {
   return JSON.parse(JSON.stringify(mockEtherscanResponse));
 }
 

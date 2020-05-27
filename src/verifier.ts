@@ -15,7 +15,7 @@ const log = debug('Verifier');
 export interface IVerificationStepCallbackAPI {
   code: string;
   label: string;
-  status: string; // enum?
+  status: string; // TODO: use enum
   errorMessage?: string;
 }
 
@@ -23,6 +23,12 @@ export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI)
 export type TExplorerAPIs = TDefaultExplorersPerBlockchain & {
   custom?: TExplorerFunctionsArray;
 };
+
+export interface IFinalVerificationStatus {
+  code: STEPS.final;
+  status: string; // TODO: use enum
+  message: string;
+}
 
 export default class Verifier {
   public chain: IBlockchainObject;
@@ -73,7 +79,7 @@ export default class Verifier {
     this._stepsStatuses = [];
   }
 
-  async verify (stepCallback: IVerificationStepCallbackFn = () => {}) {
+  async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
 
     if (this.version === Versions.V1_1) {
@@ -94,7 +100,7 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  setExplorerAPIs (explorerAPIs: ExplorerAPI[]) {
+  setExplorerAPIs (explorerAPIs: ExplorerAPI[]): void {
     this.explorerAPIs = getDefaultExplorers();
 
     if (domain.explorerAPIs.ensureValidity(explorerAPIs)) {
@@ -102,14 +108,14 @@ export default class Verifier {
     }
   }
 
-  _getRevocationListUrl (distantIssuerProfile) {
+  _getRevocationListUrl (distantIssuerProfile): any { // TODO: define revocationList type
     if (this.issuer && this.issuer.revocationList) {
       return this.issuer.revocationList;
     }
     return distantIssuerProfile.revocationList;
   }
 
-  _doAction (step: string, action: Function) {
+  _doAction (step: string, action: Function): any {
     // If not failing already
     if (this._isFailing()) {
       return;
@@ -123,7 +129,7 @@ export default class Verifier {
     }
 
     try {
-      const res = action();
+      const res: any = action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
         this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
@@ -142,7 +148,7 @@ export default class Verifier {
     }
   }
 
-  async _doAsyncAction (step: string, action: Function) {
+  async _doAsyncAction (step: string, action: Function): Promise<any> {
     if (this._isFailing()) {
       return;
     }
@@ -155,7 +161,7 @@ export default class Verifier {
     }
 
     try {
-      const res = await action();
+      const res: any = await action();
       if (step) {
         this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
         this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
@@ -174,11 +180,11 @@ export default class Verifier {
     }
   }
 
-  private _stepCallback (update: IVerificationStepCallbackAPI) {
+  private _stepCallback (update: IVerificationStepCallbackAPI): any { // TODO: unsure type is indeed any
     // defined by this.verify interface
   }
 
-  async _verifyMain () {
+  async _verifyMain (): Promise<void> {
     // Check transaction id validity
     this._doAction(
       SUB_STEPS.getTransactionId,
@@ -265,7 +271,7 @@ export default class Verifier {
     );
   }
 
-  async _verifyV2Mock () {
+  async _verifyV2Mock (): Promise<void> {
     // Compute local hash
     const localHash = await this._doAsyncAction(
       SUB_STEPS.computeLocalHash,
@@ -292,7 +298,7 @@ export default class Verifier {
   /**
    * Returns a failure final step message
    */
-  _failed (errorStep) { // TODO: define errorStep interface
+  _failed (errorStep): IFinalVerificationStatus { // TODO: define errorStep interface
     const message: string = errorStep.errorMessage;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
@@ -301,11 +307,11 @@ export default class Verifier {
   /**
    * whether or not the current verification is failing
    */
-  _isFailing () {
+  _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _retrieveDocumentBeforeIssuance (certificateJson) {
+  _retrieveDocumentBeforeIssuance (certificateJson): any { // TODO: define certificate object
     const certificateCopy = Object.assign({}, certificateJson);
     if (isV3(this.version)) {
       delete certificateCopy.proof;
@@ -318,7 +324,7 @@ export default class Verifier {
   /**
    * Returns a final success message
    */
-  _succeed () {
+  _succeed (): IFinalVerificationStatus {
     const message = domain.chains.isMockChain(this.chain)
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
@@ -326,14 +332,14 @@ export default class Verifier {
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  _setFinalStep ({ status, message }) {
+  _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
     return { code: STEPS.final, status, message };
   }
 
   /**
    * calls the origin callback to update on a step status
    */
-  private _updateStatusCallback (code: string, label: string, status: string, errorMessage = '') {
+  private _updateStatusCallback (code: string, label: string, status: string, errorMessage = ''): void {
     if (code != null) {
       const update: IVerificationStepCallbackAPI = { code, label, status };
       if (errorMessage) {

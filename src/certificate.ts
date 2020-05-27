@@ -1,6 +1,6 @@
 import domain from './domain';
 import parseJSON, { ParsedCertificate } from './parser';
-import Verifier, { IVerificationStepCallbackFn } from './verifier';
+import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
@@ -74,12 +74,12 @@ export default class Certificate {
     this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
   }
 
-  async init () {
+  async init (): Promise<void> {
     // Parse certificate
     await this.parseJson(this.certificateJson);
   }
 
-  async parseJson (certificateDefinition) {
+  async parseJson (certificateDefinition): Promise<void> {
     const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
@@ -87,7 +87,7 @@ export default class Certificate {
     this._setProperties(parsedCertificate);
   }
 
-  async verify (stepCallback?: IVerificationStepCallbackFn) {
+  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
     const verifier = new Verifier({
       certificateJson: this.certificateJson,
       chain: this.chain,
@@ -103,7 +103,7 @@ export default class Certificate {
     return await verifier.verify(stepCallback);
   }
 
-  _setOptions (options) {
+  _setOptions (options): void {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale
@@ -113,7 +113,28 @@ export default class Certificate {
     currentLocale.locale = this.locale;
   }
 
-  _setProperties ({ certificateImage, chain, description, expires, id, isFormatValid, issuedOn, issuer, metadataJson, name, publicKey, receipt, recipientFullName, recordLink, revocationKey, sealImage, signature, signatureImage, subtitle, version }) {
+  _setProperties ({
+    certificateImage,
+    chain,
+    description,
+    expires,
+    id,
+    isFormatValid,
+    issuedOn,
+    issuer,
+    metadataJson,
+    name,
+    publicKey,
+    receipt,
+    recipientFullName,
+    recordLink,
+    revocationKey,
+    sealImage,
+    signature,
+    signatureImage,
+    subtitle,
+    version
+  }): void {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -143,7 +164,7 @@ export default class Certificate {
     this._setTransactionDetails();
   }
 
-  _setTransactionDetails () {
+  _setTransactionDetails (): void {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
     this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);

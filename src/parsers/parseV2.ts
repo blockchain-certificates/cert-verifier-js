@@ -2,6 +2,7 @@ import domain from '../domain';
 import { CERTIFICATE_VERSIONS } from '../constants';
 import getSignatureImages from './helpers/getSignatureImage';
 import { IBlockchainObject } from '../constants/blockchains';
+import { BlockcertsV2 } from '../models/BlockcertsV2';
 
 /**
  * parseV2
@@ -9,7 +10,7 @@ import { IBlockchainObject } from '../constants/blockchains';
  * @param certificateJson
  * @returns {Certificate}
  */
-export default function parseV2 (certificateJson) {
+export default function parseV2 (certificateJson): BlockcertsV2 {
   const { id, expires, signature: receipt, badge } = certificateJson;
   const { image: certificateImage, name, description, subtitle, issuer } = badge;
   const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;

@@ -8,7 +8,7 @@ function isParsingFunctionValid (explorerAPI: ExplorerAPI): boolean {
   return typeof explorerAPI.parsingFunction === 'function';
 }
 
-export default function ensureValidity (explorerAPIs: ExplorerAPI[] = []) {
+export default function ensureValidity (explorerAPIs: ExplorerAPI[] = []): boolean {
   if (explorerAPIs.length === 0) {
     return false;
   }

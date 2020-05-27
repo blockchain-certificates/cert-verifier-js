@@ -13,7 +13,7 @@ function noOffset (s): number {
   return day.getTime();
 }
 
-function dateFromRegex (s: string) {
+function dateFromRegex (s: string): Date | number {
   let day;
   let tz;
   const rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
@@ -24,19 +24,27 @@ function dateFromRegex (s: string) {
     });
     day[1] -= 1;
     day = new Date(Date.UTC.apply(Date, day));
-    if (!day.getDate()) return NaN;
+    if (!day.getDate()) {
+      return NaN;
+    }
     if (p[5]) {
       tz = parseInt(p[5], 10) / 100 * 60;
-      if (p[6]) tz += parseInt(p[6], 10);
-      if (p[4] === '+') tz *= -1;
-      if (tz) day.setUTCMinutes(day.getUTCMinutes() + tz);
+      if (p[6]) {
+        tz += parseInt(p[6], 10);
+      }
+      if (p[4] === '+') {
+        tz *= -1;
+      }
+      if (tz) {
+        day.setUTCMinutes(day.getUTCMinutes() + tz);
+      }
     }
     return day;
   }
   return NaN;
 }
 
-function dateFromIso (isoDate: string) {
+function dateFromIso (isoDate: string): Date | number {
   // Chrome
   const diso: number = Date.parse(isoDate);
   if (diso) {
@@ -52,7 +60,7 @@ function dateFromIso (isoDate: string) {
   return dateFromRegex(isoDate);
 }
 
-export function dateToUnixTimestamp (date: Date | string) {
+export function dateToUnixTimestamp (date: Date | string): Date | string | number { // TODO: cleanup this mess of types
   if (date === '') {
     return '';
   }

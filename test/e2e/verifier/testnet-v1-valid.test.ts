@@ -8,9 +8,6 @@ import v1_2IssuerProfile from '../../data/v1.2-issuer-profile.json';
 import { TransactionData } from '../../../src/models/TransactionData';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
-  let stubGetIssuerProfile: sinon.SinonStub;
-  let stubLookForTx: sinon.SinonStub;
-
   beforeEach(function () {
     const cachedTransactionData: TransactionData = {
       remoteHash:
@@ -19,8 +16,8 @@ describe('given the certificate is a valid testnet (v1.2)', function () {
       time: '2016-10-03T19:37:59.141Z',
       revokedAddresses: ['1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619']
     };
-    stubLookForTx = sinon.stub(domain.verifier, 'lookForTx').resolves(cachedTransactionData);
-    stubGetIssuerProfile = sinon.stub(VerifierUseCases, 'getIssuerProfile').resolves(v1_2IssuerProfile);
+    sinon.stub(domain.verifier, 'lookForTx').resolves(cachedTransactionData);
+    sinon.stub(VerifierUseCases, 'getIssuerProfile').resolves(v1_2IssuerProfile);
   });
 
   afterEach(function () {

@@ -39,7 +39,7 @@ export interface ExplorerAPI {
   parsingFunction: TExplorerParsingFunction;
   serviceName?: TRANSACTION_APIS; // in case one would want to overload the default explorers
   key?: string; // the user's own key to the service
-  keyPropertyName?: string; // the name of the property
+  keyPropertyName?: string; // the name of the key property according to the explorer service
 }
 
 export interface CertificateOptions {

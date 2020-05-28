@@ -18,7 +18,7 @@ export enum SupportedChains {
   Testnet = 'testnet'
 }
 
-export enum DefaultExplorers {
+export enum TRANSACTION_APIS {
   Bitpay = 'bitpay',
   Blockcypher = 'blockcypher',
   Blockexplorer = 'blockexplorer',
@@ -37,7 +37,7 @@ export interface ExplorerAPI {
   serviceURL: string | ExplorerURLs;
   priority: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
   parsingFunction: TExplorerParsingFunction;
-  serviceName?: DefaultExplorers; // in case one would want to overload the default explorers
+  serviceName?: TRANSACTION_APIS; // in case one would want to overload the default explorers
   key?: string; // the user's own key to the service
   keyPropertyName?: string; // the name of the property
 }

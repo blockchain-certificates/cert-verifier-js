@@ -17,8 +17,8 @@ export type TExplorerFunctionsArray = Array<{
   parsingFunction: (transactionId: string, chain: SupportedChains) => Promise<TransactionData>;
   priority?: number;
 }>;
-export type TExplorerParsingFunction = ((jsonResponse, chain?: SupportedChains) => TransactionData) |
-((jsonResponse, chain?: SupportedChains) => Promise<TransactionData>);
+export type TExplorerParsingFunction = ((jsonResponse, chain?: SupportedChains, key?: string, keyPropertyName?: string) => TransactionData) |
+((jsonResponse, chain?: SupportedChains, key?: string, keyPropertyName?: string) => Promise<TransactionData>);
 
 export function explorerFactory (TransactionAPIArray: ExplorerAPI[]): TExplorerFunctionsArray {
   return TransactionAPIArray
@@ -43,7 +43,7 @@ export async function getTransactionFromApi (
 
   try {
     const response = await request({ url: requestUrl });
-    return await explorerAPI.parsingFunction(JSON.parse(response), chain);
+    return await explorerAPI.parsingFunction(JSON.parse(response), chain, explorerAPI.key, explorerAPI.keyPropertyName);
   } catch (err) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
   }

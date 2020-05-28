@@ -16,7 +16,7 @@ const serviceURL: ExplorerURLs = {
   test: `${TEST_API_BASE_URL}&action=eth_getTransactionByHash&txhash=${TRANSACTION_ID_PLACEHOLDER}`
 };
 
-async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<TransactionData> {
+async function parsingFunction (jsonResponse, chain: SupportedChains, key: string, keyPropertyName: string): Promise<TransactionData> {
   const getBlockByNumberServiceUrls: Partial<ExplorerAPI> = {
     serviceURL: {
       main: `${MAIN_API_BASE_URL}&action=eth_getBlockByNumber&boolean=true&tag=${TRANSACTION_ID_PLACEHOLDER}`,
@@ -50,7 +50,12 @@ async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<T
     const data = jsonResponse.result;
     const blockNumber = data.blockNumber;
     const requestUrl = buildTransactionServiceUrl({
-      explorerAPI: getBlockByNumberServiceUrls as ExplorerAPI,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      explorerAPI: {
+        ...getBlockByNumberServiceUrls,
+        key,
+        keyPropertyName
+      } as ExplorerAPI,
       transactionId: blockNumber,
       isTestApi: isTestChain(chain)
     });
@@ -69,7 +74,12 @@ async function parsingFunction (jsonResponse, chain: SupportedChains): Promise<T
 
   async function checkEtherScanConfirmations (chain: SupportedChains, blockNumber: number): Promise<number> {
     const requestUrl: string = buildTransactionServiceUrl({
-      explorerAPI: getBlockNumberServiceUrls as ExplorerAPI,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      explorerAPI: {
+        ...getBlockNumberServiceUrls,
+        key,
+        keyPropertyName
+      } as ExplorerAPI,
       isTestApi: isTestChain(chain)
     });
 

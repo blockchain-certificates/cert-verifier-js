@@ -31,13 +31,13 @@ describe('Verifier domain lookForTx use case test suite', function () {
       stubbedDefaultExplorer = sinon.stub().resolves(fixtureDefaultTxData);
       mockExplorers = {
         bitcoin: [{
-          parsingFunction: stubbedDefaultExplorer,
+          getTxData: stubbedDefaultExplorer,
           priority: -1
         }],
         ethereum: [],
         v1: [],
         custom: [{
-          parsingFunction: stubbedCustomExplorer,
+          getTxData: stubbedCustomExplorer,
           priority: 0
         }]
       };

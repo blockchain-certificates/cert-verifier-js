@@ -88,7 +88,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       const stubbedExplorer = sinon.stub().resolves(mockTxData);
       const mockExplorers: TExplorerAPIs = {
         bitcoin: [{
-          parsingFunction: stubbedExplorer
+          getTxData: stubbedExplorer
         }],
         ethereum: [],
         v1: []

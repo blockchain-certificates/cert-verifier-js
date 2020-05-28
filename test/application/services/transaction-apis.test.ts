@@ -37,10 +37,11 @@ describe('Transaction APIs test suite', function () {
 
       beforeEach(function () {
         fixtureApi = JSON.parse(JSON.stringify(Etherscan));
+        fixtureApi.key = fixtureAPIToken;
       });
+
       describe('and there are already some parameters in the URL', function () {
         it('should construct the URL to add the token with &', function () {
-          fixtureApi.key = fixtureAPIToken;
           const output = buildTransactionServiceUrl({
             explorerAPI: fixtureApi,
             transactionId: fixtureTransactionId
@@ -52,7 +53,6 @@ describe('Transaction APIs test suite', function () {
 
       describe('and there are no parameters in the URL yet', function () {
         it('should construct the URL to add the token with ?', function () {
-          fixtureApi.key = fixtureAPIToken;
           fixtureApi.serviceURL = 'https://api.etherscan.io/api';
           const output = buildTransactionServiceUrl({
             explorerAPI: fixtureApi,
@@ -60,6 +60,18 @@ describe('Transaction APIs test suite', function () {
           });
           const expectedOutput = `https://api.etherscan.io/api?apikey=${fixtureAPIToken}`;
           expect(output).toBe(expectedOutput);
+        });
+      });
+
+      describe('and the keyPropertyName is not set', function () {
+        it('should throw', function () {
+          delete fixtureApi.keyPropertyName;
+          expect(() => {
+            buildTransactionServiceUrl({
+              explorerAPI: fixtureApi,
+              transactionId: fixtureTransactionId
+            });
+          }).toThrow('No keyPropertyName defined for explorerAPI etherscan');
         });
       });
     });

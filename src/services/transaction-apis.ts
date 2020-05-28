@@ -7,7 +7,7 @@ function appendApiIdentifier (url: string, explorerAPI: ExplorerAPI): string {
   }
 
   if (explorerAPI.key && !explorerAPI.keyPropertyName) {
-    throw new Error(`No keyPropertyName defined for explorerAPI ${url}`);
+    throw new Error(`No keyPropertyName defined for explorerAPI ${explorerAPI.serviceName}`);
   }
 
   const separator = url.includes('?') ? '&' : '?';

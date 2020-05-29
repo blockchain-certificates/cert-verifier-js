@@ -106,9 +106,7 @@ async function parsingFunction (jsonResponse, chain: SupportedChains, key: strin
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
-  serviceName: TRANSACTION_APIS.Etherscan,
+  serviceName: TRANSACTION_APIS.etherscan,
   parsingFunction,
-  priority: -1,
-  key: 'FJ3CZWH8PQBV8W5U6JR8TMKAYDHBKQ3B1D',
-  keyPropertyName: 'apikey'
+  priority: -1
 };

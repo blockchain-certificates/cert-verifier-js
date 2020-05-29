@@ -34,7 +34,7 @@ const serviceURL: ExplorerURLs = {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
-  serviceName: TRANSACTION_APIS.Blockstream,
+  serviceName: TRANSACTION_APIS.blockstream,
   parsingFunction,
   priority: -1
 };

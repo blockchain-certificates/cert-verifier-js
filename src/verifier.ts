@@ -101,7 +101,7 @@ export default class Verifier {
   }
 
   setExplorerAPIs (explorerAPIs: ExplorerAPI[]): void {
-    this.explorerAPIs = getDefaultExplorers();
+    this.explorerAPIs = getDefaultExplorers(explorerAPIs);
 
     if (domain.explorerAPIs.ensureValidity(explorerAPIs)) {
       this.explorerAPIs.custom = explorerFactory(explorerAPIs);

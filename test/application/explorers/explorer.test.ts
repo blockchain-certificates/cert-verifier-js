@@ -1,10 +1,14 @@
 import sinon from 'sinon';
 import * as RequestService from '../../../src/services/request';
 import { explorerApi as BitpayAPI } from '../../../src/explorers/bitcoin/bitpay';
+import { explorerApi as BlockcypherAPI } from '../../../src/explorers/bitcoin/blockcypher';
 import * as mockBitpayResponse from './mocks/mockBitpayResponse.json';
 import { getTransactionFromApi } from '../../../src/explorers/explorer';
 import { BLOCKCHAINS } from '../../../src/constants';
 import { VerifierError } from '../../../src/models';
+import { ExplorerAPI } from '../../../src/certificate';
+import { TRANSACTION_APIS } from '../../../src/constants/api';
+import { getDefaultExplorers, overwriteDefaultExplorers } from '../../../src/explorers';
 
 describe('Bitcoin Explorer test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
@@ -46,6 +50,52 @@ describe('Bitcoin Explorer test suite', function () {
           const res = await getTransactionFromApi(BitpayAPI, fixtureTransactionId, BLOCKCHAINS.bitcoin.code);
           expect(res).toEqual(assertionResponse);
         });
+      });
+    });
+  });
+
+  describe('overwriteDefaultExplorers method', function () {
+    describe('given it was passed a default explorer match', function () {
+      it('should overwrite the data of that default explorer', function () {
+        const fixtureExplorer: ExplorerAPI = {
+          serviceName: TRANSACTION_APIS.bitpay,
+          key: 'a-custom-key',
+          keyPropertyName: 'apiKey'
+        };
+
+        const mockDefaultExplorer: ExplorerAPI = Object.assign({}, BitpayAPI);
+
+        const output = overwriteDefaultExplorers([fixtureExplorer], [mockDefaultExplorer, BlockcypherAPI]);
+        expect(output.find(explorerAPI => explorerAPI.serviceName === fixtureExplorer.serviceName).key)
+          .toBe(fixtureExplorer.key);
+      });
+
+      it('should return the list of default explorers with the one modified', function () {
+        const fixtureExplorer: ExplorerAPI = {
+          serviceName: TRANSACTION_APIS.bitpay,
+          key: 'a-custom-key',
+          keyPropertyName: 'apiKey'
+        };
+
+        const mockDefaultExplorer: ExplorerAPI = Object.assign({}, BitpayAPI);
+
+        const output = overwriteDefaultExplorers([fixtureExplorer], [mockDefaultExplorer, BlockcypherAPI]);
+        const expectedOutput = [Object.assign(mockDefaultExplorer, fixtureExplorer), BlockcypherAPI];
+        expect(output).toEqual(expectedOutput);
+      });
+    });
+
+    describe('given it was passed no default explorer match', function () {
+      it('should return the list of default explorers as expected', function () {
+        const fixtureExplorer: ExplorerAPI = {
+          serviceURL: 'https//another-service.com/api',
+          key: 'a-custom-key',
+          keyPropertyName: 'apiKey'
+        };
+
+        const output = overwriteDefaultExplorers([fixtureExplorer], [BitpayAPI, BlockcypherAPI]);
+        const expectedOutput = [BitpayAPI, BlockcypherAPI];
+        expect(output).toEqual(expectedOutput);
       });
     });
   });

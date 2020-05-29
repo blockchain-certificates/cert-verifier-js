@@ -19,11 +19,11 @@ export enum SupportedChains {
 }
 
 export enum TRANSACTION_APIS {
-  Bitpay = 'bitpay',
-  Blockcypher = 'blockcypher',
-  Blockexplorer = 'blockexplorer',
-  Blockstream = 'blockstream',
-  Etherscan = 'etherscan',
+  bitpay = 'bitpay',
+  blockcypher = 'blockcypher',
+  blockexplorer = 'blockexplorer',
+  blockstream = 'blockstream',
+  etherscan = 'etherscan',
 }
 
 export type TExplorerParsingFunction = ((jsonResponse, chain?: SupportedChains) => TransactionData) | ((jsonResponse, chain?: SupportedChains) => Promise<TransactionData>);
@@ -34,9 +34,9 @@ export interface ExplorerURLs {
 }
 
 export interface ExplorerAPI {
-  serviceURL: string | ExplorerURLs;
-  priority: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
-  parsingFunction: TExplorerParsingFunction;
+  serviceURL?: string | ExplorerURLs;
+  priority?: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
+  parsingFunction?: TExplorerParsingFunction;
   serviceName?: TRANSACTION_APIS; // in case one would want to overload the default explorers
   key?: string; // the user's own key to the service
   keyPropertyName?: string; // the name of the key property according to the explorer service

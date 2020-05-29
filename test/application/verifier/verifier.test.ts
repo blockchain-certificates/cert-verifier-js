@@ -6,6 +6,7 @@ import { TransactionData } from '../../../src/models/TransactionData';
 import { getDefaultExplorers } from '../../../src/explorers';
 import { explorerFactory } from '../../../src/explorers/explorer';
 import { ExplorerAPI } from '../../../src/certificate';
+import { TRANSACTION_APIS } from '../../../src/constants/api';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -71,8 +72,8 @@ describe('Verifier entity test suite', function () {
           });
         });
 
-        describe('when it is a valid explorer API object', function () {
-          describe('and the explorer API has a priority set to -1', function () {
+        describe('when it is a valid custom explorer API object', function () {
+          describe('and the custom explorer API has a priority set to -1', function () {
             it('should throw an error', function () {
               const fixture = Object.assign({}, verifierParamFixture);
               const fixtureExplorerAPI: ExplorerAPI[] = [{
@@ -97,7 +98,7 @@ describe('Verifier entity test suite', function () {
             });
           });
 
-          describe('and the explorer API has a missing parsing function', function () {
+          describe('and the custom explorer API has a missing parsing function', function () {
             it('should throw an error', function () {
               const fixture = Object.assign({}, verifierParamFixture);
               const fixtureExplorerAPI: ExplorerAPI[] = [{
@@ -115,25 +116,44 @@ describe('Verifier entity test suite', function () {
             });
           });
 
-          it('should set the explorerAPIs to the verifier object', function () {
-            const fixture = Object.assign({}, verifierParamFixture);
-            const fixtureExplorerAPI: ExplorerAPI[] = [{
-              serviceURL: 'https://explorer-example.com',
-              priority: 0,
-              parsingFunction: (): TransactionData => {
-                return {
-                  remoteHash: 'a',
-                  issuingAddress: 'b',
-                  time: 'c',
-                  revokedAddresses: ['d']
-                };
-              }
-            }];
-            fixture.explorerAPIs = fixtureExplorerAPI;
-            const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
-            expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
-            const verifierInstance = new Verifier(fixture);
-            expect(JSON.stringify(verifierInstance.explorerAPIs)).toEqual(JSON.stringify(expectedExplorers));
+          describe('and the custom explorer API object is valid', function () {
+            it('should set the explorerAPIs to the verifier object', function () {
+              const fixture = Object.assign({}, verifierParamFixture);
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceURL: 'https://explorer-example.com',
+                priority: 0,
+                parsingFunction: (): TransactionData => {
+                  return {
+                    remoteHash: 'a',
+                    issuingAddress: 'b',
+                    time: 'c',
+                    revokedAddresses: ['d']
+                  };
+                }
+              }];
+              fixture.explorerAPIs = fixtureExplorerAPI;
+              const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
+              expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
+              const verifierInstance = new Verifier(fixture);
+              expect(JSON.stringify(verifierInstance.explorerAPIs)).toEqual(JSON.stringify(expectedExplorers));
+            });
+          });
+
+          describe('and it references a default explorer API', function () {
+            it('should merge and overwrite the default explorer API info with the provided one', function () {
+              const fixture = Object.assign({}, verifierParamFixture);
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceName: TRANSACTION_APIS.Etherscan,
+                keyPropertyName: 'apiKey',
+                key: 'a-custom-api-key'
+              }];
+              fixture.explorerAPIs = fixtureExplorerAPI;
+              const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
+              expectedExplorers.ethereum[0].keyPropertyName = 'apiKey';
+
+              const verifierInstance = new Verifier(fixture);
+              expect(JSON.stringify(verifierInstance.explorerAPIs)).toEqual(JSON.stringify(expectedExplorers));
+            });
           });
         });
       });

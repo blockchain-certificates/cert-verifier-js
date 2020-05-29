@@ -35,7 +35,7 @@ const serviceURL: ExplorerURLs = {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
-  serviceName: TRANSACTION_APIS.Bitpay,
+  serviceName: TRANSACTION_APIS.bitpay,
   parsingFunction,
   priority: -1
 };

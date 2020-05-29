@@ -61,8 +61,12 @@ const EthereumTransactionAPIArray = [
   BlockCypherETHApi
 ];
 
-export const BitcoinExplorers: TExplorerFunctionsArray = explorerFactory(BitcoinTransactionAPIArray);
-export const EthereumExplorers: TExplorerFunctionsArray = explorerFactory(EthereumTransactionAPIArray);
+const BlockchainExplorersWithSpentOutputInfo = [
+  BlockCypherBTCApi
+];
 
-// for legacy (pre-v2) Blockcerts
-export const BlockchainExplorersWithSpentOutputInfo: TExplorerFunctionsArray = explorerFactory([BlockCypherBTCApi]);
+export {
+  BitcoinTransactionAPIArray,
+  EthereumTransactionAPIArray,
+  BlockchainExplorersWithSpentOutputInfo
+};

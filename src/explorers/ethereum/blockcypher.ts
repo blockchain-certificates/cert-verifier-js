@@ -38,7 +38,7 @@ function parsingFunction (jsonResponse): TransactionData {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
-  serviceName: TRANSACTION_APIS.Blockcypher,
+  serviceName: TRANSACTION_APIS.blockcypher,
   parsingFunction,
   priority: -1
 };

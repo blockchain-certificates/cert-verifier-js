@@ -236,7 +236,7 @@ The expected shape of the object is as follows:
   keyPropertyName?: string;
   serviceName?: TRANSACTION_APIS; 
   serviceURL: string | ExplorerURLs;
-  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after
+  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after, -1 is reserved for default explorers
   parsingFunction: TExplorerParsingFunction;
 ```
 

@@ -27,6 +27,9 @@ export function overwriteDefaultExplorers (explorerAPIs: ExplorerAPI[] = [], def
         const customSetExplorerAPI = explorerAPIs.find(customExplorerAPI => customExplorerAPI.serviceName === defaultExplorerAPI.serviceName);
         const overwrittenExplorerAPI = Object.assign(immutableExplorerAPI, customSetExplorerAPI);
         overwrittenExplorers.push(overwrittenExplorerAPI);
+        const sourceExplorerAPIIndex: number = explorerAPIs.findIndex(explorerAPI => explorerAPI.serviceName === overwrittenExplorerAPI.serviceName);
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete explorerAPIs[sourceExplorerAPIIndex]; // remove modified explorer to avoid setting them in the custom option later
       } else {
         overwrittenExplorers.push(defaultExplorerAPI);
       }

@@ -38,6 +38,7 @@ describe('Transaction APIs test suite', function () {
       beforeEach(function () {
         fixtureApi = JSON.parse(JSON.stringify(Etherscan));
         fixtureApi.key = fixtureAPIToken;
+        fixtureApi.keyPropertyName = 'apikey';
       });
 
       describe('and there are already some parameters in the URL', function () {

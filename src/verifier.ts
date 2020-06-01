@@ -100,11 +100,11 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  setExplorerAPIs (explorerAPIs: ExplorerAPI[]): void {
-    this.explorerAPIs = getDefaultExplorers();
+  setExplorerAPIs (customExplorerAPIs: ExplorerAPI[]): void {
+    this.explorerAPIs = getDefaultExplorers(customExplorerAPIs);
 
-    if (domain.explorerAPIs.ensureValidity(explorerAPIs)) {
-      this.explorerAPIs.custom = explorerFactory(explorerAPIs);
+    if (domain.explorerAPIs.ensureValidity(customExplorerAPIs)) {
+      this.explorerAPIs.custom = explorerFactory(customExplorerAPIs);
     }
   }
 

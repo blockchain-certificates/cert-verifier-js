@@ -2,6 +2,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import * as Explorers from '../../../src/explorers/explorer';
 import sinon from 'sinon';
+import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('given the certificate is a tampered ethereum', function () {
   let certificate;
@@ -14,7 +15,7 @@ describe('given the certificate is a tampered ethereum', function () {
       time: '2018-05-08T18:30:34.000Z',
       revokedAddresses: []
     });
-    certificate = new Certificate(FIXTURES.EthereumTampered);
+    certificate = new Certificate(FIXTURES.EthereumTampered, { explorerAPIs: [etherscanApiWithKey] });
     await certificate.init();
     result = await certificate.verify();
   });

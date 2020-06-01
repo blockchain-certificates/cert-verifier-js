@@ -14,17 +14,17 @@ import { explorerApi as BlockCypherBTCApi } from './bitcoin/blockcypher';
 import { explorerApi as BitPayApi } from './bitcoin/bitpay';
 
 export type TExplorerFunctionsArray = Array<{
-  parsingFunction: (transactionId: string, chain: SupportedChains) => Promise<TransactionData>;
+  getTxData: (transactionId: string, chain: SupportedChains) => Promise<TransactionData>;
   priority?: number;
 }>;
-export type TExplorerParsingFunction = ((jsonResponse, chain?: SupportedChains) => TransactionData) |
-((jsonResponse, chain?: SupportedChains) => Promise<TransactionData>);
+export type TExplorerParsingFunction = ((jsonResponse, chain?: SupportedChains, key?: string, keyPropertyName?: string) => TransactionData) |
+((jsonResponse, chain?: SupportedChains, key?: string, keyPropertyName?: string) => Promise<TransactionData>);
 
 export function explorerFactory (TransactionAPIArray: ExplorerAPI[]): TExplorerFunctionsArray {
   return TransactionAPIArray
     .map(explorerAPI => (
       {
-        parsingFunction: async (transactionId, chain) => await getTransactionFromApi(explorerAPI, transactionId, chain),
+        getTxData: async (transactionId, chain) => await getTransactionFromApi(explorerAPI, transactionId, chain),
         priority: explorerAPI.priority
       }
     ));
@@ -36,14 +36,14 @@ export async function getTransactionFromApi (
   chain: SupportedChains
 ): Promise<TransactionData> {
   const requestUrl = buildTransactionServiceUrl({
-    serviceUrls: explorerAPI.serviceURL,
+    explorerAPI,
     transactionId,
     isTestApi: isTestChain(chain)
   });
 
   try {
     const response = await request({ url: requestUrl });
-    return await explorerAPI.parsingFunction(JSON.parse(response), chain);
+    return await explorerAPI.parsingFunction(JSON.parse(response), chain, explorerAPI.key, explorerAPI.keyPropertyName);
   } catch (err) {
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
   }
@@ -61,8 +61,12 @@ const EthereumTransactionAPIArray = [
   BlockCypherETHApi
 ];
 
-export const BitcoinExplorers: TExplorerFunctionsArray = explorerFactory(BitcoinTransactionAPIArray);
-export const EthereumExplorers: TExplorerFunctionsArray = explorerFactory(EthereumTransactionAPIArray);
+const BlockchainExplorersWithSpentOutputInfo = [
+  BlockCypherBTCApi
+];
 
-// for legacy (pre-v2) Blockcerts
-export const BlockchainExplorersWithSpentOutputInfo: TExplorerFunctionsArray = explorerFactory([BlockCypherBTCApi]);
+export {
+  BitcoinTransactionAPIArray,
+  EthereumTransactionAPIArray,
+  BlockchainExplorersWithSpentOutputInfo
+};

@@ -6,6 +6,9 @@ import { TransactionData } from '../../../src/models/TransactionData';
 import { getDefaultExplorers } from '../../../src/explorers';
 import { explorerFactory } from '../../../src/explorers/explorer';
 import { ExplorerAPI } from '../../../src/certificate';
+import { TRANSACTION_APIS } from '../../../src/constants/api';
+import { SupportedChains } from '../../../src/constants/blockchains';
+import * as RequestService from '../../../src/services/request';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -66,13 +69,13 @@ describe('Verifier entity test suite', function () {
 
       describe('explorerAPIs', function () {
         describe('when it is undefined or null', function () {
-          it('should set the explorerAPIs as an empty array to the verifier object', function () {
-            expect(verifierInstance.explorerAPIs).toEqual(getDefaultExplorers());
+          it('should not define a custom property to the instance explorerAPIs property', function () {
+            expect(verifierInstance.explorerAPIs.custom).toBeUndefined();
           });
         });
 
-        describe('when it is a valid explorer API object', function () {
-          describe('and the explorer API has a priority set to -1', function () {
+        describe('when it is a valid custom explorer API object', function () {
+          describe('and the custom explorer API has a priority set to -1', function () {
             it('should throw an error', function () {
               const fixture = Object.assign({}, verifierParamFixture);
               const fixtureExplorerAPI: ExplorerAPI[] = [{
@@ -97,7 +100,7 @@ describe('Verifier entity test suite', function () {
             });
           });
 
-          describe('and the explorer API has a missing parsing function', function () {
+          describe('and the custom explorer API has a missing parsing function', function () {
             it('should throw an error', function () {
               const fixture = Object.assign({}, verifierParamFixture);
               const fixtureExplorerAPI: ExplorerAPI[] = [{
@@ -115,25 +118,67 @@ describe('Verifier entity test suite', function () {
             });
           });
 
-          it('should set the explorerAPIs to the verifier object', function () {
-            const fixture = Object.assign({}, verifierParamFixture);
-            const fixtureExplorerAPI: ExplorerAPI[] = [{
-              serviceURL: 'https://explorer-example.com',
-              priority: 0,
-              parsingFunction: (): TransactionData => {
-                return {
+          describe('and the custom explorer API object is valid', function () {
+            it('should set the explorerAPIs to the verifier object', function () {
+              const fixture = Object.assign({}, verifierParamFixture);
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceURL: 'https://explorer-example.com',
+                priority: 0,
+                parsingFunction: (): TransactionData => {
+                  return {
+                    remoteHash: 'a',
+                    issuingAddress: 'b',
+                    time: 'c',
+                    revokedAddresses: ['d']
+                  };
+                }
+              }];
+              fixture.explorerAPIs = fixtureExplorerAPI;
+              const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
+              expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
+              const verifierInstance = new Verifier(fixture);
+              expect(JSON.stringify(verifierInstance.explorerAPIs)).toEqual(JSON.stringify(expectedExplorers));
+            });
+          });
+
+          describe('and it references a default explorer API used for multiple blockchains', function () {
+            let requestStub: sinon.SinonStub;
+            let instance: Verifier;
+            const fixtureServiceURL = 'a-totally-custom-url';
+
+            beforeAll(function () {
+              requestStub = sinon.stub(RequestService, 'request').resolves(JSON.stringify({}));
+              const fixtureExplorerAPI: ExplorerAPI[] = [{
+                serviceName: TRANSACTION_APIS.blockcypher,
+                serviceURL: fixtureServiceURL,
+                keyPropertyName: 'apiKey',
+                key: 'a-custom-api-key',
+                parsingFunction: () => ({ // prevent throwing error when executing
                   remoteHash: 'a',
                   issuingAddress: 'b',
                   time: 'c',
                   revokedAddresses: ['d']
-                };
-              }
-            }];
-            fixture.explorerAPIs = fixtureExplorerAPI;
-            const expectedExplorers: TExplorerAPIs = getDefaultExplorers();
-            expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
-            const verifierInstance = new Verifier(fixture);
-            expect(JSON.stringify(verifierInstance.explorerAPIs)).toEqual(JSON.stringify(expectedExplorers));
+                })
+              }];
+              instance = new Verifier({
+                ...verifierParamFixture,
+                explorerAPIs: fixtureExplorerAPI
+              });
+            });
+
+            afterAll(function () {
+              requestStub.restore();
+            });
+
+            it('should merge and overwrite the first occurrence of the default explorer API info with the provided one', async function () {
+              await instance.explorerAPIs.ethereum[1].getTxData('transaction-id', SupportedChains.Ethmain);
+              expect(requestStub.firstCall.args[0]).toEqual({ url: `${fixtureServiceURL}?apiKey=a-custom-api-key` });
+            });
+
+            it('should merge and overwrite the second occurrence of the default explorer API info with the provided one', async function () {
+              await instance.explorerAPIs.bitcoin[0].getTxData('transaction-id', SupportedChains.Bitcoin);
+              expect(requestStub.secondCall.args[0]).toEqual({ url: `${fixtureServiceURL}?apiKey=a-custom-api-key` });
+            });
           });
         });
       });
@@ -181,14 +226,12 @@ describe('Verifier entity test suite', function () {
           issuingAddress: 'an-issuing-address'
         };
         const stubbedExplorer = {
-          parsingFunction: sinon.stub().resolves(mockTxData)
+          getTxData: sinon.stub().resolves(mockTxData)
         };
-        const defaultExplorers = getDefaultExplorers();
-        defaultExplorers.bitcoin[0] = stubbedExplorer;
-        const verifier = new Verifier(verifierParamFixture);
-        await verifier.verify();
-        expect(stubbedExplorer.parsingFunction.calledOnce).toBe(true);
-        sinon.restore();
+        const verifierInstance = new Verifier(verifierParamFixture);
+        verifierInstance.explorerAPIs.bitcoin[0] = stubbedExplorer;
+        await verifierInstance.verify();
+        expect(stubbedExplorer.getTxData.calledOnce).toBe(true);
       });
     });
   });

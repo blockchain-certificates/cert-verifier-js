@@ -2,6 +2,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import * as Explorers from '../../../src/explorers/explorer';
 import sinon from 'sinon';
+import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('given the certificate is a revoked certificate', function () {
   describe('and the revocationList is not provided in the certificate', function () {
@@ -15,7 +16,7 @@ describe('given the certificate is a revoked certificate', function () {
         time: '2019-10-15T09:20:24.000Z',
         revokedAddresses: []
       });
-      certificate = new Certificate(FIXTURES.EthereumRopstenRevokedNoRevocationList);
+      certificate = new Certificate(FIXTURES.EthereumRopstenRevokedNoRevocationList, { explorerAPIs: [etherscanApiWithKey] });
       await certificate.init();
       result = await certificate.verify();
     });

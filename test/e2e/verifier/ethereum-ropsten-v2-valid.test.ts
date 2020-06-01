@@ -2,6 +2,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import * as Explorers from '../../../src/explorers/explorer';
 import sinon from 'sinon';
+import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('given the certificate is a valid ethereum ropsten', function () {
   it('should verify successfully', async function () {
@@ -11,7 +12,7 @@ describe('given the certificate is a valid ethereum ropsten', function () {
       time: '2018-05-30T03:14:05.000Z',
       revokedAddresses: []
     });
-    const certificate = new Certificate(FIXTURES.EthereumRopstenV2Valid);
+    const certificate = new Certificate(FIXTURES.EthereumRopstenV2Valid, { explorerAPIs: [etherscanApiWithKey] });
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

@@ -5,6 +5,7 @@ import { stripHashPrefix } from '../utils/stripHashPrefix';
 import { getText } from '../../domain/i18n/useCases';
 import { TransactionData } from '../../models/TransactionData';
 import { ExplorerAPI, ExplorerURLs } from '../../certificate';
+import { TRANSACTION_APIS } from '../../constants/api';
 
 function parsingFunction (jsonResponse): TransactionData {
   if (jsonResponse.confirmations < CONFIG.MininumConfirmations) {
@@ -33,6 +34,7 @@ const serviceURL: ExplorerURLs = {
 
 export const explorerApi: ExplorerAPI = {
   serviceURL,
+  serviceName: TRANSACTION_APIS.blockcypher,
   parsingFunction,
   priority: -1
 };

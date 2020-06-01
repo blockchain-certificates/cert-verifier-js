@@ -232,12 +232,18 @@ const certificate = new Certificate(definition, options);
 
 The expected shape of the object is as follows:
 ```javascript
+  key?: string;
+  keyPropertyName?: string;
+  serviceName?: TRANSACTION_APIS; 
   serviceURL: string | ExplorerURLs;
-  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after
+  priority: 0 | 1 | -1; // 0 means the custom API will be ran before the public APIs listed, 1 after, -1 is reserved for default explorers
   parsingFunction: TExplorerParsingFunction;
 ```
 
 More information on each item:
+- `serviceName`: when a consumer wants to overwrite some information of the default explorer APIs provided (for instance provide their own keys to the service API), they should match the name of that API service with this property.
+- `key`: the explorer service API key value.
+- `keyPropertyName`: the expected parameter name to hold the key value. Depends on each service. (ie: Etherscan: "apiKey", Blockcypher: "token", etc). Required when a key is passed. 
 - `serviceURL`: when set to `string` will be assumed to be set for the `mainnet` of the Blockchain.
 When set to an object, the customer will be able to provide a service url for the `mainnet` and for the `testnet` versions of the blockchain.
 The object is then shaped as such:
@@ -250,7 +256,12 @@ The object is then shaped as such:
 
 - `priority`: this option allows the customer to decide if they wish to see their custom explorers to be executed before/after the default ones provided by the library (see the constants/api file for a list of default explorers). If the option is set to `0`, custom explorers will be called first. If set to `1` they   will be called after the default ones. `-1` value is reserved for default explorers.
 
-- `parsingFunction`: this function is required to parse the data (server response) as returned from the API, into the `TransactionData` shape that will be used by the library.
+- `parsingFunction (response: Object, chain?: SupportedChains, key?: string, keyPropertyName?: string)`: this function is required to parse the data (server response) as returned from the API, into the `TransactionData` shape that will be used by the library.
+Arguments:
+- `response`: the response object as returned by the explorer service that was called.
+- `chain`: (optional) the blockchain which to lookup. Mostly used to identify if it is a test chain or a main chain.
+- `key`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for convenience.
+- `keyPropertyName`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for reference.
 The expected output shape is as follows:
 
 ```

@@ -10,7 +10,7 @@ import { ExplorerAPI } from '../../../src/certificate';
 import { TRANSACTION_APIS } from '../../../src/constants/api';
 import { getDefaultExplorers, overwriteDefaultExplorers } from '../../../src/explorers';
 
-describe('Bitcoin Explorer test suite', function () {
+describe('Blockchain Explorers test suite', function () {
   const fixtureTransactionId = '2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd';
   const assertionRequestUrl = `https://insight.bitpay.com/api/tx/${fixtureTransactionId}`;
   let stubRequest;
@@ -96,6 +96,59 @@ describe('Bitcoin Explorer test suite', function () {
         const output = overwriteDefaultExplorers([fixtureExplorer], [BitpayAPI, BlockcypherAPI]);
         const expectedOutput = [BitpayAPI, BlockcypherAPI];
         expect(output).toEqual(expectedOutput);
+      });
+    });
+  });
+
+  describe('getDefaultExplorers method', function () {
+    // This is hard to test from a data point of view since we are wrapping the explorers
+    it('should wrap the explorers and expose the getTxData method', function () {
+      const output = getDefaultExplorers();
+      expect(output.bitcoin[0].getTxData).toBeDefined();
+    });
+
+    it('should return the default explorers for bitcoin', function () {
+      const output = getDefaultExplorers();
+      expect(output.bitcoin.length).toBe(4);
+    });
+
+    it('should return the default explorers for ethereum', function () {
+      const output = getDefaultExplorers();
+      expect(output.ethereum.length).toBe(2);
+    });
+
+    it('should return the default explorers for v1 lookup', function () {
+      const output = getDefaultExplorers();
+      expect(output.v1.length).toBe(1);
+    });
+
+    describe('when it is called with custom explorers', function () {
+      describe('and one of the custom explorers matches one of the default explorers', function () {
+        it('should return the same expected amount of default explorers', function () {
+          const fixtureExplorer: ExplorerAPI = {
+            serviceName: TRANSACTION_APIS.bitpay,
+            key: 'a-custom-key',
+            keyPropertyName: 'apiKey'
+          };
+          const output = getDefaultExplorers([fixtureExplorer]);
+          expect(output.bitcoin.length).toBe(4);
+          expect(output.ethereum.length).toBe(2);
+          expect(output.v1.length).toBe(1);
+        });
+      });
+
+      describe('and none of the custom explorers matches the default explorers', function () {
+        it('should return the same expected amount of default explorers', function () {
+          const fixtureExplorer: ExplorerAPI = {
+            serviceURL: 'https//another-service.com/api',
+            key: 'a-custom-key',
+            keyPropertyName: 'apiKey'
+          };
+          const output = getDefaultExplorers([fixtureExplorer]);
+          expect(output.bitcoin.length).toBe(4);
+          expect(output.ethereum.length).toBe(2);
+          expect(output.v1.length).toBe(1);
+        });
       });
     });
   });

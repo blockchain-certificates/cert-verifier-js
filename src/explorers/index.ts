@@ -14,7 +14,7 @@ export interface TDefaultExplorersPerBlockchain {
   v1: TExplorerFunctionsArray;
 }
 
-export function overwriteDefaultExplorers (explorerAPIs: ExplorerAPI[], defaultExplorers: ExplorerAPI[]): ExplorerAPI[] {
+export function overwriteDefaultExplorers (explorerAPIs: ExplorerAPI[] = [], defaultExplorers: ExplorerAPI[] = []): ExplorerAPI[] {
   const userSetExplorerAPIsName = explorerAPIs
     .map(explorerAPI => explorerAPI.serviceName)
     .filter(name => !!name)
@@ -37,10 +37,10 @@ export function overwriteDefaultExplorers (explorerAPIs: ExplorerAPI[], defaultE
   return defaultExplorers;
 }
 
-export function getDefaultExplorers (explorerAPIs: ExplorerAPI[]): TDefaultExplorersPerBlockchain {
+export function getDefaultExplorers (explorerAPIs?: ExplorerAPI[]): TDefaultExplorersPerBlockchain {
   return {
-    bitcoin: explorerFactory(BitcoinExplorers),
-    ethereum: explorerFactory(EthereumExplorers),
-    v1: explorerFactory(BlockchainExplorersWithSpentOutputInfo)
+    bitcoin: explorerFactory(overwriteDefaultExplorers(explorerAPIs, BitcoinExplorers)),
+    ethereum: explorerFactory(overwriteDefaultExplorers(explorerAPIs, EthereumExplorers)),
+    v1: explorerFactory(overwriteDefaultExplorers(explorerAPIs, BlockchainExplorersWithSpentOutputInfo))
   };
 }

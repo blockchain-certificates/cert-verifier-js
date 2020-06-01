@@ -14,9 +14,8 @@ export interface TDefaultExplorersPerBlockchain {
   v1: TExplorerFunctionsArray;
 }
 
-function cleanupExplorerAPIs (explorerAPIs: ExplorerAPI[], indexes: number[]) {
-  // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-  indexes.forEach(index => delete explorerAPIs[index]); // remove modified explorer to avoid setting them in the custom option later
+function cleanupExplorerAPIs (explorerAPIs: ExplorerAPI[], indexes: number[]): void {
+  indexes.forEach(index => explorerAPIs.splice(index, 1)); // remove modified explorer to avoid setting them in the custom option later
 }
 const overwrittenIndexes: number[] = [];
 
@@ -37,11 +36,11 @@ export function overwriteDefaultExplorers (explorerAPIs: ExplorerAPI[] = [], def
         if (!overwrittenIndexes.includes(explorerAPIsIndex)) {
           overwrittenIndexes.push(explorerAPIsIndex);
         }
-        if (lastSetOfExplorers) {
-          cleanupExplorerAPIs(explorerAPIs, overwrittenIndexes);
-        }
       } else {
         overwrittenExplorers.push(defaultExplorerAPI);
+      }
+      if (lastSetOfExplorers) {
+        cleanupExplorerAPIs(explorerAPIs, overwrittenIndexes);
       }
       return overwrittenExplorers;
     }, []);

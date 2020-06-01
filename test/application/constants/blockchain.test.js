@@ -1,5 +1,5 @@
-import { BLOCKCHAINS } from '../../src/constants';
-import { isTestChain } from '../../src/constants/blockchains';
+import { BLOCKCHAINS } from '../../../src/constants';
+import { isTestChain } from '../../../src/constants/blockchains';
 
 describe('isTestChain method', function () {
   describe('given the chain is bitcoin', function () {

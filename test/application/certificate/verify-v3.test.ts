@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import * as Explorers from '../../../src/explorers/explorer';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
+import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -17,7 +18,7 @@ describe('Certificate test suite', function () {
             time: '2020-03-11T14:48:23.000Z',
             revokedAddresses: []
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3Alpha);
+          certificate = new Certificate(FIXTURES.BlockcertsV3Alpha, { explorerAPIs: [etherscanApiWithKey] });
           await certificate.init();
         });
 
@@ -61,7 +62,7 @@ describe('Certificate test suite', function () {
             time: '2020-02-04T13:52:09.000Z',
             revokedAddresses: []
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered);
+          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered, { explorerAPIs: [etherscanApiWithKey] });
           await certificate.init();
         });
 
@@ -95,7 +96,7 @@ describe('Certificate test suite', function () {
             time: '2020-03-23T20:38:13.000Z',
             revokedAddresses: []
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
+          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext, { explorerAPIs: [etherscanApiWithKey] });
           await certificate.init();
         });
 

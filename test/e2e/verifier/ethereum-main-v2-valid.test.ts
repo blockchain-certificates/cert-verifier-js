@@ -2,6 +2,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import * as Explorers from '../../../src/explorers/explorer';
 import sinon from 'sinon';
+import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('given the certificate is a valid ethereum main', function () {
   it('should verify successfully', async function () {
@@ -11,7 +12,7 @@ describe('given the certificate is a valid ethereum main', function () {
       time: '2018-06-01T20:47:55.000Z',
       revokedAddresses: []
     });
-    const certificate = new Certificate(FIXTURES.EthereumMainV2Valid);
+    const certificate = new Certificate(FIXTURES.EthereumMainV2Valid, { explorerAPIs: [etherscanApiWithKey] });
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

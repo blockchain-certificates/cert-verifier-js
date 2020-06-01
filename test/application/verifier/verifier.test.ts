@@ -4,7 +4,7 @@ import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../
 import Verifier, { TExplorerAPIs } from '../../../src/verifier';
 import { TransactionData } from '../../../src/models/TransactionData';
 import { getDefaultExplorers } from '../../../src/explorers';
-import { explorerFactory, TExplorerFunctionsArray } from '../../../src/explorers/explorer';
+import { explorerFactory } from '../../../src/explorers/explorer';
 import { ExplorerAPI } from '../../../src/certificate';
 import { TRANSACTION_APIS } from '../../../src/constants/api';
 import { SupportedChains } from '../../../src/constants/blockchains';
@@ -12,22 +12,18 @@ import * as RequestService from '../../../src/services/request';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
-  let verifierParamFixture;
-
-  beforeEach(function () {
-    verifierParamFixture = {
-      certificateJson: fixture,
-      chain: BLOCKCHAINS.bitcoin,
-      expires: '',
-      id: fixture.id,
-      issuer: fixture.badge.issuer,
-      receipt: fixture.signature,
-      revocationKey: null,
-      transactionId: fixture.signature.anchors[0].sourceId,
-      version: CERTIFICATE_VERSIONS.V2_0,
-      explorerAPIs: undefined
-    };
-  });
+  const verifierParamFixture = {
+    certificateJson: fixture,
+    chain: BLOCKCHAINS.bitcoin,
+    expires: '',
+    id: fixture.id,
+    issuer: fixture.badge.issuer,
+    receipt: fixture.signature,
+    revocationKey: null,
+    transactionId: fixture.signature.anchors[0].sourceId,
+    version: CERTIFICATE_VERSIONS.V2_0,
+    explorerAPIs: undefined
+  };
 
   afterEach(function () {
     verifierInstance = null;
@@ -145,12 +141,15 @@ describe('Verifier entity test suite', function () {
             });
           });
 
-          describe('and it references a default explorer API', function () {
-            it('should merge and overwrite the default explorer API info with the provided one', async function () {
-              const requestStub = sinon.stub(RequestService, 'request').resolves(JSON.stringify({}));
-              const fixtureServiceURL = 'a-totally-custom-url';
+          describe('and it references a default explorer API used for multiple blockchains', function () {
+            let requestStub: sinon.SinonStub;
+            let instance: Verifier;
+            const fixtureServiceURL = 'a-totally-custom-url';
+
+            beforeAll(function () {
+              requestStub = sinon.stub(RequestService, 'request').resolves(JSON.stringify({}));
               const fixtureExplorerAPI: ExplorerAPI[] = [{
-                serviceName: TRANSACTION_APIS.etherscan,
+                serviceName: TRANSACTION_APIS.blockcypher,
                 serviceURL: fixtureServiceURL,
                 keyPropertyName: 'apiKey',
                 key: 'a-custom-api-key',
@@ -161,13 +160,24 @@ describe('Verifier entity test suite', function () {
                   revokedAddresses: ['d']
                 })
               }];
-              const verifierInstance = new Verifier({
+              instance = new Verifier({
                 ...verifierParamFixture,
                 explorerAPIs: fixtureExplorerAPI
               });
-              await verifierInstance.explorerAPIs.ethereum[0].getTxData('transaction-id', SupportedChains.Ethmain);
+            });
+
+            afterAll(function () {
+              requestStub.restore();
+            });
+
+            it('should merge and overwrite the first occurrence of the default explorer API info with the provided one', async function () {
+              await instance.explorerAPIs.ethereum[1].getTxData('transaction-id', SupportedChains.Ethmain);
               expect(requestStub.firstCall.args[0]).toEqual({ url: `${fixtureServiceURL}?apiKey=a-custom-api-key` });
-              sinon.restore();
+            });
+
+            it('should merge and overwrite the second occurrence of the default explorer API info with the provided one', async function () {
+              await instance.explorerAPIs.bitcoin[0].getTxData('transaction-id', SupportedChains.Bitcoin);
+              expect(requestStub.secondCall.args[0]).toEqual({ url: `${fixtureServiceURL}?apiKey=a-custom-api-key` });
             });
           });
         });

@@ -83,6 +83,21 @@ describe('Blockchain Explorers test suite', function () {
         const expectedOutput = [Object.assign(mockDefaultExplorer, fixtureExplorer), BlockcypherAPI];
         expect(output).toEqual(expectedOutput);
       });
+
+      describe('and the explorer overwrite is malformed', function () {
+        describe('when a key is set but no keyPropertyName', function () {
+          it('should throw an error', function () {
+            const fixtureExplorer: ExplorerAPI = {
+              serviceName: TRANSACTION_APIS.bitpay,
+              key: 'a-custom-key'
+            };
+
+            expect(() => {
+              overwriteDefaultExplorers([fixtureExplorer], [BitpayAPI, BlockcypherAPI]);
+            }).toThrow('Property keyPropertyName is not set for bitpay. Cannot pass the key property to the service.');
+          });
+        });
+      });
     });
 
     describe('given it was passed no default explorer match', function () {

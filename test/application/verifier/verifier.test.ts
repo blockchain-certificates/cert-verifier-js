@@ -30,6 +30,9 @@ describe('Verifier entity test suite', function () {
   });
 
   describe('constructor method', function () {
+    /* eslint @typescript-eslint/no-unused-vars: "off" */
+    let instance;
+
     beforeEach(function () {
       verifierInstance = new Verifier(verifierParamFixture);
     });
@@ -95,7 +98,7 @@ describe('Verifier entity test suite', function () {
               expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
 
               expect(() => {
-                const instance = new Verifier(fixture);
+                instance = new Verifier(fixture);
               }).toThrow('One or more of your custom explorer APIs has a priority set below zero');
             });
           });
@@ -113,7 +116,7 @@ describe('Verifier entity test suite', function () {
               expectedExplorers.custom = explorerFactory(fixtureExplorerAPI);
 
               expect(() => {
-                const instance = new Verifier(fixture);
+                instance = new Verifier(fixture);
               }).toThrow('One or more of your custom explorer APIs does not have a parsing function');
             });
           });

@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "@babel/runtime": "^7.8.7",
+    "@babel/runtime": "^7.11.2",
     "@babel/runtime-corejs3": "^7.8.7",
     "@vaultie/lds-merkle-proof-2019": "0.0.6",
     "bigi": "^1.4.2",

@@ -3,6 +3,7 @@ import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import { isV3 } from '../../../constants/certificateVersions';
 import { getIssuerProfile } from '../../../constants/verificationSubSteps';
+import { deepCopy } from '../../../helpers/object';
 
 const versionVerificationMap = {
   [NETWORKS.mainnet]: [
@@ -54,7 +55,7 @@ function stepsObjectToArray (stepsObject) {
  * @returns {any}
  */
 function setSubStepsToSteps (subSteps) {
-  const steps = JSON.parse(JSON.stringify(STEPS.language));
+  const steps = deepCopy(STEPS.language);
   subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
   return steps;
 }

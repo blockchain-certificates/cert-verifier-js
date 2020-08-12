@@ -8,6 +8,7 @@ import { TExplorerParsingFunction } from './explorers/explorer';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { TRANSACTION_APIS } from './constants/api';
+import { deepCopy } from './helpers/object';
 
 export interface ExplorerURLs {
   main: string;
@@ -71,7 +72,7 @@ export default class Certificate {
     }
 
     // Keep certificate JSON object
-    this.certificateJson = JSON.parse(JSON.stringify(certificateDefinition));
+    this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
   }
 
   async init (): Promise<void> {
@@ -98,7 +99,7 @@ export default class Certificate {
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
       version: this.version,
-      explorerAPIs: this.explorerAPIs
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
     return await verifier.verify(stepCallback);
   }

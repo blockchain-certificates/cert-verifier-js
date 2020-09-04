@@ -25,13 +25,36 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
 
   describe('given it is called with an revocationListUrl', function () {
     const revokedAssertionsAssertionString = JSON.stringify(revokedAssertionsFixture);
-    const issuerIdFixture = 'http://domain.tld';
+    const issuerIdFixture = 'http://domain.tld/path';
+
+    describe('and an assertionId', function () {
+      it('should request the correct URL with the appended assertionId', async function () {
+        stubRequest.resolves(revokedAssertionsAssertionString);
+        const fixtureAssertionId = 'fixture-assertion-id';
+        await getRevokedAssertions(issuerIdFixture, fixtureAssertionId);
+        expect(stubRequest.getCall(0).args[0]).toEqual({
+          url: 'http://domain.tld/path?assertionId=fixture-assertion-id'
+        });
+      });
+    });
 
     describe('when the request is successful', function () {
-      it('should return the revoked assertions JSON object', async function () {
-        stubRequest.resolves(revokedAssertionsAssertionString);
-        const result = await getRevokedAssertions(issuerIdFixture);
-        expect(result).toEqual(revokedAssertionsFixture.revokedAssertions);
+      describe('and the response does not have revokedAssertions', function () {
+        it('should return an empty array', async function () {
+          const revokedAssertionsAssertionCopy = { ...revokedAssertionsFixture };
+          delete revokedAssertionsAssertionCopy.revokedAssertions;
+          stubRequest.resolves(JSON.stringify(revokedAssertionsAssertionCopy));
+          const result = await getRevokedAssertions(issuerIdFixture);
+          expect(result).toEqual([]);
+        });
+      });
+
+      describe('and the response has revokedAssertions', function () {
+        it('should return the revoked assertions JSON object', async function () {
+          stubRequest.resolves(revokedAssertionsAssertionString);
+          const result = await getRevokedAssertions(issuerIdFixture);
+          expect(result).toEqual(revokedAssertionsFixture.revokedAssertions);
+        });
       });
     });
 

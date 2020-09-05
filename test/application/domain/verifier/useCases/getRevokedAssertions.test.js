@@ -30,10 +30,10 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
     describe('and an assertionId', function () {
       it('should request the correct URL with the appended assertionId', async function () {
         stubRequest.resolves(revokedAssertionsAssertionString);
-        const fixtureAssertionId = 'fixture-assertion-id';
+        const fixtureAssertionId = 'https://fixture-assertion-id.domain.tld';
         await getRevokedAssertions(issuerIdFixture, fixtureAssertionId);
         expect(stubRequest.getCall(0).args[0]).toEqual({
-          url: 'http://domain.tld/path?assertionId=fixture-assertion-id'
+          url: 'http://domain.tld/path?assertionId=https%3A%2F%2Ffixture-assertion-id.domain.tld'
         });
       });
     });

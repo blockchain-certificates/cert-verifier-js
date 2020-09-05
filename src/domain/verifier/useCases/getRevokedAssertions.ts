@@ -15,7 +15,7 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
   const errorMessage: string = getText('errors', 'getRevokedAssertions');
 
   if (assertionId) {
-    revocationListUrl = safelyAppendUrlParameter(revocationListUrl, ASSERTION_ID_NAME, assertionId);
+    revocationListUrl = safelyAppendUrlParameter(revocationListUrl, ASSERTION_ID_NAME, encodeURIComponent(assertionId));
   }
 
   const response: any = await request({ url: revocationListUrl }).catch(() => {

@@ -1,5 +1,6 @@
 import { ExplorerAPI } from '../certificate';
 import { TRANSACTION_ID_PLACEHOLDER } from '../constants/api';
+import { safelyAppendUrlParameter } from '../helpers/url';
 
 function appendApiIdentifier (url: string, explorerAPI: ExplorerAPI): string {
   if (!explorerAPI.key) {
@@ -10,8 +11,7 @@ function appendApiIdentifier (url: string, explorerAPI: ExplorerAPI): string {
     throw new Error(`No keyPropertyName defined for explorerAPI ${explorerAPI.serviceName}`);
   }
 
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}${explorerAPI.keyPropertyName}=${explorerAPI.key}`;
+  return safelyAppendUrlParameter(url, explorerAPI.keyPropertyName, explorerAPI.key);
 }
 
 export function buildTransactionServiceUrl ({

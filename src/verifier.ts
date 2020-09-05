@@ -251,7 +251,7 @@ export default class Verifier {
       // Get revoked assertions
       revokedAddresses = await this._doAsyncAction(
         null,
-        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson))
+        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson), this.id)
       );
       keys = this.id;
     }

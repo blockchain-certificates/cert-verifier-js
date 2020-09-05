@@ -21,6 +21,8 @@ module.exports = {
     '@typescript-eslint/interface-name-prefix': [0],
     '@typescript-eslint/strict-boolean-expressions': [0],
     '@typescript-eslint/no-explicit-any': [0], // remove one day, maybe. This is early days so we have some anys.
-    '@typescript-eslint/restrict-plus-operands': [0] // when this rule functions correctly, we can remove it. It does not pick up the correct type when returning from a JS function
+    '@typescript-eslint/restrict-plus-operands': [0], // when this rule functions correctly, we can remove it. It
+    // does not pick up the correct type when returning from a JS function
+    '@typescript-eslint/no-inferrable-types': 'off'
   }
 };

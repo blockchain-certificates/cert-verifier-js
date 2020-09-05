@@ -275,6 +275,11 @@ interface TransactionData {
 
 The consumer needs to write their own function for each service used.
 
+## Revocation
+The `assertionId` is appended to the `revocationList` URL request as query parameter, to allow the filtering of the
+ `revokedAssertions` by the provider: `{revocationList}?assertionId={assertionIdValue}` 
+ More details here [in this ticket](https://github.com/blockchain-certificates/cert-verifier-js/issues/715).
+
 ## Contribute
 
 ### Run the tests

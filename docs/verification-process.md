@@ -221,7 +221,7 @@ For purposes of demonstrating the process, we used the blockchain.info explorer 
 
 Using a blockchain transaction lookup service is effectively putting trust into that service, but that service could be compromised in a number of ways. A more secure approach is to run a full bitcoin node and look up the transaction directly. However, this requires machine resources that may not be feasible in all installations. At minimum, a mitigation is to check multiple services to see if they agree.
 
-Note that this also assumes the verifier is online. We are pursuing alternative ways to resolve this and the above issue (securely looking up a transaction withput SPOFs and without prohibitive hardware resources).
+Note that this also assumes the verifier is online. We are pursuing alternative ways to resolve this and the above issue (securely looking up a transaction without SPOFs and without prohibitive hardware resources).
 
 Lastly, it is a best practice with blockchain transactions to factor in the number of confirmations a transaction has received. For payment transactions, more confirmations increases confidence that the transaction is accepted by the network and that is not a double spend. The minimum  number of confirmations required by Bitcoin payment acceptors varies per confidence required (some as low as 3 confirmations; some 6). With Blockcerts, issuers have less incentive to perform double spends, but checking the number of confirmations is a good practice.
 

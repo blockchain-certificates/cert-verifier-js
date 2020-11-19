@@ -1,4 +1,4 @@
-import CERTIFICATE_VERSIONS from '../constants/certificateVersions';
+import { isV1 } from '../constants/certificateVersions';
 import CONFIG from '../constants/config';
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
@@ -60,7 +60,7 @@ function getUnmappedFields (normalized): string[] | null {
 export default async function computeLocalHash (document, version): Promise<string> {
   let expandContext = document['@context'];
   const theDocument = document;
-  if (version === CERTIFICATE_VERSIONS.V2_0 && CONFIG.CheckForUnmappedFields) {
+  if (!isV1(version) && CONFIG.CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {

@@ -5,7 +5,8 @@ import Versions from '../../../src/constants/certificateVersions';
 describe('computeLocalHash test suite', function () {
   describe('given it receives a document', function () {
     it('should return the SHA-256 hashed version', async function () {
-      const output = await computeLocalHash(blockcertsV3Fixture, Versions.V3_0_alpha);
+      const fixture = JSON.parse(JSON.stringify(blockcertsV3Fixture));
+      const output = await computeLocalHash(fixture, Versions.V3_0_alpha);
       expect(output).toBe('5a44e794431569f4b50a44336c3d445085f09ac5785e38e133385fb486ada9c5');
     });
   });
@@ -16,7 +17,7 @@ describe('computeLocalHash test suite', function () {
       fixture.testUnmapped = 'this field is not mapped';
       await expect(async () => {
         await computeLocalHash(fixture, Versions.V3_0_alpha);
-      }).rejects.toThrow('to');
+      }).rejects.toThrow('Found unmapped fields during JSON-LD normalization');
     });
   });
 });

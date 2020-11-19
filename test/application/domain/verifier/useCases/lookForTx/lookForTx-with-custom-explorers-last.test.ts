@@ -48,7 +48,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
       stubbedDefaultExplorer.resetHistory();
     });
 
-    describe('given the custom explorers return the transaction', function () {
+    describe('given the default explorers return the transaction', function () {
       let response: TransactionData;
 
       beforeEach(async function () {

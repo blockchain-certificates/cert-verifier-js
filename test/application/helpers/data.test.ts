@@ -1,4 +1,4 @@
-import { toByteArray } from '../../../src/helpers/data';
+import { toByteArray, toUTF8Data } from '../../../src/helpers/data';
 
 describe('data helper test suite', function () {
   describe('toByteArray function', function () {
@@ -7,6 +7,15 @@ describe('data helper test suite', function () {
       const expectedOutput = [106, 213, 46, 157, 185, 34, 224, 194, 100, 140, 232, 248, 143, 148, 183, 227, 118, 218, 249, 175, 96, 167, 199, 130, 219];
       const output = toByteArray(testString);
       expect(output).toEqual(expectedOutput);
+    });
+  });
+});
+
+describe('toUTF8Data method', function () {
+  describe('given a string', function () {
+    it('should return a UTF8 encoded array from the characters', function () {
+      const output = toUTF8Data('test');
+      expect(output).toEqual([116, 101, 115, 116]);
     });
   });
 });

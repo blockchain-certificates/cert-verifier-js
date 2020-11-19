@@ -37,4 +37,24 @@ describe('Verifier domain ensureValidity use case test suite', function () {
       }).toThrow('One or more of your custom explorer APIs does not have a parsing function');
     });
   });
+
+  describe('given everything is as expected', function () {
+    const fixtureExplorerAPIs: ExplorerAPI[] = [{
+      serviceURL: 'https://fixture-url.tld',
+      priority: 0,
+      parsingFunction: (): TransactionData => {
+        return {
+          remoteHash: 'a',
+          issuingAddress: 'b',
+          time: 'c',
+          revokedAddresses: ['d']
+        };
+      }
+    }];
+
+    it('should return true', function () {
+      const test = ensureValidity(fixtureExplorerAPIs);
+      expect(test).toBe(true);
+    });
+  });
 });

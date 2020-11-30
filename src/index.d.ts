@@ -53,7 +53,7 @@ declare class Certificate {
   public chain: IBlockchainObject;
   public description?: string; // v1
   public expires: string;
-  public explorerAPIs: ExplorerAPI[] = [];
+  public explorerAPIs: ExplorerAPI[];
   public id: string;
   public isFormatValid: boolean;
   public issuedOn: string;

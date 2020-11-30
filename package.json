@@ -110,7 +110,7 @@
     "rollup-plugin-terser": "^7.0.0",
     "rollup-plugin-typescript": "^1.0.1",
     "semantic-release": "^17.0.2",
-    "semistandard": "^14.2.0",
+    "semistandard": "^16.0.0",
     "sinon": "^9.0.0",
     "snazzy": "^9.0.0",
     "ts-jest": "^25.3.1",

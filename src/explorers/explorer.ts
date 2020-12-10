@@ -8,10 +8,8 @@ import { TransactionData } from '../models/TransactionData';
 import { ExplorerAPI } from '../certificate';
 import { explorerApi as EtherscanApi } from './ethereum/etherscan';
 import { explorerApi as BlockCypherETHApi } from './ethereum/blockcypher';
-import { explorerApi as BlockExplorerApi } from './bitcoin/blockexplorer';
 import { explorerApi as BlockstreamApi } from './bitcoin/blockstream';
 import { explorerApi as BlockCypherBTCApi } from './bitcoin/blockcypher';
-import { explorerApi as BitPayApi } from './bitcoin/bitpay';
 
 export type TExplorerFunctionsArray = Array<{
   getTxData: (transactionId: string, chain: SupportedChains) => Promise<TransactionData>;
@@ -51,8 +49,6 @@ export async function getTransactionFromApi (
 
 const BitcoinTransactionAPIArray = [
   BlockCypherBTCApi,
-  BitPayApi,
-  BlockExplorerApi,
   BlockstreamApi
 ];
 

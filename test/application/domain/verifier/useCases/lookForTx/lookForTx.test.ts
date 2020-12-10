@@ -51,7 +51,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
         it('should use the bitcoin specific explorers', function () {
           const selectedSelectors = getExplorersByChain(SupportedChains.Bitcoin, CERTIFICATE_VERSIONS.V2_0, getDefaultExplorers());
           // because they are wrapped, we don't necessarily have the deep nature of the result, so we use a weak test to ensure
-          expect(selectedSelectors.length).toBe(4);
+          expect(selectedSelectors.length).toBe(2);
         });
       });
 
@@ -59,7 +59,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
         it('should use the bitcoin specific explorers', function () {
           const selectedSelectors = getExplorersByChain(SupportedChains.Mocknet, CERTIFICATE_VERSIONS.V2_0, getDefaultExplorers());
           // because they are wrapped, we don't necessarily have the deep nature of the result, so we use a weak test to ensure
-          expect(selectedSelectors.length).toBe(4);
+          expect(selectedSelectors.length).toBe(2);
         });
       });
 
@@ -67,7 +67,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
         it('should use the bitcoin specific explorers', function () {
           const selectedSelectors = getExplorersByChain(SupportedChains.Testnet, CERTIFICATE_VERSIONS.V2_0, getDefaultExplorers());
           // because they are wrapped, we don't necessarily have the deep nature of the result, so we use a weak test to ensure
-          expect(selectedSelectors.length).toBe(4);
+          expect(selectedSelectors.length).toBe(2);
         });
       });
 
@@ -75,7 +75,7 @@ describe('Verifier domain lookForTx use case test suite', function () {
         it('should use the bitcoin specific explorers', function () {
           const selectedSelectors = getExplorersByChain(SupportedChains.Regtest, CERTIFICATE_VERSIONS.V2_0, getDefaultExplorers());
           // because they are wrapped, we don't necessarily have the deep nature of the result, so we use a weak test to ensure
-          expect(selectedSelectors.length).toBe(4);
+          expect(selectedSelectors.length).toBe(2);
         });
       });
     });

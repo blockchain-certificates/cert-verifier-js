@@ -63,6 +63,7 @@
     "ecurve": "^1.0.4",
     "elliptic": "github:xg-wang/elliptic",
     "jsonld": "^1.8.1",
+    "lodash.clonedeep": "^4.5.0",
     "sha256": "^0.2.0",
     "xmlhttprequest": "^1.8.0"
   },

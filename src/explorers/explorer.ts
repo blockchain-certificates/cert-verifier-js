@@ -43,6 +43,7 @@ export async function getTransactionFromApi (
     const response = await request({ url: requestUrl });
     return await explorerAPI.parsingFunction(JSON.parse(response), chain, explorerAPI.key, explorerAPI.keyPropertyName);
   } catch (err) {
+    console.error(err);
     throw new VerifierError(SUB_STEPS.fetchRemoteHash, getText('errors', 'unableToGetRemoteHash'));
   }
 }

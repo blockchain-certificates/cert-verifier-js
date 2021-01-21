@@ -258,10 +258,10 @@ The object is then shaped as such:
 
 - `parsingFunction (response: Object, chain?: SupportedChains, key?: string, keyPropertyName?: string)`: this function is required to parse the data (server response) as returned from the API, into the `TransactionData` shape that will be used by the library.
 Arguments:
-- `response`: the response object as returned by the explorer service that was called.
-- `chain`: (optional) the blockchain which to lookup. Mostly used to identify if it is a test chain or a main chain.
-- `key`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for convenience.
-- `keyPropertyName`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for reference.
+  - `response`: the response object as returned by the explorer service that was called.
+  - `chain`: (optional) the blockchain which to lookup. Mostly used to identify if it is a test chain or a main chain.
+  - `key`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for convenience.
+  - `keyPropertyName`: (optional) when further calls need to be made to the same API, the API key is injected again to the parsing function for reference.
 The expected output shape is as follows:
 
 ```

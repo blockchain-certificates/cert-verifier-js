@@ -115,3 +115,9 @@ const fixtureV3 = {
     "verificationMethod": "ecdsa-koblitz-pubkey:0x7e30a37763e6Ba1fFeDE1750bBeFB4c60b17a1B3"
   }
 }
+
+module.exports = [
+  fixtureV1,
+  fixtureV2,
+  fixtureV3
+]

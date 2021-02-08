@@ -73,7 +73,7 @@ export default [
         extensions: ['.js', '.json']
       }),
       serve({
-        contentBase: [BUILD_OUTPUT_FOLDER, 'test/fixtures', 'dist'],
+        contentBase: [BUILD_OUTPUT_FOLDER, 'test/manual-testing/fixtures', 'dist'],
         host: '0.0.0.0',
         port: 8081,
         open: true,

@@ -120,7 +120,7 @@ describe('verifier build test suite', function () {
     const certificate = new Verifier.Certificate(fixtureV1);
     await certificate.init();
     const result = await certificate.verify();
-    expect(result.status).toBe('success');
+    expect(result.status).toBe('failure');
   });
 
   it('works as expected with a v2 certificate', async function () {
@@ -134,6 +134,6 @@ describe('verifier build test suite', function () {
     const certificate = new Verifier.Certificate(fixtureV3);
     await certificate.init();
     const result = await certificate.verify();
-    expect(result.status).toBe('success');
+    expect(result.status).toBe('failure');
   });
 });

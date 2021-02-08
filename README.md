@@ -61,6 +61,8 @@ let certificate = new Certificate(certificateDefinition);
 
 You can find more examples in the [test folder](./test/e2e/).
 
+In the [manual testing folder](./test/manual-testing/) you will find examples of implementation both in nodejs and browser environments. 
+
 ### Parse a Blockcert certificate
 
 ```javascript
@@ -286,6 +288,29 @@ The `assertionId` is appended to the `revocationList` URL request as query param
 ```shell
 $ npm run test
 ```
+
+### Manual testing
+You can test the build output (`npm run build`) in the browser and/or in nodejs to ensure you get satisfactory results with low overhead.
+
+#### Browser
+To test the browser build simply run `npm run test:manual:browser`. This will open an HTML page if your default browser which will test the fixtures for each version.
+
+NOTE V1: At the time of writing this, it is expected that the v1 certificate will fail on retrieving the issuer profile due to a mixed content block from your browser.
+To circumvent the issue you can either modify the v1 certificate to set the issuer profile to HTTPS. This means tempring with the certificate and will yield a hash mismatch error.
+You may also change the settings of your browser to disable the Mixed Content Block filter. The certificate still does not validate since it's been revoked.
+We are looking for a working v1 example.
+
+NOTE V3: The certificate does not validate as it's been revoked. This does still prove the code works.
+
+#### Nodejs
+To test the node build you will first need to start the server:
+     `npm run test:manual:node:server`
+     
+Then in a separate console window run:
+    `npm run test:manual:node:verify`
+    
+NOTE V1: v1 validation does not go through as the issuer profile retrieval is denied. We are looking for a working v1 example.
+NOTE V3: The certificate does not validate as it's been revoked. This does still prove the code works.
 
 ### Build
 ```shell

@@ -190,7 +190,6 @@ export default class Verifier {
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
         chain: this.chain.code,
-        // certificateVersion: this.version, // TODO: backwards compat v1 explorers: add custom explorer API for v1
         explorerAPIs: this.explorerAPIs
       })
     );

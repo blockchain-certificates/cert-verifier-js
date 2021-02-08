@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cert-verifier-js browser manual testing</title>
+    <script src="./index-iife.js"></script>
+    <script src="./verifier-iife.js"></script>
+    <script src="./fixtures.js"></script>
+</head>
+<body>
+    <script>
+        const startedStatus = 'started';
+        function setText (element, text) {
+          element.innerHTML = text;
+        }
+
+        function addText (element, text) {
+          element.innerHTML += text;
+        }
+
+        function setStatus (element, res) {
+          setText(element, `<div>status: <span>${res.status}</span></div>`);
+          addText(element, `<div>message: <span>${res.message.label ?? res.message}</span></div>`);
+        }
+
+        async function test (fixture, version) {
+          const uiElement = document.getElementById(version);
+          setText(uiElement, startedStatus);
+          console.log(`starting ${version} test`);
+          const certificate = new Verifier.Certificate(fixture);
+          await certificate.init();
+          const res = await certificate.verify();
+          console.log(`end ${version} test:`);
+          console.log(res);
+          setStatus(uiElement, res);
+        }
+
+        async function testV1 () {
+          await test(fixtureV1, 'v1');
+        }
+        async function testV2 () {
+          await test(fixtureV2, 'v2');
+        }
+        async function testV3 () {
+          await test(fixtureV3, 'v3');
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            testV1();
+            testV2();
+            testV3();
+        });
+    </script>
+
+    <div>
+        <dl>
+            <dt>V1 Result:</dt>
+            <dd id="v1">Pending</dd>
+            <dt>V2 Result:</dt>
+            <dd id="v2">Pending</dd>
+            <dt>V3 Result:</dt>
+            <dd id="v3">Pending</dd>
+        </dl>
+</body>
+</html>

@@ -3,3 +3,4 @@ node_modules/*
 .DS_Store
 /coverage
 /lib
+test/manual-testing/browser/index-iife.js

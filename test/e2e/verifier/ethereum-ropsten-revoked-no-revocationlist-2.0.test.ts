@@ -1,6 +1,6 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
-import * as Explorers from '../../../src/explorers/explorer';
+import domain from '../../../src/domain';
 import sinon from 'sinon';
 import etherscanApiWithKey from '../../data/etherscan-key';
 
@@ -10,7 +10,7 @@ describe('given the certificate is a revoked certificate', function () {
     let result;
 
     beforeAll(async function () {
-      sinon.stub(Explorers, 'getTransactionFromApi').resolves({
+      sinon.stub(domain.verifier, 'lookForTx').resolves({
         remoteHash: '6ad52e9db922e0c2648ce8f88f94b7e376daf9af60a7c782db75011f3783ea0a',
         issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
         time: '2019-10-15T09:20:24.000Z',

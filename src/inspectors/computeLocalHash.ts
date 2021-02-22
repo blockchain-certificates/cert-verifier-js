@@ -101,9 +101,9 @@ export default async function computeLocalHash (document, version): Promise<stri
           reject(
             new VerifierError(
               SUB_STEPS.computeLocalHash,
-              getText('errors', 'foundUnmappedFields')
+              `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
             )
-          ); // + unmappedFields.join(",")
+          );
         } else {
           resolve(sha256(toUTF8Data(normalized)));
         }

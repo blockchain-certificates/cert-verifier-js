@@ -21,7 +21,7 @@ describe('computeLocalHash test suite', function () {
       fixture.testUnmapped = 'this field is not mapped';
       await expect(async () => {
         await computeLocalHash(fixture, Versions.V3_0_alpha);
-      }).rejects.toThrow('Found unmapped fields during JSON-LD normalization');
+      }).rejects.toThrow('Found unmapped fields during JSON-LD normalization: <http://fallback.org/testUnmapped>, testUnmapped');
     });
   });
 });

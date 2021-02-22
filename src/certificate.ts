@@ -4,11 +4,11 @@ import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from 
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
-import { TExplorerParsingFunction } from './explorers/explorer';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { TRANSACTION_APIS } from './constants/api';
 import { deepCopy } from './helpers/object';
+import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup/lib/esm/models/Explorers';
 
 export interface ExplorerURLs {
   main: string;

@@ -5,10 +5,8 @@ import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
-import { ExplorerAPI } from './certificate';
 import { IBlockchainObject } from './constants/blockchains';
-import { explorerFactory, TExplorerFunctionsArray } from './explorers/explorer';
-import { getDefaultExplorers, TDefaultExplorersPerBlockchain } from './explorers';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup/lib/esm/models/Explorers';
 
 const log = debug('Verifier');
 
@@ -20,9 +18,6 @@ export interface IVerificationStepCallbackAPI {
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
-export type TExplorerAPIs = TDefaultExplorersPerBlockchain & {
-  custom?: TExplorerFunctionsArray;
-};
 
 export interface IFinalVerificationStatus {
   code: STEPS.final;
@@ -40,7 +35,7 @@ export default class Verifier {
   public version: Versions;
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
-  public explorerAPIs: TExplorerAPIs;
+  public explorerAPIs: ExplorerAPI[];
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
 
   constructor (
@@ -65,7 +60,7 @@ export default class Verifier {
     this.revocationKey = revocationKey;
     this.version = version;
     this.transactionId = transactionId;
-    this.setExplorerAPIs(explorerAPIs);
+    this.explorerAPIs = explorerAPIs;
 
     let document = certificateJson.document;
     if (!document) {
@@ -98,14 +93,6 @@ export default class Verifier {
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     return erroredStep ? this._failed(erroredStep) : this._succeed();
-  }
-
-  setExplorerAPIs (customExplorerAPIs: ExplorerAPI[]): void {
-    this.explorerAPIs = getDefaultExplorers(customExplorerAPIs);
-
-    if (domain.explorerAPIs.ensureValidity(customExplorerAPIs)) {
-      this.explorerAPIs.custom = explorerFactory(customExplorerAPIs);
-    }
   }
 
   _getRevocationListUrl (distantIssuerProfile): any { // TODO: define revocationList type
@@ -203,7 +190,6 @@ export default class Verifier {
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
         chain: this.chain.code,
-        certificateVersion: this.version,
         explorerAPIs: this.explorerAPIs
       })
     );

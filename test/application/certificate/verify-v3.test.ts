@@ -1,6 +1,5 @@
 import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
-import * as Explorers from '../../../src/explorers/explorer';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
 import etherscanApiWithKey from '../../data/etherscan-key';
@@ -12,7 +11,7 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
-          sinon.stub(Explorers, 'getTransactionFromApi').resolves({
+          sinon.stub(domain.verifier, 'lookForTx').resolves({
             remoteHash: '2b065c69c70432e9f082629939733afd2343e83f45939519986e9a09cf8ccd08',
             issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
             time: '2020-03-11T14:48:23.000Z',
@@ -56,7 +55,7 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
-          sinon.stub(Explorers, 'getTransactionFromApi').resolves({
+          sinon.stub(domain.verifier, 'lookForTx').resolves({
             remoteHash: 'a16e3677d1f0ddae82642b6995937d3082fdef3323431cf6d0ada4acb893f4cc',
             issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
             time: '2020-02-04T13:52:09.000Z',
@@ -90,7 +89,7 @@ describe('Certificate test suite', function () {
         let certificate;
 
         beforeEach(async function () {
-          sinon.stub(Explorers, 'getTransactionFromApi').resolves({
+          sinon.stub(domain.verifier, 'lookForTx').resolves({
             remoteHash: 'de1ddd816629c5aaecbaae7ad8ad193a9524362f8c98508bf891f2df3a8359e4',
             issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
             time: '2020-03-23T20:38:13.000Z',

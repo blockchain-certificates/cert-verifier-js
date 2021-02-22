@@ -75,9 +75,7 @@
       "lookForTxDifferentRemoteHashes": "Remote hashes returned by the blockchain APIs were different",
       "lookForTxInvalidAppConfig": "Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value",
       "lookForTxInvalidChain": "Invalid chain; does not map to known BlockchainExplorers.",
-      "parseBitpayResponse": "Number of transaction confirmations were less than the minimum required, according to Bitpay API",
       "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
-      "parseBlockexplorerResponse": "Number of transaction confirmations were less than the minimum required, according to Blockexplorer API",
       "parseBlockstreamResponse": "Number of transaction confirmations were less than the minimum required, according to Blockstream API",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
       "unableToGetRemoteHash": "Unable to get remote hash"
@@ -159,9 +157,7 @@
       "lookForTxDifferentRemoteHashes": "Les hashs distants reçus de l'API blockchain ne concordent pas",
       "lookForTxInvalidAppConfig": "Configuration de l'application invalide : vérifiez la valeur de configuration de CONFIG.MinimumBlockchainExplorers",
       "lookForTxInvalidChain": "Chaine invalide : non liée à un BlockchainExplorers connu",
-      "parseBitpayResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Bitpay",
       "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
-      "parseBlockexplorerResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockexplorer",
       "parseBlockstreamResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockstream",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
       "unableToGetRemoteHash": "Impossible d'obtenir le hash distant"
@@ -243,9 +239,7 @@
       "lookForTxDifferentRemoteHashes": "Las cadenas binarias remotas generadas por las APIs del blockchain son distintas",
       "lookForTxInvalidAppConfig": "Configuración de aplicación inválida; cheque el valor de configuración CONFIG.MinimumBlockchainExplorers",
       "lookForTxInvalidChain": "Cadena inválida; no corresponde a BlockchainExplorers reconocidos",
-      "parseBitpayResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Bitpay",
       "parseBlockCypherResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockcypher",
-      "parseBlockexplorerResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockexplorer",
       "parseBlockstreamResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockstream",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
       "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota"
@@ -327,9 +321,7 @@
       "lookForTxDifferentRemoteHashes": "Ir-remote hashes mibgħuta lura mill-blockchain APIs kienu differenti",
       "lookForTxInvalidAppConfig": "Konfigurazzjoni tal-applikazzjoni invalida; Iċċekkja l-valur konfigurattiv f' CONFIG.MinimumBlockchainExplorers",
       "lookForTxInvalidChain": "Chain invalidu; BlockchainExplorers mhux qed isib chain magħrufa",
-      "parseBitpayResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Bitpay API",
       "parseBlockCypherResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockcypher API",
-      "parseBlockexplorerResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockexplorer API",
       "parseBlockstreamResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockstream API",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
       "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash"
@@ -411,9 +403,7 @@
       "lookForTxDifferentRemoteHashes": "Gli hash remoti restituiti dalle API blockchain erano diversi",
       "lookForTxInvalidAppConfig": "Configurazione dell'applicazione non valida, verificare il valore di configurazione di CONFIG.MinimumBlockchainExplorers",
       "lookForTxInvalidChain": "Catena non valida; non mappa BlockchainExplorers noti.",
-      "parseBitpayResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Bitpay",
       "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
-      "parseBlockexplorerResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockexplorer",
       "parseBlockstreamResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockstream",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
       "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto"
@@ -495,9 +485,7 @@
       "lookForTxDifferentRemoteHashes": "ブロックチェーンAPIから返されたリモートハッシュが異なっていました",
       "lookForTxInvalidAppConfig": "アプリケーション設定が無効です。CONFIG.MinimumBlockchainExplorersの設定値を確認して下さい。",
       "lookForTxInvalidChain": "チェーンが無効です。既知のBlockchainExplorersにマップできません。",
-      "parseBitpayResponse": "Bitpay APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
-      "parseBlockexplorerResponse": "Blockexplorer APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseBlockstreamResponse": "Blockstream APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseIssuerKeys": "発行者識別データからJSONをパースできません",
       "unableToGetRemoteHash": "リモートハッシュを取得できません"

@@ -12,3 +12,5 @@ after_script:
   - npm run test:coverage:report
 after_success:
   - npm run semantic-release
+after_failure:
+  - cat  /home/travis/.npm/_logs/2021-02-08T14_3*-debug.log

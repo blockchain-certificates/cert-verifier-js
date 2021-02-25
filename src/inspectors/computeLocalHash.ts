@@ -1,4 +1,4 @@
-import CERTIFICATE_VERSIONS from '../constants/certificateVersions';
+import { isV1 } from '../constants/certificateVersions';
 import CONFIG from '../constants/config';
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
@@ -36,7 +36,7 @@ CONTEXTS['https://www.w3.org/2018/credentials/examples/v1'] = VERIFIABLE_CREDENT
 CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 
-function setJsonLdDocumentLoader () {
+function setJsonLdDocumentLoader (): any {
   if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined') {
     return jsonld.documentLoaders.xhr();
   }
@@ -44,7 +44,7 @@ function setJsonLdDocumentLoader () {
   return jsonld.documentLoaders.node();
 }
 
-function getUnmappedFields (normalized) {
+function getUnmappedFields (normalized): string[] | null {
   const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
   const matches = myRegexp.exec(normalized);
   if (matches) {
@@ -57,10 +57,10 @@ function getUnmappedFields (normalized) {
   return null;
 }
 
-export default function computeLocalHash (document, version) {
+export default async function computeLocalHash (document, version): Promise<string> {
   let expandContext = document['@context'];
   const theDocument = document;
-  if (version === CERTIFICATE_VERSIONS.V2_0 && CONFIG.CheckForUnmappedFields) {
+  if (!isV1(version) && CONFIG.CheckForUnmappedFields) {
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {
@@ -80,7 +80,7 @@ export default function computeLocalHash (document, version) {
     return jsonldDocumentLoader(url, callback);
   };
   jsonld.documentLoader = customLoader;
-  const normalizeArgs = {
+  const normalizeArgs: any = {
     algorithm: 'URDNA2015',
     format: 'application/nquads'
   };
@@ -101,9 +101,9 @@ export default function computeLocalHash (document, version) {
           reject(
             new VerifierError(
               SUB_STEPS.computeLocalHash,
-              getText('errors', 'foundUnmappedFields')
+              `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
             )
-          ); // + unmappedFields.join(",")
+          );
         } else {
           resolve(sha256(toUTF8Data(normalized)));
         }

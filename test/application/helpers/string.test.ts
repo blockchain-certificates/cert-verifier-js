@@ -1,4 +1,4 @@
-import { startsWith } from '../../../src/helpers/string';
+import { capitalize, startsWith } from '../../../src/helpers/string';
 
 describe('startsWith method', function () {
   describe('when given a invalid stringContent', function () {
@@ -24,5 +24,12 @@ describe('startsWith method', function () {
         expect(result).toBe(false);
       });
     });
+  });
+});
+
+describe('capitalize method', function () {
+  it('should return the capitalized word', function () {
+    const output = capitalize('test');
+    expect(output).toBe('Test');
   });
 });

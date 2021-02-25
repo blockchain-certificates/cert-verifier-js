@@ -1,7 +1,7 @@
 import currentLocale from '../../../constants/currentLocale';
 import i18n from '../../../data/i18n.json';
 
-export default function getText (group, item) {
+export default function getText (group: string, item: string): string { // TODO: use enum for parameters
   if (!group || !item) {
     return '';
   }

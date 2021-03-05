@@ -8,8 +8,8 @@ export function toByteArray (hexString: string): number[] {
   return outArray;
 }
 
-export function toUTF8Data (string) {
-  const utf8 = [];
+export function toUTF8Data (string): number[] {
+  const utf8: number[] = [];
   for (let i = 0; i < string.length; i++) {
     let charcode = string.charCodeAt(i);
     if (charcode < 0x80) {

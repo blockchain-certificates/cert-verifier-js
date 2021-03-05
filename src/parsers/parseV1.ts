@@ -39,7 +39,7 @@ export default function parseV1 (certificateJson): BlockcertsV1 {
   const revocationKey = recipient.revocationKey || null;
   const sealImage = issuer.image;
   const signature = certificateJson.document.signature;
-  const signaturesRaw = certificateJson.document && certificateJson.document.assertion && certificateJson.document.assertion['image:signature'];
+  const signaturesRaw = certificateJson.document?.assertion?.['image:signature'];
   const signatureImage = getSignatureImages(signaturesRaw, version);
   if (typeof subtitle === 'object') {
     subtitle = subtitle.display ? subtitle.content : '';

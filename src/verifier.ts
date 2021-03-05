@@ -95,20 +95,20 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  _getRevocationListUrl (distantIssuerProfile): any { // TODO: define revocationList type
-    if (this.issuer && this.issuer.revocationList) {
+  _getRevocationListUrl (distantIssuerProfile: any): any { // TODO: define revocationList type
+    if (this.issuer?.revocationList) {
       return this.issuer.revocationList;
     }
     return distantIssuerProfile.revocationList;
   }
 
-  _doAction (step: string, action: Function): any {
+  _doAction (step: string, action: () => any): any {
     // If not failing already
     if (this._isFailing()) {
       return;
     }
 
-    let label;
+    let label: string;
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
@@ -135,12 +135,12 @@ export default class Verifier {
     }
   }
 
-  async _doAsyncAction (step: string, action: Function): Promise<any> {
+  async _doAsyncAction (step: string, action: () => any): Promise<any> {
     if (this._isFailing()) {
       return;
     }
 
-    let label;
+    let label: string;
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);

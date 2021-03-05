@@ -84,7 +84,7 @@ describe('Certificate entity test suite', function () {
           describe('when the locale is set to auto', function () {
             beforeEach(function () {
               interface ExtendedNavigator extends Navigator {
-                __defineGetter__: (prop: string, cb: Function) => any;
+                __defineGetter__: (prop: string, cb) => any;
               }
               (window.navigator as ExtendedNavigator).__defineGetter__('language', function () {
                 return 'it';

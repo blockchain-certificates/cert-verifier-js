@@ -2,8 +2,8 @@ import sinon from 'sinon';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
-import { ExplorerAPI } from '@blockcerts/explorer-lookup/lib/cjs/models/Explorers';
 import domain from '../../../src/domain';
+import { ExplorerAPI } from 'certificate';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;

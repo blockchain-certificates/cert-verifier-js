@@ -69,7 +69,7 @@ export default async function computeLocalHash (document, version): Promise<stri
   }
 
   const jsonldDocumentLoader = setJsonLdDocumentLoader();
-  const customLoader = function (url, callback) {
+  const customLoader = function (url, callback): any {
     if (url in CONTEXTS) {
       return callback(null, {
         contextUrl: null,

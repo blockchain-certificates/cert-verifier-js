@@ -418,7 +418,7 @@ export default {
       }
     ]
   },
-  blockcertsV3: {
+  blockcertsV3a: {
     '@context': {
       id: '@id',
       type: '@type',

@@ -13,7 +13,7 @@ const {
   blockcerts: BLOCKCERTS_CONTEXT,
   blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
   blockcertsv2: BLOCKCERTSV2_CONTEXT,
-  blockcertsV3: BLOCKCERTSV3_CONTEXT,
+  blockcertsV3a: BLOCKCERTSV3_ALPHA_CONTEXT,
   verifiableCredential: VERIFIABLE_CREDENTIAL_CONTEXT,
   verifiableCredentialExample: VERIFIABLE_CREDENTIAL_EXAMPLE,
   merkleProof2019: MERKLE_PROOF_2019
@@ -29,8 +29,8 @@ CONTEXTS['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = BLOCKCERTS
 CONTEXTS['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
 
 // V3
-CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
+CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_ALPHA_CONTEXT;
+CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_ALPHA_CONTEXT;
 CONTEXTS['https://www.w3.org/2018/credentials/v1'] = VERIFIABLE_CREDENTIAL_CONTEXT;
 CONTEXTS['https://www.w3.org/2018/credentials/examples/v1'] = VERIFIABLE_CREDENTIAL_EXAMPLE;
 CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;

@@ -4,37 +4,9 @@ import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
 import * as SUB_STEPS from '../constants/verificationSubSteps';
 import sha256 from 'sha256';
-import { CONTEXTS as ContextsMap } from '../constants';
+import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
-
-const {
-  obi: OBI_CONTEXT,
-  blockcerts: BLOCKCERTS_CONTEXT,
-  blockcertsv1_2: BLOCKCERTSV1_2_CONTEXT,
-  blockcertsv2: BLOCKCERTSV2_CONTEXT,
-  blockcertsV3: BLOCKCERTSV3_CONTEXT,
-  verifiableCredential: VERIFIABLE_CREDENTIAL_CONTEXT,
-  verifiableCredentialExample: VERIFIABLE_CREDENTIAL_EXAMPLE,
-  merkleProof2019: MERKLE_PROOF_2019
-} = ContextsMap;
-const CONTEXTS = {};
-// Preload contexts
-CONTEXTS['https://w3id.org/blockcerts/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
-CONTEXTS['https://www.blockcerts.org/schema/2.0-alpha/context.json'] = BLOCKCERTS_CONTEXT;
-CONTEXTS['https://w3id.org/openbadges/v2'] = OBI_CONTEXT;
-CONTEXTS['https://openbadgespec.org/v2/context.json'] = OBI_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/v2'] = BLOCKCERTSV2_CONTEXT;
-CONTEXTS['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = BLOCKCERTSV2_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/v1'] = BLOCKCERTSV1_2_CONTEXT;
-
-// V3
-CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
-CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/context.json'] = BLOCKCERTSV3_CONTEXT;
-CONTEXTS['https://www.w3.org/2018/credentials/v1'] = VERIFIABLE_CREDENTIAL_CONTEXT;
-CONTEXTS['https://www.w3.org/2018/credentials/examples/v1'] = VERIFIABLE_CREDENTIAL_EXAMPLE;
-CONTEXTS['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
-CONTEXTS['https://www.blockcerts.org/schema/3.0-alpha/merkleProof2019Context.json'] = MERKLE_PROOF_2019;
 
 function setJsonLdDocumentLoader (): any {
   if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined') {
@@ -70,10 +42,10 @@ export default async function computeLocalHash (document, version): Promise<stri
 
   const jsonldDocumentLoader = setJsonLdDocumentLoader();
   const customLoader = function (url, callback): any {
-    if (url in CONTEXTS) {
+    if (url in preloadedContexts) {
       return callback(null, {
         contextUrl: null,
-        document: CONTEXTS[url],
+        document: preloadedContexts[url],
         documentUrl: url
       });
     }

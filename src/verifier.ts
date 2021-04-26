@@ -7,6 +7,7 @@ import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import { ExplorerAPI } from '@blockcerts/explorer-lookup/lib/esm/models/Explorers';
+import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 
 const log = debug('Verifier');
 
@@ -29,7 +30,7 @@ export default class Verifier {
   public chain: IBlockchainObject;
   public expires: string;
   public id: string;
-  public issuer: any; // TODO: define issuer interface
+  public issuer: Issuer;
   public receipt: any; // TODO: define receipt interface
   public revocationKey: string;
   public version: Versions;
@@ -44,7 +45,7 @@ export default class Verifier {
       chain: IBlockchainObject;
       expires: string;
       id: string;
-      issuer: any;
+      issuer: Issuer;
       receipt: any;
       revocationKey: string;
       transactionId: string;
@@ -95,7 +96,7 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  _getRevocationListUrl (distantIssuerProfile: any): any { // TODO: define revocationList type
+  _getRevocationListUrl (distantIssuerProfile: Issuer): any { // TODO: define revocationList type
     if (this.issuer?.revocationList) {
       return this.issuer.revocationList;
     }
@@ -195,16 +196,16 @@ export default class Verifier {
     );
 
     // Get issuer profile
-    let issuerProfileJson = this.issuer;
+    let issuerProfileJson: Issuer = this.issuer;
     if (!isV3(this.version)) {
       issuerProfileJson = await this._doAsyncAction(
         SUB_STEPS.getIssuerProfile,
-        async () => await domain.verifier.getIssuerProfile(this.issuer)
+        async () => await domain.verifier.getIssuerProfile(this.issuer) // here is a string url
       );
     }
 
     // Parse issuer keys
-    const issuerKeyMap = await this._doAsyncAction(
+    const issuerKeyMap: IssuerPublicKeyList = await this._doAsyncAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(issuerProfileJson)
     );

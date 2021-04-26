@@ -2,15 +2,16 @@ import { request } from '../../../services';
 import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';
+import { Issuer } from '../../../models/Issuer';
 
-function isValidUrl (url) {
+function isValidUrl (url: string): boolean {
   // https://stackoverflow.com/a/15734347/4064775
   const regex = /^(ftp|http|https):\/\/[^ "]+$/;
   return regex.test(url);
 }
 
-function isValidV1Profile (profile) {
-  // eslint-disable-next-line camelcase
+function isValidV1Profile (profile: Issuer): boolean {
+  // eslint-disable-next-line camelcase,@typescript-eslint/naming-convention
   const { issuer_key, revocation_key, issuerKeys, revocationKeys } = profile;
   // eslint-disable-next-line camelcase
   if (!!issuer_key && !!revocation_key) {
@@ -26,18 +27,18 @@ function isValidV1Profile (profile) {
   return false;
 }
 
-function isValidProfile (profile) {
-  const validTypes = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
+function isValidProfile (profile: Issuer): boolean {
+  const validTypes: string[] = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
   const { type } = profile;
   if (!type) {
     return false;
   }
 
   if (Array.isArray(type)) {
-    return type.some(type => validTypes.indexOf(type.toLowerCase()) > -1);
+    return type.some(type => validTypes.includes(type.toLowerCase()));
   }
 
-  return validTypes.indexOf(type.toLowerCase()) > -1;
+  return validTypes.includes(type.toLowerCase());
 }
 
 /**
@@ -46,7 +47,7 @@ function isValidProfile (profile) {
  * @param issuerAddress: string
  * @returns {Promise<any>}
  */
-export default async function getIssuerProfile (issuerAddress) {
+export default async function getIssuerProfile (issuerAddress: any): Promise<Issuer> {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);

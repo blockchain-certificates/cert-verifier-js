@@ -1,7 +1,7 @@
 import parseIssuerKeys from '../../../../../src/domain/verifier/useCases/parseIssuerKeys';
 import issuerProfileV1JsonFixture from './fixtures/issuerProfileV1JsonFixture';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
-import parsedIssuerKeysV1Assertion from './assertions/parsedIssuerKeysV1Assertion';
+import parsedIssuerKeysV1Assertion from './assertions/parsedIssuerKeysV1Assertion.json';
 import parsedIssuerKeysV2Assertion from './assertions/parsedIssuerKeysV2Assertion';
 
 describe('domain verifier parseIssuerKeys use case test suite', function () {

@@ -1,6 +1,6 @@
 /* eslint no-useless-escape: 0 prefer-spread: 0 */ // TODO: at some point fix this
 
-function noOffset (s): number {
+function noOffset (s): Date {
   let day = s.slice(0, -5).split(/\D/).map(function (itm) {
     return parseInt(itm, 10) || 0;
   });
@@ -12,7 +12,7 @@ function noOffset (s): number {
     offset *= -1;
   }
   day.setHours(day.getHours() + offset);
-  return day.getTime();
+  return day;
 }
 
 function dateFromRegex (s: string): Date {
@@ -46,7 +46,7 @@ function dateFromRegex (s: string): Date {
   return null;
 }
 
-function dateFromIso (isoDate: string): Date | number {
+function dateFromIso (isoDate: string): Date {
   // Chrome
   const diso: number = Date.parse(isoDate);
   if (diso) {
@@ -54,7 +54,7 @@ function dateFromIso (isoDate: string): Date | number {
   }
 
   // JS 1.8 gecko
-  const offsetDate: number = noOffset(isoDate);
+  const offsetDate: Date = noOffset(isoDate);
   if (offsetDate) {
     return offsetDate;
   }
@@ -62,12 +62,12 @@ function dateFromIso (isoDate: string): Date | number {
   return dateFromRegex(isoDate);
 }
 
-export function dateToUnixTimestamp (date: Date | string): any /* Date | string | number */ { // TODO: cleanup this mess of types
+export function dateToUnixTimestamp (date: Date | string): number { // TODO: cleanup this mess of types
   if (date === '') {
-    return '';
+    return 0;
   }
   // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  return dateFromIso(`${date}`);
+  return dateFromIso(`${date}`).getTime();
 }
 
 export function timestampToDateObject (timestamp: number): Date {

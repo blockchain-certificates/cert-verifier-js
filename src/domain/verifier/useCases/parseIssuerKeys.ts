@@ -2,6 +2,8 @@ import { dateToUnixTimestamp } from '../../../helpers/date';
 import { SUB_STEPS } from '../../../constants';
 import { Key, VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
+import { NullableNumber } from '../../../models/helpers';
+import { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
 
 /**
  * createKeyObject
@@ -10,12 +12,12 @@ import { getText } from '../../i18n/useCases';
  * @param finalPublicKey
  * @returns {Key}
  */
-function createKeyObject (rawKeyObject, finalPublicKey = null) {
-  const created = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
-  const revoked = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
-  const expires = rawKeyObject.expires ? dateToUnixTimestamp(rawKeyObject.expires) : null;
+function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
+  const created: NullableNumber = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
+  const revoked: NullableNumber = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
+  const expires: NullableNumber = rawKeyObject.expires ? dateToUnixTimestamp(rawKeyObject.expires) : null;
   // backcompat for v2 alpha
-  let publicKey = finalPublicKey;
+  let publicKey: string = finalPublicKey;
   if (!finalPublicKey) {
     const publicKeyTemp = rawKeyObject.id || rawKeyObject.publicKey;
     publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
@@ -28,7 +30,7 @@ function createKeyObject (rawKeyObject, finalPublicKey = null) {
  *
  * @param issuerProfileJson
  */
-export default function parseIssuerKeys (issuerProfileJson) {
+export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPublicKeyList {
   try {
     const keyMap = {};
     if ('@context' in issuerProfileJson) {

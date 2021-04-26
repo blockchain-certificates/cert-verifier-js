@@ -5,15 +5,15 @@ describe('dateToUnixTimestamp method', function () {
     it('should return an empty string', function () {
       const emptyString = '';
       const result = dateToUnixTimestamp(emptyString);
-      expect(result).toBe(emptyString);
+      expect(result).toBe(0);
     });
   });
 
   describe('when given an iso date', function () {
-    it('should return a valid date', function () {
+    it('should return a valid timestamp', function () {
       const isoDate = '2018-06-18T22:37:22.325+00:00';
       const result = dateToUnixTimestamp(isoDate);
-      expect(result).toEqual(new Date('2018-06-18T22:37:22.325Z'));
+      expect(result).toEqual(new Date('2018-06-18T22:37:22.325Z').getTime());
     });
   });
 });

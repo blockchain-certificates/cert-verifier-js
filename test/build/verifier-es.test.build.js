@@ -15,12 +15,18 @@ describe('verifier build test suite', function () {
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    if (result.status === VERIFICATION_STATUSES.FAILURE) {
+      console.log(result.message);
+    }
   });
 
   it('works as expected with a v3 certificate', async function () {
     const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
     await certificate.init();
     const result = await certificate.verify();
-    expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    if (result.status === VERIFICATION_STATUSES.FAILURE) {
+      console.log(result.message);
+    }
   });
 });

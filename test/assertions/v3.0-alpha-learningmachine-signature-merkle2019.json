@@ -1,12 +1,12 @@
 {
   "path": [
     {
-      "left": "6ad52e9db922e0c2648ce8f88f94b7e376daf9af60a7c782db75011f3783ea0a"
+      "right": "5c1fbed6d7d1bc2652c94a319140e42c47a154cd770ae20c7ef16bb59bc6654d"
     }
   ],
-  "merkleRoot": "de1ddd816629c5aaecbaae7ad8ad193a9524362f8c98508bf891f2df3a8359e4",
-  "targetHash": "f3e59bb3e50da660b6e4a7e3d7c93331bd7b6bc33900a3b833a6c7f9436a248f",
+  "merkleRoot": "2c7afa4f8192bd8d0e243da2044306b2183527270ef6fd76854c34a1288756ba",
+  "targetHash": "e1b59fcf59c7a11d725935dd72520268ca715b754accccb896a0cc1f765056db",
   "anchors": [
-    "blink:eth:ropsten:0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40"
+    "blink:btc:testnet:1d0005700ece4a522bcf6e3ec1dc2821c1c304332b93d6148d8cec47f21ab89a"
   ]
 }

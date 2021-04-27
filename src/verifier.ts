@@ -195,6 +195,8 @@ export default class Verifier {
       })
     );
 
+    console.log(txData);
+
     // Get issuer profile
     let issuerProfileJson: Issuer = this.issuer;
     if (!isV3(this.version)) {

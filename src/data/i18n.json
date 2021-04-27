@@ -78,7 +78,8 @@
       "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
       "parseBlockstreamResponse": "Number of transaction confirmations were less than the minimum required, according to Blockstream API",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
-      "unableToGetRemoteHash": "Unable to get remote hash"
+      "unableToGetRemoteHash": "Unable to get remote hash",
+      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
     }
   },
   "fr": {
@@ -160,7 +161,8 @@
       "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
       "parseBlockstreamResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockstream",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
-      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant"
+      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant",
+      "unknownIssuingAddress": "L'adresse utilisée pour émettre ce Blockcerts n'appartient à l'émetteur déclaré."
     }
   },
   "es": {
@@ -242,7 +244,8 @@
       "parseBlockCypherResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockcypher",
       "parseBlockstreamResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockstream",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
-      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota"
+      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota",
+      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
     }
   },
   "mt": {
@@ -324,7 +327,8 @@
       "parseBlockCypherResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockcypher API",
       "parseBlockstreamResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockstream API",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
-      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash"
+      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash",
+      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
     }
   },
   "it-IT": {
@@ -406,7 +410,8 @@
       "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
       "parseBlockstreamResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockstream",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
-      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto"
+      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto",
+      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
     }
   },
   "ja": {
@@ -488,7 +493,8 @@
       "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseBlockstreamResponse": "Blockstream APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseIssuerKeys": "発行者識別データからJSONをパースできません",
-      "unableToGetRemoteHash": "リモートハッシュを取得できません"
+      "unableToGetRemoteHash": "リモートハッシュを取得できません",
+      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
     }
   }
 }

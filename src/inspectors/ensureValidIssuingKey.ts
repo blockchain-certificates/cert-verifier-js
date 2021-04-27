@@ -35,7 +35,7 @@ export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIs
   if (!validKey) {
     throw new VerifierError(
       SUB_STEPS.checkAuthenticity,
-      getText('errors', 'getCaseInsensitiveKey')
+      getText('errors', 'unknownIssuingAddress')
     );
   }
 }

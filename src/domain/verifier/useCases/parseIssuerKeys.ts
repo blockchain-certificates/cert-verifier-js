@@ -19,7 +19,7 @@ function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   // backcompat for v2 alpha
   let publicKey: string = finalPublicKey;
   if (!finalPublicKey) {
-    const publicKeyTemp = rawKeyObject.id || rawKeyObject.publicKey;
+    const publicKeyTemp: string = rawKeyObject.id || rawKeyObject.publicKey;
     publicKey = publicKeyTemp.replace('ecdsa-koblitz-pubkey:', '');
   }
   return new Key(publicKey, created, revoked, expires);
@@ -32,7 +32,7 @@ function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
  */
 export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPublicKeyList {
   try {
-    const keyMap = {};
+    const keyMap: IssuerPublicKeyList = {};
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
       const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;

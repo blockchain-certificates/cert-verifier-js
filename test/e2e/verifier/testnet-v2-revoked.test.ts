@@ -30,6 +30,6 @@ describe('given the certificate is a revoked testnet', function () {
   });
 
   it('should expose the error message', function () {
-    expect(result.message).toBe('Transaction occurred at time when issuing address was not considered valid.');
+    expect(result.message).toBe('The specified issuing address was revoked by the issuer before the transaction occurred.');
   });
 });

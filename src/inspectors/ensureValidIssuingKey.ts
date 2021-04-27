@@ -17,25 +17,27 @@ function getCaseInsensitiveKey (obj: IssuerPublicKeyList, value: string): Parsed
 }
 
 export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIssuingAddress: string, txTime: string): void {
-  let validKey = false;
+  let errorMessage: string = '';
   const theKey: ParsedKeyObjectV2 = getCaseInsensitiveKey(keyMap, txIssuingAddress);
   const txTimeToUnixTimestamp = dateToUnixTimestamp(txTime);
   if (theKey) {
-    validKey = true;
-    if (theKey.created) {
-      validKey = txTimeToUnixTimestamp >= theKey.created;
+    if (theKey.created && txTimeToUnixTimestamp <= theKey.created) {
+      errorMessage = 'invalidIssuingAddressCreationTime';
     }
-    if (theKey.revoked) {
-      validKey = txTimeToUnixTimestamp <= theKey.revoked;
+    if (theKey.revoked && txTimeToUnixTimestamp >= theKey.revoked) {
+      errorMessage = 'invalidIssuingAddressRevoked';
     }
-    if (theKey.expires) {
-      validKey = txTimeToUnixTimestamp <= theKey.expires;
+    if (theKey.expires && txTimeToUnixTimestamp >= theKey.expires) {
+      errorMessage = 'invalidIssuingAddressExpired';
     }
+  } else {
+    errorMessage = 'unknownIssuingAddress';
   }
-  if (!validKey) {
+
+  if (errorMessage) {
     throw new VerifierError(
       SUB_STEPS.checkAuthenticity,
-      getText('errors', 'unknownIssuingAddress')
+      getText('errors', errorMessage)
     );
   }
 }

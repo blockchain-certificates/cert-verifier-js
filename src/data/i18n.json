@@ -63,6 +63,7 @@
       "invalidIssuingAddressCreationTime": "The specified issuing address was created after the transaction occurred.",
       "invalidIssuingAddressRevoked": "The specified issuing address was revoked by the issuer before the transaction occurred.",
       "invalidIssuingAddressExpired": "The specified issuing address expired before the transaction occurred.",
+      "invalidIssuingAddressUnknown": "The address used to issue this Blockcerts does not belong to the claimed issuer.",
       "getChain": "Didn't recognize chain value",
       "getIssuerProfile": "Unable to get issuer profile",
       "getRevokedAssertions": "Unable to get revocation assertions",
@@ -80,8 +81,7 @@
       "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
       "parseBlockstreamResponse": "Number of transaction confirmations were less than the minimum required, according to Blockstream API",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
-      "unableToGetRemoteHash": "Unable to get remote hash",
-      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
+      "unableToGetRemoteHash": "Unable to get remote hash"
     }
   },
   "fr": {
@@ -148,6 +148,7 @@
       "invalidIssuingAddressCreationTime": "L'adresse d'émission utilisée a été créée après la transaction d'enregistrement.",
       "invalidIssuingAddressRevoked": "L'adresse d'émission utilisée a été décommissionnée par l'émetteur avant la transaction d'enregistrement.",
       "invalidIssuingAddressExpired": "L'adresse d'émission utilisée a expiré avant la transaction.",
+      "invalidIssuingAddressUnknown": "L'adresse utilisée pour émettre ce Blockcerts n'appartient à l'émetteur déclaré.",
       "getChain": "Valeur de chaine non reconnue",
       "getIssuerProfile": "Profil de l'émetteur indisponible",
       "getRevokedAssertions": "Impossible d'obtenir les raisons de revocation",
@@ -165,8 +166,7 @@
       "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
       "parseBlockstreamResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockstream",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
-      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant",
-      "unknownIssuingAddress": "L'adresse utilisée pour émettre ce Blockcerts n'appartient à l'émetteur déclaré."
+      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant"
     }
   },
   "es": {
@@ -233,6 +233,7 @@
       "invalidIssuingAddressCreationTime": "The specified issuing address was created after the transaction occurred.",
       "invalidIssuingAddressRevoked": "The specified issuing address was revoked by the issuer before the transaction occurred.",
       "invalidIssuingAddressExpired": "The specified issuing address expired before the transaction occurred.",
+      "invalidIssuingAddressUnknown": "The address used to issue this Blockcerts does not belong to the claimed issuer.",
       "getChain": "Valor de cadena no reconocido",
       "getIssuerProfile": "No se ha podido obtener el perfil del emisor",
       "getRevokedAssertions": "No se ha podido obtener aseveraciones de revocación",
@@ -250,8 +251,7 @@
       "parseBlockCypherResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockcypher",
       "parseBlockstreamResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockstream",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
-      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota",
-      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
+      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota"
     }
   },
   "mt": {
@@ -318,6 +318,7 @@
       "invalidIssuingAddressCreationTime": "The specified issuing address was created after the transaction occurred.",
       "invalidIssuingAddressRevoked": "The specified issuing address was revoked by the issuer before the transaction occurred.",
       "invalidIssuingAddressExpired": "The specified issuing address expired before the transaction occurred.",
+      "invalidIssuingAddressUnknown": "The address used to issue this Blockcerts does not belong to the claimed issuer.",
       "getChain": "Iċ-chain value ma ntgħarafx",
       "getIssuerProfile": "Mhux possibbli jinkiseb il-profil tal-emittent",
       "getRevokedAssertions": "Mhux possibbli jinkisbu dikjarazzjonijiet revokati",
@@ -335,8 +336,7 @@
       "parseBlockCypherResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockcypher API",
       "parseBlockstreamResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockstream API",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
-      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash",
-      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
+      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash"
     }
   },
   "it-IT": {
@@ -403,6 +403,7 @@
       "invalidIssuingAddressCreationTime": "The specified issuing address was created after the transaction occurred.",
       "invalidIssuingAddressRevoked": "The specified issuing address was revoked by the issuer before the transaction occurred.",
       "invalidIssuingAddressExpired": "The specified issuing address expired before the transaction occurred.",
+      "invalidIssuingAddressUnknown": "The address used to issue this Blockcerts does not belong to the claimed issuer.",
       "getChain": "Il valore della catena non è stato riconosciuto",
       "getIssuerProfile": "Impossibile ottenere il profilo dell'emittente",
       "getRevokedAssertions": "Impossibile ottenere le asserzioni di revoca",
@@ -420,8 +421,7 @@
       "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
       "parseBlockstreamResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockstream",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
-      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto",
-      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
+      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto"
     }
   },
   "ja": {
@@ -488,6 +488,7 @@
       "invalidIssuingAddressCreationTime": "The specified issuing address was created after the transaction occurred.",
       "invalidIssuingAddressRevoked": "The specified issuing address was revoked by the issuer before the transaction occurred.",
       "invalidIssuingAddressExpired": "The specified issuing address expired before the transaction occurred.",
+      "invalidIssuingAddressUnknown": "The address used to issue this Blockcerts does not belong to the claimed issuer.",
       "getChain": "チェーンの値を認識できませんでした",
       "getIssuerProfile": "発行者プロフィールを取得できません",
       "getRevokedAssertions": "取消assertionsを取得できません",
@@ -505,8 +506,7 @@
       "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseBlockstreamResponse": "Blockstream APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseIssuerKeys": "発行者識別データからJSONをパースできません",
-      "unableToGetRemoteHash": "リモートハッシュを取得できません",
-      "unknownIssuingAddress": "The address used to issue this Blockcerts does not belong to the claimed issuer."
+      "unableToGetRemoteHash": "リモートハッシュを取得できません"
     }
   }
 }

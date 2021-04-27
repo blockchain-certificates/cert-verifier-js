@@ -31,7 +31,7 @@ export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIs
       errorMessage = 'invalidIssuingAddressExpired';
     }
   } else {
-    errorMessage = 'unknownIssuingAddress';
+    errorMessage = 'invalidIssuingAddressUnknown';
   }
 
   if (errorMessage) {

@@ -8,6 +8,7 @@ describe('verifier build test suite', function () {
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    expect(result.message).toBe('The address used to issue this Blockcerts does not belong to the claimed issuer.');
   });
 
   it('works as expected with a v2 certificate', async function () {

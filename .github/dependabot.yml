@@ -1,0 +1,49 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@blockcerts/explorer-lookup"
+    versions:
+    - 1.1.0
+  - dependency-name: "@types/node"
+    versions:
+    - 14.14.28
+    - 15.0.0
+  - dependency-name: core-js
+    versions:
+    - 3.10.2
+  - dependency-name: rollup
+    versions:
+    - 2.42.4
+  - dependency-name: karma
+    versions:
+    - 6.3.0
+  - dependency-name: jsonld
+    versions:
+    - 3.3.0
+    - 3.3.2
+    - 4.0.1
+    - 5.0.0
+  - dependency-name: "@typescript-eslint/eslint-plugin"
+    versions:
+    - 4.18.0
+  - dependency-name: typescript
+    versions:
+    - 4.2.2
+    - 4.2.3
+  - dependency-name: eslint-config-standard-with-typescript
+    versions:
+    - 20.0.0
+  - dependency-name: jest
+    versions:
+    - 26.6.3
+  - dependency-name: "@commitlint/cli"
+    versions:
+    - 12.0.1
+  - dependency-name: husky
+    versions:
+    - 5.0.9

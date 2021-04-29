@@ -6,7 +6,7 @@ import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
-import { ExplorerAPI } from '@blockcerts/explorer-lookup/lib/esm/models/Explorers';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 
 const log = debug('Verifier');
@@ -194,6 +194,7 @@ export default class Verifier {
         explorerAPIs: this.explorerAPIs
       })
     );
+    console.log(txData);
 
     // Get issuer profile
     let issuerProfileJson: Issuer = this.issuer;

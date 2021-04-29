@@ -194,7 +194,6 @@ export default class Verifier {
         explorerAPIs: this.explorerAPIs
       })
     );
-    console.log(txData);
 
     // Get issuer profile
     let issuerProfileJson: Issuer = this.issuer;

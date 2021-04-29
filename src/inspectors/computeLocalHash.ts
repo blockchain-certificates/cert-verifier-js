@@ -64,6 +64,7 @@ export default async function computeLocalHash (document, version): Promise<stri
     jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
       const isErr = !!err;
       if (isErr) {
+        console.error(err);
         reject(
           new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'))
         );

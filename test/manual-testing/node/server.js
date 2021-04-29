@@ -12,19 +12,24 @@ server.post('/verification', async (req, res) => {
     const blockcertsData = req.body.blockcerts;
     const certificate = new certVerifierJs.Certificate(blockcertsData);
     await certificate.init();
-    certificate
+    await certificate
       .verify()
       .then(({ status, message }) => {
-        console.log('Status:', status);
+        console.log(`${req.body.version} Status:`, status);
 
         if (status === 'failure') {
-          console.log(`The certificate is not valid. Error: ${message}`);
+          console.log(`The certificate ${req.body.blockcerts.id} is not valid. Error: ${message}`);
         }
 
         return res.json({
+          version: req.body.version,
           status,
           message
         });
+      })
+      .catch(err => {
+        console.log(req.body.version, err);
+        return err;
       });
   }
 });

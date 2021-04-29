@@ -2,7 +2,6 @@
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
     "https://www.blockcerts.org/schema/3.0-alpha/context.json",
-    "https://www.w3.org/2018/credentials/examples/v1",
     {
       "metadataJson": {
         "@id": "https://schemas.learningmachine.com/2017/blockcerts/metadata",
@@ -31,19 +30,17 @@
     "VerifiableCredential",
     "BlockcertsCredential"
   ],
-  "issuer": "https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json",
+  "issuer": "https://raw.githubusercontent.com/blockchain-certificates/cert-issuer/master/examples/issuer/profile.json",
   "issuanceDate": "2010-01-01T19:33:24Z",
   "credentialSubject": {
-    "id": "did:key:z6Mkq3L1jEDDZ5R7eT523FMLxC4k6MCpzqD7ff1CrkWpoJwM",
-    "alumniOf": {
-      "id": "did:example:c276e12ec21ebfeb1f712ebc6f1"
-    }
+    "name": "John Doe",
+    "id": "did:key:z6Mkq3L1jEDDZ5R7eT523FMLxC4k6MCpzqD7ff1CrkWpoJwM"
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2020-03-23T15:38:11.804838",
-    "proofValue": "z2LuLBVSfnVzaQtvzuA7EaPQsGEgYWeaMTH1p3uqAG3ESx9HYyFzFFrYsyPkZSbn1Ji5LN76jw6HBr3oiaa8KsQenCPqKk7dJvxEXsDnYvhuDHu3ktTZuz4KL2UWU3hieKFwMG2akp4rPvYmwQDbtXNmhZgpdGpp9hiDZiz37bca2LZZG2VJ9Xen31trVG5A2SApCkFoUxYeNvXr8reqJPca1voRwFXAgo25XWV2BQ1ycQ2wM3jPz3BAx4tZuPno7Ebd5XLfroXHCaKiNadiqxLedp2SHZjDicG8kxMwPo2gR1mYeWjtQSPVMrtf6p325wCNVrQpxTAszLp4CPXSZFFYsb2dn9iRAcMTUSKYhYtsNjst2fDdPye4arHmvLL5s6pL6U8vtEEBiYJDrFj8xo",
+    "created": "2021-04-27T17:50:20.583082",
+    "proofValue": "z4zvrPUULqodatUGkAdvDASFwHq3Qk8tKAphMrmQGrWKJfoHs9ikMvYr49j6Ky9ooRpjFvVWEMokiANwSdTic4FbXiaZxhrxhmNetEoJhNmy8EJGj7eesoZhGsXdQXdqt98DpYtuMV9WA8SEwPZVhQsj5VruCowd3vKYojdnBb82dARfUKGq5K8RtarBjZ1fS4SxNBb5w59TtKEj8HWNNx6hfPVJwq1ovDYfW3HeuBu5Mae4P5z92URF5HAMJdEHmh8DC7BvUTaCeWUJseF36cbVnHE7pB2Zx4mW8kVeBKwnxURsB6hUhJRbxEfAcmxdtkP4XYnsP5KnLM13VBexmDf8MksnoVHHqNh9SHs7Njqqtyxrtxx5m4nY6YRo7qUhrZgrmKPvh8bievrh7LC",
     "proofPurpose": "assertionMethod",
-    "verificationMethod": "ecdsa-koblitz-pubkey:0x7e30a37763e6Ba1fFeDE1750bBeFB4c60b17a1B3"
+    "verificationMethod": "did:example:23adb1f712ebc6f1c276eba4dfa#key-1"
   }
 }

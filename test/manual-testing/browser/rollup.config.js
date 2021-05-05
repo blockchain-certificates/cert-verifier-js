@@ -6,7 +6,7 @@ import replace from 'rollup-plugin-re';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import globals from 'rollup-plugin-node-globals';
-import builtins from 'rollup-plugin-node-polyfills';
+import builtins from 'rollup-plugin-node-builtins';
 import fs from 'fs';
 
 const BUILD_OUTPUT_FOLDER = 'test/manual-testing/browser';

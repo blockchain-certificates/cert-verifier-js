@@ -24,7 +24,7 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: false,
+      preferBuiltins: true,
       extensions: ['.js', '.json']
     }),
     typescript(),

@@ -1,12 +1,12 @@
 import serve from 'rollup-plugin-serve';
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript';
 import livereload from 'rollup-plugin-livereload';
 import replace from 'rollup-plugin-re';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import globals from 'rollup-plugin-node-globals';
-import builtins from 'rollup-plugin-node-builtins';
+import builtins from 'rollup-plugin-node-polyfills';
 import fs from 'fs';
 
 const BUILD_OUTPUT_FOLDER = 'test/manual-testing/browser';

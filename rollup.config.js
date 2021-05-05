@@ -1,4 +1,4 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import typescript from 'rollup-plugin-typescript';
@@ -24,7 +24,7 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true,
+      preferBuiltins: false,
       extensions: ['.js', '.json']
     }),
     typescript(),
@@ -68,12 +68,13 @@ export default {
       namedExports: {
         debug: ['debug'],
         'bitcoinjs-lib': ['bitcoin'],
-        jsonld: ['jsonld']
+        jsonld: ['jsonld'],
+        buffer: ['isBuffer']
       }
     }),
     json(),
     globals(),
     builtins(),
-    terser()
+    // terser()
   ]
 };

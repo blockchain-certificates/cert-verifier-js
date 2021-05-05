@@ -36,7 +36,7 @@ describe('verifier build test suite', function () {
     if (result.status === VERIFICATION_STATUSES.FAILURE) {
       console.log(result.message);
     }
-    // expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
     expect(result.message).toEqual({
       label: 'Verified',
       // eslint-disable-next-line no-template-curly-in-string

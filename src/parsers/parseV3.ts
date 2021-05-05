@@ -22,7 +22,6 @@ async function getIssuerProfile (issuer): Promise<Issuer> {
 
 export default async function parseV3 (certificateJson): Promise<BlockcertsV3> {
   const receipt = parseSignature(certificateJson.proof);
-  console.log(receipt);
   const { issuer: issuerProfileUrl, metadataJson, metadata, issuanceDate, id, expirationDate } = certificateJson;
   const certificateMetadata = metadata || metadataJson;
   const issuer = await getIssuerProfile(issuerProfileUrl);

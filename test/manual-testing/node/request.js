@@ -10,11 +10,12 @@ async function verify (blockcerts, version) {
     throw new Error(`No blockcerts to verify. version: ${version}`);
   }
 
-  console.log('Now starting verification of', version);
+  console.log('Now starting verification of', version, blockcerts.id);
 
   const verificationStatus = await fetch('http://localhost:4000/verification', {
     body: JSON.stringify({
-      blockcerts
+      blockcerts,
+      version
     }),
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }

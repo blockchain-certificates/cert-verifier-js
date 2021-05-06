@@ -4,10 +4,10 @@ import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-sign
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile';
 import verificationStepsV3 from '../../assertions/verification-steps-v3';
 
-const assertionTransactionId = '0xd8876609620d1839ea100523a6b8350779e2e517e356fe974739f58fd8ad2d40';
+const assertionTransactionId = '1d0005700ece4a522bcf6e3ec1dc2821c1c304332b93d6148d8cec47f21ab89a';
 
 describe('Certificate entity test suite', function () {
-  const fixture = FIXTURES.BlockcertsV3AlphaExampleProperties;
+  const fixture = FIXTURES.BlockcertsV3AlphaCustomContext;
 
   describe('constructor method', function () {
     describe('given it is called with valid v3 certificate data', function () {
@@ -35,7 +35,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set the chain property', function () {
-        expect(certificate.chain).toEqual(BLOCKCHAINS.ethropst);
+        expect(certificate.chain).toEqual(BLOCKCHAINS.testnet);
       });
 
       it('should set the expires property', function () {
@@ -67,12 +67,12 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set the rawTransactionLink property', function () {
-        const rawTransactionLinkAssertion = `https://ropsten.etherscan.io/getRawTx?tx=${assertionTransactionId}`;
+        const rawTransactionLinkAssertion = `https://testnet.blockchain.info/rawtx/${assertionTransactionId}`;
         expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
       });
 
       it('should set the transactionLink property', function () {
-        const transactionLinkAssertion = `https://ropsten.etherscan.io/tx/${assertionTransactionId}`;
+        const transactionLinkAssertion = `https://testnet.blockchain.info/tx/${assertionTransactionId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
 

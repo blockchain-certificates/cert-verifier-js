@@ -118,6 +118,7 @@ describe('verifier build test suite', function () {
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe('failure');
+    expect(result.message).toBe('The address used to issue this Blockcerts does not belong to the claimed issuer.');
   });
 
   it('works as expected with a v2 certificate', async function () {
@@ -125,6 +126,12 @@ describe('verifier build test suite', function () {
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe('success');
+    expect(result.message).toEqual({
+      label: 'Verified',
+      // eslint-disable-next-line no-template-curly-in-string
+      description: 'This is a valid ${chain} certificate.',
+      linkText: 'View transaction link'
+    });
   });
 
   it('works as expected with a v3 certificate', async function () {
@@ -132,5 +139,11 @@ describe('verifier build test suite', function () {
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe('success');
+    expect(result.message).toEqual({
+      label: 'Verified',
+      // eslint-disable-next-line no-template-curly-in-string
+      description: 'This is a valid ${chain} certificate.',
+      linkText: 'View transaction link'
+    });
   });
 });

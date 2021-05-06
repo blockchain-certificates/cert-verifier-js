@@ -1,14 +1,15 @@
 import domain from './domain';
 import parseJSON, { ParsedCertificate } from './parser';
 import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
-import { DEFAULT_OPTIONS } from './constants';
+import { DEFAULT_OPTIONS, TRANSACTION_APIS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
-import { TRANSACTION_APIS } from './constants/api';
 import { deepCopy } from './helpers/object';
-import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup/lib/esm/models/Explorers';
+import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
+import { Issuer } from './models/Issuer';
+import { ProofValue } from './models/MerkleProof2019';
 
 export interface ExplorerURLs {
   main: string;
@@ -39,14 +40,14 @@ export default class Certificate {
   public id: string;
   public isFormatValid: boolean;
   public issuedOn: string;
-  public issuer: any; // TODO: define issuer interface
+  public issuer: Issuer;
   public locale: string; // enum?
   public metadataJson: any; // TODO: define metadataJson interface. As abstract as can be as keys and values are open.
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
   public publicKey?: string;
   public rawTransactionLink: string;
-  public receipt: any; // TODO: define receipt interface
+  public receipt: ProofValue | any; // TODO: define receipt interface for v1, v2
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;

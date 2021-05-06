@@ -1,5 +1,4 @@
 /* eslint-disable */
-
 const fixtureV1 = {
   "receipt": {
     "merkleRoot": "68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728",
@@ -111,7 +110,7 @@ const fixtureV3 = {
     "proofPurpose": "assertionMethod",
     "verificationMethod": "did:example:23adb1f712ebc6f1c276eba4dfa#key-1"
   }
-}
+};
 
 module.exports = [
   fixtureV1,

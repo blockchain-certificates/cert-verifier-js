@@ -5,10 +5,15 @@ const log = debug('request');
 
 export function request (obj) {
   return new Promise((resolve, reject) => {
-    const url = obj.url;
+    let url = obj.url;
 
     if (!url) {
       reject(new Error('URL is missing'));
+    }
+
+    if (url.substr(0, 7) === 'http://') {
+      console.warn(`Upgrading requested url ${url} to https protocol.`);
+      url = url.replace('http://', 'https://');
     }
 
     // server

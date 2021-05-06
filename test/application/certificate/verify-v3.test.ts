@@ -2,7 +2,6 @@ import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../s
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
-import etherscanApiWithKey from '../../data/etherscan-key';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -17,7 +16,7 @@ describe('Certificate test suite', function () {
             time: '2020-03-11T14:48:23.000Z',
             revokedAddresses: []
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3Alpha, { explorerAPIs: [etherscanApiWithKey] });
+          certificate = new Certificate(FIXTURES.BlockcertsV3Alpha);
           await certificate.init();
         });
 
@@ -61,7 +60,7 @@ describe('Certificate test suite', function () {
             time: '2020-02-04T13:52:09.000Z',
             revokedAddresses: []
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered, { explorerAPIs: [etherscanApiWithKey] });
+          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered);
           await certificate.init();
         });
 
@@ -90,12 +89,12 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           sinon.stub(domain.verifier, 'lookForTx').resolves({
-            remoteHash: 'de1ddd816629c5aaecbaae7ad8ad193a9524362f8c98508bf891f2df3a8359e4',
-            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
-            time: '2020-03-23T20:38:13.000Z',
-            revokedAddresses: []
+            remoteHash: '2c7afa4f8192bd8d0e243da2044306b2183527270ef6fd76854c34a1288756ba',
+            issuingAddress: 'n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4',
+            time: '2021-05-06T14:35:09.000Z',
+            revokedAddresses: ['n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext, { explorerAPIs: [etherscanApiWithKey] });
+          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
           await certificate.init();
         });
 

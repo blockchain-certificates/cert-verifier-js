@@ -13,7 +13,7 @@
     "copy:declaration": "cp src/index.d.ts dist/index.d.ts",
     "test": "jest",
     "test:build": "npm run test:build:esm && npm run test:build:iife",
-    "test:build:esm": "jest --testRegex \"/*(.test.build.js)\" --runInBand",
+    "test:build:esm": "jest --testRegex \"/*(.test.build.js)\" --runInBand --silent",
     "test:build:iife": "karma start --single-run",
     "test:manual:browser": "rollup -c test/manual-testing/browser/rollup.config.js",
     "test:manual:node:server": "nodemon test/manual-testing/node/server.js",

@@ -21,6 +21,9 @@ describe('verifier build test suite', function () {
     const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
     await certificate.init();
     const result = await certificate.verify();
-    expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    if (result.status === VERIFICATION_STATUSES.FAILURE) {
+      console.log(result.message);
+    }
+    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
 });

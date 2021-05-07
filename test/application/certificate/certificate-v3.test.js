@@ -4,7 +4,7 @@ import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-sign
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile';
 import verificationStepsV3 from '../../assertions/verification-steps-v3';
 
-const assertionTransactionId = '1d0005700ece4a522bcf6e3ec1dc2821c1c304332b93d6148d8cec47f21ab89a';
+const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
 describe('Certificate entity test suite', function () {
   const fixture = FIXTURES.BlockcertsV3AlphaCustomContext;

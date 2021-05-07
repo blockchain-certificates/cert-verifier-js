@@ -38,8 +38,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2021-04-27T17:50:20.583082",
-    "proofValue": "z4zvrPUULqodatUGkAdvDASFwHq3Qk8tKAphMrmQGrWKJfoHs9ikMvYr49j6Ky9ooRpjFvVWEMokiANwSdTic4FbXiaZxhrxhmNetEoJhNmy8EJGj7eesoZhGsXdQXdqt98DpYtuMV9WA8SEwPZVhQsj5VruCowd3vKYojdnBb82dARfUKGq5K8RtarBjZ1fS4SxNBb5w59TtKEj8HWNNx6hfPVJwq1ovDYfW3HeuBu5Mae4P5z92URF5HAMJdEHmh8DC7BvUTaCeWUJseF36cbVnHE7pB2Zx4mW8kVeBKwnxURsB6hUhJRbxEfAcmxdtkP4XYnsP5KnLM13VBexmDf8MksnoVHHqNh9SHs7Njqqtyxrtxx5m4nY6YRo7qUhrZgrmKPvh8bievrh7LC",
+    "created": "2021-05-06T16:19:52.200750",
+    "proofValue": "z4zvrPUULqodatUGkAdvDASFwHq3Qk8tKAphMrmQGrWKJfoHs9ikMvYr49j6Ky9ooRpjFvVWEMokiANwSdTic4FbXiaZxhrxhmNetEoJhNmy8EJGj7eesoZhGsXdQXdqt98DpYtuMV9WA8SEwPZVhQsj5VruCowd3vKYojdnBb82dARfUKGq5K8RtarBjZ1fS4SxNBb5w59TtKEj8HWNNx6hfPVJwq1ovDYfW3HeuBu5Mae4P5z92URF5HAMJdEHmh8DC7BvUTaCeWUJseF36cbVnHE7pB2Zx4mW8kVeBKwnxURsB6hUhJRbxEfAcnEQqFQHmRwKGXtZBrjV3oC1dr43iU3cTbXb7ytPyVUBPLwgk7b1QjrchuwRtqpCYWTaLn7gutVtBEqgScUTDKJ",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "did:example:23adb1f712ebc6f1c276eba4dfa#key-1"
   }

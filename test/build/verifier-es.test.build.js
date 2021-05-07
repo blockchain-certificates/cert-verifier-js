@@ -24,8 +24,7 @@ describe('verifier build test suite', function () {
     });
   });
 
-  xit('works as expected with a v3 certificate', async function () {
-    // cbor issue with jest only. Not sure what's up but I also believe we were getting false positives.
+  it('works as expected with a v3 certificate', async function () {
     const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
     await certificate.init();
     const result = await certificate.verify();

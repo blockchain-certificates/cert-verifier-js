@@ -75,7 +75,7 @@ export default [
       serve({
         contentBase: [BUILD_OUTPUT_FOLDER, 'test/manual-testing/fixtures', 'dist'],
         host: '0.0.0.0',
-        port: 8081,
+        port: 9999,
         open: true,
         https: {
           cert: fs.readFileSync(`${BUILD_OUTPUT_FOLDER}/https-cert/cert.pem`),

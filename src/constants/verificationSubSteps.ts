@@ -1,5 +1,5 @@
 import * as STEPS from './verificationSteps';
-import i18n from '../data/i18n';
+import i18n from '../data/i18n.json';
 
 const getTransactionId = 'getTransactionId';
 const computeLocalHash = 'computeLocalHash';
@@ -14,7 +14,7 @@ const checkAuthenticity = 'checkAuthenticity';
 const checkRevokedStatus = 'checkRevokedStatus';
 const checkExpiresDate = 'checkExpiresDate';
 
-function getTextFor (subStep, status) {
+function getTextFor (subStep: string, status: string): string {
   return i18n['en-US'].subSteps[`${subStep}${status}`];
 }
 
@@ -27,7 +27,7 @@ const subStepsMap = {
   [STEPS.statusCheck]: [checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
 };
 
-function generateSubsteps (parentKey) {
+function generateSubsteps (parentKey): any { // TODO: define proper substep shape
   return subStepsMap[parentKey].reduce((acc, curr) => {
     acc[curr] = {
       code: curr,

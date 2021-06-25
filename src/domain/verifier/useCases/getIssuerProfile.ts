@@ -3,6 +3,7 @@ import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';
 import { Issuer } from '../../../models/Issuer';
+import domain from '../../../domain';
 
 function isValidUrl (url: string): boolean {
   // https://stackoverflow.com/a/15734347/4064775
@@ -62,8 +63,17 @@ export default async function getIssuerProfile (issuerAddress: any): Promise<Iss
   }
 
   if (isDidUri(issuerAddress)) {
-    console.log('issuer profile is DID - TODO: resolve document');
-    return;
+    // TODO: it could be that the issuer profile is embedded, or that it is distant,
+    //  but we found a did document so the rest of the function does not apply
+    try {
+      const didDocument = await domain.did.resolve(issuerAddress);
+      return {
+        // TODO: return more data from the issuer profile
+        didDocument
+      };
+    } catch (e) {
+      throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${e as string}`);
+    }
   } else if (!isValidUrl(issuerAddress)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }

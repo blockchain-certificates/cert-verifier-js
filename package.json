@@ -52,6 +52,8 @@
     "@babel/runtime": "^7.11.2",
     "@babel/runtime-corejs3": "^7.8.7",
     "@blockcerts/explorer-lookup": "^1.1.0",
+    "@decentralized-identity/did-common-typescript": "^0.1.19",
+    "@decentralized-identity/ion-tools": "^0.0.12",
     "@vaultie/lds-merkle-proof-2019": "0.0.8",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^5.0.3",

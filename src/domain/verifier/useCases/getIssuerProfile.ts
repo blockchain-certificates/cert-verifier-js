@@ -10,6 +10,10 @@ function isValidUrl (url: string): boolean {
   return regex.test(url);
 }
 
+function isDidUri (url: string): boolean {
+  return url.startsWith('did:', 0);
+}
+
 function isValidV1Profile (profile: Issuer): boolean {
   // eslint-disable-next-line camelcase,@typescript-eslint/naming-convention
   const { issuer_key, revocation_key, issuerKeys, revocationKeys } = profile;
@@ -57,7 +61,10 @@ export default async function getIssuerProfile (issuerAddress: any): Promise<Iss
     issuerAddress = issuerAddress.id;
   }
 
-  if (!isValidUrl(issuerAddress)) {
+  if (isDidUri(issuerAddress)) {
+    console.log('issuer profile is DID - TODO: resolve document');
+    return;
+  } else if (!isValidUrl(issuerAddress)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 

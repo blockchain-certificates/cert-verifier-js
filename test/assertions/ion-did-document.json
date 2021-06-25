@@ -1,0 +1,37 @@
+{
+  "@context": "https://w3id.org/did-resolution/v1",
+  "didDocument": {
+    "id": "did:ion:test:EiA_-7-VnxXffIXqC0Fb6H9SgkkjKyThVo_WgWItyeXsZw",
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      {
+        "@base": "did:ion:test:EiA_-7-VnxXffIXqC0Fb6H9SgkkjKyThVo_WgWItyeXsZw"
+      }
+    ],
+    "verificationMethod": [
+      {
+        "id": "#key-1",
+        "controller": "",
+        "type": "EcdsaSecp256k1VerificationKey2019",
+        "publicKeyJwk": {
+          "kty": "EC",
+          "crv": "secp256k1",
+          "x": "6_JKJIXL7PJQT9hnr03yQNda_fUfmfrcZpymkRqsmH4",
+          "y": "steT4D8LrgwmqASd1EMy6ZyyAqsl-KvNlD7rBhX3za8",
+          "kid": "_0qG5QVt8vd6pbVGs5ReFJA4-yvYNEi4Ov1HZHTsobM"
+        }
+      }
+    ],
+    "authentication": [
+      "#key-1"
+    ]
+  },
+  "didDocumentMetadata": {
+    "method": {
+      "published": true,
+      "recoveryCommitment": "EiCYogv8ekYDItHFW_S5ewfMipUy5BeaJFe_Jn-5WAan8A",
+      "updateCommitment": "EiBAFJG3OmKlBvpr1xsBmYEF_J2mDmLyi1wYttAxYl78GQ"
+    },
+    "canonicalId": "did:ion:test:EiA_-7-VnxXffIXqC0Fb6H9SgkkjKyThVo_WgWItyeXsZw"
+  }
+}

@@ -1,4 +1,4 @@
-import { IDidDocument } from '@decentralized-identity/did-common-typescript';
+import { IDidDocument } from './DidDocument';
 
 export interface IssuerPublicKeyList {
   [key: string]: ParsedKeyObjectV2;

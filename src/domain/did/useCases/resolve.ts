@@ -1,5 +1,5 @@
-import { IDidDocument } from '@decentralized-identity/did-common-typescript';
 import ion from '../methods/ion';
+import { IDidDocument } from '../../../models/DidDocument';
 
 const supportedMethods = {
   ion

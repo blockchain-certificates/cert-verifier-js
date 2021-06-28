@@ -1,5 +1,5 @@
 import ION from '@decentralized-identity/ion-tools';
-import { IDidDocument } from '@decentralized-identity/did-common-typescript';
+import { IDidDocument } from '../../../models/DidDocument';
 
 const ionApiServer = 'http://127.0.0.1:3000';
 

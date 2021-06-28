@@ -35,6 +35,7 @@ export default async function parseV3 (certificateJson): Promise<BlockcertsV3> {
     receipt,
     recipientFullName: getRecipientFullName(certificateJson),
     recordLink: id,
+    // TODO: more dynamic set up of V3
     version: CERTIFICATE_VERSIONS.V3_0_alpha
   };
 }

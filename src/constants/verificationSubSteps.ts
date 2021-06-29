@@ -1,6 +1,17 @@
 import * as STEPS from './verificationSteps';
 import i18n from '../data/i18n.json';
 
+export interface IVerificationSubstep {
+  code: string;
+  label: string;
+  labelPending: string;
+  parentStep: STEPS;
+}
+
+export interface ISubstepList {
+  [key: string]: IVerificationSubstep;
+}
+
 const getTransactionId = 'getTransactionId';
 const computeLocalHash = 'computeLocalHash';
 const fetchRemoteHash = 'fetchRemoteHash';
@@ -10,6 +21,7 @@ const compareHashes = 'compareHashes';
 const checkMerkleRoot = 'checkMerkleRoot';
 const checkReceipt = 'checkReceipt';
 const checkIssuerSignature = 'checkIssuerSignature';
+const checkIssuerIdentity = 'checkIssuerIdentity';
 const checkAuthenticity = 'checkAuthenticity';
 const checkRevokedStatus = 'checkRevokedStatus';
 const checkExpiresDate = 'checkExpiresDate';
@@ -24,10 +36,10 @@ const LABEL_PENDING = 'LabelPending';
 const subStepsMap = {
   [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys],
   [STEPS.hashComparison]: [compareHashes, checkMerkleRoot, checkReceipt],
-  [STEPS.statusCheck]: [checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
+  [STEPS.statusCheck]: [checkIssuerIdentity, checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
 };
 
-function generateSubsteps (parentKey): any { // TODO: define proper substep shape
+function generateSubsteps (parentKey): ISubstepList {
   return subStepsMap[parentKey].reduce((acc, curr) => {
     acc[curr] = {
       code: curr,
@@ -39,7 +51,7 @@ function generateSubsteps (parentKey): any { // TODO: define proper substep shap
   }, {});
 }
 
-const language = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
+const language: ISubstepList = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
   return Object.assign(acc, generateSubsteps(parentStepKey));
 }, {});
 
@@ -52,6 +64,7 @@ export {
   compareHashes,
   checkMerkleRoot,
   checkReceipt,
+  checkIssuerIdentity,
   checkIssuerSignature,
   checkAuthenticity,
   checkRevokedStatus,

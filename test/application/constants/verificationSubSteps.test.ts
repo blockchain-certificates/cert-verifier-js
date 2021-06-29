@@ -1,4 +1,4 @@
-import { language } from '../../../src/constants/verificationSubSteps';
+import { substepsList } from '../../../src/constants/verificationSubSteps';
 
 const expectedSubSteps = {
   checkAuthenticity: {
@@ -84,7 +84,7 @@ const expectedSubSteps = {
 describe('verificationSubSteps test suite', function () {
   describe('language property', function () {
     it('should output the expected shape', function () {
-      expect(language).toEqual(expectedSubSteps);
+      expect(substepsList).toEqual(expectedSubSteps);
     });
   });
 });

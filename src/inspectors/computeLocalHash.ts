@@ -2,7 +2,7 @@ import { isV1 } from '../constants/certificateVersions';
 import CONFIG from '../constants/config';
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
-import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSubSteps';
 import sha256 from 'sha256';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';

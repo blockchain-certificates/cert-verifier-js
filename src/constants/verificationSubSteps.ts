@@ -1,30 +1,32 @@
-import * as STEPS from './verificationSteps';
 import i18n from '../data/i18n.json';
+import { VerificationSteps } from './verificationSteps';
 
 export interface IVerificationSubstep {
   code: string;
   label: string;
   labelPending: string;
-  parentStep: STEPS;
+  parentStep: VerificationSteps;
 }
 
 export interface ISubstepList {
   [key: string]: IVerificationSubstep;
 }
 
-const getTransactionId = 'getTransactionId';
-const computeLocalHash = 'computeLocalHash';
-const fetchRemoteHash = 'fetchRemoteHash';
-const getIssuerProfile = 'getIssuerProfile';
-const parseIssuerKeys = 'parseIssuerKeys';
-const compareHashes = 'compareHashes';
-const checkMerkleRoot = 'checkMerkleRoot';
-const checkReceipt = 'checkReceipt';
-const checkIssuerSignature = 'checkIssuerSignature';
-const checkIssuerIdentity = 'checkIssuerIdentity';
-const checkAuthenticity = 'checkAuthenticity';
-const checkRevokedStatus = 'checkRevokedStatus';
-const checkExpiresDate = 'checkExpiresDate';
+enum SUB_STEPS {
+  getTransactionId = 'getTransactionId',
+  computeLocalHash = 'computeLocalHash',
+  fetchRemoteHash = 'fetchRemoteHash',
+  getIssuerProfile = 'getIssuerProfile',
+  parseIssuerKeys = 'parseIssuerKeys',
+  compareHashes = 'compareHashes',
+  checkMerkleRoot = 'checkMerkleRoot',
+  checkReceipt = 'checkReceipt',
+  checkIssuerSignature = 'checkIssuerSignature',
+  checkIssuerIdentity = 'checkIssuerIdentity',
+  checkAuthenticity = 'checkAuthenticity',
+  checkRevokedStatus = 'checkRevokedStatus',
+  checkExpiresDate = 'checkExpiresDate'
+}
 
 function getTextFor (subStep: string, status: string): string {
   return i18n['en-US'].subSteps[`${subStep}${status}`];
@@ -34,9 +36,9 @@ const LABEL = 'Label';
 const LABEL_PENDING = 'LabelPending';
 
 const subStepsMap = {
-  [STEPS.formatValidation]: [getTransactionId, computeLocalHash, fetchRemoteHash, getIssuerProfile, parseIssuerKeys],
-  [STEPS.hashComparison]: [compareHashes, checkMerkleRoot, checkReceipt],
-  [STEPS.statusCheck]: [checkIssuerIdentity, checkIssuerSignature, checkAuthenticity, checkRevokedStatus, checkExpiresDate]
+  [VerificationSteps.formatValidation]: [SUB_STEPS.getTransactionId, SUB_STEPS.computeLocalHash, SUB_STEPS.fetchRemoteHash, SUB_STEPS.getIssuerProfile, SUB_STEPS.parseIssuerKeys],
+  [VerificationSteps.hashComparison]: [SUB_STEPS.compareHashes, SUB_STEPS.checkMerkleRoot, SUB_STEPS.checkReceipt],
+  [VerificationSteps.statusCheck]: [SUB_STEPS.checkIssuerIdentity, SUB_STEPS.checkIssuerSignature, SUB_STEPS.checkAuthenticity, SUB_STEPS.checkRevokedStatus, SUB_STEPS.checkExpiresDate]
 };
 
 function generateSubsteps (parentKey): ISubstepList {
@@ -51,23 +53,11 @@ function generateSubsteps (parentKey): ISubstepList {
   }, {});
 }
 
-const language: ISubstepList = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
+const substepsList: ISubstepList = Object.keys(subStepsMap).reduce((acc, parentStepKey) => {
   return Object.assign(acc, generateSubsteps(parentStepKey));
 }, {});
 
 export {
-  getTransactionId,
-  computeLocalHash,
-  fetchRemoteHash,
-  getIssuerProfile,
-  parseIssuerKeys,
-  compareHashes,
-  checkMerkleRoot,
-  checkReceipt,
-  checkIssuerIdentity,
-  checkIssuerSignature,
-  checkAuthenticity,
-  checkRevokedStatus,
-  checkExpiresDate,
-  language
+  SUB_STEPS,
+  substepsList
 };

@@ -1,4 +1,4 @@
-import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
+import { VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import Versions, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
@@ -8,6 +8,8 @@ import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
+import { VerificationSteps } from './constants/verificationSteps';
+import { SUB_STEPS } from './constants/verificationSubSteps';
 
 const log = debug('Verifier');
 
@@ -21,7 +23,7 @@ export interface IVerificationStepCallbackAPI {
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
 
 export interface IFinalVerificationStatus {
-  code: STEPS.final;
+  code: VerificationSteps.final;
   status: string; // TODO: use enum
   message: string;
 }
@@ -320,7 +322,7 @@ export default class Verifier {
   }
 
   _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
-    return { code: STEPS.final, status, message };
+    return { code: VerificationSteps.final, status, message };
   }
 
   /**

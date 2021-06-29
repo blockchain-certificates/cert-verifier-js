@@ -1,7 +1,7 @@
 import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api';
 import CERTIFICATE_VERSIONS from './certificateVersions';
 import * as STEPS from './verificationSteps';
-import * as SUB_STEPS from './verificationSubSteps';
+import { SUB_STEPS } from './verificationSubSteps';
 import * as VERIFICATION_STATUSES from './verificationStatuses';
 import { BLOCKCHAINS } from './blockchains';
 import { NETWORKS } from './networks';

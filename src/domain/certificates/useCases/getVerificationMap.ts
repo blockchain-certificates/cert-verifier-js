@@ -1,11 +1,24 @@
-import { NETWORKS, STEPS, SUB_STEPS } from '../../../constants';
+import { NETWORKS, STEPS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
-import { isV3 } from '../../../constants/certificateVersions';
-import { getIssuerProfile } from '../../../constants/verificationSubSteps';
+import Versions, { isV3 } from '../../../constants/certificateVersions';
+import { SUB_STEPS, substepsList, IVerificationSubstep } from '../../../constants/verificationSubSteps';
 import { deepCopy } from '../../../helpers/object';
+import { TVerificationStepsList, VerificationSteps } from '../../../constants/verificationSteps';
+import { IBlockchainObject } from '../../../constants/blockchains';
 
-const versionVerificationMap = {
+export interface IVerificationMapItem {
+  code: VerificationSteps;
+  label: string;
+  labelPending: string;
+  subSteps: IVerificationSubstep[];
+}
+
+type TNetworkVerificationStepList = {
+  [key in NETWORKS]: SUB_STEPS[];
+};
+
+const versionVerificationMap: TNetworkVerificationStepList = {
   [NETWORKS.mainnet]: [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
@@ -35,7 +48,7 @@ const versionVerificationMap = {
  * @param stepsObject
  * @returns {{code: string}[]}
  */
-function stepsObjectToArray (stepsObject) {
+function stepsObjectToArray (stepsObject: TVerificationStepsList): IVerificationMapItem[] {
   return Object.keys(stepsObject).map(stepCode => {
     return {
       ...stepsObject[stepCode],
@@ -54,7 +67,7 @@ function stepsObjectToArray (stepsObject) {
  * @param subSteps
  * @returns {any}
  */
-function setSubStepsToSteps (subSteps) {
+function setSubStepsToSteps (subSteps: IVerificationSubstep[]): TVerificationStepsList {
   const steps = deepCopy(STEPS.language);
   subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
   return steps;
@@ -68,9 +81,9 @@ function setSubStepsToSteps (subSteps) {
  * @param subStepMap
  * @returns {Array}
  */
-function getFullStepsFromSubSteps (subStepMap) {
-  const subSteps = subStepMap.map(stepCode => {
-    const subStep = Object.assign({}, SUB_STEPS.language[stepCode]);
+function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[]): IVerificationMapItem[] {
+  const subSteps: IVerificationSubstep[] = subStepMap.map(stepCode => {
+    const subStep = Object.assign({}, substepsList[stepCode]);
     return {
       ...subStep,
       label: getText('subSteps', `${stepCode}Label`),
@@ -91,7 +104,7 @@ function getFullStepsFromSubSteps (subStepMap) {
  * @param chain
  * @returns {Array}
  */
-export default function getVerificationMap (chain, version) {
+export default function getVerificationMap (chain: IBlockchainObject, version: Versions): IVerificationMapItem[] {
   if (!chain) {
     return [];
   }
@@ -99,7 +112,8 @@ export default function getVerificationMap (chain, version) {
   const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const verificationMap = Object.assign(versionVerificationMap);
   if (isV3(version)) {
-    const getIssuerProfileIndex = verificationMap[network].findIndex(subStep => subStep === getIssuerProfile);
+    const getIssuerProfileIndex = verificationMap[network].findIndex(subStep => subStep === SUB_STEPS.getIssuerProfile);
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete verificationMap[network][getIssuerProfileIndex];
   }
   return getFullStepsFromSubSteps(verificationMap[network]);

@@ -1,4 +1,4 @@
-import { NETWORKS, VERIFICATION_STATUSES } from './constants';
+import { VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import Versions, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
@@ -10,7 +10,7 @@ import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
-import { versionVerificationMap } from './domain/certificates/useCases/getVerificationMap';
+import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
 
 const log = debug('Verifier');
 
@@ -91,9 +91,7 @@ export default class Verifier {
       );
     }
 
-    const verificationProcess: string[] = domain.chains.isMockChain(this.chain)
-      ? versionVerificationMap[NETWORKS.testnet]
-      : versionVerificationMap[NETWORKS.mainnet];
+    const verificationProcess: SUB_STEPS[] = getVerificationStepsForChain(this.chain, this.version);
     for (const verificationStep of verificationProcess) {
       if (!this[verificationStep]) {
         console.error('No function for step', verificationStep);
@@ -177,12 +175,10 @@ export default class Verifier {
   }
 
   private async getIssuerProfile (): Promise<void> {
-    if (!isV3(this.version)) { // with v3 this is done at certificate parsing level (parseV3)
-      this.issuer = await this._doAction(
-        SUB_STEPS.getIssuerProfile,
-        async () => await domain.verifier.getIssuerProfile(this.issuer)
-      );
-    }
+    this.issuer = await this._doAction(
+      SUB_STEPS.getIssuerProfile,
+      async () => await domain.verifier.getIssuerProfile(this.issuer)
+    );
   }
 
   private async parseIssuerKeys (): Promise<void> {

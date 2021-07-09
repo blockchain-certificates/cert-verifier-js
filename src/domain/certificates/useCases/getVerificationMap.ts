@@ -18,27 +18,38 @@ type TNetworkVerificationStepList = {
   [key in NETWORKS]: SUB_STEPS[];
 };
 
-export const versionVerificationMap: TNetworkVerificationStepList = {
-  [NETWORKS.mainnet]: [
-    SUB_STEPS.getTransactionId,
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.fetchRemoteHash,
-    SUB_STEPS.getIssuerProfile,
-    SUB_STEPS.parseIssuerKeys,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkMerkleRoot,
-    SUB_STEPS.checkReceipt,
-    SUB_STEPS.checkRevokedStatus,
-    SUB_STEPS.checkAuthenticity,
-    SUB_STEPS.checkExpiresDate
-  ],
-  [NETWORKS.testnet]: [
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkReceipt,
-    SUB_STEPS.checkExpiresDate
-  ]
-};
+export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions): SUB_STEPS[] {
+  const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
+  const networkVerificationMap: TNetworkVerificationStepList = {
+    [NETWORKS.mainnet]: [
+      SUB_STEPS.getTransactionId,
+      SUB_STEPS.computeLocalHash,
+      SUB_STEPS.fetchRemoteHash,
+      SUB_STEPS.getIssuerProfile,
+      SUB_STEPS.parseIssuerKeys,
+      SUB_STEPS.compareHashes,
+      SUB_STEPS.checkMerkleRoot,
+      SUB_STEPS.checkReceipt,
+      SUB_STEPS.checkRevokedStatus,
+      SUB_STEPS.checkAuthenticity,
+      SUB_STEPS.checkExpiresDate
+    ],
+    [NETWORKS.testnet]: [
+      SUB_STEPS.computeLocalHash,
+      SUB_STEPS.compareHashes,
+      SUB_STEPS.checkReceipt,
+      SUB_STEPS.checkExpiresDate
+    ]
+  };
+
+  if (isV3(version)) {
+    const getIssuerProfileIndex = networkVerificationMap[network].findIndex(subStep => subStep === SUB_STEPS.getIssuerProfile);
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete networkVerificationMap[network][getIssuerProfileIndex];
+  }
+
+  return networkVerificationMap[network].filter(step => !!step);
+}
 
 /**
  * stepsObjectToArray
@@ -109,13 +120,5 @@ export default function getVerificationMap (chain: IBlockchainObject, version: V
     return [];
   }
 
-  const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
-  const verificationMap = JSON.parse(JSON.stringify(versionVerificationMap));
-  // TODO: handle this at map level
-  if (isV3(version)) {
-    const getIssuerProfileIndex = verificationMap[network].findIndex(subStep => subStep === SUB_STEPS.getIssuerProfile);
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete verificationMap[network][getIssuerProfileIndex];
-  }
-  return getFullStepsFromSubSteps(verificationMap[network]);
+  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version));
 }

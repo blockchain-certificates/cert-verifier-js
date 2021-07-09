@@ -18,7 +18,7 @@ type TNetworkVerificationStepList = {
   [key in NETWORKS]: SUB_STEPS[];
 };
 
-const versionVerificationMap: TNetworkVerificationStepList = {
+export const versionVerificationMap: TNetworkVerificationStepList = {
   [NETWORKS.mainnet]: [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
@@ -110,7 +110,8 @@ export default function getVerificationMap (chain: IBlockchainObject, version: V
   }
 
   const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
-  const verificationMap = Object.assign(versionVerificationMap);
+  const verificationMap = JSON.parse(JSON.stringify(versionVerificationMap));
+  // TODO: handle this at map level
   if (isV3(version)) {
     const getIssuerProfileIndex = verificationMap[network].findIndex(subStep => subStep === SUB_STEPS.getIssuerProfile);
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete

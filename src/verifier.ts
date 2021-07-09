@@ -1,4 +1,4 @@
-import { VERIFICATION_STATUSES } from './constants';
+import { NETWORKS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import Versions, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
@@ -10,6 +10,7 @@ import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
+import { versionVerificationMap } from './domain/certificates/useCases/getVerificationMap';
 
 const log = debug('Verifier');
 
@@ -90,10 +91,15 @@ export default class Verifier {
       );
     }
 
-    if (domain.chains.isMockChain(this.chain)) {
-      await this._verifyV2Mock();
-    } else {
-      await this._verifyMain();
+    const verificationProcess: string[] = domain.chains.isMockChain(this.chain)
+      ? versionVerificationMap[NETWORKS.testnet]
+      : versionVerificationMap[NETWORKS.mainnet];
+    for (const verificationStep of verificationProcess) {
+      if (!this[verificationStep]) {
+        console.error('No function for step', verificationStep);
+        return;
+      }
+      await this[verificationStep]();
     }
 
     // Send final callback update for global verification status
@@ -143,27 +149,6 @@ export default class Verifier {
 
   private _stepCallback (update: IVerificationStepCallbackAPI): any { // TODO: unsure type is indeed any
     // defined by this.verify interface
-  }
-
-  async _verifyMain (): Promise<void> {
-    await this.getTransactionId();
-    await this.computeLocalHash();
-    await this.fetchRemoteHash();
-    await this.getIssuerProfile();
-    await this.parseIssuerKeys();
-    await this.compareHashes();
-    await this.checkMerkleRoot();
-    await this.checkReceipt();
-    await this.checkRevokedStatus();
-    await this.checkAuthenticity();
-    await this.checkExpiresDate();
-  }
-
-  async _verifyV2Mock (): Promise<void> {
-    await this.computeLocalHash();
-    await this.compareHashes();
-    await this.checkReceipt();
-    await this.checkExpiresDate();
   }
 
   private async getTransactionId (): Promise<void> {

@@ -143,27 +143,9 @@ export default class Verifier {
   }
 
   async _verifyMain (): Promise<void> {
-    // Check transaction id validity
-    await this._doAction(
-      SUB_STEPS.getTransactionId,
-      () => inspectors.isTransactionIdValid(this.transactionId)
-    );
-
-    // Compute local hash
-    this.localHash = await this._doAction(
-      SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
-    );
-
-    // Fetch remote hash
-    this.txData = await this._doAction(
-      SUB_STEPS.fetchRemoteHash,
-      async () => await domain.verifier.lookForTx({
-        transactionId: this.transactionId,
-        chain: this.chain.code,
-        explorerAPIs: this.explorerAPIs
-      })
-    );
+    await this.getTransactionId();
+    await this.computeLocalHash();
+    await this.fetchRemoteHash();
 
     // Get issuer profile
     let issuerProfileJson: Issuer = this.issuer;
@@ -229,12 +211,7 @@ export default class Verifier {
   }
 
   async _verifyV2Mock (): Promise<void> {
-    // Compute local hash
-    this.localHash = await this._doAction(
-      SUB_STEPS.computeLocalHash,
-      async () =>
-        await inspectors.computeLocalHash(this.documentToVerify, this.version)
-    );
+    await this.computeLocalHash();
 
     // Compare hashes
     await this._doAction(SUB_STEPS.compareHashes, () =>
@@ -249,6 +226,31 @@ export default class Verifier {
     // Check expiration date
     await this._doAction(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
+    );
+  }
+
+  private async getTransactionId (): Promise<void> {
+    await this._doAction(
+      SUB_STEPS.getTransactionId,
+      () => inspectors.isTransactionIdValid(this.transactionId)
+    );
+  }
+
+  private async computeLocalHash (): Promise<void> {
+    this.localHash = await this._doAction(
+      SUB_STEPS.computeLocalHash,
+      async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
+    );
+  }
+
+  private async fetchRemoteHash (): Promise<void> {
+    this.txData = await this._doAction(
+      SUB_STEPS.fetchRemoteHash,
+      async () => await domain.verifier.lookForTx({
+        transactionId: this.transactionId,
+        chain: this.chain.code,
+        explorerAPIs: this.explorerAPIs
+      })
     );
   }
 

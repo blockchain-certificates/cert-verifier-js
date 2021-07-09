@@ -52,7 +52,7 @@ function isValidProfile (profile: Issuer): boolean {
  * @param issuerAddress: string
  * @returns {Promise<any>}
  */
-export default async function getIssuerProfile (issuerAddress: any): Promise<Issuer> {
+export default async function getIssuerProfile (issuerAddress: Issuer | string): Promise<Issuer> {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);

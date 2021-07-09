@@ -148,20 +148,12 @@ export default class Verifier {
     await this.getTransactionId();
     await this.computeLocalHash();
     await this.fetchRemoteHash();
-
-    // Get issuer profile
-    let issuerProfileJson: Issuer = this.issuer;
-    if (!isV3(this.version)) {
-      issuerProfileJson = await this._doAction(
-        SUB_STEPS.getIssuerProfile,
-        async () => await domain.verifier.getIssuerProfile(this.issuer) // here is a string url
-      );
-    }
+    await this.getIssuerProfile();
 
     // Parse issuer keys
     const issuerKeyMap: IssuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
-      () => domain.verifier.parseIssuerKeys(issuerProfileJson)
+      () => domain.verifier.parseIssuerKeys(this.issuer)
     );
 
     // Compare hashes
@@ -185,14 +177,14 @@ export default class Verifier {
     if (this.version === Versions.V1_2) {
       revokedAddresses = this.txData.revokedAddresses;
       keys = [
-        domain.verifier.parseRevocationKey(issuerProfileJson),
+        domain.verifier.parseRevocationKey(this.issuer),
         this.revocationKey
       ];
     } else {
       // Get revoked assertions
       revokedAddresses = await this._doAction(
         null,
-        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson), this.id)
+        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
       );
       keys = this.id;
     }
@@ -254,6 +246,15 @@ export default class Verifier {
         explorerAPIs: this.explorerAPIs
       })
     );
+  }
+
+  private async getIssuerProfile (): Promise<void> {
+    if (!isV3(this.version)) { // with v3 this is done at certificate parsing level (parseV3)
+      this.issuer = await this._doAction(
+        SUB_STEPS.getIssuerProfile,
+        async () => await domain.verifier.getIssuerProfile(this.issuer)
+      );
+    }
   }
 
   /**

@@ -103,40 +103,8 @@ export default class Verifier {
     return distantIssuerProfile.revocationList;
   }
 
-  _doAction (step: string, action: () => any): any {
+  private async _doAction (step: string, action: () => any): Promise<any> {
     // If not failing already
-    if (this._isFailing()) {
-      return;
-    }
-
-    let label: string;
-    if (step) {
-      label = domain.i18n.getText('subSteps', `${step}LabelPending`);
-      log(label);
-      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
-    }
-
-    try {
-      const res: any = action();
-      if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
-      }
-      return res;
-    } catch (err) {
-      if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
-        this._stepsStatuses.push({
-          code: step,
-          label,
-          status: VERIFICATION_STATUSES.FAILURE,
-          errorMessage: err.message
-        });
-      }
-    }
-  }
-
-  async _doAsyncAction (step: string, action: () => any): Promise<any> {
     if (this._isFailing()) {
       return;
     }
@@ -174,19 +142,19 @@ export default class Verifier {
 
   async _verifyMain (): Promise<void> {
     // Check transaction id validity
-    this._doAction(
+    await this._doAction(
       SUB_STEPS.getTransactionId,
       () => inspectors.isTransactionIdValid(this.transactionId)
     );
 
     // Compute local hash
-    const localHash = await this._doAsyncAction(
+    const localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
-    const txData = await this._doAsyncAction(
+    const txData = await this._doAction(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
@@ -198,30 +166,30 @@ export default class Verifier {
     // Get issuer profile
     let issuerProfileJson: Issuer = this.issuer;
     if (!isV3(this.version)) {
-      issuerProfileJson = await this._doAsyncAction(
+      issuerProfileJson = await this._doAction(
         SUB_STEPS.getIssuerProfile,
         async () => await domain.verifier.getIssuerProfile(this.issuer) // here is a string url
       );
     }
 
     // Parse issuer keys
-    const issuerKeyMap: IssuerPublicKeyList = await this._doAsyncAction(
+    const issuerKeyMap: IssuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(issuerProfileJson)
     );
 
     // Compare hashes
-    this._doAction(SUB_STEPS.compareHashes, () => {
+    await this._doAction(SUB_STEPS.compareHashes, () => {
       inspectors.ensureHashesEqual(localHash, this.receipt.targetHash);
     });
 
     // Check merkle root
-    this._doAction(SUB_STEPS.checkMerkleRoot, () =>
+    await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
       inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
     );
 
     // Check receipt
-    this._doAction(SUB_STEPS.checkReceipt, () =>
+    await this._doAction(SUB_STEPS.checkReceipt, () =>
       inspectors.ensureValidReceipt(this.receipt, this.version)
     );
 
@@ -236,48 +204,48 @@ export default class Verifier {
       ];
     } else {
       // Get revoked assertions
-      revokedAddresses = await this._doAsyncAction(
+      revokedAddresses = await this._doAction(
         null,
         async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(issuerProfileJson), this.id)
       );
       keys = this.id;
     }
 
-    this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+    await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
       inspectors.ensureNotRevoked(revokedAddresses, keys)
     );
 
     // Check authenticity
-    this._doAction(SUB_STEPS.checkAuthenticity, () =>
+    await this._doAction(SUB_STEPS.checkAuthenticity, () =>
       inspectors.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
     );
 
     // Check expiration
-    this._doAction(SUB_STEPS.checkExpiresDate, () =>
+    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
     );
   }
 
   async _verifyV2Mock (): Promise<void> {
     // Compute local hash
-    const localHash = await this._doAsyncAction(
+    const localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
       async () =>
         await inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Compare hashes
-    this._doAction(SUB_STEPS.compareHashes, () =>
+    await this._doAction(SUB_STEPS.compareHashes, () =>
       inspectors.ensureHashesEqual(localHash, this.receipt.targetHash)
     );
 
     // Check receipt
-    this._doAction(SUB_STEPS.checkReceipt, () =>
+    await this._doAction(SUB_STEPS.checkReceipt, () =>
       inspectors.ensureValidReceipt(this.receipt)
     );
 
     // Check expiration date
-    this._doAction(SUB_STEPS.checkExpiresDate, () =>
+    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
     );
   }

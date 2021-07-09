@@ -40,6 +40,7 @@ export default class Verifier {
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
   private txData: TransactionData;
+  private issuerPublicKeyList: IssuerPublicKeyList;
 
   constructor (
     { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
@@ -147,78 +148,20 @@ export default class Verifier {
     await this.computeLocalHash();
     await this.fetchRemoteHash();
     await this.getIssuerProfile();
-
-    // Parse issuer keys
-    const issuerKeyMap: IssuerPublicKeyList = await this._doAction(
-      SUB_STEPS.parseIssuerKeys,
-      () => domain.verifier.parseIssuerKeys(this.issuer)
-    );
-
-    // Compare hashes
-    await this._doAction(SUB_STEPS.compareHashes, () => {
-      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
-    });
-
-    // Check merkle root
-    await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
-    );
-
-    // Check receipt
-    await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt, this.version)
-    );
-
-    // Check revoked status
-    let keys;
-    let revokedAddresses;
-    if (this.version === Versions.V1_2) {
-      revokedAddresses = this.txData.revokedAddresses;
-      keys = [
-        domain.verifier.parseRevocationKey(this.issuer),
-        this.revocationKey
-      ];
-    } else {
-      // Get revoked assertions
-      revokedAddresses = await this._doAction(
-        null,
-        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
-      );
-      keys = this.id;
-    }
-
-    await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-      inspectors.ensureNotRevoked(revokedAddresses, keys)
-    );
-
-    // Check authenticity
-    await this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      inspectors.ensureValidIssuingKey(issuerKeyMap, this.txData.issuingAddress, this.txData.time)
-    );
-
-    // Check expiration
-    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
-      inspectors.ensureNotExpired(this.expires)
-    );
+    await this.parseIssuerKeys();
+    await this.compareHashes();
+    await this.checkMerkleRoot();
+    await this.checkReceipt();
+    await this.checkRevokedStatus();
+    await this.checkAuthenticity();
+    await this.checkExpiresDate();
   }
 
   async _verifyV2Mock (): Promise<void> {
     await this.computeLocalHash();
-
-    // Compare hashes
-    await this._doAction(SUB_STEPS.compareHashes, () =>
-      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash)
-    );
-
-    // Check receipt
-    await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt)
-    );
-
-    // Check expiration date
-    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
-      inspectors.ensureNotExpired(this.expires)
-    );
+    await this.compareHashes();
+    await this.checkReceipt();
+    await this.checkExpiresDate();
   }
 
   private async getTransactionId (): Promise<void> {
@@ -253,6 +196,66 @@ export default class Verifier {
         async () => await domain.verifier.getIssuerProfile(this.issuer)
       );
     }
+  }
+
+  private async parseIssuerKeys (): Promise<void> {
+    this.issuerPublicKeyList = await this._doAction(
+      SUB_STEPS.parseIssuerKeys,
+      () => domain.verifier.parseIssuerKeys(this.issuer)
+    );
+  }
+
+  private async compareHashes (): Promise<void> {
+    await this._doAction(SUB_STEPS.compareHashes, () => {
+      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
+    });
+  }
+
+  private async checkMerkleRoot (): Promise<void> {
+    await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
+      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
+    );
+  }
+
+  private async checkReceipt (): Promise<void> {
+    await this._doAction(SUB_STEPS.checkReceipt, () =>
+      inspectors.ensureValidReceipt(this.receipt, this.version)
+    );
+  }
+
+  private async checkRevokedStatus (): Promise<void> {
+    let keys;
+    let revokedAddresses;
+    if (this.version === Versions.V1_2) {
+      revokedAddresses = this.txData.revokedAddresses;
+      keys = [
+        domain.verifier.parseRevocationKey(this.issuer),
+        this.revocationKey
+      ];
+    } else {
+      // Get revoked assertions
+      revokedAddresses = await this._doAction(
+        null,
+        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
+      );
+      keys = this.id;
+    }
+
+    await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+      inspectors.ensureNotRevoked(revokedAddresses, keys)
+    );
+  }
+
+  private async checkAuthenticity (): Promise<void> {
+    await this._doAction(SUB_STEPS.checkAuthenticity, () =>
+      inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
+    );
+  }
+
+  private async checkExpiresDate (): Promise<void> {
+    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
+      inspectors.ensureNotExpired(this.expires)
+    );
   }
 
   /**

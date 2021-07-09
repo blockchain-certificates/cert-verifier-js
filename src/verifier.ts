@@ -6,7 +6,7 @@ import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
-import { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 
 const log = debug('Verifier');
@@ -38,6 +38,8 @@ export default class Verifier {
   public documentToVerify: Blockcerts; // TODO: confirm this
   public explorerAPIs: ExplorerAPI[];
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private localHash: string;
+  private txData: TransactionData;
 
   constructor (
     { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
@@ -148,13 +150,13 @@ export default class Verifier {
     );
 
     // Compute local hash
-    const localHash = await this._doAction(
+    this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
     );
 
     // Fetch remote hash
-    const txData = await this._doAction(
+    this.txData = await this._doAction(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
@@ -180,12 +182,12 @@ export default class Verifier {
 
     // Compare hashes
     await this._doAction(SUB_STEPS.compareHashes, () => {
-      inspectors.ensureHashesEqual(localHash, this.receipt.targetHash);
+      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
     });
 
     // Check merkle root
     await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, txData.remoteHash)
+      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
     );
 
     // Check receipt
@@ -197,7 +199,7 @@ export default class Verifier {
     let keys;
     let revokedAddresses;
     if (this.version === Versions.V1_2) {
-      revokedAddresses = txData.revokedAddresses;
+      revokedAddresses = this.txData.revokedAddresses;
       keys = [
         domain.verifier.parseRevocationKey(issuerProfileJson),
         this.revocationKey
@@ -217,7 +219,7 @@ export default class Verifier {
 
     // Check authenticity
     await this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      inspectors.ensureValidIssuingKey(issuerKeyMap, txData.issuingAddress, txData.time)
+      inspectors.ensureValidIssuingKey(issuerKeyMap, this.txData.issuingAddress, this.txData.time)
     );
 
     // Check expiration
@@ -228,7 +230,7 @@ export default class Verifier {
 
   async _verifyV2Mock (): Promise<void> {
     // Compute local hash
-    const localHash = await this._doAction(
+    this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
       async () =>
         await inspectors.computeLocalHash(this.documentToVerify, this.version)
@@ -236,7 +238,7 @@ export default class Verifier {
 
     // Compare hashes
     await this._doAction(SUB_STEPS.compareHashes, () =>
-      inspectors.ensureHashesEqual(localHash, this.receipt.targetHash)
+      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash)
     );
 
     // Check receipt

@@ -11,6 +11,7 @@ import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
 import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
+import { Receipt } from './models/Receipt';
 
 const log = debug('Verifier');
 
@@ -34,7 +35,7 @@ export default class Verifier {
   public expires: string;
   public id: string;
   public issuer: Issuer;
-  public receipt: any; // TODO: define receipt interface
+  public receipt: Receipt;
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;

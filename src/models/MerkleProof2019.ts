@@ -6,12 +6,12 @@ export interface MerkleProof2019 {
   verificationMethod: string;
 }
 
-interface MerklePath {
+export interface MerklePath {
   left?: string;
   right?: string;
 }
 
-export interface ProofValue {
+export interface ProofValueMerkleProof2019 {
   path: MerklePath[];
   merkleRoot: string;
   targetHash: string;

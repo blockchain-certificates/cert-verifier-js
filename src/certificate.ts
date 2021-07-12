@@ -9,7 +9,7 @@ import Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
 import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
 import { Issuer } from './models/Issuer';
-import { ProofValue } from './models/MerkleProof2019';
+import { Receipt } from './models/Receipt';
 
 export interface ExplorerURLs {
   main: string;
@@ -47,7 +47,7 @@ export default class Certificate {
   public options: CertificateOptions;
   public publicKey?: string;
   public rawTransactionLink: string;
-  public receipt: ProofValue | any; // TODO: define receipt interface for v1, v2
+  public receipt: Receipt;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;

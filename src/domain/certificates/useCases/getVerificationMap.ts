@@ -30,6 +30,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkMerkleRoot,
       SUB_STEPS.checkReceipt,
+      SUB_STEPS.checkIssuerIdentity,
       SUB_STEPS.checkRevokedStatus,
       SUB_STEPS.checkAuthenticity,
       SUB_STEPS.checkExpiresDate
@@ -38,6 +39,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.computeLocalHash,
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkReceipt,
+      SUB_STEPS.checkIssuerIdentity,
       SUB_STEPS.checkExpiresDate
     ]
   };

@@ -241,6 +241,20 @@ export default class Verifier {
     );
   }
 
+  private async checkIssuerIdentity (): Promise<void> {
+    if (!this.issuer?.didDocument) {
+      return;
+    }
+    await this._doAction(SUB_STEPS.checkIssuerIdentity, () => {
+      inspectors.confirmDidSignature({
+        didDocument: this.issuer.didDocument,
+        proof: this.receipt,
+        issuingAddress: this.txData.issuingAddress,
+        chain: this.chain
+      });
+    });
+  }
+
   /**
    * Returns a failure final step message
    */

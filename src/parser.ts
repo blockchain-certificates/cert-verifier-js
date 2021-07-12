@@ -1,9 +1,10 @@
 import { versionParserMap } from './parsers';
-import { MerkleProof2019, ProofValueMerkleProof2019 } from './models/MerkleProof2019';
+import { MerkleProof2019 } from './models/MerkleProof2019';
 import { Receipt } from './models/Receipt';
 import { IBlockchainObject } from './constants/blockchains';
 import { Issuer } from './models/Issuer';
 import Versions from './constants/certificateVersions';
+import { Blockcerts } from './models/Blockcerts';
 
 function lookupVersion (array: string[], v: string): boolean {
   return array.some(str => str.includes(`v${v}`) || str.includes(`${v}.`));
@@ -47,7 +48,7 @@ export interface ParsedCertificate {
   proof?: MerkleProof2019;
 }
 
-export default async function parseJSON (certificateJson): Promise<ParsedCertificate> {
+export default async function parseJSON (certificateJson: Blockcerts): Promise<ParsedCertificate> {
   try {
     const version: number = retrieveBlockcertsVersion(certificateJson['@context']);
     const parsedCertificate = await versionParserMap[version](certificateJson);

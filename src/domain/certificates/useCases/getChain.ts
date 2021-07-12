@@ -50,7 +50,7 @@ function getChainObject (chainCodeSignatureValue): IBlockchainObject {
  * @param address
  * @returns {*}
  */
-export default function getChain (address, proof: Receipt): IBlockchainObject {
+export default function getChain (address: string, proof: Receipt): IBlockchainObject {
   const cleanedSignature = proof || null;
   if (cleanedSignature?.anchors) {
     const anchors = cleanedSignature.anchors;

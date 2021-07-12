@@ -1,6 +1,6 @@
 import TransactionData from './models/TransactionData';
 import { Blockcerts } from './models/Blockcerts';
-import { IVerificationStepCallbackFn } from './verifier';
+import { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions'; // TODO: improve definition and export from this file
 
@@ -76,8 +76,8 @@ declare class Certificate {
   public version: Versions;
 
   constructor (definition: Blockcerts | string, options?: CertificateOptions);
-  async init ();
-  async verify (stepCallback?: IVerificationStepCallbackFn);
+  async init (): Promise<void>;
+  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus>;
 }
 
 export {

@@ -3,6 +3,7 @@ import getSignatureImages from './helpers/getSignatureImage';
 import { CERTIFICATE_VERSIONS } from '../constants';
 import { IBlockchainObject } from '../constants/blockchains';
 import { BlockcertsV1 } from '../models/BlockcertsV1';
+import { ParsedCertificate } from '../parser';
 
 /**
  * parseV1
@@ -18,7 +19,7 @@ interface IRecipient {
   revocationKey?: string;
 }
 
-export default function parseV1 (certificateJson): BlockcertsV1 {
+export default function parseV1 (certificateJson: BlockcertsV1): ParsedCertificate {
   const fullCertificateObject = certificateJson.certificate || certificateJson.document.certificate;
   const recipient: IRecipient = certificateJson.recipient || certificateJson.document.recipient;
   const assertion = certificateJson.document.assertion;

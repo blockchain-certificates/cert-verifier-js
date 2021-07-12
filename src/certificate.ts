@@ -83,7 +83,7 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
   }
 
-  async parseJson (certificateDefinition): Promise<void> {
+  async parseJson (certificateDefinition: Blockcerts): Promise<void> {
     const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
@@ -108,7 +108,7 @@ export default class Certificate {
     return await verifier.verify(stepCallback);
   }
 
-  _setOptions (options): void {
+  _setOptions (options: CertificateOptions): void {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale

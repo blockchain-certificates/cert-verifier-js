@@ -263,7 +263,7 @@ export default class Verifier {
   /**
    * Returns a failure final step message
    */
-  _failed (errorStep): IFinalVerificationStatus { // TODO: define errorStep interface
+  _failed (errorStep: IVerificationStepCallbackAPI): IFinalVerificationStatus {
     const message: string = errorStep.errorMessage;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
@@ -276,7 +276,7 @@ export default class Verifier {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _retrieveDocumentBeforeIssuance (certificateJson): any { // TODO: define certificate object
+  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): any { // TODO: define certificate object without proof
     const certificateCopy = Object.assign({}, certificateJson);
     if (isV3(this.version)) {
       delete certificateCopy.proof;

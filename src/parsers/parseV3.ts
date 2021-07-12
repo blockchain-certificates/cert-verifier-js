@@ -4,6 +4,7 @@ import domain from '../domain';
 import { Issuer } from '../models/Issuer';
 import { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
 import { ParsedCertificate } from '../parser';
+import { BlockcertsV3 } from '../models/BlockcertsV3';
 
 function parseSignature (signature): ProofValueMerkleProof2019 {
   const base58Decoder = new Decoder(signature.proofValue);
@@ -15,7 +16,7 @@ function getRecipientFullName (certificateJson): string {
   return credentialSubject.name || '';
 }
 
-export default async function parseV3 (certificateJson): Promise<ParsedCertificate> {
+export default async function parseV3 (certificateJson: BlockcertsV3): Promise<ParsedCertificate> {
   const receipt = parseSignature(certificateJson.proof);
   const { issuer: issuerProfileUrl, metadataJson, metadata, issuanceDate, id, expirationDate } = certificateJson;
   const certificateMetadata = metadata || metadataJson;

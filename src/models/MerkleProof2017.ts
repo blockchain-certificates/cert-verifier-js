@@ -8,7 +8,7 @@ export interface MerkleProof2017 {
   anchors: MerkleProof2017Anchor[];
 }
 
-interface MerkleProof2017Anchor {
+export interface MerkleProof2017Anchor {
   sourceId: string;
   type: string;
   chain: string;

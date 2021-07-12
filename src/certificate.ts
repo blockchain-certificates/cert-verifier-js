@@ -10,6 +10,7 @@ import { deepCopy } from './helpers/object';
 import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
 import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
+import { MerkleProof2019 } from './models/MerkleProof2019';
 
 export interface ExplorerURLs {
   main: string;
@@ -46,6 +47,7 @@ export default class Certificate {
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
   public publicKey?: string;
+  public proof?: MerkleProof2019;
   public rawTransactionLink: string;
   public receipt: Receipt;
   public recipientFullName: string;
@@ -100,7 +102,8 @@ export default class Certificate {
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
       version: this.version,
-      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
+      proof: this.proof
     });
     return await verifier.verify(stepCallback);
   }
@@ -127,6 +130,7 @@ export default class Certificate {
     metadataJson,
     name,
     publicKey,
+    proof,
     receipt,
     recipientFullName,
     recordLink,
@@ -136,7 +140,7 @@ export default class Certificate {
     signatureImage,
     subtitle,
     version
-  }): void {
+  }: ParsedCertificate): void {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -147,6 +151,7 @@ export default class Certificate {
     this.issuer = issuer;
     this.metadataJson = metadataJson;
     this.name = name;
+    this.proof = proof;
     this.publicKey = publicKey;
     this.receipt = receipt;
     this.recipientFullName = recipientFullName;
@@ -160,7 +165,7 @@ export default class Certificate {
     // Get the full verification step-by-step map
     this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
 
-    this.version = version as Versions;
+    this.version = version;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();

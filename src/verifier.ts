@@ -12,6 +12,7 @@ import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
 import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
 import { Receipt } from './models/Receipt';
+import { MerkleProof2019 } from './models/MerkleProof2019';
 
 const log = debug('Verifier');
 
@@ -36,6 +37,7 @@ export default class Verifier {
   public id: string;
   public issuer: Issuer;
   public receipt: Receipt;
+  public proof?: MerkleProof2019;
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
@@ -47,17 +49,18 @@ export default class Verifier {
   private issuerPublicKeyList: IssuerPublicKeyList;
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
-      receipt: any;
+      receipt: Receipt;
       revocationKey: string;
       transactionId: string;
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
+      proof?: MerkleProof2019;
     }
   ) {
     this.chain = chain;
@@ -69,6 +72,7 @@ export default class Verifier {
     this.version = version;
     this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
+    this.proof = proof;
 
     let document = certificateJson.document;
     if (!document) {
@@ -249,7 +253,7 @@ export default class Verifier {
     await this._doAction(SUB_STEPS.checkIssuerIdentity, () => {
       inspectors.confirmDidSignature({
         didDocument: this.issuer.didDocument,
-        proof: this.receipt,
+        proof: this.proof,
         issuingAddress: this.txData.issuingAddress,
         chain: this.chain
       });

@@ -1,4 +1,9 @@
 import { versionParserMap } from './parsers';
+import { MerkleProof2019, ProofValueMerkleProof2019 } from './models/MerkleProof2019';
+import { Receipt } from './models/Receipt';
+import { IBlockchainObject } from './constants/blockchains';
+import { Issuer } from './models/Issuer';
+import Versions from './constants/certificateVersions';
 
 function lookupVersion (array: string[], v: string): boolean {
   return array.some(str => str.includes(`v${v}`) || str.includes(`${v}.`));
@@ -17,32 +22,29 @@ function retrieveBlockcertsVersion (context): number {
   return parseInt(availableVersions.filter(version => lookupVersion(blockcertsContextArray, version.toString()))[0], 10);
 }
 
-export interface ParsedCertificateValidityFormat {
-  isFormatValid: boolean;
-  error: string;
-}
-
-export interface ParsedCertificate extends ParsedCertificateValidityFormat {
-  certificateImage;
-  chain;
-  description;
-  expires;
-  id;
-  isFormatValid;
-  issuedOn;
-  issuer;
-  metadataJson;
-  name;
-  publicKey;
-  receipt;
-  recipientFullName;
-  recordLink;
-  revocationKey;
-  sealImage;
-  signature;
-  signatureImage;
-  subtitle;
-  version;
+export interface ParsedCertificate {
+  certificateImage?: string;
+  chain: IBlockchainObject;
+  description?: string;
+  expires?: string;
+  id: string;
+  isFormatValid?: boolean;
+  error?: string;
+  issuedOn?: string;
+  issuer: Issuer;
+  metadataJson?: string;
+  name?: string;
+  publicKey?: string;
+  receipt: Receipt;
+  recipientFullName?: string;
+  recordLink?: string;
+  revocationKey?: string;
+  sealImage?: string;
+  signature?: string;
+  signatureImage?: string;
+  subtitle?: string;
+  version: Versions;
+  proof?: MerkleProof2019;
 }
 
 export default async function parseJSON (certificateJson): Promise<ParsedCertificate> {

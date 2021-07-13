@@ -65,7 +65,9 @@ export default {
       namedExports: {
         debug: ['debug'],
         'bitcoinjs-lib': ['bitcoin'],
-        jsonld: ['jsonld']
+        jsonld: ['jsonld'],
+        pvtsutils: ['BufferSourceConverter', 'Convert'],
+        'node_modules/pvtsutils/build/index.js': ['BufferSourceConverter', 'Convert']
       }
     }),
     json(),

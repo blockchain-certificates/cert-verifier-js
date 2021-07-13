@@ -1,5 +1,5 @@
 import { ensureNotRevoked } from '../../../src/inspectors';
-import revokedAssertionsFixture from '../../application/domain/verifier/useCases/fixtures/revokedAssertionsFixture';
+import revokedAssertionsFixture from '../../application/domain/verifier/useCases/fixtures/revokedAssertionsFixture.json';
 
 describe('Inspectors test suite', function () {
   describe('ensureNotRevoked method', function () {
@@ -11,7 +11,7 @@ describe('Inspectors test suite', function () {
 
     describe('given it is called without keys', function () {
       it('should return nothing', function () {
-        expect(ensureNotRevoked(['something here'])).toBeUndefined();
+        expect(ensureNotRevoked(revokedAssertionsFixture.revokedAssertions)).toBeUndefined();
       });
     });
 

@@ -2,7 +2,6 @@ import serve from 'rollup-plugin-serve';
 import resolve from 'rollup-plugin-node-resolve';
 import typescript from 'rollup-plugin-typescript';
 import livereload from 'rollup-plugin-livereload';
-import replace from 'rollup-plugin-re';
 import commonjs from 'rollup-plugin-commonjs';
 import json from 'rollup-plugin-json';
 import globals from 'rollup-plugin-node-globals';
@@ -22,45 +21,10 @@ export default [
       }
     ],
     plugins: [
-      replace({
-        patterns: [
-          {
-            match: /jsonld.js/,
-            test: 'global = window;',
-            replace: ''
-          },
-          {
-            match: /jsonld.js/,
-            test: 'global = self;',
-            replace: ''
-          },
-          {
-            match: /jsonld.js/,
-            test: 'global = $;',
-            replace: ''
-          },
-          // fix jsonld|jsonldjs is not defined
-          {
-            match: /jsonld.js/,
-            test: 'if(typeof jsonld === \'undefined\') {',
-            replace: 'if(typeof window.jsonld === \'undefined\') {'
-          },
-          {
-            match: /jsonld.js/,
-            test: 'jsonld = jsonldjs = factory;',
-            replace: 'window.jsonld = window.jsonldjs = factory;'
-          },
-          {
-            test: 'var version = \'\'',
-            replace: 'var version = \'11.0.0\''
-          }
-        ]
-      }),
       commonjs({
         namedExports: {
           debug: ['debug'],
-          'bitcoinjs-lib': ['bitcoin'],
-          jsonld: ['jsonld']
+          'bitcoinjs-lib': ['bitcoin']
         }
       }),
       json(),

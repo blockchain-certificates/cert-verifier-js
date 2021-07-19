@@ -37,5 +37,7 @@ preloadedContexts['https://openbadgespec.org/v2/context.json'] = CONTEXTS.OPEN_B
 // /** ***** VERIFIABLE CREDENTIALS ***** **/
 preloadedContexts['https://www.w3.org/2018/credentials/v1'] = CONTEXTS.VERIFIABLE_CREDENTIALS;
 preloadedContexts['https://www.w3.org/2018/credentials/examples/v1'] = CONTEXTS.VERIFIABLE_CREDENTIALS_EXAMPLE;
+// this one is inherited from the credential/examples one
+preloadedContexts['https://www.w3.org/ns/odrl.jsonld'] = CONTEXTS.ODRL;
 
 export default preloadedContexts;

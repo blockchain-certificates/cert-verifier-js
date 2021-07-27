@@ -1,7 +1,7 @@
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { IDidDocument } from '../models/DidDocument';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import { keyUtils } from '@transmute/did-key-secp256k1';
+import { publicKeyUInt8ArrayFromJwk, ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
 import * as bitcoin from 'bitcoinjs-lib';
 import { IBlockchainObject } from '../constants/blockchains';
 
@@ -25,7 +25,7 @@ function findVerificationMethodPublicKey (didDocument: IDidDocument, verificatio
 }
 
 function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
-  const publicKey = keyUtils.publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as keyUtils.ISecp256k1PublicKeyJwk);
+  const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
   const address = bitcoin.payments.p2pkh({ pubkey: publicKey, network: bitcoin.networks[chain.code] }).address;
   return address;
 }

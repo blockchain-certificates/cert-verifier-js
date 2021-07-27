@@ -1,10 +1,8 @@
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import json from 'rollup-plugin-json';
 import typescript from 'rollup-plugin-typescript';
 import replace from 'rollup-plugin-re';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
@@ -64,18 +62,8 @@ export default {
         }
       ]
     }),
-    commonjs({
-      namedExports: {
-        debug: ['debug'],
-        'bitcoinjs-lib': ['bitcoin'],
-        jsonld: ['jsonld'],
-        pvtsutils: ['BufferSourceConverter', 'Convert'],
-        'node_modules/pvtsutils/build/index.js': ['BufferSourceConverter', 'Convert']
-      }
-    }),
+    commonjs(),
     json(),
-    globals(),
-    builtins(),
     terser()
   ]
 };

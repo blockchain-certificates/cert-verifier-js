@@ -1,10 +1,10 @@
 {
-  "name": "@blockcerts/cert-verifier-js",
+  "name": "@blockcerts/cert-verifier-js-v1-legacy",
   "version": "0.0.0-dev",
-  "description": "Javascript library for verifying Blockcerts",
+  "description": "Javascript library for verifying Blockcerts v1 (legacy)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/blockchain-certificates/cert-verifier-js.git"
+    "url": "https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy.git"
   },
   "main": "dist/verifier.js",
   "module": "dist/verifier-es.js",
@@ -38,6 +38,7 @@
     "access": "public"
   },
   "author": "Kim Duffy",
+  "contributors": ["Matthieu Collé", "Julien Fraichot"],
   "license": "MIT",
   "semistandard": {
     "globals": [

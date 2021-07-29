@@ -1,17 +1,19 @@
-# @blockcerts/cert-verifier-js
+# @blockcerts/cert-verifier-js-v1-legacy
 
-[![Build Status](https://travis-ci.com/blockchain-certificates/cert-verifier-js.svg?branch=master)](https://travis-ci.com/blockchain-certificates/cert-verifier-js)
-[![codecov](https://codecov.io/gh/blockchain-certificates/cert-verifier-js/branch/master/graph/badge.svg)](https://codecov.io/gh/blockchain-certificates/cert-verifier-js)
+[![Build Status](https://travis-ci.com/blockchain-certificates/cert-verifier-js-v1-legacy.svg?branch=master)](https://travis-ci.com/blockchain-certificates/cert-verifier-js-v1-legacy)
+[![codecov](https://codecov.io/gh/blockchain-certificates/cert-verifier-js-v1-legacy/branch/master/graph/badge.svg)](https://codecov.io/gh/blockchain-certificates/cert-verifier-js-v1-legacy)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-A library to parse and verify [Blockcerts](https://www.blockcerts.org/) certificates.
+A library to parse and verify [Blockcerts](https://www.blockcerts.org/) v1 legacy certificates.
+
+### [The library to parse and verify Blockcerts v2 & v3 is here](https://github.com/blockchain-certificates/cert-verifier-js)
 
 # Usage
 
 ## Install
 
 ```shell
-$ npm i @blockcerts/cert-verifier-js
+$ npm i @blockcerts/cert-verifier-js-v1-legacy
 ```
 
 ## Import
@@ -22,7 +24,7 @@ While you would import the `Certificate` constructor and instantiate identically
 
 Example:
 ```javascript
-import { Certificate } from '@blockcerts/cert-verifier-js';
+import { Certificate } from '@blockcerts/cert-verifier-js-v1-legacy';
 let certificate = new Certificate(certificateDefinition);
 await certificate.init();
 ```  
@@ -32,26 +34,26 @@ await certificate.init();
 Exposed by default:
 
 ```javascript
-const { Certificate } = require('@blockcerts/cert-verifier-js');
+const { Certificate } = require('@blockcerts/cert-verifier-js-v1-legacy');
 var certificate = new Certificate(certificateDefinition);
 ```
 
 ### Running in Nodejs
 ```javascript
-const { Certificate } = require('@blockcerts/cert-verifier-js/lib');
+const { Certificate } = require('@blockcerts/cert-verifier-js-v1-legacy/lib');
 var certificate = new Certificate(certificateDefinition);
 ```
 
 #### ES module
 ```javascript
-import { Certificate } from '@blockcerts/cert-verifier-js';
+import { Certificate } from '@blockcerts/cert-verifier-js-v1-legacy';
 let certificate = new Certificate(certificateDefinition);
 ```
 
 #### Script tag (iife)
-[Check an example here](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/test/e2e/script-tag.html)
+[Check an example here](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/test/e2e/script-tag.html)
 ```html
-<script src='node_modules/@blockcerts/cert-verifier-js/dist/verifier-iife.js'></script>
+<script src='node_modules/@blockcerts/cert-verifier-js-v1-legacy/dist/verifier-iife.js'></script>
 <script>
   var certificate = new Verifier.Certificate(certificateDefinition);
 </script>
@@ -203,18 +205,18 @@ Shape of the returned object can be checked here: https://github.com/blockchain-
 ### Constants
 Several constants are being exposed:
 ```javascript
-import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js';
+import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js-v1-legacy';
 ```
-- [`BLOCKCHAINS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/blockchains.js): descriptive object of all blockchains supported by the library
-- [`STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
-- [`SUB_STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
-- [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions
-- [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationStatuses.js)
+- [`BLOCKCHAINS`](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/src/constants/blockchains.js): descriptive object of all blockchains supported by the library
+- [`STEPS`](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
+- [`SUB_STEPS`](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/src/constants/verificationSubSteps.js): descriptive object of all verification substeps
+- [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/src/constants/certificateVersions.js): list of all certificate versions
+- [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/src/constants/verificationStatuses.js)
 
 ### i18n
 The exposed function `getSupportedLanguages()` returns an array of language codes supported by the library.
 ```javascript
-import { getSupportedLanguages } from '@blockcerts/cert-verifier-js';
+import { getSupportedLanguages } from '@blockcerts/cert-verifier-js-v1-legacy';
 getSupportedLanguages(); // ['en-US', 'es-ES', 'mt', ...]
 ```
 You can use the codes for the `locale` option.
@@ -319,7 +321,7 @@ $ npm run build
 The build files are in the `dist` folder.
 
 ## Verification process
-If you want more details about the verification process, please check out the [documentation](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/docs/verification-process.md).
+If you want more details about the verification process, please check out the [documentation](https://github.com/blockchain-certificates/cert-verifier-js-v1-legacy/blob/master/docs/verification-process.md).
 
 # Contact
 

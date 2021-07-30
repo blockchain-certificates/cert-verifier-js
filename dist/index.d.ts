@@ -1,5 +1,5 @@
 import TransactionData from './models/TransactionData';
-import { Blockcerts } from './models/Blockcerts';
+import { BlockcertsV1 } from './models/BlockcertsV1';
 import { IVerificationStepCallbackFn } from './verifier';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions'; // TODO: improve definition and export from this file
@@ -47,7 +47,7 @@ export interface CertificateOptions {
 
 declare class Certificate {
   public certificateImage?: string;
-  public certificateJson: Blockcerts;
+  public certificateJson: BlockcertsV1;
   public chain: IBlockchainObject;
   public description?: string; // v1
   public expires: string;
@@ -75,7 +75,7 @@ declare class Certificate {
   public verificationSteps: any[]; // TODO: define verificationSteps interface.
   public version: Versions;
 
-  constructor (definition: Blockcerts | string, options?: CertificateOptions);
+  constructor (definition: BlockcertsV1 | string, options?: CertificateOptions);
   async init ();
   async verify (stepCallback?: IVerificationStepCallbackFn);
 }

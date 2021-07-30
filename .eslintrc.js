@@ -24,5 +24,8 @@ module.exports = {
     '@typescript-eslint/restrict-plus-operands': [0], // when this rule functions correctly, we can remove it. It
     // does not pick up the correct type when returning from a JS function
     '@typescript-eslint/no-inferrable-types': 'off'
+  },
+  env: {
+    jest: true
   }
 };

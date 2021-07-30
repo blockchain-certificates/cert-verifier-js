@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
+import fixture from '../../fixtures/v1/v1.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
@@ -11,12 +11,12 @@ describe('Verifier entity test suite', function () {
     certificateJson: fixture,
     chain: BLOCKCHAINS.bitcoin,
     expires: '',
-    id: fixture.id,
-    issuer: fixture.badge.issuer,
-    receipt: fixture.signature,
+    id: fixture.document.assertion.uid,
+    issuer: fixture.document.certificate.issuer,
+    receipt: fixture.receipt,
     revocationKey: null,
-    transactionId: fixture.signature.anchors[0].sourceId,
-    version: CERTIFICATE_VERSIONS.V2_0,
+    transactionId: fixture.receipt.anchors[0].sourceId,
+    version: CERTIFICATE_VERSIONS.V1_2,
     explorerAPIs: undefined
   };
 
@@ -85,8 +85,8 @@ describe('Verifier entity test suite', function () {
       });
 
       it('should set the documentToVerify to the verifier object', function () {
-        const documentAssertion = JSON.parse(JSON.stringify(fixture));
-        delete documentAssertion.signature;
+        const documentAssertion = JSON.parse(JSON.stringify(fixture)).document;
+        // delete documentAssertion.signature;
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
       });
     });

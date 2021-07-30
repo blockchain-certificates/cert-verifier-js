@@ -27,20 +27,6 @@ function isValidV1Profile (profile: Issuer): boolean {
   return false;
 }
 
-function isValidProfile (profile: Issuer): boolean {
-  const validTypes: string[] = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
-  const { type } = profile;
-  if (!type) {
-    return false;
-  }
-
-  if (Array.isArray(type)) {
-    return type.some(type => validTypes.includes(type.toLowerCase()));
-  }
-
-  return validTypes.includes(type.toLowerCase());
-}
-
 /**
  * getIssuerProfile
  *
@@ -67,7 +53,7 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
 
   response = JSON.parse(response);
 
-  if (!isValidProfile(response) && !isValidV1Profile(response)) {
+  if (!isValidV1Profile(response)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
   }
 

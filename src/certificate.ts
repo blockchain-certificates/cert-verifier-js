@@ -3,7 +3,7 @@ import parseJSON, { ParsedCertificate } from './parser';
 import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS, TRANSACTION_APIS } from './constants';
 import currentLocale from './constants/currentLocale';
-import { Blockcerts } from './models/Blockcerts';
+import { BlockcertsV1 } from './models/BlockcertsV1';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
@@ -32,7 +32,7 @@ export interface CertificateOptions {
 
 export default class Certificate {
   public certificateImage?: string;
-  public certificateJson: Blockcerts;
+  public certificateJson: BlockcertsV1;
   public chain: IBlockchainObject;
   public description?: string; // v1
   public expires: string;
@@ -60,7 +60,7 @@ export default class Certificate {
   public verificationSteps: any[]; // TODO: define verificationSteps interface.
   public version: Versions;
 
-  constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
+  constructor (certificateDefinition: BlockcertsV1 | string, options: CertificateOptions = {}) {
     // Options
     this._setOptions(options);
 
@@ -73,7 +73,7 @@ export default class Certificate {
     }
 
     // Keep certificate JSON object
-    this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
+    this.certificateJson = deepCopy<BlockcertsV1>(certificateDefinition);
   }
 
   async init (): Promise<void> {
@@ -158,7 +158,7 @@ export default class Certificate {
     this.subtitle = subtitle;
 
     // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
+    this.verificationSteps = domain.certificates.getVerificationMap(chain);
 
     this.version = version as Versions;
 

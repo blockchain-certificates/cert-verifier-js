@@ -7,7 +7,7 @@ describe('End-to-end i18n test suite', function () {
     let certificate;
 
     beforeEach(async function () {
-      certificate = new Certificate(FIXTURES.MainnetV2Valid, { locale: 'es' });
+      certificate = new Certificate(FIXTURES.TestnetV1Valid, { locale: 'es' });
       await certificate.init();
     });
 

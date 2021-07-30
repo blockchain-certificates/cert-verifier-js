@@ -1,13 +1,13 @@
 import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
-import Versions, { isV3 } from './constants/certificateVersions';
 import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
-import { Blockcerts } from './models/Blockcerts';
+import { BlockcertsV1 } from './models/BlockcertsV1';
 import { IBlockchainObject } from './constants/blockchains';
 import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
+import Versions from './constants/certificateVersions';
 
 const log = debug('Verifier');
 
@@ -35,7 +35,7 @@ export default class Verifier {
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
-  public documentToVerify: Blockcerts; // TODO: confirm this
+  public documentToVerify: BlockcertsV1; // TODO: confirm this
   public explorerAPIs: ExplorerAPI[];
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
@@ -44,7 +44,7 @@ export default class Verifier {
 
   constructor (
     { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
-      certificateJson: Blockcerts;
+      certificateJson: BlockcertsV1;
       chain: IBlockchainObject;
       expires: string;
       id: string;
@@ -190,12 +190,10 @@ export default class Verifier {
   }
 
   private async getIssuerProfile (): Promise<void> {
-    if (!isV3(this.version)) { // with v3 this is done at certificate parsing level (parseV3)
-      this.issuer = await this._doAction(
-        SUB_STEPS.getIssuerProfile,
-        async () => await domain.verifier.getIssuerProfile(this.issuer)
-      );
-    }
+    this.issuer = await this._doAction(
+      SUB_STEPS.getIssuerProfile,
+      async () => await domain.verifier.getIssuerProfile(this.issuer)
+    );
   }
 
   private async parseIssuerKeys (): Promise<void> {
@@ -219,7 +217,7 @@ export default class Verifier {
 
   private async checkReceipt (): Promise<void> {
     await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt, this.version)
+      inspectors.ensureValidReceipt(this.receipt)
     );
   }
 
@@ -227,7 +225,7 @@ export default class Verifier {
     let keys;
     let revokedAddresses;
     if (this.version === Versions.V1_2) {
-      revokedAddresses = this.txData.revokedAddresses;
+      revokedAddresses = this.txData?.revokedAddresses || [];
       keys = [
         domain.verifier.parseRevocationKey(this.issuer),
         this.revocationKey
@@ -276,11 +274,7 @@ export default class Verifier {
 
   _retrieveDocumentBeforeIssuance (certificateJson): any { // TODO: define certificate object
     const certificateCopy = Object.assign({}, certificateJson);
-    if (isV3(this.version)) {
-      delete certificateCopy.proof;
-    } else {
-      delete certificateCopy.signature;
-    }
+    delete certificateCopy.signature;
     return certificateCopy;
   }
 

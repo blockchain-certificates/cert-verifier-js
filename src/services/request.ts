@@ -3,15 +3,22 @@ import debug from 'debug';
 
 const log = debug('request');
 
-export function request (obj) {
-  return new Promise((resolve, reject) => {
+export interface IRequestAPI {
+  url: string;
+  method?: string;
+  body?: any;
+  forceHttp?: boolean;
+}
+
+export async function request (obj: IRequestAPI): Promise<any> {
+  return await new Promise((resolve, reject) => {
     let url = obj.url;
 
     if (!url) {
       reject(new Error('URL is missing'));
     }
 
-    if (url.substr(0, 7) === 'http://') {
+    if (url.substr(0, 7) === 'http://' && !obj.forceHttp) {
       console.warn(`Upgrading requested url ${url} to https protocol.`);
       url = url.replace('http://', 'https://');
     }

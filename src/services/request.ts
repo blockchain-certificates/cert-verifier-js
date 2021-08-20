@@ -26,7 +26,7 @@ export async function request (obj: IRequestAPI): Promise<any> {
     // server
     const xhr = typeof XMLHttpRequest === 'undefined' ? xhrPolyfill : XMLHttpRequest;
     /* eslint new-cap: "off" */
-    const request = new xhr();
+    const request: XMLHttpRequest = new xhr();
 
     request.onload = () => {
       if (request.status >= 200 && request.status < 300) {

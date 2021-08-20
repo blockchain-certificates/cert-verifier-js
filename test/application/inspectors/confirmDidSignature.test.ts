@@ -58,7 +58,7 @@ describe('confirmDidSignature inspector test suite', function () {
     });
   });
 
-  describe('given the issuing address does not the public key mapped to the proof', function () {
+  describe('given the issuing address does not match the public key mapped to the proof', function () {
     it('should throw', function () {
       expect(() => {
         confirmDidSignature({

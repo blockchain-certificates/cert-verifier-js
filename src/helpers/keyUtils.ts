@@ -89,12 +89,28 @@ export const privateKeyJwkFromPrivateKeyHex = (privateKeyHex: string): ISecp256k
   };
 };
 
+export const range = (length: number, begin = 0): number[] =>
+  Array.from({ length }, (_, index) => begin + index);
+
+export const splitEvery = (input: string, chunkLength: number): string[] =>
+  range(Math.ceil(input.length / chunkLength))
+    .map((index) => index * chunkLength)
+    .map((begin) => input.slice(begin, begin + chunkLength));
+
+const hexByteWidth = 2;
+const hexadecimal = 16;
+
+export const hexToBin = (validHex: string): Uint8Array =>
+  Uint8Array.from(
+    splitEvery(validHex, hexByteWidth).map((byte) => parseInt(byte, hexadecimal))
+  );
+
 /** convert compressed hex encoded public key to jwk */
 export const publicKeyJwkFromPublicKeyHex = (publicKeyHex: string): ISecp256k1PublicKeyJwk => {
   let key = publicKeyHex;
   if (publicKeyHex.length === compressedHexEncodedPublicKeyLength) {
     const keyBin = secp256k1.publicKeyConvert(
-      Buffer.from(publicKeyHex, 'hex'),
+      hexToBin(publicKeyHex),
       false
     );
     key = Buffer.from(keyBin).toString('hex');
@@ -117,7 +133,6 @@ export const privateKeyJwkFromPrivateKeyPem = (privateKeyPem: string): ISecp256k
     ...keyto.from(privateKeyPem, 'pem').toJwk('private'),
     crv: 'secp256k1'
   };
-  // console.log(jwk);
   const kid = getKid(jwk);
 
   return {
@@ -165,7 +180,7 @@ export const publicKeyHexFromJwk = (jwk: ISecp256k1PublicKeyJwk): string => {
     .toString('blk', 'public');
 
   const compressed = secp256k1.publicKeyConvert(
-    Buffer.from(uncompressedPublicKey, 'hex'),
+    hexToBin(uncompressedPublicKey),
     true
   );
   return Buffer.from(compressed).toString('hex');

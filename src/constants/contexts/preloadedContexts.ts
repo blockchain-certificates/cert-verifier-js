@@ -24,6 +24,7 @@ preloadedContexts['https://w3id.org/blockcerts/3.0-alpha'] = CONTEXTS.BLOCKCERTS
 preloadedContexts['https://www.blockcerts.org/schema/3.0-beta/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-beta/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
 preloadedContexts['https://w3id.org/blockcerts/3.0-beta'] = CONTEXTS.BLOCKCERTSV3_BETA;
+preloadedContexts['https://w3id.org/blockcerts/v3.0-beta'] = CONTEXTS.BLOCKCERTSV3_BETA;
 
 // extra definitions
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = CONTEXTS.MERKLE_PROOF_2019;

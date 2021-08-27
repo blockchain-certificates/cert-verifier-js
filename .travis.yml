@@ -1,4 +1,7 @@
 language: node_js
+addons:
+  chrome: stable
+  firefox: latest
 branches:
   only:
     - master

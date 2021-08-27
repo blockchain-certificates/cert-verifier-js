@@ -1,7 +1,6 @@
 import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import Versions, { isV3 } from './constants/certificateVersions';
-import VerifierError from './models/verifierError';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
@@ -80,13 +79,6 @@ export default class Verifier {
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
-
-    if (this.version === Versions.V1_1) {
-      throw new VerifierError(
-        '',
-        'Verification of 1.1 certificates is not supported by this component. See the python cert-verifier for legacy verification'
-      );
-    }
 
     if (domain.chains.isMockChain(this.chain)) {
       await this._verifyV2Mock();

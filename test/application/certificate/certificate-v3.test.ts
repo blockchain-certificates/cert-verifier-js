@@ -1,8 +1,8 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import FIXTURES from '../../fixtures';
-import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019';
-import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile';
-import verificationStepsV3 from '../../assertions/verification-steps-v3';
+import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
+import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
+import verificationStepsV3 from '../../assertions/verification-steps-v3.json';
 
 const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
@@ -39,7 +39,8 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set the expires property', function () {
-        expect(certificate.expires).toEqual(fixture.expirationDate);
+        // not currently set in the fixture
+        expect(certificate.expires).toEqual((fixture as any).expirationDate);
       });
 
       it('should set the metadataJson property', function () {
@@ -89,7 +90,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile - no issuer address given$/);
+            .toThrow('Unable to get issuer profile - no issuer address given');
         });
       });
 
@@ -100,7 +101,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile - no issuer address given$/);
+            .toThrow('Unable to get issuer profile - no issuer address given');
         });
       });
 
@@ -111,7 +112,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile - no issuer address given$/);
+            .toThrow('Unable to get issuer profile - no issuer address given');
         });
       });
 
@@ -122,7 +123,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile - no issuer address given$/);
+            .toThrow('Unable to get issuer profile - no issuer address given');
         });
       });
 
@@ -133,7 +134,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile$/);
+            .toThrow('Unable to get issuer profile');
         });
       });
 
@@ -144,7 +145,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow(/^Error: Unable to get issuer profile - retrieved file does not seem to be a valid profile$/);
+            .toThrow('Unable to get issuer profile - retrieved file does not seem to be a valid profile');
         });
       });
     });

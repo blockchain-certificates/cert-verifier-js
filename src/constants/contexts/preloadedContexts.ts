@@ -3,8 +3,6 @@ import CONTEXTS from './contexts';
 const preloadedContexts = {};
 
 /** ***** BLOCKCERTS ***** **/
-/** V1 **/
-preloadedContexts['https://w3id.org/blockcerts/v1'] = CONTEXTS.BLOCKCERTSV1_2;
 
 /** V2 **/
 // alpha

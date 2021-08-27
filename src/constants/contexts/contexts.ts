@@ -1,4 +1,3 @@
-import BLOCKCERTSV1_2 from './blockcerts.v1.2.json';
 import BLOCKCERTSV2_ALPHA from './blockcerts.v2-alpha.json';
 import BLOCKCERTSV2 from './blockcerts.v2.0.json';
 import BLOCKCERTSV3_ALPHA from './blockcerts.v3-alpha.json';
@@ -14,7 +13,6 @@ import VERIFIABLE_CREDENTIALS_EXAMPLE from './verifiable-credentials-example.jso
 import ODRL from './odrl.json';
 
 export default {
-  BLOCKCERTSV1_2,
   BLOCKCERTSV2_ALPHA,
   BLOCKCERTSV2,
   BLOCKCERTSV3_ALPHA,

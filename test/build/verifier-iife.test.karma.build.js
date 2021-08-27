@@ -115,12 +115,11 @@ const fixtureV3 = {
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
     const certificate = new Verifier.Certificate(fixtureV1);
-    expect(async () => {
-      await certificate.init();
-    }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
+    await expectAsync(certificate.init())
+      .toBeRejectedWith(new Error('Verification of v1 certificates is not supported by this component. ' +
       'See the python cert-verifier for v1.1 verification ' +
       'or the npm package cert-verifier-js-v1-legacy for v1.2 ' +
-      '(https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy)');
+      '(https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy)'));
   });
 
   it('works as expected with a v2 certificate', async function () {

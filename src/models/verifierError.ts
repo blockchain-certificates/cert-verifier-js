@@ -1,5 +1,7 @@
 export default class VerifierError extends Error {
-  constructor (stepCode, message) {
+  public stepCode: string;
+
+  constructor (stepCode: string, message: string) {
     super(message);
     this.stepCode = stepCode;
   }

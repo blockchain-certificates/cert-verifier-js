@@ -55,7 +55,7 @@ export default async function parseJSON (certificateJson): Promise<ParsedCertifi
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return {
       isFormatValid: false,
-      error
+      error: error.message
     } as ParsedCertificate;
   }
 }

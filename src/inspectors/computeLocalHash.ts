@@ -9,14 +9,6 @@ import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 import { Blockcerts } from '../models/Blockcerts';
 
-function setJsonLdDocumentLoader (): any {
-  if (typeof window !== 'undefined' && typeof window.XMLHttpRequest !== 'undefined') {
-    return jsonld.documentLoaders.xhr();
-  }
-
-  return jsonld.documentLoaders.node();
-}
-
 function getUnmappedFields (normalized): string[] | null {
   const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
   const matches = myRegexp.exec(normalized);
@@ -41,47 +33,41 @@ export default async function computeLocalHash (document: Blockcerts, version: V
     }
   }
 
-  const jsonldDocumentLoader = setJsonLdDocumentLoader();
-  const customLoader = function (url, callback): any {
+  const customLoader = function (url): any {
     if (url in preloadedContexts) {
-      return callback(null, {
+      return {
         contextUrl: null,
         document: preloadedContexts[url],
         documentUrl: url
-      });
+      };
     }
-    return jsonldDocumentLoader(url, callback);
+    return jsonld.documentLoader(url);
   };
-  jsonld.documentLoader = customLoader;
+
   const normalizeArgs: any = {
     algorithm: 'URDNA2015',
-    format: 'application/nquads'
+    format: 'application/nquads',
+    documentLoader: customLoader
   };
   if (expandContext) {
     normalizeArgs.expandContext = expandContext;
   }
 
-  return new Promise((resolve, reject) => {
-    jsonld.normalize(theDocument, normalizeArgs, (err, normalized) => {
-      const isErr = !!err;
-      if (isErr) {
-        console.error(err);
-        reject(
-          new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'))
-        );
-      } else {
-        const unmappedFields = getUnmappedFields(normalized);
-        if (unmappedFields) {
-          reject(
-            new VerifierError(
-              SUB_STEPS.computeLocalHash,
-              `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
-            )
-          );
-        } else {
-          resolve(sha256(toUTF8Data(normalized)));
-        }
-      }
-    });
-  });
+  let normalizedDocument;
+  try {
+    normalizedDocument = await jsonld.normalize(theDocument, normalizeArgs);
+  } catch (e) {
+    console.error(e);
+    throw new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'));
+  }
+
+  const unmappedFields = getUnmappedFields(normalizedDocument);
+  if (unmappedFields) {
+    throw new VerifierError(
+      SUB_STEPS.computeLocalHash,
+      `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
+    );
+  } else {
+    return sha256(toUTF8Data(normalizedDocument));
+  }
 }

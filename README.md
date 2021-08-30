@@ -6,6 +6,8 @@
 
 A library to parse and verify [Blockcerts](https://www.blockcerts.org/) certificates.
 
+IMPORTANT NOTE: as of version 5 of this library, v1 blockcerts are not supported anymore. Use https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy if needed.
+
 # Usage
 
 ## Install

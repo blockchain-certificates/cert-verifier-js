@@ -8,7 +8,7 @@ import { IBlockchainObject } from '../constants/blockchains';
 const baseError = 'Issuer identity mismatch';
 
 function getDocumentId (didDocument: IDidDocument): string {
-  return didDocument.didDocument.id;
+  return didDocument.id;
 }
 
 function checkVerificationMethod (didDocument: IDidDocument, verificationMethod: string): boolean {
@@ -19,7 +19,7 @@ function checkVerificationMethod (didDocument: IDidDocument, verificationMethod:
 
 function findVerificationMethodPublicKey (didDocument: IDidDocument, verificationMethod: string): IDidDocumentPublicKey {
   const verificationMethodId = verificationMethod.split('#')[1];
-  const verificationMethodFromDocument = didDocument.didDocument.verificationMethod;
+  const verificationMethodFromDocument = didDocument.verificationMethod;
   return verificationMethodFromDocument
     .filter(verificationMethod => verificationMethod.id === `#${verificationMethodId}`)[0];
 }

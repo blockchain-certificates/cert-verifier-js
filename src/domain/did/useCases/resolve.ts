@@ -1,19 +1,23 @@
-import ion from '../methods/ion';
 import { IDidDocument } from '../../../models/DidDocument';
 import { request } from '../../../services/request';
 
-const supportedMethods = {
-  ion
-};
-
 const universalResolverUrl = 'http://localhost:8080/1.0/identifiers';
 
+interface IUniversalResolverResponse {
+  didResolutionMetadata?: any;
+  didDocument: IDidDocument;
+  didDocumentMetadata?: {
+    method?: {
+      published: boolean;
+      recoveryMethod: string;
+      updateCommitment: string;
+    };
+    canonicalId: string;
+  };
+}
+
 export default async function resolve (didUri: string): Promise<IDidDocument> {
-  // const method = didUri.split(':')[1];
-  // if (!supportedMethods[method]) {
-  //   throw new Error(`Unsupported did method: ${method} used with blockcerts document`);
-  // }
-  // const didDocument = await supportedMethods[method](didUri);
-  const didDocument = await request({ url: `${universalResolverUrl}/${didUri}`, forceHttp: true });
-  return didDocument;
+  const universalResolverResponse: string = await request({ url: `${universalResolverUrl}/${didUri}`, forceHttp: true });
+  const parsedUniversalResolverResponse: IUniversalResolverResponse = JSON.parse(universalResolverResponse);
+  return parsedUniversalResolverResponse.didDocument;
 }

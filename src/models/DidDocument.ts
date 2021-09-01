@@ -5,20 +5,17 @@ interface IDidContext {
 }
 
 export interface IDidDocument {
-  'context': string;
-  'didDocument': {
-    'id': string;
-    '@context': Array<string | IDidContext>;
-    'verificationMethod': IDidDocumentPublicKey[];
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    'authentication'?: Array<string | object>;
+  id?: string;
+  '@context'?: Array<string | IDidContext>;
+  verificationMethod?: IDidDocumentPublicKey[];
+  authentication?: Array<string | IDidDocumentPublicKey>;
+  assertionMethod?: string[];
+  service?: {
+    serviceEndpoint?: string;
+    type?: string;
+    id?: string;
   };
-  didDocumentMetadata?: {
-    'method'?: {
-      'published'?: boolean;
-      'recoveryCommitment'?: string;
-      'updateCommitment'?: string;
-    };
-    'canonicalId'?: string;
-  };
+  capabilityDelegation?: string[];
+  keyAgreement?: IDidDocumentPublicKey[];
+  publicKey?: IDidDocumentPublicKey[];
 }

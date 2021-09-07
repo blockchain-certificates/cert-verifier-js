@@ -18,7 +18,12 @@ type TNetworkVerificationStepList = {
   [key in NETWORKS]: SUB_STEPS[];
 };
 
-export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions): SUB_STEPS[] {
+function removeStep (map: string[], step: string): void {
+  const checkIssuerIdentityIndex = map.findIndex(subStep => subStep === step);
+  map.splice(checkIssuerIdentityIndex, 1);
+}
+
+export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): SUB_STEPS[] {
   const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const networkVerificationMap: TNetworkVerificationStepList = {
     [NETWORKS.mainnet]: [
@@ -45,12 +50,14 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
   };
 
   if (isV3(version)) {
-    const getIssuerProfileIndex = networkVerificationMap[network].findIndex(subStep => subStep === SUB_STEPS.getIssuerProfile);
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete networkVerificationMap[network][getIssuerProfileIndex];
+    removeStep(networkVerificationMap[network], SUB_STEPS.getIssuerProfile);
   }
 
-  return networkVerificationMap[network].filter(step => !!step);
+  if (!hasDid) {
+    removeStep(networkVerificationMap[network], SUB_STEPS.checkIssuerIdentity);
+  }
+
+  return networkVerificationMap[network];
 }
 
 /**
@@ -117,10 +124,10 @@ function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[]): IVerificationMapIte
  * @param chain
  * @returns {Array}
  */
-export default function getVerificationMap (chain: IBlockchainObject, version: Versions): IVerificationMapItem[] {
+export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): IVerificationMapItem[] {
   if (!chain) {
     return [];
   }
 
-  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version));
+  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version, hasDid));
 }

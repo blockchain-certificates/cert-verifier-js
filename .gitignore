@@ -4,3 +4,4 @@ node_modules/*
 /coverage
 /lib
 test/manual-testing/browser/index-iife.js
+/dist

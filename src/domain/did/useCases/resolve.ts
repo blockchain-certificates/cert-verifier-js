@@ -1,7 +1,7 @@
 import { IDidDocument } from '../../../models/DidDocument';
 import { request } from '../../../services/request';
 
-const universalResolverUrl = 'http://localhost:8080/1.0/identifiers';
+const universalResolverUrl = 'https://resolver.identity.foundation/1.0/identifiers';
 
 interface IUniversalResolverResponse {
   didResolutionMetadata?: any;

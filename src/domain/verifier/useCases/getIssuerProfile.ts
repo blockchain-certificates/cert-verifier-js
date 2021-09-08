@@ -62,14 +62,21 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
     issuerAddress = issuerAddress.id;
   }
 
+  let issuerProfile: Issuer;
+
   if (isDidUri(issuerAddress)) {
     // TODO: it could be that the issuer profile is embedded, or that it is distant,
     //  but we found a did document so the rest of the function does not apply
     try {
       const didDocument = await domain.did.resolve(issuerAddress);
+      const issuerProfileUrl = await domain.did.getIssuerProfileUrl(didDocument);
+      if (issuerProfileUrl) {
+        issuerProfile = await getIssuerProfile(issuerProfileUrl);
+      }
       return {
         // TODO: return more data from the issuer profile
-        didDocument
+        didDocument,
+        ...issuerProfile
       };
     } catch (e) {
       throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${e as string}`);
@@ -78,15 +85,13 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
-  let response = await request({ url: issuerAddress }).catch(() => {
+  issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch(() => {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
-  });
+  }));
 
-  response = JSON.parse(response);
-
-  if (!isValidProfile(response) && !isValidV1Profile(response)) {
+  if (!isValidProfile(issuerProfile) && !isValidV1Profile(issuerProfile)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
   }
 
-  return response;
+  return issuerProfile;
 }

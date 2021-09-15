@@ -3,8 +3,10 @@ import base64url from 'base64url';
 import crypto from 'crypto';
 import bs58 from 'bs58';
 import secp256k1 from 'secp256k1';
-
+import { Buffer as BufferPolyfill } from 'buffer';
 import canonicalize from 'canonicalize';
+
+const buffer = typeof Buffer === 'undefined' ? BufferPolyfill : Buffer;
 
 const compressedHexEncodedPublicKeyLength = 66;
 
@@ -73,7 +75,7 @@ export const getKid = (
     .update(canonicalize(copy))
     .digest();
 
-  return base64url.encode(Buffer.from(digest));
+  return base64url.encode(buffer.from(digest));
 };
 
 /** convert compressed hex encoded private key to jwk */
@@ -94,10 +96,10 @@ export const publicKeyJwkFromPublicKeyHex = (publicKeyHex: string): ISecp256k1Pu
   let key = publicKeyHex;
   if (publicKeyHex.length === compressedHexEncodedPublicKeyLength) {
     const keyBin = secp256k1.publicKeyConvert(
-      Buffer.from(publicKeyHex, 'hex'),
+      buffer.from(publicKeyHex, 'hex'),
       false
     );
-    key = Buffer.from(keyBin).toString('hex');
+    key = buffer.from(keyBin).toString('hex');
   }
   const jwk = {
     ...keyto.from(key, 'blk').toJwk('public'),
@@ -165,19 +167,19 @@ export const publicKeyHexFromJwk = (jwk: ISecp256k1PublicKeyJwk): string => {
     .toString('blk', 'public');
 
   const compressed = secp256k1.publicKeyConvert(
-    Buffer.from(uncompressedPublicKey, 'hex'),
+    buffer.from(uncompressedPublicKey, 'hex'),
     true
   );
-  return Buffer.from(compressed).toString('hex');
+  return buffer.from(compressed).toString('hex');
 };
 
 /** convert jwk to binary encoded private key */
 export const privateKeyUInt8ArrayFromJwk = (jwk: ISecp256k1PrivateKeyJwk): Buffer => {
   const privateKeyHex = privateKeyHexFromJwk(jwk);
-  let asBuffer = Buffer.from(privateKeyHex, 'hex');
+  let asBuffer = buffer.from(privateKeyHex, 'hex');
   let padding = 32 - asBuffer.length;
   while (padding > 0) {
-    asBuffer = Buffer.concat([Buffer.from('00', 'hex'), asBuffer]);
+    asBuffer = buffer.concat([buffer.from('00', 'hex'), asBuffer]);
     padding--;
   }
   return asBuffer;
@@ -186,10 +188,10 @@ export const privateKeyUInt8ArrayFromJwk = (jwk: ISecp256k1PrivateKeyJwk): Buffe
 /** convert jwk to binary encoded public key */
 export const publicKeyUInt8ArrayFromJwk = (jwk: ISecp256k1PublicKeyJwk): Buffer => {
   const publicKeyHex = publicKeyHexFromJwk(jwk);
-  let asBuffer = Buffer.from(publicKeyHex, 'hex');
+  let asBuffer = buffer.from(publicKeyHex, 'hex');
   let padding = 32 - asBuffer.length;
   while (padding > 0) {
-    asBuffer = Buffer.concat([Buffer.from('00', 'hex'), asBuffer]);
+    asBuffer = buffer.concat([buffer.from('00', 'hex'), asBuffer]);
     padding--;
   }
   return asBuffer;
@@ -197,12 +199,12 @@ export const publicKeyUInt8ArrayFromJwk = (jwk: ISecp256k1PublicKeyJwk): Buffer 
 
 /** convert publicKeyHex to base58 */
 export const publicKeyBase58FromPublicKeyHex = (publicKeyHex: string): string => {
-  return bs58.encode(Buffer.from(publicKeyHex, 'hex'));
+  return bs58.encode(buffer.from(publicKeyHex, 'hex'));
 };
 
 /** convert publicKeyHex to base58 */
 export const privateKeyBase58FromPrivateKeyHex = (privateKeyHex: string): string => {
-  return bs58.encode(Buffer.from(privateKeyHex, 'hex'));
+  return bs58.encode(buffer.from(privateKeyHex, 'hex'));
 };
 
 export const privateKeyUInt8ArrayFromPrivateKeyBase58 = (
@@ -219,9 +221,9 @@ export const publicKeyUInt8ArrayFromPublicKeyBase58 = (
 
 export const publicKeyHexFromPrivateKeyHex = (privateKeyHex: string): string => {
   const publicKey = secp256k1.publicKeyCreate(
-    new Uint8Array(Buffer.from(privateKeyHex, 'hex'))
+    new Uint8Array(buffer.from(privateKeyHex, 'hex'))
   );
-  return Buffer.from(publicKey).toString('hex');
+  return buffer.from(publicKey).toString('hex');
 };
 
 export const publicKeyJwkFromPublicKeyBase58 = (publicKeybase58: string): ISecp256k1PublicKeyJwk => {

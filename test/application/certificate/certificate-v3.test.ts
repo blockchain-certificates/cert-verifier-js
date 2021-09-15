@@ -1,8 +1,9 @@
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
+import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, SUB_STEPS } from '../../../src';
 import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import verificationStepsV3 from '../../assertions/verification-steps-v3.json';
+import { VerificationSteps } from '../../../src/constants/verificationSteps';
 
 const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
@@ -146,6 +147,18 @@ describe('Certificate entity test suite', function () {
           await expect(certificate.init())
             .rejects
             .toThrow('Unable to get issuer profile - retrieved file does not seem to be a valid profile');
+        });
+      });
+
+      describe('when the issuer profile URN is a DID', function () {
+        it('should add the issuer identity verification to the verification steps', async function () {
+          const fixture = JSON.parse(JSON.stringify(FIXTURES.BlockcertsV3BetaWithDID));
+          const certificate = new Certificate(fixture);
+          await certificate.init();
+          const expectedStepIndex = certificate.verificationSteps
+            .find(parentStep => parentStep.code === VerificationSteps.statusCheck).subSteps
+            .findIndex(subStep => subStep.code === SUB_STEPS.checkIssuerIdentity);
+          expect(expectedStepIndex).toBe(0);
         });
       });
     });

@@ -163,7 +163,9 @@ export default class Certificate {
     this.subtitle = subtitle;
 
     // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
+    // TODO: refactor. The verifier is calling a subset of this method later to determine the verification steps and
+    //  associate them to their function - CALL ONCE VERIFICATION STEPS WITH DID
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version, !!this.issuer.didDocument);
 
     this.version = version;
 

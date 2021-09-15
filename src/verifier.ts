@@ -88,10 +88,10 @@ export default class Verifier {
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
 
-    const verificationProcess: SUB_STEPS[] = getVerificationStepsForChain(this.chain, this.version);
+    // TODO: refactor this with certificate - CALL ONCE VERIFICATION STEPS WITH DID
+    const verificationProcess: SUB_STEPS[] = getVerificationStepsForChain(this.chain, this.version, !!this.issuer.didDocument);
     for (const verificationStep of verificationProcess) {
       if (!this[verificationStep]) {
-        console.error('No function for step', verificationStep);
         return;
       }
       await this[verificationStep]();

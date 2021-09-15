@@ -27,7 +27,6 @@ function findVerificationMethodPublicKey (didDocument: IDidDocument, verificatio
 function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
   const address = bitcoin.payments.p2pkh({ pubkey: publicKey, network: bitcoin.networks[chain.code] }).address;
-  console.log('address', address);
   return address;
 }
 
@@ -56,7 +55,6 @@ export default function confirmDidSignature ({
       throw new Error(`${baseError} - the identity document provided by the issuer does not reference the verification method`);
     }
 
-    console.log('issuing address', issuingAddress);
     if (issuingAddress !== retrieveIssuingAddress(verificationMethodPublicKey, chain)) {
       throw new Error(`${baseError} - the provided verification method does not match the issuer identity`);
     }
@@ -64,6 +62,6 @@ export default function confirmDidSignature ({
     return true;
   } catch (e) {
     console.error(e);
-    throw new Error(`${baseError} - ${e.message}`);
+    throw new Error(`${baseError} - ${e.message as string}`);
   }
 }

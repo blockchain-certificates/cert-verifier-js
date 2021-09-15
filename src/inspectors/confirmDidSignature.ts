@@ -27,6 +27,7 @@ function findVerificationMethodPublicKey (didDocument: IDidDocument, verificatio
 function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
   const address = bitcoin.payments.p2pkh({ pubkey: publicKey, network: bitcoin.networks[chain.code] }).address;
+  console.log('address', address);
   return address;
 }
 
@@ -43,20 +44,26 @@ export default function confirmDidSignature ({
   issuingAddress,
   chain
 }: IConfirmDidSignatureApi): boolean {
-  const { verificationMethod } = proof;
+  try {
+    const { verificationMethod } = proof;
 
-  if (!checkVerificationMethod(didDocument, verificationMethod)) {
-    throw new Error(`${baseError} - the identity document provided by the issuer does not match the verification method`);
+    if (!checkVerificationMethod(didDocument, verificationMethod)) {
+      throw new Error(`${baseError} - the identity document provided by the issuer does not match the verification method`);
+    }
+
+    const verificationMethodPublicKey = findVerificationMethodPublicKey(didDocument, verificationMethod);
+    if (!verificationMethodPublicKey) {
+      throw new Error(`${baseError} - the identity document provided by the issuer does not reference the verification method`);
+    }
+
+    console.log('issuing address', issuingAddress);
+    if (issuingAddress !== retrieveIssuingAddress(verificationMethodPublicKey, chain)) {
+      throw new Error(`${baseError} - the provided verification method does not match the issuer identity`);
+    }
+
+    return true;
+  } catch (e) {
+    console.error(e);
+    throw new Error(`${baseError} - ${e.message}`);
   }
-
-  const verificationMethodPublicKey = findVerificationMethodPublicKey(didDocument, verificationMethod);
-  if (!verificationMethodPublicKey) {
-    throw new Error(`${baseError} - the identity document provided by the issuer does not reference the verification method`);
-  }
-
-  if (issuingAddress !== retrieveIssuingAddress(verificationMethodPublicKey, chain)) {
-    throw new Error(`${baseError} - the provided verification method does not match the issuer identity`);
-  }
-
-  return true;
 }

@@ -42,6 +42,6 @@ export default {
         shippedProposals: true
       }]]
     }),
-    terser()
+    // terser()
   ]
 };

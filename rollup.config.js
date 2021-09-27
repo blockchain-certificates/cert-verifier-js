@@ -31,6 +31,6 @@ export default {
     json(),
     globals(),
     builtins(),
-    terser()
+    // terser()
   ]
 };

@@ -8,15 +8,15 @@ import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 
-function getUnmappedFields (normalized): string[] | null {
+export function getUnmappedFields (normalized: string): string[] | null {
+  const normalizedArray = normalized.split('\n');
   const myRegexp = /<http:\/\/fallback\.org\/(.*)>/;
-  const matches = myRegexp.exec(normalized);
-  if (matches) {
-    const unmappedFields = [];
-    for (let i = 0; i < matches.length; i++) {
-      unmappedFields.push(matches[i]);
-    }
-    return unmappedFields;
+  const matches = normalizedArray
+    .map(normalizedString => myRegexp.exec(normalizedString))
+    .filter(match => match != null);
+  if (matches.length > 0) {
+    const unmappedFields = matches.map(match => match[1]).sort(); // only return name of unmapped key
+    return Array.from(new Set(unmappedFields)); // dedup
   }
   return null;
 }
@@ -60,7 +60,7 @@ export default async function computeLocalHash (document, version): Promise<stri
     throw new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'));
   }
 
-  const unmappedFields = getUnmappedFields(normalizedDocument);
+  const unmappedFields: string[] = getUnmappedFields(normalizedDocument);
   if (unmappedFields) {
     throw new VerifierError(
       SUB_STEPS.computeLocalHash,

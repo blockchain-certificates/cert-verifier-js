@@ -38,7 +38,10 @@
     "access": "public"
   },
   "author": "Kim Duffy",
-  "maintainers": ["Matthieu Collé", "Julien Fraichot"],
+  "maintainers": [
+    "Matthieu Collé",
+    "Julien Fraichot"
+  ],
   "license": "MIT",
   "semistandard": {
     "globals": [

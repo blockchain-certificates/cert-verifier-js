@@ -11,7 +11,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "copy:declaration": "cp src/index.d.ts dist/index.d.ts",
-    "test": "jest",
+    "test": "jest --setupFilesAfterEnv=./test/setup.js",
     "test:build": "npm run test:build:esm && npm run test:build:iife",
     "test:build:esm": "jest --testRegex \"/*(.test.build.js)\" --setupTestFrameworkScriptFile=./test/build/setupTests.js --runInBand",
     "test:build:iife": "karma start --single-run",

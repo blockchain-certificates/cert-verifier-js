@@ -38,8 +38,11 @@
     "challenge": "sec:challenge",
     "expires": {"@id": "sec:expiration", "@type": "xsd:dateTime"},
 
-    "name": {
-      "@id": "schema:name"
-    }
+    "name": { "@id": "schema:name" },
+    "description": { "@id": "schema:description" },
+    "email": { "@id": "schema:email" },
+    "publicKey": { "@id": "sec:publicKey", "@type": "@id" },
+    "url": { "@id": "schema:url", "@type": "@id" },
+    "image": { "@id": "schema:image", "@type": "@id" }
   }
 }

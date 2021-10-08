@@ -29,7 +29,7 @@
     "transpile:node:ts": "npx babel src -d lib --copy-files --extensions '.ts'",
     "clean:lib:ts": "rimraf lib/\"**\"/*.ts",
     "lint": "npm run lint:js && npm run lint:ts",
-    "lint:js": "semistandard --verbose | snazzy",
+    "lint:js": "semistandard --verbose",
     "lint:ts": "eslint . --ext .ts",
     "semantic-release": "semantic-release",
     "prepare": "husky install"

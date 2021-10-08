@@ -95,7 +95,6 @@ const fixtureV3 = {
   };
 
 module.exports = [
-  fixtureV1,
   fixtureV2,
   fixtureV3
 ]

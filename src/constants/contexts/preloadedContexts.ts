@@ -1,4 +1,4 @@
-import CONTEXTS from './contexts';
+import CONTEXTS from './contexts-list';
 
 const preloadedContexts = {};
 

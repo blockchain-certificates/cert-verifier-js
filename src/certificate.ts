@@ -1,5 +1,5 @@
 import domain from './domain';
-import parseJSON, { ParsedCertificate } from './parser';
+import parseJSON, { ParsedCertificate } from './parsers/index';
 import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import { DEFAULT_OPTIONS, TRANSACTION_APIS } from './constants';
 import currentLocale from './constants/currentLocale';

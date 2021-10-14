@@ -5,3 +5,4 @@ export { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATU
 export { getSupportedLanguages };
 export { Certificate };
 export { SignatureImage } from './models';
+export { retrieveBlockcertsVersion } from './parsers';

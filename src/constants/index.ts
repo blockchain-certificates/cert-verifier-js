@@ -6,7 +6,7 @@ import * as VERIFICATION_STATUSES from './verificationStatuses';
 import { BLOCKCHAINS } from './blockchains';
 import { NETWORKS } from './networks';
 import CONFIG from './config';
-import { CONTEXTS, preloadedContexts } from './contexts';
+import preloadedContexts from './contexts/preloadedContexts';
 import { DEFAULT_OPTIONS } from './options';
 
 export {
@@ -15,7 +15,6 @@ export {
   BLOCKCHAINS,
   CERTIFICATE_VERSIONS,
   CONFIG,
-  CONTEXTS,
   preloadedContexts,
   DEFAULT_OPTIONS,
   NETWORKS,

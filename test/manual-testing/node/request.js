@@ -26,7 +26,7 @@ async function verify (blockcerts, version) {
 }
 
 function verifyCerts () {
-  fixtures.forEach((fixture, index) => verify(fixture, `v${index + 1}`));
+  fixtures.forEach((fixture, index) => verify(fixture, `v${index + 2}`)); // no v1 anymore, bit dirty innit?
 }
 
 verifyCerts();

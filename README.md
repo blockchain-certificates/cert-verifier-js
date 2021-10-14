@@ -63,7 +63,14 @@ let certificate = new Certificate(certificateDefinition);
 
 You can find more examples in the [test folder](./test/e2e/).
 
-In the [manual testing folder](./test/manual-testing/) you will find examples of implementation both in nodejs and browser environments. 
+In the [manual testing folder](./test/manual-testing/) you will find examples of implementation both in nodejs and browser environments.
+
+### Discover version of a Blockcert Certificate without parsing it
+```
+import { retrieveBlockcertsVersion } from '@blockcerts/cert-verifier-js';
+const version = retrieveBlockcertsVersion(blockcertDocument['@context']);
+// return 1, 2 or 3 
+```
 
 ### Parse a Blockcert certificate
 

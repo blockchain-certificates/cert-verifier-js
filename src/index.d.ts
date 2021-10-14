@@ -7,6 +7,7 @@ import Versions from './constants/certificateVersions'; // TODO: improve definit
 export { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from './constants';
 export { getSupportedLanguages } from './domain/i18n/useCases';
 export { SignatureImage } from './models';
+export { retrieveBlockcertsVersion } from './parsers';
 
 export enum SupportedChains {
   Bitcoin = 'bitcoin',

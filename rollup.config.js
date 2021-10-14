@@ -7,7 +7,7 @@ import globals from 'rollup-plugin-node-globals';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
-  input: 'src/index.js',
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/verifier.js',

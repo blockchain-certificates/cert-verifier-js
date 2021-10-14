@@ -1,5 +1,5 @@
 import FIXTURES from '../../fixtures';
-import parseJSON from '../../../src/parser';
+import parseJSON from '../../../src/parsers/index';
 
 const fixture = FIXTURES.TestnetV1Valid;
 

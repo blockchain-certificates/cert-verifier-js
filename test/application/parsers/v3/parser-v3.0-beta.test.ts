@@ -1,6 +1,6 @@
 import FIXTURES from '../../../fixtures';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
-import parseJSON from '../../../../src/parser';
+import parseJSON from '../../../../src/parsers/index';
 import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
 import assertionProofValue from '../../../assertions/v3.0-beta-signature-merkle2019.json';
 

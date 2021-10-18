@@ -1,6 +1,6 @@
 import FIXTURES from '../../fixtures';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
-import parseJSON from '../../../src/parser';
+import parseJSON from '../../../src/parsers/index';
 
 const fixture = FIXTURES.MainnetV2Valid;
 

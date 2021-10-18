@@ -1,9 +1,9 @@
-import { capitalize, startsWith } from '../../../src/helpers/string';
+import { capitalize, isString, startsWith } from '../../../src/helpers/string';
 
 describe('startsWith method', function () {
   describe('when given a invalid stringContent', function () {
     it('should return false', function () {
-      const result = startsWith(100, 'foo');
+      const result = startsWith(100 as any, 'foo');
       expect(result).toBe(false);
     });
   });
@@ -31,5 +31,23 @@ describe('capitalize method', function () {
   it('should return the capitalized word', function () {
     const output = capitalize('test');
     expect(output).toBe('Test');
+  });
+});
+
+describe('isString method', function () {
+  describe('when called with a string', function () {
+    it('should return true', function () {
+      const test = 'string';
+      expect(isString(test)).toBe(true);
+    });
+  });
+
+  describe('when not called with a string', function () {
+    it('should return false', function () {
+      const test = {
+        test: 'not a string'
+      };
+      expect(isString(test)).toBe(false);
+    });
   });
 });

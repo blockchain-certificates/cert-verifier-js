@@ -36,9 +36,9 @@ export default class Verifier {
   public transactionId: string;
   public documentToVerify: Blockcerts; // TODO: confirm this
   public explorerAPIs: ExplorerAPI[];
+  public txData: TransactionData;
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
-  private txData: TransactionData;
   private issuerPublicKeyList: IssuerPublicKeyList;
 
   constructor (
@@ -75,6 +75,13 @@ export default class Verifier {
     // Final verification result
     // Init status as success, we will update the final status at the end
     this._stepsStatuses = [];
+  }
+
+  getIssuingAddress (): string {
+    if (!this.txData) {
+      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+    }
+    return this.txData?.issuingAddress;
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {

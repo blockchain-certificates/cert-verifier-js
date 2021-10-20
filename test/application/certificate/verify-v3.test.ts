@@ -48,6 +48,11 @@ describe('Certificate test suite', function () {
           const finalStep = await certificate.verify();
           expect(finalStep).toEqual(expectedFinalStep);
         });
+
+        it('should set the publicKey property on the certificate', async function () {
+          await certificate.verify();
+          expect(certificate.publicKey).toBe('0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3');
+        });
       });
 
       describe('when the certificate has been tampered with', function () {

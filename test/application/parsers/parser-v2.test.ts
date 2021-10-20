@@ -57,10 +57,6 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.name).toEqual(fixture.badge.name);
     });
 
-    it('should set the publicKey of the certificate object', function () {
-      expect(parsedCertificate.publicKey).toEqual(fixture.recipientProfile.publicKey);
-    });
-
     it('should set the receipt of the certificate object', function () {
       expect(parsedCertificate.receipt).toEqual(fixture.signature);
     });

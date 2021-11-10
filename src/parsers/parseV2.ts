@@ -21,7 +21,6 @@ export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertifica
   const chain: IBlockchainObject = domain.certificates.getChain(issuerKey, certificateJson.signature);
   const issuedOn = certificateJson.issuedOn;
   const metadataJson = certificateJson.metadataJson;
-  const publicKey = recipientProfile.publicKey;
   const recipientFullName = recipientProfile.name;
   const revocationKey = null;
   const sealImage = issuer.image;
@@ -37,7 +36,6 @@ export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertifica
     issuer,
     metadataJson,
     name,
-    publicKey,
     receipt,
     recipientFullName,
     recordLink: id,

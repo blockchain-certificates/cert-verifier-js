@@ -8,6 +8,7 @@ export { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATU
 export { getSupportedLanguages } from './domain/i18n/useCases';
 export { SignatureImage } from './models';
 export { retrieveBlockcertsVersion } from './parsers';
+export { IFinalVerificationStatus } from './verifier';
 
 export enum SupportedChains {
   Bitcoin = 'bitcoin',

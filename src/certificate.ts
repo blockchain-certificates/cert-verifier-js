@@ -106,7 +106,9 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proof: this.proof
     });
-    return await verifier.verify(stepCallback);
+    const verificationStatus = await verifier.verify(stepCallback);
+    this.publicKey = verifier.getIssuingAddress();
+    return verificationStatus;
   }
 
   _setOptions (options: CertificateOptions): void {

@@ -51,6 +51,11 @@ describe('Certificate test suite', function () {
           const finalStep = await certificate.verify();
           expect(finalStep).toEqual(expectedFinalStep);
         });
+
+        it('should set the publicKey property on the certificate', async function () {
+          await certificate.verify();
+          expect(certificate.publicKey).toBe('1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo');
+        });
       });
 
       describe('when the certificate is invalid', function () {

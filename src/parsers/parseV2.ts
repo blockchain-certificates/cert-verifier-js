@@ -3,7 +3,7 @@ import { CERTIFICATE_VERSIONS } from '../constants';
 import getSignatureImages from './helpers/getSignatureImage';
 import { IBlockchainObject } from '../constants/blockchains';
 import { BlockcertsV2 } from '../models/BlockcertsV2';
-import { ParsedCertificate } from '../parser';
+import { ParsedCertificate } from './index';
 
 /**
  * parseV2

@@ -11,6 +11,7 @@ import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
 import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
+import { SignatureImage } from './models';
 
 export interface ExplorerURLs {
   main: string;
@@ -55,7 +56,7 @@ export default class Certificate {
   public revocationKey: string;
   public sealImage?: string; // v1
   public signature?: string; // v1
-  public signatureImage?: string; // v1
+  public signatureImage?: SignatureImage[]; // v1
   public subtitle?: string; // v1
   public transactionId: string;
   public transactionLink: string;

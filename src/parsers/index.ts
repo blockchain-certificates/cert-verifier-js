@@ -8,6 +8,7 @@ import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { Blockcerts } from '../models/Blockcerts';
 import { retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
 import { Receipt } from '../models/Receipt';
+import { SignatureImage } from '../models';
 
 export const versionParserMap = {
   1: parseV1,
@@ -34,7 +35,7 @@ export interface ParsedCertificate {
   revocationKey?: string;
   sealImage?: string;
   signature?: string;
-  signatureImage?: string;
+  signatureImage?: SignatureImage[];
   subtitle?: string;
   version: Versions;
   proof?: MerkleProof2019;

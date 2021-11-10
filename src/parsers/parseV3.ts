@@ -3,8 +3,8 @@ import { CERTIFICATE_VERSIONS } from '../constants';
 import domain from '../domain';
 import { Issuer } from '../models/Issuer';
 import { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
-import { ParsedCertificate } from '../parser';
 import { BlockcertsV3 } from '../models/BlockcertsV3';
+import { ParsedCertificate } from './index';
 
 function parseSignature (signature): ProofValueMerkleProof2019 {
   const base58Decoder = new Decoder(signature.proofValue);

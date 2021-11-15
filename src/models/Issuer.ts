@@ -1,3 +1,5 @@
+import { IDidDocument } from './DidDocument';
+
 export interface IssuerPublicKeyList {
   [key: string]: ParsedKeyObjectV2;
 }
@@ -39,6 +41,8 @@ export interface Issuer {
   analyticsURL?: string;
   issuingEstimateAuth?: string;
   issuingEstimateUrl?: string;
+  // blockcerts v3
+  didDocument?: IDidDocument;
 
   // blockcerts v2-alpha
   publicKeys?: string[] | KeyObjectV2[];

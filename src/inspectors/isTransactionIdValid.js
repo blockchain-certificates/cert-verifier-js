@@ -1,6 +1,6 @@
 import VerifierError from '../models/verifierError';
-import * as SUB_STEPS from '../constants/verificationSubSteps';
 import { getText } from '../domain/i18n/useCases';
+import { SUB_STEPS } from '../constants/verificationSubSteps';
 
 /**
  * isTransactionIdValid

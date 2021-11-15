@@ -1,10 +1,11 @@
 import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 import json from 'rollup-plugin-json';
 import typescript from 'rollup-plugin-typescript';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import babel from 'rollup-plugin-babel';
+import polyfills from 'rollup-plugin-polyfill-node';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
@@ -23,15 +24,11 @@ export default {
       extensions: ['.js', '.json']
     }),
     typescript(),
-    commonjs({
-      namedExports: {
-        debug: ['debug'],
-        'bitcoinjs-lib': ['bitcoin']
-      }
-    }),
+    commonjs(),
     json(),
     globals(),
     builtins(),
+    polyfills(),
     babel({
       exclude: 'node_modules/**',
       runtimeHelpers: true,

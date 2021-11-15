@@ -7,6 +7,8 @@ import Versions from '../constants/certificateVersions';
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { Blockcerts } from '../models/Blockcerts';
 import { retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
+import { Receipt } from '../models/Receipt';
+import { SignatureImage } from '../models';
 
 export const versionParserMap = {
   1: parseV1,
@@ -14,32 +16,29 @@ export const versionParserMap = {
   3: parseV3
 };
 
-export interface ParsedCertificateValidityFormat {
-  isFormatValid: boolean;
-  error: string;
-}
-
-export interface ParsedCertificate extends ParsedCertificateValidityFormat {
-  certificateImage;
-  chain;
-  description;
-  expires;
-  id;
-  isFormatValid;
-  issuedOn;
-  issuer;
-  metadataJson;
-  name;
-  publicKey;
-  receipt;
-  recipientFullName;
-  recordLink;
-  revocationKey;
-  sealImage;
-  signature;
-  signatureImage;
-  subtitle;
-  version;
+export interface ParsedCertificate {
+  certificateImage?: string;
+  chain: IBlockchainObject;
+  description?: string;
+  expires?: string;
+  id: string;
+  isFormatValid?: boolean;
+  error?: string;
+  issuedOn?: string;
+  issuer: Issuer;
+  metadataJson?: string;
+  name?: string;
+  publicKey?: string;
+  receipt: Receipt;
+  recipientFullName?: string;
+  recordLink?: string;
+  revocationKey?: string;
+  sealImage?: string;
+  signature?: string;
+  signatureImage?: SignatureImage[];
+  subtitle?: string;
+  version: Versions;
+  proof?: MerkleProof2019;
 }
 
 export {

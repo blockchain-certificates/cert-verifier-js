@@ -1,4 +1,4 @@
-import { STEPS, SUB_STEPS, VERIFICATION_STATUSES } from './constants';
+import { VERIFICATION_STATUSES } from './constants';
 import debug from 'debug';
 import Versions, { isV3 } from './constants/certificateVersions';
 import domain from './domain';
@@ -7,6 +7,11 @@ import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
+import { VerificationSteps } from './constants/verificationSteps';
+import { SUB_STEPS } from './constants/verificationSubSteps';
+import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
+import { Receipt } from './models/Receipt';
+import { MerkleProof2019 } from './models/MerkleProof2019';
 
 const log = debug('Verifier');
 
@@ -20,7 +25,7 @@ export interface IVerificationStepCallbackAPI {
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
 
 export interface IFinalVerificationStatus {
-  code: STEPS.final;
+  code: VerificationSteps.final;
   status: string; // TODO: use enum
   message: string;
 }
@@ -30,7 +35,8 @@ export default class Verifier {
   public expires: string;
   public id: string;
   public issuer: Issuer;
-  public receipt: any; // TODO: define receipt interface
+  public receipt: Receipt;
+  public proof?: MerkleProof2019;
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
@@ -42,17 +48,18 @@ export default class Verifier {
   private issuerPublicKeyList: IssuerPublicKeyList;
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs }: {
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
-      receipt: any;
+      receipt: Receipt;
       revocationKey: string;
       transactionId: string;
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
+      proof?: MerkleProof2019;
     }
   ) {
     this.chain = chain;
@@ -64,6 +71,7 @@ export default class Verifier {
     this.version = version;
     this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
+    this.proof = proof;
 
     let document = certificateJson.document;
     if (!document) {
@@ -87,10 +95,13 @@ export default class Verifier {
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
 
-    if (domain.chains.isMockChain(this.chain)) {
-      await this._verifyV2Mock();
-    } else {
-      await this._verifyMain();
+    // TODO: refactor this with certificate - CALL ONCE VERIFICATION STEPS WITH DID
+    const verificationProcess: SUB_STEPS[] = getVerificationStepsForChain(this.chain, this.version, !!this.issuer.didDocument);
+    for (const verificationStep of verificationProcess) {
+      if (!this[verificationStep]) {
+        return;
+      }
+      await this[verificationStep]();
     }
 
     // Send final callback update for global verification status
@@ -142,27 +153,6 @@ export default class Verifier {
     // defined by this.verify interface
   }
 
-  async _verifyMain (): Promise<void> {
-    await this.getTransactionId();
-    await this.computeLocalHash();
-    await this.fetchRemoteHash();
-    await this.getIssuerProfile();
-    await this.parseIssuerKeys();
-    await this.compareHashes();
-    await this.checkMerkleRoot();
-    await this.checkReceipt();
-    await this.checkRevokedStatus();
-    await this.checkAuthenticity();
-    await this.checkExpiresDate();
-  }
-
-  async _verifyV2Mock (): Promise<void> {
-    await this.computeLocalHash();
-    await this.compareHashes();
-    await this.checkReceipt();
-    await this.checkExpiresDate();
-  }
-
   private async getTransactionId (): Promise<void> {
     await this._doAction(
       SUB_STEPS.getTransactionId,
@@ -189,12 +179,10 @@ export default class Verifier {
   }
 
   private async getIssuerProfile (): Promise<void> {
-    if (!isV3(this.version)) { // with v3 this is done at certificate parsing level (parseV3)
-      this.issuer = await this._doAction(
-        SUB_STEPS.getIssuerProfile,
-        async () => await domain.verifier.getIssuerProfile(this.issuer)
-      );
-    }
+    this.issuer = await this._doAction(
+      SUB_STEPS.getIssuerProfile,
+      async () => await domain.verifier.getIssuerProfile(this.issuer)
+    );
   }
 
   private async parseIssuerKeys (): Promise<void> {
@@ -257,10 +245,24 @@ export default class Verifier {
     );
   }
 
+  private async checkIssuerIdentity (): Promise<void> {
+    if (!this.issuer?.didDocument) {
+      return;
+    }
+    await this._doAction(SUB_STEPS.checkIssuerIdentity, () => {
+      inspectors.confirmDidSignature({
+        didDocument: this.issuer.didDocument,
+        proof: this.proof,
+        issuingAddress: this.txData.issuingAddress,
+        chain: this.chain
+      });
+    });
+  }
+
   /**
    * Returns a failure final step message
    */
-  _failed (errorStep): IFinalVerificationStatus { // TODO: define errorStep interface
+  _failed (errorStep: IVerificationStepCallbackAPI): IFinalVerificationStatus {
     const message: string = errorStep.errorMessage;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
@@ -273,7 +275,7 @@ export default class Verifier {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _retrieveDocumentBeforeIssuance (certificateJson): any { // TODO: define certificate object
+  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): any { // TODO: define certificate object without proof
     const certificateCopy = Object.assign({}, certificateJson);
     if (isV3(this.version)) {
       delete certificateCopy.proof;
@@ -295,7 +297,7 @@ export default class Verifier {
   }
 
   _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
-    return { code: STEPS.final, status, message };
+    return { code: VerificationSteps.final, status, message };
   }
 
   /**

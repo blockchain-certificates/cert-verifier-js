@@ -9,7 +9,9 @@ import Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
 import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
 import { Issuer } from './models/Issuer';
-import { ProofValue } from './models/MerkleProof2019';
+import { Receipt } from './models/Receipt';
+import { MerkleProof2019 } from './models/MerkleProof2019';
+import { SignatureImage } from './models';
 
 export interface ExplorerURLs {
   main: string;
@@ -46,14 +48,15 @@ export default class Certificate {
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
   public publicKey?: string;
+  public proof?: MerkleProof2019;
   public rawTransactionLink: string;
-  public receipt: ProofValue | any; // TODO: define receipt interface for v1, v2
+  public receipt: Receipt;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;
   public sealImage?: string; // v1
   public signature?: string; // v1
-  public signatureImage?: string; // v1
+  public signatureImage?: SignatureImage[]; // v1
   public subtitle?: string; // v1
   public transactionId: string;
   public transactionLink: string;
@@ -81,7 +84,7 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
   }
 
-  async parseJson (certificateDefinition): Promise<void> {
+  async parseJson (certificateDefinition: Blockcerts): Promise<void> {
     const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
@@ -100,14 +103,15 @@ export default class Certificate {
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
       version: this.version,
-      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
+      proof: this.proof
     });
     const verificationStatus = await verifier.verify(stepCallback);
     this.publicKey = verifier.getIssuingAddress();
     return verificationStatus;
   }
 
-  _setOptions (options): void {
+  _setOptions (options: CertificateOptions): void {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale
@@ -129,6 +133,7 @@ export default class Certificate {
     metadataJson,
     name,
     publicKey,
+    proof,
     receipt,
     recipientFullName,
     recordLink,
@@ -138,7 +143,7 @@ export default class Certificate {
     signatureImage,
     subtitle,
     version
-  }): void {
+  }: ParsedCertificate): void {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -149,6 +154,7 @@ export default class Certificate {
     this.issuer = issuer;
     this.metadataJson = metadataJson;
     this.name = name;
+    this.proof = proof;
     this.publicKey = publicKey;
     this.receipt = receipt;
     this.recipientFullName = recipientFullName;
@@ -160,9 +166,11 @@ export default class Certificate {
     this.subtitle = subtitle;
 
     // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(chain, version);
+    // TODO: refactor. The verifier is calling a subset of this method later to determine the verification steps and
+    //  associate them to their function - CALL ONCE VERIFICATION STEPS WITH DID
+    this.verificationSteps = domain.certificates.getVerificationMap(chain, version, !!this.issuer.didDocument);
 
-    this.version = version as Versions;
+    this.version = version;
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();

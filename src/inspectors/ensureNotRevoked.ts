@@ -1,9 +1,10 @@
 import VerifierError from '../models/verifierError';
-import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSubSteps';
 import domain from '../domain';
 import { intersect } from '../helpers/array';
+import { RevokedAssertion } from '../models/RevokedAssertions';
 
-export default function ensureNotRevoked (revokedAddresses, keys) {
+export default function ensureNotRevoked (revokedAddresses?: RevokedAssertion[], keys?: string | string[]): void {
   if (!revokedAddresses || !keys) {
     // nothing to do
     return;

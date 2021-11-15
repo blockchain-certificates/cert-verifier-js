@@ -2,6 +2,7 @@ import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../s
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
+import { substepsList } from '../../../src/constants/verificationSubSteps';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -29,7 +30,7 @@ describe('Certificate test suite', function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
             code: SUB_STEPS.getTransactionId,
-            label: SUB_STEPS.language.getTransactionId.labelPending,
+            label: substepsList.getTransactionId.labelPending,
             status: VERIFICATION_STATUSES.SUCCESS
           };
 
@@ -112,7 +113,7 @@ describe('Certificate test suite', function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
             code: SUB_STEPS.getTransactionId,
-            label: SUB_STEPS.language.getTransactionId.labelPending,
+            label: substepsList.getTransactionId.labelPending,
             status: VERIFICATION_STATUSES.SUCCESS
           };
 

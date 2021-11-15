@@ -1,12 +1,13 @@
-import { isV1 } from '../constants/certificateVersions';
+import Versions, { isV1 } from '../constants/certificateVersions';
 import CONFIG from '../constants/config';
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
-import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSubSteps';
 import sha256 from 'sha256';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
+import { Blockcerts } from '../models/Blockcerts';
 
 export function getUnmappedFields (normalized: string): string[] | null {
   const normalizedArray = normalized.split('\n');
@@ -21,7 +22,7 @@ export function getUnmappedFields (normalized: string): string[] | null {
   return null;
 }
 
-export default async function computeLocalHash (document, version): Promise<string> {
+export default async function computeLocalHash (document: Blockcerts, version: Versions): Promise<string> {
   let expandContext = document['@context'];
   const theDocument = document;
   if (!isV1(version) && CONFIG.CheckForUnmappedFields) {

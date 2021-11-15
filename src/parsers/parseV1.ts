@@ -6,7 +6,6 @@ import VerifierError from '../models/verifierError';
  * @param certificateJson
  * @returns {Certificate}
  */
-
 export default function parseV1 (): void {
   throw new VerifierError(
     '',

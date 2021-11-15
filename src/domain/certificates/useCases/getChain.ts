@@ -2,6 +2,8 @@ import { BLOCKCHAINS, IBlockchainObject } from '../../../constants/blockchains';
 import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
 import { capitalize } from '../../../helpers/string';
+import { Receipt } from '../../../models/Receipt';
+import { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 
 // merkleRoot2019: see https://w3c-dvcg.github.io/lds-merkle-proof-2019/#blockchain-keymap
 function getMerkleRoot2019Chain (anchor): IBlockchainObject {
@@ -48,13 +50,13 @@ function getChainObject (chainCodeSignatureValue): IBlockchainObject {
  * @param address
  * @returns {*}
  */
-export default function getChain (address, signature = null): IBlockchainObject {
-  const cleanedSignature = signature || {};
-  if (cleanedSignature.anchors) {
+export default function getChain (address: string, proof: Receipt): IBlockchainObject {
+  const cleanedSignature = proof || null;
+  if (cleanedSignature?.anchors) {
     const anchors = cleanedSignature.anchors;
     const anchor = anchors[0];
-    if (anchor.chain) {
-      const chainCodeSignatureValue = anchor.chain;
+    if ((anchor as MerkleProof2017Anchor).chain) {
+      const chainCodeSignatureValue = (anchor as MerkleProof2017Anchor).chain;
       return getChainObject(chainCodeSignatureValue);
     } else if (typeof anchor === 'string') {
       return getMerkleRoot2019Chain(anchor);

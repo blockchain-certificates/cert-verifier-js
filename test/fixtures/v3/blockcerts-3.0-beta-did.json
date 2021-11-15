@@ -1,0 +1,28 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/blockcerts/v3.0-beta"
+  ],
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": "did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1",
+  "issuanceDate": "2021-09-07T19:33:24Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21"
+  },
+  "metadata": "{\"classOf\":\"2021\"}",
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<b>hello world</b>"
+  },
+  "proof": {
+    "type": "MerkleProof2019",
+    "created": "2021-09-08T14:13:16.692648",
+    "proofValue": "z4zvrPUULnHmaio8LY3mX31UPxTJYyNApGJkozwq2aFVzn8kJbkbtB9c1nY44iU5k9mgw8sJAeRDtNsiB2XD8Zo1Cmvj8u1AXtF84M5nFuQ5daM77sD7kraNySmU5EvGHuoqgu74Bt1UZ8fA7h9Vbvgv65YguS48CqaoWicZJ8Z8sPcVSqVUouMc64USn4usGSgat3FX1d7jUFSokA1ijHXbRVsUTk5PumJMSfTPgfrTDoR9DR5UioRsPjS15QSbEkhpXazo34fSHPB9tCinhUQ5tnMRmfRSgF6Z6VK193fXpVin5C7gfPQx5zWz7PTSJSB553nEzzSz38qizHxtCErdVLynSu4G37zeFFLj1FJiby2CqqbbzaLA3SvALsL2kXfF5rQ81SEPBQfY1ZD",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1"
+  }
+}

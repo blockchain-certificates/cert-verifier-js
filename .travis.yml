@@ -14,6 +14,13 @@ after_script:
   - npm run test:coverage
   - npm run test:coverage:report
 after_success:
+  # to make the build work through rollup with DID logic (https://github.com/blockchain-certificates/cert-verifier-js/pull/1257)
+  # we are aliasing readable-stream to https://github.com/exogee-technology/readable-stream
+  # however this breaks semantic release because the shape of the export is different
+  # so we install the regular version of readable stream to enable expected use by semantic release
+  # it is an inelegant patch but it's a quick solution to the problem and is acceptable as it is the last step of the CI
+  - npm uninstall readable-stream
+  - npm install readable-stream
   - npm run semantic-release
 after_failure:
   - cat  /home/travis/.npm/_logs/2021-02-08T14_3*-debug.log

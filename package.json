@@ -55,7 +55,7 @@
   "dependencies": {
     "@babel/runtime": "^7.11.2",
     "@babel/runtime-corejs3": "^7.8.7",
-    "@blockcerts/explorer-lookup": "^1.1.0",
+    "@blockcerts/explorer-lookup": "^1.2.1",
     "@decentralized-identity/did-common-typescript": "^0.1.19",
     "@trust/keyto": "^1.0.1",
     "@vaultie/lds-merkle-proof-2019": "0.0.8",
@@ -81,7 +81,7 @@
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-typescript": "^7.9.0",
     "@commitlint/cli": "^13.1.0",
-    "@commitlint/config-conventional": "^13.2.0",
+    "@commitlint/config-conventional": "^15.0.0",
     "@rollup/plugin-commonjs": "^19.0.1",
     "@types/jest": "^26.0.4",
     "@types/node": "^16.11.1",

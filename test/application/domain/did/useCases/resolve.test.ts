@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import domain from '../../../../../src/domain';
 import assertionIonDidDocument from '../../../../assertions/ion-did-document.json';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import { universalResolverUrl } from '../../../../../src/domain/did/useCases/resolve';
+import { universalResolverUrl } from '../../../../../src/domain/did/valueObjects/didResolver';
 
 describe('domain did resolve test suite', function () {
   describe('given the did method is supported by the resolver', function () {

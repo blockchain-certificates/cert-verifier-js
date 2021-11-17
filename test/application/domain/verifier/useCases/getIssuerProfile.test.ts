@@ -1,5 +1,5 @@
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
-import * as RequestServices from '../../../../../src/services/request';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
 import fixtureBlockcertsV3Alpha from '../../../../fixtures/v3/blockcerts-3.0-alpha.json';
 import fixtureBlockcertsV2 from '../../../../fixtures/v2/mainnet-valid-2.0.json';
@@ -9,7 +9,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
   let stubRequest;
 
   beforeEach(function () {
-    stubRequest = sinon.stub(RequestServices, 'request').resolves(undefined);
+    stubRequest = sinon.stub(ExplorerLookup, 'request').resolves(undefined);
   });
 
   afterEach(function () {

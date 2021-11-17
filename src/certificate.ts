@@ -28,8 +28,13 @@ export interface ExplorerAPI {
 }
 
 export interface CertificateOptions {
+  // language option
   locale?: string;
+  // provide your own custom explorer API to either pass an identifier to a default service
+  // or use your own blockchain explorer
   explorerAPIs?: ExplorerAPI[];
+  // specify your own DID resolver url
+  didResolverUrl?: string;
 }
 
 export default class Certificate {
@@ -117,6 +122,10 @@ export default class Certificate {
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
     this.explorerAPIs = this.options.explorerAPIs || [];
+
+    if (options.didResolverUrl) {
+      domain.did.didResolver.url = options.didResolverUrl;
+    }
 
     currentLocale.locale = this.locale;
   }

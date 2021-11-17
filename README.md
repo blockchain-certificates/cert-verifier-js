@@ -36,18 +36,21 @@ Exposed by default:
 ```javascript
 const { Certificate } = require('@blockcerts/cert-verifier-js');
 var certificate = new Certificate(certificateDefinition);
+await certificate.init();
 ```
 
 ### Running in Nodejs
 ```javascript
 const { Certificate } = require('@blockcerts/cert-verifier-js/lib');
 var certificate = new Certificate(certificateDefinition);
+await certificate.init();
 ```
 
 #### ES module
 ```javascript
 import { Certificate } from '@blockcerts/cert-verifier-js';
 let certificate = new Certificate(certificateDefinition);
+await certificate.init();
 ```
 
 #### Script tag (iife)
@@ -56,6 +59,7 @@ let certificate = new Certificate(certificateDefinition);
 <script src='node_modules/@blockcerts/cert-verifier-js/dist/verifier-iife.js'></script>
 <script>
   var certificate = new Verifier.Certificate(certificateDefinition);
+  await certificate.init();
 </script>
 ```
 
@@ -77,12 +81,13 @@ const version = retrieveBlockcertsVersion(blockcertDocument['@context']);
 ```javascript
 var fs = require('fs');
 
-fs.readFile('./certificate.json', 'utf8', function (err, data) {
+fs.readFile('./certificate.json', 'utf8', async function (err, data) {
   if (err) {
     console.log(err);
   }
 
   let certificate = new Certificate(data);
+  await certificate.init();
   console.log(cert.name);
 });
 ```
@@ -92,12 +97,13 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
 ```javascript
 var fs = require('fs');
 
-fs.readFile('./certificate.json', 'utf8', function (err, data) {
+fs.readFile('./certificate.json', 'utf8', async function (err, data) {
   if (err) {
     console.log(err);
   }
 
   let certificate = new Certificate(data);
+  await certificate.init();
   const verificationResult = await certificate.verify(({code, label, status, errorMessage}) => {
     console.log('Code:', code, label, ' - Status:', status);
     if (errorMessage) {
@@ -119,13 +125,14 @@ fs.readFile('./certificate.json', 'utf8', function (err, data) {
 ```javascript
 const certificate = new Certificate(certificateDefinition);
 ```
-The constructor automatically parses a certificate.
+The constructor automatically parses a certificate. Call `certificate.init()` to handle initial required set up.
 
 #### Parameter
 - `certificateDefinition` (`String|Object`): the certificate definition. Can either be a string or a JSON object.
 - `options`: (`Object`): an object of options. The following properties are used:
     - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`. If set to `auto` it will use the user's browser language if available, or default to `en-US`. See the [dedicated section](#i18n) for more information.
-    - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.  
+    - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.
+    - didResolverUrl: (`String`): pass this option to specify your own did resolver url. By default this library uses the DIF universal resolver which is not recommended for production use.
 
 #### Returns
 The certificate instance has the following properties:

@@ -2,6 +2,8 @@ import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
 import { CertificateOptions } from '../../../src/certificate';
 import { TransactionData } from '../../../src/models/TransactionData';
+import domain from '../../../src/domain';
+import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -124,6 +126,23 @@ describe('Certificate entity test suite', function () {
               };
               const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
               expect(instance.explorerAPIs).toEqual(fixtureOptions.explorerAPIs);
+            });
+          });
+        });
+
+        describe('didResolverUrl option', function () {
+          describe('when it is not set', function () {
+            it('the system should use the default value', function () {
+              const instance = new Certificate(FIXTURES.MainnetV2Valid);
+              expect(domain.did.didResolver.url).toBe(universalResolverUrl);
+            });
+          });
+
+          describe('when it is set', function () {
+            it('the system should use the custom value', function () {
+              const customDidResolverUrl = 'https://resolver.blockcerts.org';
+              const instance = new Certificate(FIXTURES.MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
+              expect(domain.did.didResolver.url).toBe(customDidResolverUrl);
             });
           });
         });

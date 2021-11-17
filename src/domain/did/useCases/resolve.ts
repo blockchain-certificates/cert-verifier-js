@@ -1,7 +1,7 @@
 import { IDidDocument } from '../../../models/DidDocument';
 import { request } from '@blockcerts/explorer-lookup';
 
-const universalResolverUrl = 'https://resolver.identity.foundation/1.0/identifiers';
+export const universalResolverUrl = 'https://resolver.identity.foundation/1.0/identifiers';
 
 interface IUniversalResolverResponse {
   didResolutionMetadata?: any;
@@ -16,8 +16,8 @@ interface IUniversalResolverResponse {
   };
 }
 
-export default async function resolve (didUri: string): Promise<IDidDocument> {
-  const universalResolverResponse: string = await request({ url: `${universalResolverUrl}/${didUri}`, forceHttp: true });
+export default async function resolve (didUri: string, didResolverUrl = universalResolverUrl): Promise<IDidDocument> {
+  const universalResolverResponse: string = await request({ url: `${didResolverUrl}/${didUri}` });
   const parsedUniversalResolverResponse: IUniversalResolverResponse = JSON.parse(universalResolverResponse);
   return parsedUniversalResolverResponse.didDocument;
 }

@@ -15,8 +15,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
       beforeEach(async function () {
         requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
-          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1',
-          forceHttp: true
+          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1'
         }).resolves(JSON.stringify({ didDocument }));
         requestStub.withArgs({
           url: 'https://raw.githubusercontent.com/lemoustachiste/did-blockcerts-poc/master/issuer-profile.json'

@@ -1,5 +1,5 @@
 import { IDidDocument } from '../../../models/DidDocument';
-import { request } from '../../../services/request';
+import { request } from '@blockcerts/explorer-lookup';
 
 const universalResolverUrl = 'https://resolver.identity.foundation/1.0/identifiers';
 

@@ -1,4 +1,4 @@
-import { request } from '../../../services';
+import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';

@@ -1,5 +1,5 @@
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
-import * as RequestServices from '../../../../../src/services/request';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
 import sinon from 'sinon';
 
@@ -8,7 +8,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
   let stubRequest;
 
   beforeEach(function () {
-    stubRequest = sinon.stub(RequestServices, 'request').resolves(undefined);
+    stubRequest = sinon.stub(ExplorerLookup, 'request').resolves(undefined);
   });
 
   afterEach(function () {

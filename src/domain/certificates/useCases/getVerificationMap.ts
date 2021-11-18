@@ -1,10 +1,10 @@
-import { NETWORKS, STEPS } from '../../../constants';
+import { NETWORKS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import Versions, { isV3 } from '../../../constants/certificateVersions';
 import { SUB_STEPS, substepsList, IVerificationSubstep } from '../../../constants/verificationSubSteps';
 import { deepCopy } from '../../../helpers/object';
-import { TVerificationStepsList, VerificationSteps } from '../../../constants/verificationSteps';
+import { language as stepsLanguage, TVerificationStepsList, VerificationSteps } from '../../../constants/verificationSteps';
 import { IBlockchainObject } from '../../../constants/blockchains';
 
 export interface IVerificationMapItem {
@@ -88,7 +88,7 @@ function stepsObjectToArray (stepsObject: TVerificationStepsList): IVerification
  * @returns {any}
  */
 function setSubStepsToSteps (subSteps: IVerificationSubstep[]): TVerificationStepsList {
-  const steps = deepCopy(STEPS.language);
+  const steps = deepCopy(stepsLanguage);
   subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
   return steps;
 }

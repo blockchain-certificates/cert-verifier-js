@@ -89,14 +89,6 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
   }
 
-  async parseJson (certificateDefinition: Blockcerts): Promise<void> {
-    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
-    if (!parsedCertificate.isFormatValid) {
-      throw new Error(parsedCertificate.error);
-    }
-    this._setProperties(parsedCertificate);
-  }
-
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
     const verifier = new Verifier({
       certificateJson: this.certificateJson,
@@ -116,7 +108,15 @@ export default class Certificate {
     return verificationStatus;
   }
 
-  _setOptions (options: CertificateOptions): void {
+  private async parseJson (certificateDefinition: Blockcerts): Promise<void> {
+    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
+    if (!parsedCertificate.isFormatValid) {
+      throw new Error(parsedCertificate.error);
+    }
+    this._setProperties(parsedCertificate);
+  }
+
+  private _setOptions (options: CertificateOptions): void {
     this.options = Object.assign({}, DEFAULT_OPTIONS, options);
 
     // Set locale
@@ -130,7 +130,7 @@ export default class Certificate {
     currentLocale.locale = this.locale;
   }
 
-  _setProperties ({
+  private _setProperties ({
     certificateImage,
     chain,
     description,
@@ -185,7 +185,7 @@ export default class Certificate {
     this._setTransactionDetails();
   }
 
-  _setTransactionDetails (): void {
+  private _setTransactionDetails (): void {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
     this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);

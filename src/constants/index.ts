@@ -1,8 +1,6 @@
 import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api';
 import CERTIFICATE_VERSIONS from './certificateVersions';
-import * as STEPS from './verificationSteps';
 import { SUB_STEPS } from './verificationSubSteps';
-import * as VERIFICATION_STATUSES from './verificationStatuses';
 import { BLOCKCHAINS } from './blockchains';
 import { NETWORKS } from './networks';
 import CONFIG from './config';
@@ -18,7 +16,5 @@ export {
   preloadedContexts,
   DEFAULT_OPTIONS,
   NETWORKS,
-  STEPS,
-  SUB_STEPS,
-  VERIFICATION_STATUSES
+  SUB_STEPS
 };

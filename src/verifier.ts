@@ -1,11 +1,11 @@
-import { VERIFICATION_STATUSES } from './constants';
+import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import debug from 'debug';
+import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import Versions, { isV3 } from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
-import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';

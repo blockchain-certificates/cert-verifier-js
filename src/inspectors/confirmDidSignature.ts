@@ -1,9 +1,9 @@
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { IDidDocument } from '../models/DidDocument';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import { publicKeyUInt8ArrayFromJwk, ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
-import * as bitcoin from 'bitcoinjs-lib';
-import { IBlockchainObject } from '../constants/blockchains';
+import { ISecp256k1PublicKeyJwk, publicKeyUInt8ArrayFromJwk } from '../helpers/keyUtils';
+import { IBlockchainObject, SupportedChains } from '../constants/blockchains';
+import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../helpers/issuingAddress';
 
 const baseError = 'Issuer identity mismatch';
 
@@ -26,7 +26,23 @@ function findVerificationMethodPublicKey (didDocument: IDidDocument, verificatio
 
 function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
-  const address = bitcoin.payments.p2pkh({ pubkey: publicKey, network: bitcoin.networks[chain.code] }).address;
+  let address: string = '';
+  switch (chain.code) {
+    case SupportedChains.Bitcoin:
+    case SupportedChains.Mocknet:
+    case SupportedChains.Testnet:
+      address = computeBitcoinAddressFromPublicKey(publicKey, chain);
+      break;
+
+    case SupportedChains.Ethmain:
+    case SupportedChains.Ethropst:
+    case SupportedChains.Ethrinkeby:
+      address = computeEthereumAddressFromPublicKey(publicKey, chain);
+      break;
+
+    default:
+      throw new Error('Unsupported chain for DID verification');
+  }
   return address;
 }
 

@@ -66,6 +66,8 @@
     "core-js": "^3.6.5",
     "debug": "^4.1.1",
     "ecurve": "^1.0.4",
+    "elliptic": "^6.5.4",
+    "js-sha3": "^0.8.0",
     "jsonld": "^5.2.0",
     "lodash.clonedeep": "^4.5.0",
     "readable-stream": "npm:vite-compatible-readable-stream@^3.6.0",

@@ -17,12 +17,15 @@ preloadedContexts['https://www.w3id.org/blockcerts/schema/2.0/context.json'] = C
 // alpha
 preloadedContexts['https://www.blockcerts.org/schema/3.0-alpha/context.json'] = CONTEXTS.BLOCKCERTSV3_ALPHA;
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-alpha/context.json'] = CONTEXTS.BLOCKCERTSV3_ALPHA;
-preloadedContexts['https://w3id.org/blockcerts/3.0-alpha'] = CONTEXTS.BLOCKCERTSV3_ALPHA;
+preloadedContexts['https://w3id.org/blockcerts/v3.0-alpha'] = CONTEXTS.BLOCKCERTSV3_ALPHA;
 // beta
 preloadedContexts['https://www.blockcerts.org/schema/3.0-beta/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-beta/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
-preloadedContexts['https://w3id.org/blockcerts/3.0-beta'] = CONTEXTS.BLOCKCERTSV3_BETA;
 preloadedContexts['https://w3id.org/blockcerts/v3.0-beta'] = CONTEXTS.BLOCKCERTSV3_BETA;
+// v3
+preloadedContexts['https://www.blockcerts.org/schema/3.0/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
+preloadedContexts['https://w3id.org/blockcerts/schema/3.0/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
+preloadedContexts['https://w3id.org/blockcerts/v3'] = CONTEXTS.BLOCKCERTSV3;
 
 // extra definitions
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-alpha/merkleProof2019Context.json'] = CONTEXTS.MERKLE_PROOF_2019;

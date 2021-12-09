@@ -2,6 +2,7 @@ import BLOCKCERTSV2_ALPHA from './blockcerts.v2-alpha.json';
 import BLOCKCERTSV2 from './blockcerts.v2.0.json';
 import BLOCKCERTSV3_ALPHA from './blockcerts.v3-alpha.json';
 import BLOCKCERTSV3_BETA from './blockcerts.v3-beta.json';
+import BLOCKCERTSV3 from './blockcerts.v3.0.json';
 
 import MERKLE_PROOF_2019 from './merkle-proof-2019.json';
 
@@ -17,6 +18,7 @@ export default {
   BLOCKCERTSV2,
   BLOCKCERTSV3_ALPHA,
   BLOCKCERTSV3_BETA,
+  BLOCKCERTSV3,
   MERKLE_PROOF_2019,
   ODRL,
   OPEN_BADGES,

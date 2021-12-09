@@ -1,0 +1,50 @@
+{
+  "@context": {
+    "id": "@id",
+    "type": "@type",
+    "bc": "https://w3id.org/blockcerts#",
+    "cp": "https://w3id.org/chainpoint#",
+    "vc": "https://www.w3.org/2018/credentials/v1",
+    "schema": "https://schema.org/",
+    "sec": "https://w3id.org/security#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+    "MerkleProof2019": "sec:MerkleProof2019",
+
+    "BlockcertsCredential": "bc:BlockcertsCredential",
+    "introductionUrl": { "@id": "bc:introductionUrl", "@type": "@id" },
+    "metadata": "bc:metadata",
+    "display": {
+      "@id": "bc:display",
+      "@context": {
+        "id": "@id",
+        "type": "@type",
+        "contentMediaType": {"@id": "bc:contentMediaType", "@type": "@id"},
+        "contentEncoding": {"@id": "bc:contentEncoding", "@type": "@id"},
+        "content": {"@id": "bc:content", "@type": "@id"}
+      }
+    },
+
+    "CryptographicKey": "sec:Key",
+
+    "domain": "sec:domain",
+    "nonce": "sec:nonce",
+    "proofValue": "sec:proofValue",
+    "assertionMethod": {"@id": "sec:assertionMethod", "@type": "@id", "@container": "@set"},
+    "authentication": {"@id": "sec:authenticationMethod", "@type": "@id", "@container": "@set"},
+    "proofPurpose": {"@id": "sec:proofPurpose", "@type": "@vocab"},
+    "verificationMethod": {"@id": "sec:verificationMethod", "@type": "@id"},
+    "created": {"@id": "https://purl.org/dc/terms/created", "@type": "xsd:dateTime"},
+    "challenge": "sec:challenge",
+    "expires": {"@id": "sec:expiration", "@type": "xsd:dateTime"},
+
+    "name": { "@id": "schema:name" },
+    "description": { "@id": "schema:description" },
+    "email": { "@id": "schema:email" },
+    "publicKey": { "@id": "sec:publicKey", "@type": "@id" },
+    "url": { "@id": "schema:url", "@type": "@id" },
+    "image": { "@id": "schema:image", "@type": "@id" },
+    "criteria": { "@id": "schema:criteria", "@type": "@id" },
+    "claim": { "@id": "schema:claim", "@type": "@id" }
+  }
+}

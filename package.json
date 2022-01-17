@@ -95,7 +95,7 @@
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "dts-bundle-generator": "^6.0.0",
-    "eslint": "^7.21.0",
+    "eslint": "^8.7.0",
     "eslint-config-semistandard": "^16.0.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-config-standard-with-typescript": "^21.0.1",

@@ -4,6 +4,10 @@ import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-sign
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import verificationStepsV3 from '../../assertions/verification-steps-v3.json';
 import { VerificationSteps } from '../../../src/constants/verificationSteps';
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import didDocument from '../../fixtures/did.json';
+import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 
 const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
@@ -153,6 +157,13 @@ describe('Certificate entity test suite', function () {
       describe('when the issuer profile URN is a DID', function () {
         it('should add the issuer identity verification to the verification steps', async function () {
           const fixture = JSON.parse(JSON.stringify(FIXTURES.BlockcertsV3BetaWithDID));
+          const requestStub = sinon.stub(ExplorerLookup, 'request');
+          requestStub.withArgs({
+            url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1'
+          }).resolves(JSON.stringify({ didDocument }));
+          requestStub.withArgs({
+            url: 'https://raw.githubusercontent.com/lemoustachiste/did-blockcerts-poc/master/issuer-profile.json'
+          }).resolves(JSON.stringify(fixtureIssuerProfile));
           const certificate = new Certificate(fixture);
           await certificate.init();
           const expectedStepIndex = certificate.verificationSteps

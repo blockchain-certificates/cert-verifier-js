@@ -1,7 +1,10 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v3/blockcerts-3.0-beta-did.json';
 import sinon from 'sinon';
 import domain from '../../../src/domain';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import didDocument from '../../fixtures/did.json';
+import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
@@ -13,9 +16,18 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
           time: '2021-06-25T12:42:54.000Z',
           revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
         });
+        const requestStub = sinon.stub(ExplorerLookup, 'request');
+        requestStub.withArgs({
+          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1'
+        }).resolves(JSON.stringify({ didDocument }));
+        requestStub.withArgs({
+          url: 'https://raw.githubusercontent.com/lemoustachiste/did-blockcerts-poc/master/issuer-profile.json'
+        }).resolves(JSON.stringify(fixtureIssuerProfile));
+
         const certificate = new Certificate(fixture);
         await certificate.init();
         const result = await certificate.verify();
+        sinon.restore();
       });
     });
   });

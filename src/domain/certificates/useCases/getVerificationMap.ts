@@ -19,8 +19,8 @@ type TNetworkVerificationStepList = {
 };
 
 function removeStep (map: string[], step: string): void {
-  const checkIssuerIdentityIndex = map.findIndex(subStep => subStep === step);
-  map.splice(checkIssuerIdentityIndex, 1);
+  const stepIndex = map.findIndex(subStep => subStep === step);
+  map.splice(stepIndex, 1);
 }
 
 export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): SUB_STEPS[] {
@@ -113,7 +113,7 @@ function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[]): IVerificationMapIte
 
   const steps = setSubStepsToSteps(subSteps);
 
-  return stepsObjectToArray(steps);
+  return stepsObjectToArray(steps).filter(parentStep => parentStep.subSteps.length !== 0);
 }
 
 /**

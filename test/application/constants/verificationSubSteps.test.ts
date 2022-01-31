@@ -1,83 +1,88 @@
-import { substepsList } from '../../../src/constants/verificationSubSteps';
+import { SUB_STEPS, substepsList } from '../../../src/constants/verificationSubSteps';
+import { VerificationSteps } from '../../../src/constants/verificationSteps';
+import i18n from '../../../src/data/i18n.json';
+import currentLocale from '../../../src/constants/currentLocale';
+
+const language = i18n[currentLocale.locale].subSteps;
 
 const expectedSubSteps = {
   checkAuthenticity: {
-    code: 'checkAuthenticity',
-    label: 'Check Authenticity',
-    labelPending: 'Checking Authenticity',
-    parentStep: 'statusCheck'
+    code: SUB_STEPS.checkAuthenticity,
+    label: language.checkAuthenticityLabel,
+    labelPending: language.checkAuthenticityLabelPending,
+    parentStep: VerificationSteps.statusCheck
   },
   checkExpiresDate: {
-    code: 'checkExpiresDate',
-    label: 'Check Expiration Date',
-    labelPending: 'Checking Expiration Date',
-    parentStep: 'statusCheck'
+    code: SUB_STEPS.checkExpiresDate,
+    label: language.checkExpiresDateLabel,
+    labelPending: language.checkExpiresDateLabelPending,
+    parentStep: VerificationSteps.statusCheck
   },
   checkIssuerIdentity: {
-    code: 'checkIssuerIdentity',
-    label: 'Check Issuer Identity',
-    labelPending: 'Checking Issuer Identity',
-    parentStep: 'statusCheck'
+    code: SUB_STEPS.checkIssuerIdentity,
+    label: language.checkIssuerIdentityLabel,
+    labelPending: language.checkIssuerIdentityLabelPending,
+    parentStep: VerificationSteps.identityVerification
   },
   checkIssuerSignature: {
-    code: 'checkIssuerSignature',
-    label: 'Check Issuer Signature',
-    labelPending: 'Checking Issuer Signature',
-    parentStep: 'statusCheck'
+    code: SUB_STEPS.checkIssuerSignature,
+    label: language.checkIssuerSignatureLabel,
+    labelPending: language.checkIssuerSignatureLabelPending,
+    parentStep: VerificationSteps.statusCheck
   },
   checkMerkleRoot: {
-    code: 'checkMerkleRoot',
-    label: 'Check Merkle Root',
-    labelPending: 'Checking Merkle Root',
-    parentStep: 'hashComparison'
+    code: SUB_STEPS.checkMerkleRoot,
+    label: language.checkMerkleRootLabel,
+    labelPending: language.checkMerkleRootLabelPending,
+    parentStep: VerificationSteps.hashComparison
   },
   checkReceipt: {
-    code: 'checkReceipt',
-    label: 'Check Receipt',
-    labelPending: 'Checking Receipt',
-    parentStep: 'hashComparison'
+    code: SUB_STEPS.checkReceipt,
+    label: language.checkReceiptLabel,
+    labelPending: language.checkReceiptLabelPending,
+    parentStep: VerificationSteps.hashComparison
   },
   checkRevokedStatus: {
-    code: 'checkRevokedStatus',
-    label: 'Check Revoked Status',
-    labelPending: 'Checking Revoked Status',
-    parentStep: 'statusCheck'
+    code: SUB_STEPS.checkRevokedStatus,
+    label: language.checkRevokedStatusLabel,
+    labelPending: language.checkRevokedStatusLabelPending,
+    parentStep: VerificationSteps.statusCheck
   },
   compareHashes: {
-    code: 'compareHashes',
-    label: 'Compare hashes',
-    labelPending: 'Comparing hashes',
-    parentStep: 'hashComparison'
+    code: SUB_STEPS.compareHashes,
+    label: language.compareHashesLabel,
+    labelPending: language.compareHashesLabelPending,
+    parentStep: VerificationSteps.hashComparison
   },
   computeLocalHash: {
-    code: 'computeLocalHash',
-    label: 'Compute local hash',
-    labelPending: 'Computing local hash',
-    parentStep: 'formatValidation'
+    code: SUB_STEPS.computeLocalHash,
+    label: language.computeLocalHashLabel,
+    labelPending: language.computeLocalHashLabelPending,
+    parentStep: VerificationSteps.formatValidation
   },
   fetchRemoteHash: {
-    code: 'fetchRemoteHash',
-    label: 'Fetch remote hash',
-    labelPending: 'Fetching remote hash',
-    parentStep: 'formatValidation'
+    code: SUB_STEPS.fetchRemoteHash,
+    label: language.fetchRemoteHashLabel,
+    labelPending: language.fetchRemoteHashLabelPending,
+    parentStep: VerificationSteps.formatValidation
   },
   getIssuerProfile: {
-    code: 'getIssuerProfile',
-    label: 'Get issuer profile',
-    labelPending: 'Getting issuer profile',
-    parentStep: 'formatValidation'
+    code: SUB_STEPS.getIssuerProfile,
+    label: language.getIssuerProfileLabel,
+    labelPending: language.getIssuerProfileLabelPending,
+    parentStep: VerificationSteps.formatValidation
   },
   getTransactionId: {
-    code: 'getTransactionId',
-    label: 'Get transaction ID',
-    labelPending: 'Getting transaction ID',
-    parentStep: 'formatValidation'
+    code: SUB_STEPS.getTransactionId,
+    label: language.getTransactionIdLabel,
+    labelPending: language.getTransactionIdLabelPending,
+    parentStep: VerificationSteps.formatValidation
   },
   parseIssuerKeys: {
-    code: 'parseIssuerKeys',
-    label: 'Parse issuer keys',
-    labelPending: 'Parsing issuer keys',
-    parentStep: 'formatValidation'
+    code: SUB_STEPS.parseIssuerKeys,
+    label: language.parseIssuerKeysLabel,
+    labelPending: language.parseIssuerKeysLabelPending,
+    parentStep: VerificationSteps.formatValidation
   }
 };
 

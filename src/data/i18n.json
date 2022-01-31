@@ -5,6 +5,8 @@
       "formatValidationLabelPending": "Validating format",
       "hashComparisonLabel": "Hash comparison",
       "hashComparisonLabelPending": "Comparing hash",
+      "identityVerificationLabel": "Identity verification",
+      "identityVerificationLabelPending": "Verifying identity",
       "statusCheckLabel": "Status check",
       "statusCheckLabelPending": "Checking record status"
     },
@@ -92,6 +94,8 @@
       "formatValidationLabelPending": "Validation du format",
       "hashComparisonLabel": "Comparaison du hash",
       "hashComparisonLabelPending": "Comparaison du hash",
+      "identityVerificationLabel": "Vérification de l'identité",
+      "identityVerificationLabelPending":  "Vérification de l'identité",
       "statusCheckLabel": "Vérification du status",
       "statusCheckLabelPending": "Vérification du status"
     },
@@ -179,6 +183,8 @@
       "formatValidationLabelPending": "Validando el formato",
       "hashComparisonLabel": "Comparación de cadena binaria",
       "hashComparisonLabelPending": "Comparando cadena binaria",
+      "identityVerificationLabel": "Verificar identitad",
+      "identityVerificationLabelPending":  "Verificando identitad",
       "statusCheckLabel": "Estado de Verificación",
       "statusCheckLabelPending": "Verificando Estado de Grabación"
     },
@@ -266,6 +272,8 @@
       "formatValidationLabelPending": "Il-format qed jiġi vvalidat",
       "hashComparisonLabel": "Paragun tal-Hash",
       "hashComparisonLabelPending": "Il-hash qed jiġi pparagunat",
+      "identityVerificationLabel": "Identity verification",
+      "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "Status check",
       "statusCheckLabelPending": "Ir-record status qed jiġi ċċekkjat"
     },
@@ -353,6 +361,8 @@
       "formatValidationLabelPending": "Convalida formato",
       "hashComparisonLabel": "Confrontare hash",
       "hashComparisonLabelPending": "Confronta hash",
+      "identityVerificationLabel": "Identity verification",
+      "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "Verificare stato",
       "statusCheckLabelPending": "Verifica stato del record"
     },
@@ -440,6 +450,8 @@
       "formatValidationLabelPending": "フォーマットを検証しています",
       "hashComparisonLabel": "ハッシュの照合",
       "hashComparisonLabelPending": "ハッシュを照合しています",
+      "identityVerificationLabel": "Identity verification",
+      "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "ステータスの確認",
       "statusCheckLabelPending": "ステータスを確認しています"
     },

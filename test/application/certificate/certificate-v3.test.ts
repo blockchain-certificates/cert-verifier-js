@@ -167,7 +167,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(fixture);
           await certificate.init();
           const expectedStepIndex = certificate.verificationSteps
-            .find(parentStep => parentStep.code === VerificationSteps.statusCheck).subSteps
+            .find(parentStep => parentStep.code === VerificationSteps.identityVerification).subSteps
             .findIndex(subStep => subStep.code === SUB_STEPS.checkIssuerIdentity);
           expect(expectedStepIndex).toBe(0);
         });

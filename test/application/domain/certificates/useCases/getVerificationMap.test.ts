@@ -1,10 +1,11 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS, SUB_STEPS } from '../../../../../src';
+import { BLOCKCHAINS, STEPS, SUB_STEPS } from '../../../../../src';
 import mocknetMapAssertion from './assertions/mocknetMapAssertion';
 import mainnetMapAssertion from './assertions/mainnetMapAssertion';
 import Versions from '../../../../../src/constants/certificateVersions';
 import { IVerificationMapItem } from '../../../../../src/domain/certificates/useCases/getVerificationMap';
 import { VerificationSteps } from '../../../../../src/constants/verificationSteps';
+import { substepsList } from '../../../../../src/constants/verificationSubSteps';
 
 describe('domain certificates get verification map use case test suite', function () {
   describe('given it is called with the mocknet chain', function () {
@@ -39,12 +40,20 @@ describe('domain certificates get verification map use case test suite', functio
         expectedOutput[0].subSteps.splice(getIssuerProfileIndex, 1);
 
         // add because did
-        expectedOutput[2].subSteps.splice(0, 0, {
-          code: 'checkIssuerIdentity',
-          label: 'Check Issuer Identity',
-          labelPending: 'Checking Issuer Identity',
-          parentStep: VerificationSteps.statusCheck
+        expectedOutput.splice(2, 0, {
+          code: VerificationSteps.identityVerification,
+          label: STEPS.language.identityVerification.label,
+          labelPending: STEPS.language.identityVerification.labelPending,
+          subSteps: [
+            {
+              code: SUB_STEPS.checkIssuerIdentity,
+              label: substepsList.checkIssuerIdentity.label,
+              labelPending: substepsList.checkIssuerIdentity.labelPending,
+              parentStep: VerificationSteps.identityVerification
+            }
+          ]
         });
+
         expect(result).toEqual(expectedOutput);
       });
     });

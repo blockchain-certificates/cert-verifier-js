@@ -12,6 +12,7 @@ import { SUB_STEPS } from './constants/verificationSubSteps';
 import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
+import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 const log = debug('Verifier');
 
@@ -46,6 +47,8 @@ export default class Verifier {
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
   private issuerPublicKeyList: IssuerPublicKeyList;
+  private verificationMethodPublicKey: IDidDocumentPublicKey;
+  private derivedIssuingAddress: string;
 
   constructor (
     { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
@@ -256,6 +259,44 @@ export default class Verifier {
         issuingAddress: this.txData.issuingAddress,
         chain: this.chain
       });
+    });
+  }
+
+  private async controlVerificationMethod (): Promise<void> {
+    if (!this.issuer?.didDocument || !this.proof?.verificationMethod) {
+      return;
+    }
+
+    await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
+      inspectors.controlVerificationMethod(this.issuer.didDocument, this.proof.verificationMethod);
+    });
+  }
+
+  private async retrieveVerificationMethodPublicKey (): Promise<void> {
+    if (!this.issuer?.didDocument || !this.proof?.verificationMethod) {
+      return;
+    }
+
+    this.verificationMethodPublicKey = await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
+      inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+    });
+  }
+
+  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
+    if (!this.verificationMethodPublicKey) {
+      return;
+    }
+    this.derivedIssuingAddress = await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
+      inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
+    });
+  }
+
+  private async compareIssuingAddress (): Promise<void> {
+    if (!this.derivedIssuingAddress) {
+      return;
+    }
+    await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
+      inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
     });
   }
 

@@ -5,6 +5,8 @@ import { ISecp256k1PublicKeyJwk, publicKeyUInt8ArrayFromJwk } from '../helpers/k
 import { IBlockchainObject, SupportedChains } from '../constants/blockchains';
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../helpers/issuingAddress';
 import domain from '../domain';
+import { VerifierError } from '../models';
+import { SUB_STEPS } from '../constants';
 
 const baseError = domain.i18n.getText('errors', 'identityErrorBaseMessage');
 
@@ -12,17 +14,23 @@ function getDocumentId (didDocument: IDidDocument): string {
   return didDocument.id;
 }
 
-function checkVerificationMethod (didDocument: IDidDocument, verificationMethod: string): boolean {
+function checkVerificationMethod (didDocument: IDidDocument, verificationMethod: string): void {
   const documentId = getDocumentId(didDocument);
   const verificationDid = verificationMethod.split('#')[0];
-  return documentId === verificationDid;
+  if (documentId !== verificationDid) {
+    throw new VerifierError(SUB_STEPS.controlVerificationMethod, `${baseError} - ${domain.i18n.getText('errors', 'controlVerificationMethod')}`);
+  }
 }
 
 function findVerificationMethodPublicKey (didDocument: IDidDocument, verificationMethod: string): IDidDocumentPublicKey {
   const verificationMethodId = verificationMethod.split('#')[1];
   const verificationMethodFromDocument = didDocument.verificationMethod;
-  return verificationMethodFromDocument
+  const verificationMethodPublicKey = verificationMethodFromDocument
     .filter(verificationMethod => verificationMethod.id === `#${verificationMethodId}`)[0];
+  if (!verificationMethodPublicKey) {
+    throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, `${baseError} - ${domain.i18n.getText('errors', 'retrieveVerificationMethodPublicKey')}`);
+  }
+  return verificationMethodPublicKey;
 }
 
 function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
@@ -62,18 +70,11 @@ export default function confirmDidSignature ({
 }: IConfirmDidSignatureApi): boolean {
   try {
     const { verificationMethod } = proof;
-
-    if (!checkVerificationMethod(didDocument, verificationMethod)) {
-      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorVerificationMethodMismatch')}`);
-    }
-
+    checkVerificationMethod(didDocument, verificationMethod);
     const verificationMethodPublicKey = findVerificationMethodPublicKey(didDocument, verificationMethod);
-    if (!verificationMethodPublicKey) {
-      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorUnknownVerificationMethod')}`);
-    }
 
     if (issuingAddress !== retrieveIssuingAddress(verificationMethodPublicKey, chain)) {
-      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorInvalidPublicKey')}`);
+      throw new VerifierError(SUB_STEPS.deriveIssuingAddressFromPublicKey, `${baseError} - ${domain.i18n.getText('errors', 'deriveIssuingAddressFromPublicKey')}`);
     }
 
     return true;

@@ -25,7 +25,10 @@ enum SUB_STEPS {
   checkIssuerIdentity = 'checkIssuerIdentity',
   checkAuthenticity = 'checkAuthenticity',
   checkRevokedStatus = 'checkRevokedStatus',
-  checkExpiresDate = 'checkExpiresDate'
+  checkExpiresDate = 'checkExpiresDate',
+  controlVerificationMethod = 'controlVerificationMethod',
+  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey'
 }
 
 function getTextFor (subStep: string, status: string): string {
@@ -38,7 +41,7 @@ const LABEL_PENDING = 'LabelPending';
 const subStepsMap = {
   [VerificationSteps.formatValidation]: [SUB_STEPS.getTransactionId, SUB_STEPS.computeLocalHash, SUB_STEPS.fetchRemoteHash, SUB_STEPS.getIssuerProfile, SUB_STEPS.parseIssuerKeys],
   [VerificationSteps.hashComparison]: [SUB_STEPS.compareHashes, SUB_STEPS.checkMerkleRoot, SUB_STEPS.checkReceipt],
-  [VerificationSteps.identityVerification]: [SUB_STEPS.checkIssuerIdentity],
+  [VerificationSteps.identityVerification]: [SUB_STEPS.controlVerificationMethod, SUB_STEPS.retrieveVerificationMethodPublicKey, SUB_STEPS.deriveIssuingAddressFromPublicKey],
   [VerificationSteps.statusCheck]: [SUB_STEPS.checkIssuerSignature, SUB_STEPS.checkAuthenticity, SUB_STEPS.checkRevokedStatus, SUB_STEPS.checkExpiresDate]
 };
 

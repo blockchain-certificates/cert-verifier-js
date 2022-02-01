@@ -2,9 +2,13 @@ import { NETWORKS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import Versions, { isV3 } from '../../../constants/certificateVersions';
-import { SUB_STEPS, substepsList, IVerificationSubstep } from '../../../constants/verificationSubSteps';
+import { IVerificationSubstep, SUB_STEPS, substepsList } from '../../../constants/verificationSubSteps';
 import { deepCopy } from '../../../helpers/object';
-import { language as stepsLanguage, TVerificationStepsList, VerificationSteps } from '../../../constants/verificationSteps';
+import {
+  language as stepsLanguage,
+  TVerificationStepsList,
+  VerificationSteps
+} from '../../../constants/verificationSteps';
 import { IBlockchainObject } from '../../../constants/blockchains';
 
 export interface IVerificationMapItem {
@@ -35,7 +39,9 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkMerkleRoot,
       SUB_STEPS.checkReceipt,
-      SUB_STEPS.checkIssuerIdentity,
+      SUB_STEPS.controlVerificationMethod,
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
+      SUB_STEPS.deriveIssuingAddressFromPublicKey,
       SUB_STEPS.checkRevokedStatus,
       SUB_STEPS.checkAuthenticity,
       SUB_STEPS.checkExpiresDate
@@ -44,7 +50,9 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.computeLocalHash,
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkReceipt,
-      SUB_STEPS.checkIssuerIdentity,
+      SUB_STEPS.controlVerificationMethod,
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
+      SUB_STEPS.deriveIssuingAddressFromPublicKey,
       SUB_STEPS.checkExpiresDate
     ]
   };

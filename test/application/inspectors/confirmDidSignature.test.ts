@@ -63,7 +63,7 @@ describe('confirmDidSignature inspector test suite', function () {
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the identity document provided by the issuer does not match the verification method');
+      }).toThrow('Issuer identity mismatch - The identity document provided by the issuer does not match the verification method');
     });
   });
 
@@ -78,7 +78,7 @@ describe('confirmDidSignature inspector test suite', function () {
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the identity document provided by the issuer does not reference the verification method');
+      }).toThrow('Issuer identity mismatch - The identity document provided by the issuer does not reference the verification method');
     });
   });
 
@@ -91,7 +91,7 @@ describe('confirmDidSignature inspector test suite', function () {
           issuingAddress: 'n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the provided verification method does not match the issuer identity');
+      }).toThrow('Issuer identity mismatch - The provided verification method does not match the issuer identity');
     });
   });
 });

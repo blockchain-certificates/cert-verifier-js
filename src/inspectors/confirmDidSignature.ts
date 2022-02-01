@@ -4,8 +4,9 @@ import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typesc
 import { ISecp256k1PublicKeyJwk, publicKeyUInt8ArrayFromJwk } from '../helpers/keyUtils';
 import { IBlockchainObject, SupportedChains } from '../constants/blockchains';
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../helpers/issuingAddress';
+import domain from '../domain';
 
-const baseError = 'Issuer identity mismatch';
+const baseError = domain.i18n.getText('errors', 'identityErrorBaseMessage');
 
 function getDocumentId (didDocument: IDidDocument): string {
   return didDocument.id;
@@ -41,7 +42,7 @@ function retrieveIssuingAddress (verificationMethodPublicKey: IDidDocumentPublic
       break;
 
     default:
-      throw new Error('Unsupported chain for DID verification');
+      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorUnsupportedBlockchain')}`);
   }
   return address;
 }
@@ -63,21 +64,21 @@ export default function confirmDidSignature ({
     const { verificationMethod } = proof;
 
     if (!checkVerificationMethod(didDocument, verificationMethod)) {
-      throw new Error(`${baseError} - the identity document provided by the issuer does not match the verification method`);
+      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorVerificationMethodMismatch')}`);
     }
 
     const verificationMethodPublicKey = findVerificationMethodPublicKey(didDocument, verificationMethod);
     if (!verificationMethodPublicKey) {
-      throw new Error(`${baseError} - the identity document provided by the issuer does not reference the verification method`);
+      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorUnknownVerificationMethod')}`);
     }
 
     if (issuingAddress !== retrieveIssuingAddress(verificationMethodPublicKey, chain)) {
-      throw new Error(`${baseError} - the provided verification method does not match the issuer identity`);
+      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorInvalidPublicKey')}`);
     }
 
     return true;
   } catch (e) {
     console.error(e);
-    throw new Error(`${baseError} - ${e.message as string}`);
+    throw new Error(`${e.message as string}`);
   }
 }

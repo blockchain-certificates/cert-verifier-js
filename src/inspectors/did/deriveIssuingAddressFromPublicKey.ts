@@ -4,6 +4,8 @@ import { ISecp256k1PublicKeyJwk, publicKeyUInt8ArrayFromJwk } from '../../helper
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../../helpers/issuingAddress';
 import domain from '../../domain';
 import { baseError } from './index';
+import { VerifierError } from '../../models';
+import { SUB_STEPS } from '../../constants';
 
 export default function deriveIssuingAddressFromPublicKey (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
@@ -22,7 +24,7 @@ export default function deriveIssuingAddressFromPublicKey (verificationMethodPub
       break;
 
     default:
-      throw new Error(`${baseError} - ${domain.i18n.getText('errors', 'identityErrorUnsupportedBlockchain')}`);
+      throw new VerifierError(SUB_STEPS.deriveIssuingAddressFromPublicKey, `${baseError} - ${domain.i18n.getText('errors', 'deriveIssuingAddressFromPublicKey')}`);
   }
   return address;
 }

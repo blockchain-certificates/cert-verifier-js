@@ -1,14 +1,10 @@
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { IDidDocument } from '../models/DidDocument';
 import { IBlockchainObject } from '../constants/blockchains';
-import domain from '../domain';
-import { VerifierError } from '../models';
-import { SUB_STEPS } from '../constants';
 import controlVerificationMethod from './did/controlVerificationMethod';
 import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey';
 import deriveIssuingAddressFromPublicKey from './did/deriveIssuingAddressFromPublicKey';
-
-const baseError = domain.i18n.getText('errors', 'identityErrorBaseMessage');
+import compareIssuingAddress from './did/compareIssuingAddress';
 
 export interface IConfirmDidSignatureApi {
   didDocument: IDidDocument;
@@ -27,10 +23,8 @@ export default function confirmDidSignature ({
     const { verificationMethod } = proof;
     controlVerificationMethod(didDocument, verificationMethod);
     const verificationMethodPublicKey = retrieveVerificationMethodPublicKey(didDocument, verificationMethod);
-
-    if (issuingAddress !== deriveIssuingAddressFromPublicKey(verificationMethodPublicKey, chain)) {
-      throw new VerifierError(SUB_STEPS.deriveIssuingAddressFromPublicKey, `${baseError} - ${domain.i18n.getText('errors', 'deriveIssuingAddressFromPublicKey')}`);
-    }
+    const derivedIssuingAddress = deriveIssuingAddressFromPublicKey(verificationMethodPublicKey, chain);
+    compareIssuingAddress(issuingAddress, derivedIssuingAddress);
 
     return true;
   } catch (e) {

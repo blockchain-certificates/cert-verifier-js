@@ -101,6 +101,12 @@ const expectedSubSteps = {
     label: language.deriveIssuingAddressFromPublicKeyLabel,
     labelPending: language.deriveIssuingAddressFromPublicKeyLabelPending,
     parentStep: VerificationSteps.identityVerification
+  },
+  [SUB_STEPS.compareIssuingAddress]: {
+    code: SUB_STEPS.compareIssuingAddress,
+    label: language.compareIssuingAddressLabel,
+    labelPending: language.compareIssuingAddressLabelPending,
+    parentStep: VerificationSteps.identityVerification
   }
 };
 

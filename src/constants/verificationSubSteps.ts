@@ -3,7 +3,7 @@ import { VerificationSteps } from './verificationSteps';
 import currentLocale from './currentLocale';
 
 export interface IVerificationSubstep {
-  code: string;
+  code: SUB_STEPS;
   label: string;
   labelPending: string;
   parentStep: VerificationSteps;

@@ -12,6 +12,7 @@ import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
+import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
 export interface ExplorerURLs {
   main: string;
@@ -65,7 +66,7 @@ export default class Certificate {
   public subtitle?: string; // v1
   public transactionId: string;
   public transactionLink: string;
-  public verificationSteps: any[]; // TODO: define verificationSteps interface.
+  public verificationSteps: IVerificationMapItem[];
   public version: Versions;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
@@ -101,7 +102,8 @@ export default class Certificate {
       transactionId: this.transactionId,
       version: this.version,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
-      proof: this.proof
+      proof: this.proof,
+      verificationSteps: this.verificationSteps
     });
     const verificationStatus = await verifier.verify(stepCallback);
     this.publicKey = verifier.getIssuingAddress();

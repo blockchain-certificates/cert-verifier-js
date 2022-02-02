@@ -248,53 +248,25 @@ export default class Verifier {
     );
   }
 
-  private async checkIssuerIdentity (): Promise<void> {
-    if (!this.issuer?.didDocument) {
-      return;
-    }
-    await this._doAction(SUB_STEPS.checkIssuerIdentity, () => {
-      inspectors.confirmDidSignature({
-        didDocument: this.issuer.didDocument,
-        proof: this.proof,
-        issuingAddress: this.txData.issuingAddress,
-        chain: this.chain
-      });
-    });
-  }
-
   private async controlVerificationMethod (): Promise<void> {
-    if (!this.issuer?.didDocument || !this.proof?.verificationMethod) {
-      return;
-    }
-
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(this.issuer.didDocument, this.proof.verificationMethod);
     });
   }
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    if (!this.issuer?.didDocument || !this.proof?.verificationMethod) {
-      return;
-    }
-
-    this.verificationMethodPublicKey = await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+    await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
+      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
     });
   }
 
   private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    if (!this.verificationMethodPublicKey) {
-      return;
-    }
-    this.derivedIssuingAddress = await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
-      inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
+    await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
+      this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
     });
   }
 
   private async compareIssuingAddress (): Promise<void> {
-    if (!this.derivedIssuingAddress) {
-      return;
-    }
     await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
       inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
     });

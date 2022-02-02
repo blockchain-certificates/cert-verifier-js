@@ -1,11 +1,14 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS, STEPS, SUB_STEPS } from '../../../../../src';
+import { BLOCKCHAINS, SUB_STEPS } from '../../../../../src';
 import mocknetMapAssertion from './assertions/mocknetMapAssertion';
 import mainnetMapAssertion from './assertions/mainnetMapAssertion';
 import Versions from '../../../../../src/constants/certificateVersions';
 import { IVerificationMapItem } from '../../../../../src/domain/certificates/useCases/getVerificationMap';
 import { VerificationSteps } from '../../../../../src/constants/verificationSteps';
-import { substepsList } from '../../../../../src/constants/verificationSubSteps';
+import i18n from '../../../../../src/data/i18n.json';
+import currentLocale from '../../../../../src/constants/currentLocale';
+
+const defaultLanguageSet = i18n[currentLocale.locale];
 
 describe('domain certificates get verification map use case test suite', function () {
   describe('given it is called with the mocknet chain', function () {
@@ -32,7 +35,7 @@ describe('domain certificates get verification map use case test suite', functio
     });
 
     describe('and the blockcerts issuer shared their DID', function () {
-      it('should add the checkIssuerIdentity step', function () {
+      it('should add the identityVerification step', function () {
         const result: IVerificationMapItem[] = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin, Versions.V3_0_beta, true);
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(mainnetMapAssertion));
         // remove because v3
@@ -42,13 +45,31 @@ describe('domain certificates get verification map use case test suite', functio
         // add because did
         expectedOutput.splice(2, 0, {
           code: VerificationSteps.identityVerification,
-          label: STEPS.language.identityVerification.label,
-          labelPending: STEPS.language.identityVerification.labelPending,
+          label: defaultLanguageSet.steps.identityVerificationLabel,
+          labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
           subSteps: [
             {
-              code: SUB_STEPS.checkIssuerIdentity,
-              label: substepsList.checkIssuerIdentity.label,
-              labelPending: substepsList.checkIssuerIdentity.labelPending,
+              code: SUB_STEPS.controlVerificationMethod,
+              label: defaultLanguageSet.subSteps.controlVerificationMethodLabel,
+              labelPending: defaultLanguageSet.subSteps.controlVerificationMethodLabelPending,
+              parentStep: VerificationSteps.identityVerification
+            },
+            {
+              code: SUB_STEPS.retrieveVerificationMethodPublicKey,
+              label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
+              labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
+              parentStep: VerificationSteps.identityVerification
+            },
+            {
+              code: SUB_STEPS.deriveIssuingAddressFromPublicKey,
+              label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
+              labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,
+              parentStep: VerificationSteps.identityVerification
+            },
+            {
+              code: SUB_STEPS.compareIssuingAddress,
+              label: defaultLanguageSet.subSteps.compareIssuingAddressLabel,
+              labelPending: defaultLanguageSet.subSteps.compareIssuingAddressLabelPending,
               parentStep: VerificationSteps.identityVerification
             }
           ]

@@ -1,92 +1,95 @@
-import { STEPS } from '../../../../../../src';
 import { VerificationSteps } from '../../../../../../src/constants/verificationSteps';
 import { IVerificationMapItem } from '../../../../../../src/domain/certificates/useCases/getVerificationMap';
-import { SUB_STEPS, substepsList } from '../../../../../../src/constants/verificationSubSteps';
+import { SUB_STEPS } from '../../../../../../src/constants/verificationSubSteps';
+import i18n from '../../../../../../src/data/i18n.json';
+import currentLocale from '../../../../../../src/constants/currentLocale';
+
+const defaultLanguageSet = i18n[currentLocale.locale];
 
 const mainnetStepMapAssertion: IVerificationMapItem[] = [
   {
     code: VerificationSteps.formatValidation,
-    label: STEPS.language.formatValidation.label,
-    labelPending: STEPS.language.formatValidation.labelPending,
+    label: defaultLanguageSet.steps.formatValidationLabel,
+    labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
     subSteps: [
       {
         code: SUB_STEPS.getTransactionId,
-        label: substepsList.getTransactionId.label,
-        labelPending: substepsList.getTransactionId.labelPending,
+        label: defaultLanguageSet.subSteps.getTransactionIdLabel,
+        labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
         parentStep: VerificationSteps.formatValidation
       },
       {
         code: SUB_STEPS.computeLocalHash,
-        label: substepsList.computeLocalHash.label,
-        labelPending: substepsList.computeLocalHash.labelPending,
+        label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+        labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
         parentStep: VerificationSteps.formatValidation
       },
       {
         code: SUB_STEPS.fetchRemoteHash,
-        label: substepsList.fetchRemoteHash.label,
-        labelPending: substepsList.fetchRemoteHash.labelPending,
+        label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
+        labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
         parentStep: VerificationSteps.formatValidation
       },
       {
         code: SUB_STEPS.getIssuerProfile,
-        label: substepsList.getIssuerProfile.label,
-        labelPending: substepsList.getIssuerProfile.labelPending,
+        label: defaultLanguageSet.subSteps.getIssuerProfileLabel,
+        labelPending: defaultLanguageSet.subSteps.getIssuerProfileLabelPending,
         parentStep: VerificationSteps.formatValidation
       },
       {
         code: SUB_STEPS.parseIssuerKeys,
-        label: substepsList.parseIssuerKeys.label,
-        labelPending: substepsList.parseIssuerKeys.labelPending,
+        label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
+        labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
         parentStep: VerificationSteps.formatValidation
       }
     ]
   },
   {
     code: VerificationSteps.hashComparison,
-    label: STEPS.language.hashComparison.label,
-    labelPending: STEPS.language.hashComparison.labelPending,
+    label: defaultLanguageSet.steps.hashComparisonLabel,
+    labelPending: defaultLanguageSet.steps.hashComparisonLabelPending,
     subSteps: [
       {
         code: SUB_STEPS.compareHashes,
-        label: substepsList.compareHashes.label,
-        labelPending: substepsList.compareHashes.labelPending,
+        label: defaultLanguageSet.subSteps.compareHashesLabel,
+        labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
         parentStep: VerificationSteps.hashComparison
       },
       {
         code: SUB_STEPS.checkMerkleRoot,
-        label: substepsList.checkMerkleRoot.label,
-        labelPending: substepsList.checkMerkleRoot.labelPending,
+        label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
+        labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
         parentStep: VerificationSteps.hashComparison
       },
       {
         code: SUB_STEPS.checkReceipt,
-        label: substepsList.checkReceipt.label,
-        labelPending: substepsList.checkReceipt.labelPending,
+        label: defaultLanguageSet.subSteps.checkReceiptLabel,
+        labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
         parentStep: VerificationSteps.hashComparison
       }
     ]
   },
   {
     code: VerificationSteps.statusCheck,
-    label: STEPS.language.statusCheck.label,
-    labelPending: STEPS.language.statusCheck.labelPending,
+    label: defaultLanguageSet.steps.statusCheckLabel,
+    labelPending: defaultLanguageSet.steps.statusCheckLabelPending,
     subSteps: [
       {
         code: SUB_STEPS.checkRevokedStatus,
-        label: substepsList.checkRevokedStatus.label,
-        labelPending: substepsList.checkRevokedStatus.labelPending,
+        label: defaultLanguageSet.subSteps.checkRevokedStatusLabel,
+        labelPending: defaultLanguageSet.subSteps.checkRevokedStatusLabelPending,
         parentStep: VerificationSteps.statusCheck
       },
       {
         code: SUB_STEPS.checkAuthenticity,
-        label: substepsList.checkAuthenticity.label,
-        labelPending: substepsList.checkAuthenticity.labelPending,
+        label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
+        labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
         parentStep: VerificationSteps.statusCheck
       },
       {
         code: SUB_STEPS.checkExpiresDate,
-        label: substepsList.checkExpiresDate.label,
-        labelPending: substepsList.checkExpiresDate.labelPending,
+        label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
+        labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,
         parentStep: VerificationSteps.statusCheck
       }
     ]

@@ -2,12 +2,14 @@ import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, SUB_STEPS } from '../..
 import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
-import verificationStepsV3 from '../../assertions/verification-steps-v3.json';
 import { VerificationSteps } from '../../../src/constants/verificationSteps';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import didDocument from '../../fixtures/did.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
+import { deepCopy } from '../../../src/helpers/object';
+import { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
 
 const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
@@ -83,7 +85,11 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set the verificationSteps property', function () {
-        expect(certificate.verificationSteps).toEqual(verificationStepsV3);
+        const expectedSteps = deepCopy<IVerificationMapItem[]>(mainnetMapAssertion);
+        // issuer profile is retrieved earlier in v3
+        const getIssuerProfileIndex = expectedSteps[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
+        expectedSteps[0].subSteps.splice(getIssuerProfileIndex, 1);
+        expect(certificate.verificationSteps).toEqual(expectedSteps);
       });
     });
 
@@ -167,9 +173,8 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(fixture);
           await certificate.init();
           const expectedStepIndex = certificate.verificationSteps
-            .find(parentStep => parentStep.code === VerificationSteps.identityVerification).subSteps
-            .findIndex(subStep => subStep.code === SUB_STEPS.checkIssuerIdentity);
-          expect(expectedStepIndex).toBe(0);
+            .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
+          expect(expectedStepIndex).toBe(2);
         });
       });
     });

@@ -1,5 +1,6 @@
 import i18n from '../data/i18n.json';
 import { VerificationSteps } from './verificationSteps';
+import currentLocale from './currentLocale';
 
 export interface IVerificationSubstep {
   code: string;
@@ -33,7 +34,7 @@ enum SUB_STEPS {
 }
 
 function getTextFor (subStep: string, status: string): string {
-  return i18n['en-US'].subSteps[`${subStep}${status}`];
+  return i18n[currentLocale.locale].subSteps[`${subStep}${status}`];
 }
 
 const LABEL = 'Label';

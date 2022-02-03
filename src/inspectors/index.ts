@@ -8,10 +8,17 @@ import ensureNotRevoked from './ensureNotRevoked';
 import ensureValidIssuingKey from './ensureValidIssuingKey';
 import ensureValidReceipt from './ensureValidReceipt';
 import isTransactionIdValid from './isTransactionIdValid';
+import compareIssuingAddress from './did/compareIssuingAddress';
+import controlVerificationMethod from './did/controlVerificationMethod';
+import deriveIssuingAddressFromPublicKey from './did/deriveIssuingAddressFromPublicKey';
+import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey';
 
 export {
+  compareIssuingAddress,
   computeLocalHash,
   confirmDidSignature,
+  controlVerificationMethod,
+  deriveIssuingAddressFromPublicKey,
   ensureHashesEqual,
   ensureIssuerSignature,
   ensureMerkleRootEqual,
@@ -19,5 +26,6 @@ export {
   ensureNotRevoked,
   ensureValidIssuingKey,
   ensureValidReceipt,
-  isTransactionIdValid
+  isTransactionIdValid,
+  retrieveVerificationMethodPublicKey
 };

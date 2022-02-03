@@ -1,9 +1,10 @@
 import sinon from 'sinon';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
+import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { ExplorerAPI } from 'certificate';
+import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -17,7 +18,8 @@ describe('Verifier entity test suite', function () {
     revocationKey: null,
     transactionId: fixture.signature.anchors[0].sourceId,
     version: CERTIFICATE_VERSIONS.V2_0,
-    explorerAPIs: undefined
+    explorerAPIs: undefined,
+    verificationSteps: mainnetMapAssertion
   };
 
   afterEach(function () {
@@ -111,6 +113,32 @@ describe('Verifier entity test suite', function () {
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2' });
 
         expect(verifierInstance._isFailing()).toBe(true);
+      });
+    });
+  });
+
+  describe('groomVerificationProcess method', function () {
+    beforeEach(function () {
+      verifierInstance = new Verifier(verifierParamFixture);
+    });
+
+    describe('given it is provided with the verificationStep object', function () {
+      it('should extract the sub steps', function () {
+        const expectedOutput = [
+          SUB_STEPS.getTransactionId,
+          SUB_STEPS.computeLocalHash,
+          SUB_STEPS.fetchRemoteHash,
+          SUB_STEPS.getIssuerProfile,
+          SUB_STEPS.parseIssuerKeys,
+          SUB_STEPS.compareHashes,
+          SUB_STEPS.checkMerkleRoot,
+          SUB_STEPS.checkReceipt,
+          SUB_STEPS.checkRevokedStatus,
+          SUB_STEPS.checkAuthenticity,
+          SUB_STEPS.checkExpiresDate
+        ];
+        const output = verifierInstance.groomVerificationProcess(mainnetMapAssertion);
+        expect(output).toEqual(expectedOutput);
       });
     });
   });

@@ -9,9 +9,10 @@ import { IBlockchainObject } from './constants/blockchains';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
-import { getVerificationStepsForChain } from './domain/certificates/useCases/getVerificationMap';
+import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
+import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 const log = debug('Verifier');
 
@@ -46,9 +47,12 @@ export default class Verifier {
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
   private issuerPublicKeyList: IssuerPublicKeyList;
+  private verificationMethodPublicKey: IDidDocumentPublicKey;
+  private derivedIssuingAddress: string;
+  readonly verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof, verificationSteps }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
@@ -60,6 +64,7 @@ export default class Verifier {
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
       proof?: MerkleProof2019;
+      verificationSteps: IVerificationMapItem[];
     }
   ) {
     this.chain = chain;
@@ -72,6 +77,7 @@ export default class Verifier {
     this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
+    this.verificationProcess = this.groomVerificationProcess(verificationSteps);
 
     let document = certificateJson.document;
     if (!document) {
@@ -95,9 +101,7 @@ export default class Verifier {
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
 
-    // TODO: refactor this with certificate - CALL ONCE VERIFICATION STEPS WITH DID
-    const verificationProcess: SUB_STEPS[] = getVerificationStepsForChain(this.chain, this.version, !!this.issuer.didDocument);
-    for (const verificationStep of verificationProcess) {
+    for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
         return;
       }
@@ -107,6 +111,13 @@ export default class Verifier {
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     return erroredStep ? this._failed(erroredStep) : this._succeed();
+  }
+
+  groomVerificationProcess (verificationSteps: IVerificationMapItem[]): SUB_STEPS[] {
+    return verificationSteps.reduce((subStepsList: SUB_STEPS[], step: IVerificationMapItem) => {
+      step.subSteps.forEach(subStep => subStepsList.push(subStep.code));
+      return subStepsList;
+    }, []);
   }
 
   _getRevocationListUrl (distantIssuerProfile: Issuer): any { // TODO: define revocationList type
@@ -245,17 +256,27 @@ export default class Verifier {
     );
   }
 
-  private async checkIssuerIdentity (): Promise<void> {
-    if (!this.issuer?.didDocument) {
-      return;
-    }
-    await this._doAction(SUB_STEPS.checkIssuerIdentity, () => {
-      inspectors.confirmDidSignature({
-        didDocument: this.issuer.didDocument,
-        proof: this.proof,
-        issuingAddress: this.txData.issuingAddress,
-        chain: this.chain
-      });
+  private async controlVerificationMethod (): Promise<void> {
+    await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
+      inspectors.controlVerificationMethod(this.issuer.didDocument, this.proof.verificationMethod);
+    });
+  }
+
+  private async retrieveVerificationMethodPublicKey (): Promise<void> {
+    await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
+      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+    });
+  }
+
+  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
+    await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
+      this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
+    });
+  }
+
+  private async compareIssuingAddress (): Promise<void> {
+    await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
+      inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
     });
   }
 

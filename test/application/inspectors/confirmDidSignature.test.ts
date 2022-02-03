@@ -1,7 +1,6 @@
 import confirmDidSignature from '../../../src/inspectors/confirmDidSignature';
-import didDocument from '../../assertions/ion-did-document-btc-addresses.json';
-import didDocumentEth from '../../fixtures/did/ion-did-document-eth-addresses.json';
-import blockcertsV3WithDid from '../../fixtures/v3/blockcerts-3.0-beta-did.json';
+import didDocumentEth from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import blockcertsV3WithDid from '../../fixtures/v3/testnet-v3-did.json';
 import blockcertsV3WithDidEthRopsten from '../../fixtures/v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
 import { BLOCKCHAINS } from '../../../src';
 
@@ -10,7 +9,7 @@ describe('confirmDidSignature inspector test suite', function () {
     describe('given the Testnet issuing address matches the public key mapped to the proof', function () {
       it('should return true', function () {
         const didVerification = confirmDidSignature({
-          didDocument: didDocument as any,
+          didDocument: didDocumentEth as any,
           proof: blockcertsV3WithDid.proof,
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           chain: BLOCKCHAINS.testnet
@@ -22,7 +21,7 @@ describe('confirmDidSignature inspector test suite', function () {
     describe('given the Mainnet issuing address matches the public key mapped to the proof', function () {
       it('should return true', function () {
         const didVerification = confirmDidSignature({
-          didDocument: didDocument as any,
+          didDocument: didDocumentEth as any,
           proof: blockcertsV3WithDid.proof,
           issuingAddress: '127ZSsk5cWiubyDBkocJdW9dFYLN5N1jHF',
           chain: BLOCKCHAINS.bitcoin
@@ -58,12 +57,12 @@ describe('confirmDidSignature inspector test suite', function () {
       proof.verificationMethod = 'did:example:1234567890';
       expect(() => {
         confirmDidSignature({
-          didDocument: didDocument as any,
+          didDocument: didDocumentEth as any,
           proof,
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the identity document provided by the issuer does not match the verification method');
+      }).toThrow('Issuer identity mismatch - The identity document provided by the issuer does not match the verification method');
     });
   });
 
@@ -73,12 +72,12 @@ describe('confirmDidSignature inspector test suite', function () {
       proof.verificationMethod = blockcertsV3WithDid.proof.verificationMethod.split('#')[0] + '#key-2';
       expect(() => {
         confirmDidSignature({
-          didDocument: didDocument as any,
+          didDocument: didDocumentEth as any,
           proof,
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the identity document provided by the issuer does not reference the verification method');
+      }).toThrow('Issuer identity mismatch - The identity document provided by the issuer does not reference the verification method');
     });
   });
 
@@ -86,12 +85,12 @@ describe('confirmDidSignature inspector test suite', function () {
     it('should throw', function () {
       expect(() => {
         confirmDidSignature({
-          didDocument: didDocument as any,
+          didDocument: didDocumentEth as any,
           proof: blockcertsV3WithDid.proof,
           issuingAddress: 'n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4',
           chain: BLOCKCHAINS.testnet
         });
-      }).toThrow('Issuer identity mismatch - the provided verification method does not match the issuer identity');
+      }).toThrow('Issuer identity mismatch - The provided verification method does not match the issuer identity');
     });
   });
 });

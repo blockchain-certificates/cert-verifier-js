@@ -1,9 +1,9 @@
 import sinon from 'sinon';
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
-import fixtureBlockcertsV3BetaDid from '../../../../fixtures/v3/blockcerts-3.0-beta-did.json';
+import fixtureBlockcertsV3Did from '../../../../fixtures/v3/testnet-v3-did.json';
 import { Issuer } from '../../../../../src/models/Issuer';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import didDocument from '../../../../fixtures/did.json';
+import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../../fixtures/issuer-profile.json';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
@@ -15,12 +15,12 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
       beforeEach(async function () {
         requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
-          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1'
+          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ'
         }).resolves(JSON.stringify({ didDocument }));
         requestStub.withArgs({
-          url: 'https://raw.githubusercontent.com/lemoustachiste/did-blockcerts-poc/master/issuer-profile.json'
+          url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
         }).resolves(JSON.stringify(fixtureIssuerProfile));
-        issuerProfile = await getIssuerProfile(fixtureBlockcertsV3BetaDid.issuer);
+        issuerProfile = await getIssuerProfile(fixtureBlockcertsV3Did.issuer);
       });
 
       afterEach(function () {

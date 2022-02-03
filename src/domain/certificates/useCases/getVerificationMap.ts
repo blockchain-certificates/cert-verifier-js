@@ -2,9 +2,11 @@ import { NETWORKS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import Versions, { isV3 } from '../../../constants/certificateVersions';
-import { SUB_STEPS, substepsList, IVerificationSubstep } from '../../../constants/verificationSubSteps';
-import { deepCopy } from '../../../helpers/object';
-import { language as stepsLanguage, TVerificationStepsList, VerificationSteps } from '../../../constants/verificationSteps';
+import { IVerificationSubstep, SUB_STEPS, substepsList } from '../../../constants/verificationSubSteps';
+import getMainVerificationSteps, {
+  TVerificationStepsList,
+  VerificationSteps
+} from '../../../constants/verificationSteps';
 import { IBlockchainObject } from '../../../constants/blockchains';
 
 export interface IVerificationMapItem {
@@ -19,11 +21,11 @@ type TNetworkVerificationStepList = {
 };
 
 function removeStep (map: string[], step: string): void {
-  const checkIssuerIdentityIndex = map.findIndex(subStep => subStep === step);
-  map.splice(checkIssuerIdentityIndex, 1);
+  const stepIndex = map.findIndex(subStep => subStep === step);
+  map.splice(stepIndex, 1);
 }
 
-export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): SUB_STEPS[] {
+export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions): SUB_STEPS[] {
   const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
   const networkVerificationMap: TNetworkVerificationStepList = {
     [NETWORKS.mainnet]: [
@@ -35,7 +37,10 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkMerkleRoot,
       SUB_STEPS.checkReceipt,
-      SUB_STEPS.checkIssuerIdentity,
+      SUB_STEPS.controlVerificationMethod,
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
+      SUB_STEPS.deriveIssuingAddressFromPublicKey,
+      SUB_STEPS.compareIssuingAddress,
       SUB_STEPS.checkRevokedStatus,
       SUB_STEPS.checkAuthenticity,
       SUB_STEPS.checkExpiresDate
@@ -44,17 +49,16 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.computeLocalHash,
       SUB_STEPS.compareHashes,
       SUB_STEPS.checkReceipt,
-      SUB_STEPS.checkIssuerIdentity,
+      SUB_STEPS.controlVerificationMethod,
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
+      SUB_STEPS.deriveIssuingAddressFromPublicKey,
+      SUB_STEPS.compareIssuingAddress,
       SUB_STEPS.checkExpiresDate
     ]
   };
 
   if (isV3(version)) {
     removeStep(networkVerificationMap[network], SUB_STEPS.getIssuerProfile);
-  }
-
-  if (!hasDid) {
-    removeStep(networkVerificationMap[network], SUB_STEPS.checkIssuerIdentity);
   }
 
   return networkVerificationMap[network];
@@ -87,9 +91,10 @@ function stepsObjectToArray (stepsObject: TVerificationStepsList): IVerification
  * @param subSteps
  * @returns {any}
  */
-function setSubStepsToSteps (subSteps: IVerificationSubstep[]): TVerificationStepsList {
-  const steps = deepCopy(stepsLanguage);
-  subSteps.forEach(subStep => steps[subStep.parentStep].subSteps.push(subStep));
+function setSubStepsToSteps (subSteps: IVerificationSubstep[], hasDid: boolean): TVerificationStepsList {
+  const steps = getMainVerificationSteps(hasDid);
+  subSteps
+    .forEach(subStep => !!steps[subStep.parentStep] && steps[subStep.parentStep].subSteps.push(subStep));
   return steps;
 }
 
@@ -101,7 +106,7 @@ function setSubStepsToSteps (subSteps: IVerificationSubstep[]): TVerificationSte
  * @param subStepMap
  * @returns {Array}
  */
-function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[]): IVerificationMapItem[] {
+function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[], hasDid: boolean): IVerificationMapItem[] {
   const subSteps: IVerificationSubstep[] = subStepMap.map(stepCode => {
     const subStep = Object.assign({}, substepsList[stepCode]);
     return {
@@ -111,7 +116,7 @@ function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[]): IVerificationMapIte
     };
   });
 
-  const steps = setSubStepsToSteps(subSteps);
+  const steps = setSubStepsToSteps(subSteps, hasDid);
 
   return stepsObjectToArray(steps);
 }
@@ -129,5 +134,5 @@ export default function getVerificationMap (chain: IBlockchainObject, version: V
     return [];
   }
 
-  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version, hasDid));
+  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version), hasDid);
 }

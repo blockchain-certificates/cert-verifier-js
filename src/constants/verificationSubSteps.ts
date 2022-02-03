@@ -1,8 +1,9 @@
 import i18n from '../data/i18n.json';
 import { VerificationSteps } from './verificationSteps';
+import currentLocale from './currentLocale';
 
 export interface IVerificationSubstep {
-  code: string;
+  code: SUB_STEPS;
   label: string;
   labelPending: string;
   parentStep: VerificationSteps;
@@ -25,11 +26,15 @@ enum SUB_STEPS {
   checkIssuerIdentity = 'checkIssuerIdentity',
   checkAuthenticity = 'checkAuthenticity',
   checkRevokedStatus = 'checkRevokedStatus',
-  checkExpiresDate = 'checkExpiresDate'
+  checkExpiresDate = 'checkExpiresDate',
+  controlVerificationMethod = 'controlVerificationMethod',
+  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey',
+  compareIssuingAddress = 'compareIssuingAddress'
 }
 
 function getTextFor (subStep: string, status: string): string {
-  return i18n['en-US'].subSteps[`${subStep}${status}`];
+  return i18n[currentLocale.locale].subSteps[`${subStep}${status}`];
 }
 
 const LABEL = 'Label';
@@ -38,7 +43,8 @@ const LABEL_PENDING = 'LabelPending';
 const subStepsMap = {
   [VerificationSteps.formatValidation]: [SUB_STEPS.getTransactionId, SUB_STEPS.computeLocalHash, SUB_STEPS.fetchRemoteHash, SUB_STEPS.getIssuerProfile, SUB_STEPS.parseIssuerKeys],
   [VerificationSteps.hashComparison]: [SUB_STEPS.compareHashes, SUB_STEPS.checkMerkleRoot, SUB_STEPS.checkReceipt],
-  [VerificationSteps.statusCheck]: [SUB_STEPS.checkIssuerIdentity, SUB_STEPS.checkIssuerSignature, SUB_STEPS.checkAuthenticity, SUB_STEPS.checkRevokedStatus, SUB_STEPS.checkExpiresDate]
+  [VerificationSteps.identityVerification]: [SUB_STEPS.controlVerificationMethod, SUB_STEPS.retrieveVerificationMethodPublicKey, SUB_STEPS.deriveIssuingAddressFromPublicKey, SUB_STEPS.compareIssuingAddress],
+  [VerificationSteps.statusCheck]: [SUB_STEPS.checkIssuerSignature, SUB_STEPS.checkAuthenticity, SUB_STEPS.checkRevokedStatus, SUB_STEPS.checkExpiresDate]
 };
 
 function generateSubsteps (parentKey): ISubstepList {

@@ -1,5 +1,5 @@
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
-import BlockcertsV3BetaWithDID from './v3/blockcerts-3.0-beta-did.json';
+import BlockcertsV3BetaWithDID from './v3/testnet-v3-did.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
 import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
 import BlockcertsV3AlphaTampered from './v3/blockcerts-3.0-alpha--tampered.json';

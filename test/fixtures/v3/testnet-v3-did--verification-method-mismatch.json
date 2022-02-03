@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/blockcerts/v3"
+  ],
+  "id": "13172c8c-efa5-49e1-9f69-a67ba6bd9937",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": {
+    "id": "did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA",
+    "name": "Hyland Innovation Team",
+    "url": "https://www.hyland.com",
+    "description": "",
+    "image": "",
+    "email": "julien.fraichot@hyland.com"
+  },
+  "issuanceDate": "2022-02-02T15:00:00Z",
+  "credentialSubject": {
+    "name": "Julien Fraichot",
+    "claim": {
+      "type": "Blockcerts",
+      "id": "41015b98-fc99-447c-b211-ef6782147fb3",
+      "name": "V3 issuance",
+      "description": "A v3 working example for test purposes",
+      "criteria": "it has been issued"
+    }
+  },
+  "metadata": "{\"classOf\":\"2022\"}",
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<div>Hello World</div>"
+  },
+  "proof": {
+    "type": "MerkleProof2019",
+    "created": "2022-02-03T15:42:29.227091",
+    "proofValue": "zMcm4LfQFUZkWZxtau5V9AC3B9BeU1J2L1jm2pPaHu9DxFGLqnjVkxFT7m2SnDmkommiyfkjG3x4ZewUSBcDGdNpKHNTn1QgpDc7VA8gW5Lvn6YdGewvCTN1DMNbvxW9YowWQfMCfmRVYTt5XxB3Whpfj3jhk99Tj6UCjNNoUfDcGSUXvZ5BbjZpUNwpaYn55rVozpwevYghvGfKUC2jGTgj9CsAKyz5iCW28XM1fh5YiFiW47cJafMrqkpSB2AnWEnKUNcDeAW1BxTbyk6Lp4YaQMXg28fH89squrqYaYbMa8H12o5",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1"
+  }
+}

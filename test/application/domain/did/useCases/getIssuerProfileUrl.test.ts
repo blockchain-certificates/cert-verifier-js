@@ -1,5 +1,5 @@
 import { getIssuerProfileUrl } from '../../../../../src/domain/did/useCases';
-import didDocument from '../../../../fixtures/did.json';
+import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
 describe('domain did getIssuerProfileUrl test suite', function () {
   describe('given it is called with a DID document which does not contain a service object', function () {
@@ -26,7 +26,7 @@ describe('domain did getIssuerProfileUrl test suite', function () {
     describe('and this object has a IssuerProfile type of service endpoint listed', function () {
       it('should return the service endpoint url', function () {
         const output = getIssuerProfileUrl(didDocument);
-        expect(output).toBe('https://raw.githubusercontent.com/lemoustachiste/did-blockcerts-poc/master/issuer-profile.json');
+        expect(output).toBe('https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json');
       });
     });
   });

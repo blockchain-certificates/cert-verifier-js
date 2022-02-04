@@ -30,7 +30,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0);
+        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0_alpha);
       });
 
       it('should set the decoded signature as the receipt to the certificate object', function () {

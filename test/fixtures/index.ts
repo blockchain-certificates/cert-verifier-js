@@ -1,5 +1,5 @@
+import BlockcertsV3 from './v3/testnet-v3-did.json';
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
-import BlockcertsV3BetaWithDID from './v3/testnet-v3-did.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
 import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
 import BlockcertsV3AlphaTampered from './v3/blockcerts-3.0-alpha--tampered.json';
@@ -24,8 +24,8 @@ import TestnetV2Valid from './v2/testnet-valid-2.0.json';
 import TestnetV2ValidV1Issuer from './v2/testnet-valid-v1-issuer-2.0.json';
 
 export default {
+  BlockcertsV3,
   BlockcertsV3Beta,
-  BlockcertsV3BetaWithDID,
   BlockcertsV3Alpha,
   BlockcertsV3AlphaCustomContext,
   BlockcertsV3AlphaTampered,

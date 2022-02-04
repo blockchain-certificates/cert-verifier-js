@@ -30,7 +30,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0_alpha);
+        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0);
       });
 
       it('should set the decoded signature as the receipt to the certificate object', function () {
@@ -162,7 +162,7 @@ describe('Certificate entity test suite', function () {
 
       describe('when the issuer profile URN is a DID', function () {
         it('should add the issuer identity verification to the verification steps', async function () {
-          const fixture = JSON.parse(JSON.stringify(FIXTURES.BlockcertsV3BetaWithDID));
+          const fixture = JSON.parse(JSON.stringify(FIXTURES.BlockcertsV3));
           const requestStub = sinon.stub(ExplorerLookup, 'request');
           requestStub.withArgs({
             url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ'

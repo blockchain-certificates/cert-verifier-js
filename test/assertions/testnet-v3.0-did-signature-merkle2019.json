@@ -1,0 +1,8 @@
+{
+  "path": [],
+  "merkleRoot": "fe611ad32790e9a34034e3de22459da6471bbce06f6bd55074262086cdff334c",
+  "targetHash": "fe611ad32790e9a34034e3de22459da6471bbce06f6bd55074262086cdff334c",
+  "anchors": [
+    "blink:btc:testnet:ec81d11809b42eb486b3175ea0c29c36ec24887e5f9520250c3271603e3fa852"
+  ]
+}

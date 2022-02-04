@@ -6,7 +6,7 @@ import { Issuer } from '../models/Issuer';
 import Versions from '../constants/certificateVersions';
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { Blockcerts } from '../models/Blockcerts';
-import { retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
+import { BlockcertsVersion, retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
 import { Receipt } from '../models/Receipt';
 import { SignatureImage } from '../models';
 
@@ -47,8 +47,8 @@ export {
 
 export default async function parseJSON (certificateJson: Blockcerts): Promise<ParsedCertificate> {
   try {
-    const version: number = retrieveBlockcertsVersion(certificateJson['@context']);
-    const parsedCertificate = await versionParserMap[version](certificateJson);
+    const blockcertsVersion: BlockcertsVersion = retrieveBlockcertsVersion(certificateJson['@context']);
+    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson, blockcertsVersion.version);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (error) {

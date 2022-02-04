@@ -1,10 +1,15 @@
 import FIXTURES from '../../../fixtures';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
 import parseJSON from '../../../../src/parsers/index';
-import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
-import assertionProofValue from '../../../assertions/v3.0-beta-signature-merkle2019.json';
+import v3IssuerProfile from '../../../assertions/v3.0-issuer-profile.json';
+import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import assertionProofValue from '../../../assertions/testnet-v3.0-did-signature-merkle2019.json';
 
-const fixture = FIXTURES.BlockcertsV3Beta;
+const fixture = FIXTURES.BlockcertsV3;
+const assertionIssuerProfile = {
+  ...v3IssuerProfile,
+  didDocument
+};
 
 describe('Parser test suite', function () {
   describe('given it is called with a invalid format v3 certificate data', function () {
@@ -52,9 +57,8 @@ describe('Parser test suite', function () {
     });
 
     it('should set the recipientFullName of the certificate object', function () {
-      // not defined in current sample
-      // const fullNameAssertion = fixture.credentialSubject.name;
-      expect(parsedCertificate.recipientFullName).toEqual('');
+      const fullNameAssertion = fixture.credentialSubject.name;
+      expect(parsedCertificate.recipientFullName).toEqual(fullNameAssertion);
     });
 
     it('should set recordLink of the certificate object', function () {
@@ -62,7 +66,7 @@ describe('Parser test suite', function () {
     });
 
     it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0_beta);
+      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0);
     });
 
     describe('when the expirationDate is set', function () {

@@ -12,6 +12,7 @@ import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
+import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
 
 export interface ExplorerURLs {
   main: string;
@@ -180,8 +181,8 @@ export default class Certificate {
 
   private _setTransactionDetails (): void {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
-    // TODO: refactor, call once return one object
-    this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
-    this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
+    this.rawTransactionLink = transactionLinks.rawTransactionLink;
+    this.transactionLink = transactionLinks.transactionLink;
   }
 }

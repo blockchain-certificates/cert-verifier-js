@@ -49,10 +49,11 @@ export default class Verifier {
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
   private derivedIssuingAddress: string;
+  readonly verificationSteps: IVerificationMapItem[];
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof, verificationSteps }: {
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
@@ -64,7 +65,6 @@ export default class Verifier {
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
       proof?: MerkleProof2019;
-      verificationSteps: IVerificationMapItem[];
     }
   ) {
     this.chain = chain;
@@ -77,7 +77,9 @@ export default class Verifier {
     this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
-    this.verificationProcess = this.groomVerificationProcess(verificationSteps);
+    // Get the full verification step-by-step map
+    this.verificationSteps = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
+    this.verificationProcess = this.groomVerificationProcess(this.verificationSteps);
 
     let document = certificateJson.document;
     if (!document) {

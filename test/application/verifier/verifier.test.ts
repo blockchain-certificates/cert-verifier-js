@@ -5,6 +5,12 @@ import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { ExplorerAPI } from 'certificate';
 import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
+import { deepCopy } from '../../../src/helpers/object';
+import { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
+import FIXTURES from '../../fixtures';
+import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
+import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import { VerificationSteps } from '../../../src/constants/verificationSteps';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -90,6 +96,26 @@ describe('Verifier entity test suite', function () {
         const documentAssertion = JSON.parse(JSON.stringify(fixture));
         delete documentAssertion.signature;
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
+      });
+
+      it('should set the verificationSteps property', function () {
+        const expectedSteps = deepCopy<IVerificationMapItem[]>(mainnetMapAssertion);
+        expect(verifierInstance.verificationSteps).toEqual(expectedSteps);
+      });
+
+      describe('when the issuer profile URN is a DID', function () {
+        it('should add the issuer identity verification to the verification steps', async function () {
+          const fixture = JSON.parse(JSON.stringify(verifierParamFixture));
+          fixture.certificateJson = FIXTURES.BlockcertsV3;
+          fixture.issuer = {
+            ...issuerProfileAssertion,
+            didDocument
+          };
+          const verifierInstance = new Verifier(fixture);
+          const expectedStepIndex = verifierInstance.verificationSteps
+            .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
+          expect(expectedStepIndex).toBe(2);
+        });
       });
     });
   });

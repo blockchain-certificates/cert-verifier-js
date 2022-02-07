@@ -49,7 +49,7 @@ export default class Verifier {
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
   private derivedIssuingAddress: string;
-  readonly verificationSteps: IVerificationMapItem[];
+  public verificationSteps: IVerificationMapItem[];
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (

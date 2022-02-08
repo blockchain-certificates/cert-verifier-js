@@ -25,7 +25,7 @@ export function getUnmappedFields (normalized: string): string[] | null {
 
 export default async function computeLocalHash (document: Blockcerts, version: Versions): Promise<string> {
   let expandContext = document['@context'];
-  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document, version);
+  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document);
   if (!isV1(version) && CONFIG.CheckForUnmappedFields) {
     // @ts-expect-error: we are checking if @vocab may already be defined in the document
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {

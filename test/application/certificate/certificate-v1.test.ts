@@ -5,7 +5,7 @@ describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v1 certificate data', function () {
       it('should not support the verification and throw an error', async function () {
-        const certificate = new Certificate(FIXTURES.TestnetV1Valid);
+        const certificate = new Certificate(FIXTURES.TestnetV1Valid as any);
         await expect(async () => {
           await certificate.init();
         }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +

@@ -61,7 +61,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
     };
   };
   metadata?: string;
-  display: {
+  display?: {
     contentMediaType: string;
     content: string;
     contentEncoding?: string;

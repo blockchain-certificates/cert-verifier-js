@@ -11,5 +11,5 @@ export interface MerkleProof2017 {
 export interface MerkleProof2017Anchor {
   sourceId: string;
   type: string;
-  chain: string;
+  chain?: string;
 }

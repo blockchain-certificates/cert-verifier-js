@@ -3,7 +3,7 @@ import FIXTURES from '../../fixtures';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   it('should not support the verification and throw an error', async function () {
-    const certificate = new Certificate(FIXTURES.TestnetV1Valid);
+    const certificate = new Certificate(FIXTURES.TestnetV1Valid as any);
     await expect(async () => {
       await certificate.init();
     }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +

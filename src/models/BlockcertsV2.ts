@@ -1,21 +1,27 @@
 import { JsonLDContext } from './Blockcerts';
 import { MerkleProof2017 } from './MerkleProof2017';
 
+interface RecipientProfile {
+  type: string[];
+  name: string;
+  publicKey: string;
+}
+
 export interface BlockcertsV2 {
   '@context': JsonLDContext;
   type: string;
   id: string;
-  recipient: {
+  recipient?: {
     type: string;
     identity: string;
     hashed: boolean;
+    /**
+     * @deprecated v2 alpha only
+     */
+    recipientProfile?: RecipientProfile;
   };
-  recipientProfile: {
-    type: string[];
-    name: string;
-    publicKey: string;
-  };
-  badge: {
+  recipientProfile?: RecipientProfile;
+  badge?: {
     type: string;
     id?: string;
     name?: string;
@@ -38,13 +44,18 @@ export interface BlockcertsV2 {
       image?: string;
     }>;
   };
-  verification: {
+  verification?: {
     type: string[];
-    publicKey: string;
+    publicKey?: string;
+    /**
+     * @deprecated v2 alpha only
+     */
+    creator?: string;
   };
-  issuedOn: string;
+  issuedOn?: string;
   metadataJson?: string;
-  displayHtml: string;
+  displayHtml?: string;
+  expires?: string;
   nonce?: string;
   universalIdentifier?: string;
   signature: MerkleProof2017;

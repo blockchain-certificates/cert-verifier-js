@@ -4,7 +4,7 @@ import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import Versions from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
-import { Blockcerts, UnsignedBlockcerts } from './models/Blockcerts';
+import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
@@ -171,7 +171,7 @@ export default class Verifier {
   private async computeLocalHash (): Promise<void> {
     this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
+      async () => await inspectors.computeLocalHash(this.documentToVerify)
     );
   }
 

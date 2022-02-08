@@ -48,7 +48,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
   issuer: string | Issuer;
   issuanceDate: string;
   credentialSubject: {
-    id: string;
+    id?: string;
     publicKey?: string;
     name?: string;
     type?: string;

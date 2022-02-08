@@ -94,7 +94,6 @@ describe('Verifier entity test suite', function () {
 
       it('should set the documentToVerify to the verifier object', function () {
         const documentAssertion = JSON.parse(JSON.stringify(fixture));
-        delete documentAssertion.signature;
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
       });
 

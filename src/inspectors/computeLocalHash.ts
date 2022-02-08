@@ -8,6 +8,7 @@ import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 import { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
+import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts';
 
 export function getUnmappedFields (normalized: string): string[] | null {
   const normalizedArray = normalized.split('\n');
@@ -22,9 +23,9 @@ export function getUnmappedFields (normalized: string): string[] | null {
   return null;
 }
 
-export default async function computeLocalHash (document: UnsignedBlockcerts, version: Versions): Promise<string> {
+export default async function computeLocalHash (document: Blockcerts, version: Versions): Promise<string> {
   let expandContext = document['@context'];
-  const theDocument = document;
+  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document, version);
   if (!isV1(version) && CONFIG.CheckForUnmappedFields) {
     // @ts-expect-error: we are checking if @vocab may already be defined in the document
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {

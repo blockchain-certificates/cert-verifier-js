@@ -17,27 +17,27 @@ export interface BlockcertsV2 {
   };
   badge: {
     type: string;
-    id: string;
-    name: string;
-    subtitle: string;
-    description: string;
-    image: string;
+    id?: string;
+    name?: string;
+    subtitle?: string;
+    description?: string;
+    image?: string;
+    criteria?: any; // TODO: define criteria
+    issuer: {
+      type?: string;
+      id?: string;
+      name?: string;
+      url?: string;
+      image?: string;
+      email?: string;
+      revocationList?: string;
+    };
+    signatureLines?: Array<{
+      type?: string[];
+      jobTitle?: string;
+      image?: string;
+    }>;
   };
-  criteria?: any; // TODO: define criteria
-  issuer: {
-    type: string;
-    id: string;
-    name: string;
-    url: string;
-    image: string;
-    email: string;
-    revocationList: string;
-  };
-  signatureLines?: Array<{
-    type: string[];
-    jobTitle: string;
-    image: string;
-  }>;
   verification: {
     type: string[];
     publicKey: string;

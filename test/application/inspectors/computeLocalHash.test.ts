@@ -6,7 +6,6 @@ describe('computeLocalHash test suite', function () {
   let fixture;
   beforeEach(function () {
     fixture = Object.assign({}, blockcertsV3Fixture);
-    delete fixture.proof;
   });
 
   describe('given it receives a document', function () {

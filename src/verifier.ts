@@ -13,7 +13,6 @@ import { IVerificationMapItem } from './domain/certificates/useCases/getVerifica
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import retrieveDocumentBeforeIssuance from './parsers/helpers/retrieveDocumentBeforeIssuance';
 
 const log = debug('Verifier');
 
@@ -42,7 +41,7 @@ export default class Verifier {
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
-  public documentToVerify: UnsignedBlockcerts;
+  public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
@@ -82,7 +81,7 @@ export default class Verifier {
     this.verificationSteps = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
     this.verificationProcess = this.groomVerificationProcess(this.verificationSteps);
 
-    this.documentToVerify = Object.assign({}, this._retrieveDocumentBeforeIssuance(certificateJson));
+    this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
     // Final verification result
     // Init status as success, we will update the final status at the end
@@ -292,10 +291,6 @@ export default class Verifier {
    */
   _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
-  }
-
-  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): UnsignedBlockcerts {
-    return retrieveDocumentBeforeIssuance(certificateJson, this.version);
   }
 
   /**

@@ -2,13 +2,13 @@ import parseV1 from './parseV1';
 import parseV2 from './parseV2';
 import parseV3 from './parseV3';
 import { IBlockchainObject } from '../constants/blockchains';
-import { Issuer } from '../models/Issuer';
 import Versions from '../constants/certificateVersions';
+import { Issuer } from '../models/Issuer';
 import { MerkleProof2019 } from '../models/MerkleProof2019';
 import { Blockcerts } from '../models/Blockcerts';
-import { BlockcertsVersion, retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
 import { Receipt } from '../models/Receipt';
 import { SignatureImage } from '../models';
+import { BlockcertsVersion, retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
 
 export const versionParserMap = {
   1: parseV1,

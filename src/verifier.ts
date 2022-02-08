@@ -1,10 +1,10 @@
 import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
-import Versions, { isV3 } from './constants/certificateVersions';
+import Versions from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
-import { Blockcerts } from './models/Blockcerts';
+import { Blockcerts, UnsignedBlockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
@@ -13,6 +13,7 @@ import { IVerificationMapItem } from './domain/certificates/useCases/getVerifica
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import retrieveDocumentBeforeIssuance from './parsers/helpers/retrieveDocumentBeforeIssuance';
 
 const log = debug('Verifier');
 
@@ -41,7 +42,7 @@ export default class Verifier {
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
-  public documentToVerify: Blockcerts; // TODO: confirm this
+  public documentToVerify: UnsignedBlockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
@@ -81,12 +82,7 @@ export default class Verifier {
     this.verificationSteps = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
     this.verificationProcess = this.groomVerificationProcess(this.verificationSteps);
 
-    let document = certificateJson.document;
-    if (!document) {
-      document = this._retrieveDocumentBeforeIssuance(certificateJson);
-    }
-
-    this.documentToVerify = Object.assign({}, document);
+    this.documentToVerify = Object.assign({}, this._retrieveDocumentBeforeIssuance(certificateJson));
 
     // Final verification result
     // Init status as success, we will update the final status at the end
@@ -298,14 +294,8 @@ export default class Verifier {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): any { // TODO: define certificate object without proof
-    const certificateCopy = Object.assign({}, certificateJson);
-    if (isV3(this.version)) {
-      delete certificateCopy.proof;
-    } else {
-      delete certificateCopy.signature;
-    }
-    return certificateCopy;
+  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): UnsignedBlockcerts {
+    return retrieveDocumentBeforeIssuance(certificateJson, this.version);
   }
 
   /**

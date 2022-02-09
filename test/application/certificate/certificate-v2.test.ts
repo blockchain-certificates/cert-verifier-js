@@ -1,5 +1,4 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
-import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 
 describe('Certificate entity test suite', function () {
@@ -95,10 +94,6 @@ describe('Certificate entity test suite', function () {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.signature.anchors[0].sourceId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
-      });
-
-      it('should set verificationSteps to the certificate object', function () {
-        expect(certificate.verificationSteps).toEqual(mainnetMapAssertion);
       });
 
       it('should set version to the certificate object', function () {

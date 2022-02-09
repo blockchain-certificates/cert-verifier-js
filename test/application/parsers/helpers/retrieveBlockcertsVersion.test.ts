@@ -1,6 +1,6 @@
-import Fixtures from '../../fixtures';
-import { BlockcertsVersion, retrieveBlockcertsVersion } from '../../../src/parsers/retrieveBlockcertsVersion';
-import Versions from '../../../src/constants/certificateVersions';
+import Fixtures from '../../../fixtures';
+import { BlockcertsVersion, retrieveBlockcertsVersion } from '../../../../src/parsers/helpers/retrieveBlockcertsVersion';
+import Versions from '../../../../src/constants/certificateVersions';
 
 describe('retrieveBlockcertsVersion test suite', function () {
   let output: BlockcertsVersion;

@@ -1,7 +1,7 @@
-import { versionParserMap } from './index';
-import { JsonLDContext } from '../models/Blockcerts';
-import { isString } from '../helpers/string';
-import Versions from '../constants/certificateVersions';
+import { versionParserMap } from '../index';
+import { JsonLDContext } from '../../models/Blockcerts';
+import { isString } from '../../helpers/string';
+import Versions from '../../constants/certificateVersions';
 
 function lookupVersion (array: string[], v: string): boolean {
   return array.some(str => str.includes(`v${v}`) || str.includes(`${v}.`));

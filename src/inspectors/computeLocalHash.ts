@@ -1,4 +1,3 @@
-import Versions, { isV1 } from '../constants/certificateVersions';
 import CONFIG from '../constants/config';
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
@@ -7,7 +6,8 @@ import sha256 from 'sha256';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
-import { Blockcerts } from '../models/Blockcerts';
+import { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
+import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts';
 
 export function getUnmappedFields (normalized: string): string[] | null {
   const normalizedArray = normalized.split('\n');
@@ -22,10 +22,11 @@ export function getUnmappedFields (normalized: string): string[] | null {
   return null;
 }
 
-export default async function computeLocalHash (document: Blockcerts, version: Versions): Promise<string> {
+export default async function computeLocalHash (document: Blockcerts): Promise<string> {
   let expandContext = document['@context'];
-  const theDocument = document;
-  if (!isV1(version) && CONFIG.CheckForUnmappedFields) {
+  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document);
+  if (CONFIG.CheckForUnmappedFields) {
+    // @ts-expect-error: we are checking if @vocab may already be defined in the document
     if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
       expandContext = null;
     } else {

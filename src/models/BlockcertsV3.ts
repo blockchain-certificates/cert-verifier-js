@@ -1,8 +1,9 @@
 import { Issuer } from './Issuer';
 import { MerkleProof2019 } from './MerkleProof2019';
+import { JsonLDContext } from './Blockcerts';
 
 export interface VerifiableCredential {
-  '@context': string[];
+  '@context': JsonLDContext;
   id: string;
   type: string[];
   credentialStatus?: {
@@ -47,7 +48,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
   issuer: string | Issuer;
   issuanceDate: string;
   credentialSubject: {
-    id: string;
+    id?: string;
     publicKey?: string;
     name?: string;
     type?: string;
@@ -60,7 +61,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
     };
   };
   metadata?: string;
-  display: {
+  display?: {
     contentMediaType: string;
     content: string;
     contentEncoding?: string;
@@ -73,3 +74,5 @@ export interface BlockcertsV3 extends VerifiableCredential{
    */
   metadataJson?: string;
 }
+
+export type UnsignedBlockcertsV3 = Omit<BlockcertsV3, 'proof'>;

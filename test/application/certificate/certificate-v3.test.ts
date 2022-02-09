@@ -1,15 +1,7 @@
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS, SUB_STEPS } from '../../../src';
+import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
-import { VerificationSteps } from '../../../src/constants/verificationSteps';
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
-import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
-import { deepCopy } from '../../../src/helpers/object';
-import { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
 
 const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
 
@@ -83,14 +75,6 @@ describe('Certificate entity test suite', function () {
         const transactionLinkAssertion = `https://testnet.blockchain.info/tx/${assertionTransactionId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
-
-      it('should set the verificationSteps property', function () {
-        const expectedSteps = deepCopy<IVerificationMapItem[]>(mainnetMapAssertion);
-        // issuer profile is retrieved earlier in v3
-        const getIssuerProfileIndex = expectedSteps[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
-        expectedSteps[0].subSteps.splice(getIssuerProfileIndex, 1);
-        expect(certificate.verificationSteps).toEqual(expectedSteps);
-      });
     });
 
     describe('retrieving the issuer profile - failing cases', function () {
@@ -157,24 +141,6 @@ describe('Certificate entity test suite', function () {
           await expect(certificate.init())
             .rejects
             .toThrow('Unable to get issuer profile - retrieved file does not seem to be a valid profile');
-        });
-      });
-
-      describe('when the issuer profile URN is a DID', function () {
-        it('should add the issuer identity verification to the verification steps', async function () {
-          const fixture = JSON.parse(JSON.stringify(FIXTURES.BlockcertsV3));
-          const requestStub = sinon.stub(ExplorerLookup, 'request');
-          requestStub.withArgs({
-            url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ'
-          }).resolves(JSON.stringify({ didDocument }));
-          requestStub.withArgs({
-            url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-          }).resolves(JSON.stringify(fixtureIssuerProfile));
-          const certificate = new Certificate(fixture);
-          await certificate.init();
-          const expectedStepIndex = certificate.verificationSteps
-            .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
-          expect(expectedStepIndex).toBe(2);
         });
       });
     });

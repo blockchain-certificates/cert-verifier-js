@@ -160,30 +160,9 @@ The certificate instance has the following properties:
 - `transactionId`: `String`. Transaction ID
 - `rawTransactionLink`: `String`. Raw transaction ID
 - `transactionLink`: `String`. Transaction link
-- `verificationSteps`: `VerificationStep[]`. The array of steps the certificate will have to go through during verification
 - `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js)
 
 [signatureLineModel]: src/models/signatureImage.js
-
-**Note:** `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
-
-`VerificationStep` has the following shape:
-```javascript
-{
-    code: 'formatValidation',
-    label: 'Format validation',
-    labelPending: 'Validating format',
-    subSteps: [
-      {
-        code: 'getTransactionId',
-        label: 'Get transaction ID',
-        labelPending: 'Getting transaction ID',
-        parentStep: 'formatValidation'
-      },
-      ...
-    ]
-}
-```
 
 ### `verify(stepCallback)`
 This will run the verification of a certificate. The function is asynchronous.
@@ -213,6 +192,26 @@ The final verification status:
   - `label`: Main label of the final step
   - `description`: further details about the issuance
   - `linkText`: translation provided for a link text towards the transaction
+
+**Note:** Exposes: `verificationSteps` is generated according to the nature of the certificate. The full steps array is provided ahead of verification in order to give more flexibility to the consumer. For example, you might want to pre-render the verification steps for animation, or render a count of steps and/or sub-steps.
+
+`VerificationStep` has the following shape:
+```javascript
+{
+    code: 'formatValidation',
+    label: 'Format validation',
+    labelPending: 'Validating format',
+    subSteps: [
+      {
+        code: 'getTransactionId',
+        label: 'Get transaction ID',
+        labelPending: 'Getting transaction ID',
+        parentStep: 'formatValidation'
+      },
+      ...
+    ]
+}
+```
 
 Shape of the returned object can be checked here: https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/data/i18n.json#L41
 

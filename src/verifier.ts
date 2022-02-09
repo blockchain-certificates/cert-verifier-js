@@ -1,7 +1,7 @@
 import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
-import Versions, { isV3 } from './constants/certificateVersions';
+import Versions from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import { Blockcerts } from './models/Blockcerts';
@@ -41,7 +41,7 @@ export default class Verifier {
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
-  public documentToVerify: Blockcerts; // TODO: confirm this
+  public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
@@ -49,10 +49,11 @@ export default class Verifier {
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
   private derivedIssuingAddress: string;
+  public verificationSteps: IVerificationMapItem[];
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof, verificationSteps }: {
+    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
@@ -64,7 +65,6 @@ export default class Verifier {
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
       proof?: MerkleProof2019;
-      verificationSteps: IVerificationMapItem[];
     }
   ) {
     this.chain = chain;
@@ -77,14 +77,11 @@ export default class Verifier {
     this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
-    this.verificationProcess = this.groomVerificationProcess(verificationSteps);
+    // Get the full verification step-by-step map
+    this.verificationSteps = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
+    this.verificationProcess = this.groomVerificationProcess(this.verificationSteps);
 
-    let document = certificateJson.document;
-    if (!document) {
-      document = this._retrieveDocumentBeforeIssuance(certificateJson);
-    }
-
-    this.documentToVerify = Object.assign({}, document);
+    this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
     // Final verification result
     // Init status as success, we will update the final status at the end
@@ -174,7 +171,7 @@ export default class Verifier {
   private async computeLocalHash (): Promise<void> {
     this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify, this.version)
+      async () => await inspectors.computeLocalHash(this.documentToVerify)
     );
   }
 
@@ -294,16 +291,6 @@ export default class Verifier {
    */
   _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
-  }
-
-  _retrieveDocumentBeforeIssuance (certificateJson: Blockcerts): any { // TODO: define certificate object without proof
-    const certificateCopy = Object.assign({}, certificateJson);
-    if (isV3(this.version)) {
-      delete certificateCopy.proof;
-    } else {
-      delete certificateCopy.signature;
-    }
-    return certificateCopy;
   }
 
   /**

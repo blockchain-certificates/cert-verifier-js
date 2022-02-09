@@ -12,7 +12,7 @@ import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
-import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
 
 export interface ExplorerURLs {
   main: string;
@@ -66,7 +66,6 @@ export default class Certificate {
   public subtitle?: string; // v1
   public transactionId: string;
   public transactionLink: string;
-  public verificationSteps: IVerificationMapItem[];
   public version: Versions;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
@@ -75,7 +74,7 @@ export default class Certificate {
 
     if (typeof certificateDefinition !== 'object') {
       try {
-        certificateDefinition = JSON.parse(certificateDefinition);
+        certificateDefinition = JSON.parse(certificateDefinition) as Blockcerts;
       } catch (err) {
         throw new Error(domain.i18n.getText('errors', 'certificateNotValid'));
       }
@@ -102,8 +101,7 @@ export default class Certificate {
       transactionId: this.transactionId,
       version: this.version,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
-      proof: this.proof,
-      verificationSteps: this.verificationSteps
+      proof: this.proof
     });
     const verificationStatus = await verifier.verify(stepCallback);
     this.publicKey = verifier.getIssuingAddress();
@@ -175,12 +173,6 @@ export default class Certificate {
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-
-    // Get the full verification step-by-step map
-    // TODO: refactor. The verifier is calling a subset of this method later to determine the verification steps and
-    //  associate them to their function - CALL ONCE VERIFICATION STEPS WITH DID
-    this.verificationSteps = domain.certificates.getVerificationMap(chain, version, !!this.issuer.didDocument);
-
     this.version = version;
 
     // Transaction ID, link & raw link
@@ -189,7 +181,8 @@ export default class Certificate {
 
   private _setTransactionDetails (): void {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
-    this.rawTransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain, true);
-    this.transactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
+    this.rawTransactionLink = transactionLinks.rawTransactionLink;
+    this.transactionLink = transactionLinks.transactionLink;
   }
 }

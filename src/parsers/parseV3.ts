@@ -1,5 +1,4 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
-import { CERTIFICATE_VERSIONS } from '../constants';
 import domain from '../domain';
 import { Issuer } from '../models/Issuer';
 import { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';

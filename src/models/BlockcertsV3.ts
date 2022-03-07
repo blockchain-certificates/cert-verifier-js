@@ -44,6 +44,12 @@ export interface VerifiableCredential {
   };
 }
 
+export interface BlockcertsV3Display {
+  contentMediaType: string;
+  content: string;
+  contentEncoding?: string;
+}
+
 export interface BlockcertsV3 extends VerifiableCredential{
   issuer: string | Issuer;
   issuanceDate: string;
@@ -61,11 +67,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
     };
   };
   metadata?: string;
-  display?: {
-    contentMediaType: string;
-    content: string;
-    contentEncoding?: string;
-  };
+  display?: BlockcertsV3Display;
   nonce?: string;
   proof: MerkleProof2019;
 

@@ -9,6 +9,7 @@ import { Blockcerts } from '../models/Blockcerts';
 import { Receipt } from '../models/Receipt';
 import { SignatureImage } from '../models';
 import { BlockcertsVersion, retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
+import { BlockcertsV3Display } from '../models/BlockcertsV3';
 
 export const versionParserMap = {
   1: parseV1,
@@ -20,6 +21,7 @@ export interface ParsedCertificate {
   certificateImage?: string;
   chain: IBlockchainObject;
   description?: string;
+  display?: BlockcertsV3Display;
   expires?: string;
   id: string;
   isFormatValid?: boolean;

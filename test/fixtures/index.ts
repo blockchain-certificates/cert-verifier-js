@@ -1,4 +1,7 @@
 import BlockcertsV3 from './v3/testnet-v3-did.json';
+import BlockcertsV3Hashlink from './v3/testnet-v3-hashlink.json';
+import BlockcertsV3NoHashlink from './v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
+import BlockcertsV3Png from './v3/testnet-v3.png.json';
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
 import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
@@ -25,6 +28,9 @@ import TestnetV2ValidV1Issuer from './v2/testnet-valid-v1-issuer-2.0.json';
 
 export default {
   BlockcertsV3,
+  BlockcertsV3Hashlink,
+  BlockcertsV3NoHashlink,
+  BlockcertsV3Png,
   BlockcertsV3Beta,
   BlockcertsV3Alpha,
   BlockcertsV3AlphaCustomContext,

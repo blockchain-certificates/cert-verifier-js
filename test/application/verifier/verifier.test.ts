@@ -92,6 +92,21 @@ describe('Verifier entity test suite', function () {
         });
       });
 
+      describe('verify method', function () {
+        describe('when starting a new verification process', function () {
+          it('should reset the step status property', async function () {
+            const instance = new Verifier(verifierParamFixture);
+            await instance.verify();
+            // @ts-expect-error accessing private field
+            expect((instance._stepsStatuses)).not.toEqual([]);
+            // ignore await
+            void instance.verify();
+            // @ts-expect-error accessing private field
+            expect(instance._stepsStatuses).toEqual([]);
+          });
+        });
+      });
+
       it('should set the documentToVerify to the verifier object', function () {
         const documentAssertion = JSON.parse(JSON.stringify(fixture));
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);

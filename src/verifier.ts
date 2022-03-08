@@ -44,7 +44,7 @@ export default class Verifier {
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
-  private readonly _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private _stepsStatuses: any[]; // TODO: define stepStatus interface
   private localHash: string;
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
@@ -97,6 +97,7 @@ export default class Verifier {
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
+    this._stepsStatuses = [];
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {

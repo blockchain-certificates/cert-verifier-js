@@ -34,8 +34,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2022-02-03T15:42:29.227091",
-    "proofValue": "zMcm4LfQFUZkWZxtau5V9AC3B9BeU1J2L1jm2pPaHu9DxFGLqnjVkxFT7m2SnDmkommiyfkjG3x4ZewUSBcDGdNpKHNTn1QgpDc7VA8gW5Lvn6YdGewvCTN1DMNbvxW9YowWQfMCfmRVYTt5XxB3Whpfj3jhk99Tj6UCjNNoUfDcGSUXvZ5BbjZpUNwpaYn55rVozpwevYghvGfKUC2jGTgj9CsAKyz5iCW28XM1fh5YiFiW47cJafMrqkpSB2AnWEnKUNcDeAW1BxTbyk6Lp4YaQMXg28fH89squrqYaYbMa8H12o5",
+    "created": "2022-03-08T12:28:00.272888",
+    "proofValue": "zMcm4LfQFUZkWZyNBxa39Cb6PmB8ybzF53a9oRX2vDjZzX9NudVKDb9STGxNLTHeXs9xwpdNCvw13pNKkXXvSCNrtuDRk2H9GGYVMcXy4FZP3agDFGBxSMUkt9Fzam5AY52wzX866fojbLMqkgzMddZ6jR5BtqfHk7mu6mCiAarfMiJQzXJtAtxPCNFMv1w4tPSqe6SPxQcMHFckJoPtqhbang31oQDRk9JjjUSKMGWJZpwERg6Kk8JdR8mPxPkKgDq6G5tBbQqAz1VeXtgX4fUL3nydgUSz2pJNqVYD4LwDiW2ZAxD",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1"
   }

@@ -7,25 +7,17 @@ import { Blockcerts } from './models/Blockcerts';
 import { IBlockchainObject } from './constants/blockchains';
 import Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
-import { TExplorerParsingFunction } from '@blockcerts/explorer-lookup';
 import { Issuer } from './models/Issuer';
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
 import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
+import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 
 export interface ExplorerURLs {
   main: string;
   test: string;
-}
-
-export interface ExplorerAPI {
-  serviceURL?: string | ExplorerURLs;
-  priority?: 0 | 1 | -1; // 0: custom APIs will run before the default APIs, 1: after, -1: reserved to default APIs
-  parsingFunction?: TExplorerParsingFunction;
-  serviceName?: TRANSACTION_APIS; // in case one would want to overload the default explorers
-  key?: string; // the user's own key to the service
-  keyPropertyName?: string; // the name of the property
 }
 
 export interface CertificateOptions {
@@ -67,6 +59,8 @@ export default class Certificate {
   public transactionId: string;
   public transactionLink: string;
   public version: Versions;
+  public verificationSteps: IVerificationMapItem[];
+  public verifier: Verifier;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -87,10 +81,7 @@ export default class Certificate {
   async init (): Promise<void> {
     // Parse certificate
     await this.parseJson(this.certificateJson);
-  }
-
-  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
-    const verifier = new Verifier({
+    this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       chain: this.chain,
       expires: this.expires,
@@ -103,8 +94,12 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proof: this.proof
     });
-    const verificationStatus = await verifier.verify(stepCallback);
-    this.publicKey = verifier.getIssuingAddress();
+    this.verificationSteps = this.verifier.verificationSteps;
+  }
+
+  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
+    const verificationStatus = await this.verifier.verify(stepCallback);
+    this.publicKey = this.verifier.getIssuingAddress();
     return verificationStatus;
   }
 

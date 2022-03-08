@@ -3,7 +3,7 @@
   "verificationMethod": [
     {
       "id": "#key-1",
-      "controller": "",
+      "controller": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ",
       "type": "EcdsaSecp256k1VerificationKey2019",
       "publicKeyJwk": {
         "kty": "EC",

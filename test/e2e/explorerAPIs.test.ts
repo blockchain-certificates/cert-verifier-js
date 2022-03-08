@@ -1,7 +1,8 @@
 import sinon from 'sinon';
-import Certificate, { ExplorerAPI } from '../../src/certificate';
+import Certificate from '../../src/certificate';
 import FIXTURES from '../fixtures';
 import * as RequestService from '@blockcerts/explorer-lookup/lib/cjs/services/request.js';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 
 describe('explorerAPIs end to end test suite', function () {
   describe('given a custom explorer API with a parsingFunction is set', function () {

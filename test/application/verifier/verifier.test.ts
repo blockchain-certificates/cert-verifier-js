@@ -3,7 +3,7 @@ import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
-import { ExplorerAPI } from 'certificate';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 import { deepCopy } from '../../../src/helpers/object';
 import { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';

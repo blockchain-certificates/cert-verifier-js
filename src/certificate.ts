@@ -13,6 +13,7 @@ import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
 import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
+import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
 export interface ExplorerURLs {
   main: string;
@@ -67,6 +68,8 @@ export default class Certificate {
   public transactionId: string;
   public transactionLink: string;
   public version: Versions;
+  public verificationSteps: IVerificationMapItem[];
+  public verifier: Verifier;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -87,10 +90,7 @@ export default class Certificate {
   async init (): Promise<void> {
     // Parse certificate
     await this.parseJson(this.certificateJson);
-  }
-
-  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
-    const verifier = new Verifier({
+    this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       chain: this.chain,
       expires: this.expires,
@@ -103,8 +103,12 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proof: this.proof
     });
-    const verificationStatus = await verifier.verify(stepCallback);
-    this.publicKey = verifier.getIssuingAddress();
+    this.verificationSteps = this.verifier.verificationSteps;
+  }
+
+  async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
+    const verificationStatus = await this.verifier.verify(stepCallback);
+    this.publicKey = this.verifier.getIssuingAddress();
     return verificationStatus;
   }
 

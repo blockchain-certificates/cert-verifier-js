@@ -19,9 +19,9 @@
       "@context": {
         "id": "@id",
         "type": "@type",
-        "contentMediaType": {"@id": "bc:contentMediaType", "@type": "@id"},
-        "contentEncoding": {"@id": "bc:contentEncoding", "@type": "@id"},
-        "content": {"@id": "bc:content", "@type": "@id"}
+        "contentMediaType": {"@id": "bc:contentMediaType"},
+        "contentEncoding": {"@id": "bc:contentEncoding"},
+        "content": {"@id": "bc:content"}
       }
     },
 

@@ -3,7 +3,7 @@ import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
-import { ExplorerAPI } from 'certificate';
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 import { deepCopy } from '../../../src/helpers/object';
 import { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
@@ -88,6 +88,21 @@ describe('Verifier entity test suite', function () {
             await instance.verify();
             expect(lookForTxSpy.firstCall.args[0].explorerAPIs).toEqual(parametersWithExporerAPI.explorerAPIs);
             lookForTxSpy.restore();
+          });
+        });
+      });
+
+      describe('verify method', function () {
+        describe('when starting a new verification process', function () {
+          it('should reset the step status property', async function () {
+            const instance = new Verifier(verifierParamFixture);
+            await instance.verify();
+            // @ts-expect-error accessing private field
+            expect((instance._stepsStatuses)).not.toEqual([]);
+            // ignore await
+            void instance.verify();
+            // @ts-expect-error accessing private field
+            expect(instance._stepsStatuses).toEqual([]);
           });
         });
       });

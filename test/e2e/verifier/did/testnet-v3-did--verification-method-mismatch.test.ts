@@ -8,10 +8,10 @@ import fixtureIssuerProfile from '../../../fixtures/issuer-profile.json';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
-    describe('and the verification method refers to a DID', function () {
-      it('should resolve the DID document', async function () {
+    describe('and the verification method does not match the provided issuer profile DID', function () {
+      it('should not verify successfully', async function () {
         sinon.stub(domain.verifier, 'lookForTx').resolves({
-          remoteHash: '9c9df6271c138f1b7eda3c43f0183fabfc52abba202148c6506d8df8b5214fac',
+          remoteHash: 'eb342568f2068271a59daf2db9e8060274aa8f2efcc9c726e094fbe8f1256325',
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           time: '2022-02-03T14:08:54.000Z',
           revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']

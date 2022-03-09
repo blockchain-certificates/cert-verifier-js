@@ -195,7 +195,7 @@ export default class Certificate {
     if (display.contentMediaType !== 'text/html') { // TODO: enum supported content media types
       return display;
     }
-    display.content = await convertHashlink(display.content);
+    display.content = await convertHashlink(display.content, this.hashlinkVerifier);
     return display;
   }
 

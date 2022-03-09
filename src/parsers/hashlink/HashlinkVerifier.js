@@ -9858,7 +9858,14 @@ class HashlinkVerifier {
   }
   verifyHashlinkTable() {
     return __awaiter(this, void 0, void 0, function* () {
-      return Object.keys(this.hashlinkTable).every((hashlink) => __awaiter(this, void 0, void 0, function* () { return yield this.verify(hashlink); }));
+      const hashlinks = Object.keys(this.hashlinkTable);
+      for (let i = 0; i < hashlinks.length; i++) {
+        yield this.verify(hashlinks[i])
+          .catch(error => {
+            throw new Error(error)
+          });
+      }
+      return true;
     });
   }
   /**

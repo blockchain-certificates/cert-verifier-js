@@ -14,6 +14,8 @@ import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import { HashlinkVerifier } from './parsers/hashlink';
+import { VerifierError } from './models';
+import { getText } from './domain/i18n/useCases';
 
 const log = debug('Verifier');
 
@@ -194,7 +196,13 @@ export default class Verifier {
   private async checkImagesIntegrity (): Promise<void> {
     await this._doAction(
       SUB_STEPS.checkImagesIntegrity,
-      async () => await this.hashlinkVerifier.verifyHashlinkTable()
+      async () => {
+        await this.hashlinkVerifier.verifyHashlinkTable()
+          .catch((error) => {
+            console.error('hashlink verification error', error);
+            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
+          });
+      }
     );
   }
 

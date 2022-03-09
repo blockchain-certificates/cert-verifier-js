@@ -13,6 +13,9 @@ import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
 import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
+import { HashlinkVerifier } from './parsers/hashlink/HashlinkVerifier';
+import { BlockcertsV3Display } from './models/BlockcertsV3';
+import convertHashlink from './parsers/helpers/convertHashlink';
 
 export interface ExplorerURLs {
   main: string;
@@ -43,6 +46,7 @@ export default class Certificate {
   public certificateJson: Blockcerts;
   public chain: IBlockchainObject;
   public description?: string; // v1
+  public display?: BlockcertsV3Display;
   public expires: string;
   public explorerAPIs: ExplorerAPI[] = [];
   public id: string;
@@ -67,6 +71,7 @@ export default class Certificate {
   public transactionId: string;
   public transactionLink: string;
   public version: Versions;
+  public hashlinkVerifier: HashlinkVerifier;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -82,6 +87,7 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
+    this.hashlinkVerifier = new HashlinkVerifier();
   }
 
   async init (): Promise<void> {
@@ -113,7 +119,7 @@ export default class Certificate {
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
     }
-    this._setProperties(parsedCertificate);
+    await this._setProperties(parsedCertificate);
   }
 
   private _setOptions (options: CertificateOptions): void {
@@ -130,10 +136,11 @@ export default class Certificate {
     currentLocale.locale = this.locale;
   }
 
-  private _setProperties ({
+  private async _setProperties ({
     certificateImage,
     chain,
     description,
+    display,
     expires,
     id,
     isFormatValid,
@@ -152,7 +159,7 @@ export default class Certificate {
     signatureImage,
     subtitle,
     version
-  }: ParsedCertificate): void {
+  }: ParsedCertificate): Promise<void> {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -174,9 +181,22 @@ export default class Certificate {
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
     this.version = version;
+    this.display = await this.parseHashlinksInDisplay(display);
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();
+  }
+
+  async parseHashlinksInDisplay (display: BlockcertsV3Display): Promise<BlockcertsV3Display> {
+    if (!display) {
+      return;
+    }
+
+    if (display.contentMediaType !== 'text/html') { // TODO: enum supported content media types
+      return display;
+    }
+    display.content = await convertHashlink(display.content);
+    return display;
   }
 
   private _setTransactionDetails (): void {

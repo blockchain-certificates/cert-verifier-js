@@ -9,7 +9,7 @@
     "BlockcertsCredential"
   ],
   "issuer": {
-    "id": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ",
+    "id": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
     "name": "Julien",
     "url": "https://www.hyland.com",
     "description": "",
@@ -30,8 +30,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2022-03-02T11:32:05.101322",
-    "proofValue": "zMcm4LfQFUZkWZxqTNBP9ZEQAoU9ZPoQTmDUh9779Tv8mXQLYduAdBbYxpKqgv1TAFwk6zzarvyuGxU4Xs4zeMX5ARqJ473TaUKLbeRmTKd4VG6qeoXAAnxcki5fmX7F6keFDHLbqKeXkQ5ojMQeeJTx7XMf9oaYVTrepBBzF2yspWxCFfWhXj7g8dDjj6mJV6KmptRcucNzz9V4w6HV6WwqHr2ib38Cr19YWHkzLj8qLj5ZyN94LhWcpoZfKqRETJx2Zdcx18w6rHffUWLSRTiTFkfFn81kfbfbJBiZYA6eWDH6xZu",
+    "created": "2022-03-09T11:13:29.130168",
+    "proofValue": "zMcm4LfQFUZkWZxoa3xWzGXSg6w7xpUS9SqH6j2sMHJLKnR3njk6ziL3tVTjV8no79rx5TpTUffRDG3wkN2WQrh5SNVVJsEZWFmqapvUMTjFohJY1KuqD7a16jsiR72KBcCTzD7FtP3WKreZpGThoMJfEqHC7gFEFusHQjCEmJfPGiL5XseyzsZwqYLsKWfiUJmfS9fisopQSCRT2B6Xk8r2XA1tAFUeskJET19qKzcWuasZw91J8UG3ynRE9padbJoLBwZWVcx6JXNBRhBQDUEHPqhuF1o9kJycpxEZskYgB3rnFqt",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1"
   }

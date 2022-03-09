@@ -13,6 +13,7 @@ import { IVerificationMapItem } from './domain/certificates/useCases/getVerifica
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import { HashlinkVerifier } from './parsers/hashlink';
 
 const log = debug('Verifier');
 
@@ -45,6 +46,7 @@ export default class Verifier {
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private readonly hashlinkVerifier: HashlinkVerifier;
   private localHash: string;
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
@@ -53,12 +55,13 @@ export default class Verifier {
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
+      hashlinkVerifier: HashlinkVerifier;
       receipt: Receipt;
       revocationKey: string;
       transactionId: string;
@@ -71,6 +74,7 @@ export default class Verifier {
     this.expires = expires;
     this.id = id;
     this.issuer = issuer;
+    this.hashlinkVerifier = hashlinkVerifier;
     this.receipt = receipt;
     this.revocationKey = revocationKey;
     this.version = version;
@@ -184,6 +188,13 @@ export default class Verifier {
         chain: this.chain.code,
         explorerAPIs: this.explorerAPIs
       })
+    );
+  }
+
+  private async checkImagesIntegrity (): Promise<void> {
+    await this._doAction(
+      SUB_STEPS.checkImagesIntegrity,
+      async () => await this.hashlinkVerifier.verifyHashlinkTable()
     );
   }
 

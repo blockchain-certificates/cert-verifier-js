@@ -20,6 +20,7 @@ enum SUB_STEPS {
   getIssuerProfile = 'getIssuerProfile',
   parseIssuerKeys = 'parseIssuerKeys',
   compareHashes = 'compareHashes',
+  checkImagesIntegrity = 'checkImagesIntegrity',
   checkMerkleRoot = 'checkMerkleRoot',
   checkReceipt = 'checkReceipt',
   checkIssuerSignature = 'checkIssuerSignature',
@@ -41,7 +42,7 @@ const LABEL = 'Label';
 const LABEL_PENDING = 'LabelPending';
 
 const subStepsMap = {
-  [VerificationSteps.formatValidation]: [SUB_STEPS.getTransactionId, SUB_STEPS.computeLocalHash, SUB_STEPS.fetchRemoteHash, SUB_STEPS.getIssuerProfile, SUB_STEPS.parseIssuerKeys],
+  [VerificationSteps.formatValidation]: [SUB_STEPS.getTransactionId, SUB_STEPS.computeLocalHash, SUB_STEPS.fetchRemoteHash, SUB_STEPS.checkImagesIntegrity, SUB_STEPS.getIssuerProfile, SUB_STEPS.parseIssuerKeys],
   [VerificationSteps.hashComparison]: [SUB_STEPS.compareHashes, SUB_STEPS.checkMerkleRoot, SUB_STEPS.checkReceipt],
   [VerificationSteps.identityVerification]: [SUB_STEPS.controlVerificationMethod, SUB_STEPS.retrieveVerificationMethodPublicKey, SUB_STEPS.deriveIssuingAddressFromPublicKey, SUB_STEPS.compareIssuingAddress],
   [VerificationSteps.statusCheck]: [SUB_STEPS.checkIssuerSignature, SUB_STEPS.checkAuthenticity, SUB_STEPS.checkRevokedStatus, SUB_STEPS.checkExpiresDate]

@@ -41,6 +41,12 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
         label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
         labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
         parentStep: VerificationSteps.formatValidation
+      },
+      {
+        code: SUB_STEPS.checkImagesIntegrity,
+        label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
+        labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
+        parentStep: VerificationSteps.formatValidation
       }
     ]
   },

@@ -35,6 +35,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.getIssuerProfile,
       SUB_STEPS.parseIssuerKeys,
       SUB_STEPS.compareHashes,
+      SUB_STEPS.checkImagesIntegrity,
       SUB_STEPS.checkMerkleRoot,
       SUB_STEPS.checkReceipt,
       SUB_STEPS.controlVerificationMethod,
@@ -48,6 +49,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
     [NETWORKS.testnet]: [
       SUB_STEPS.computeLocalHash,
       SUB_STEPS.compareHashes,
+      SUB_STEPS.checkImagesIntegrity,
       SUB_STEPS.checkReceipt,
       SUB_STEPS.controlVerificationMethod,
       SUB_STEPS.retrieveVerificationMethodPublicKey,

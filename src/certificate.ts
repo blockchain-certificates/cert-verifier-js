@@ -93,6 +93,7 @@ export default class Certificate {
       expires: this.expires,
       id: this.id,
       issuer: this.issuer,
+      hashlinkVerifier: this.hashlinkVerifier,
       receipt: this.receipt,
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
@@ -183,15 +184,16 @@ export default class Certificate {
   }
 
   async parseHashlinksInDisplay (display: BlockcertsV3Display): Promise<BlockcertsV3Display> {
-    if (!display) {
+    const modifiedDisplay = deepCopy<BlockcertsV3Display>(display);
+    if (!modifiedDisplay) {
       return;
     }
 
-    if (display.contentMediaType !== 'text/html') { // TODO: enum supported content media types
-      return display;
+    if (modifiedDisplay.contentMediaType !== 'text/html') { // TODO: enum supported content media types
+      return modifiedDisplay;
     }
-    display.content = await convertHashlink(display.content, this.hashlinkVerifier);
-    return display;
+    modifiedDisplay.content = await convertHashlink(modifiedDisplay.content, this.hashlinkVerifier);
+    return modifiedDisplay;
   }
 
   private _setTransactionDetails (): void {

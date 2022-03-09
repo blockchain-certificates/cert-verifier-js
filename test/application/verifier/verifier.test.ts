@@ -11,6 +11,7 @@ import FIXTURES from '../../fixtures';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { VerificationSteps } from '../../../src/constants/verificationSteps';
+import { HashlinkVerifier } from '../../../src/parsers/hashlink/HashlinkVerifier';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -25,7 +26,8 @@ describe('Verifier entity test suite', function () {
     transactionId: fixture.signature.anchors[0].sourceId,
     version: CERTIFICATE_VERSIONS.V2_0,
     explorerAPIs: undefined,
-    verificationSteps: mainnetMapAssertion
+    verificationSteps: mainnetMapAssertion,
+    hashlinkVerifier: new HashlinkVerifier()
   };
 
   afterEach(function () {
@@ -170,6 +172,7 @@ describe('Verifier entity test suite', function () {
           SUB_STEPS.fetchRemoteHash,
           SUB_STEPS.getIssuerProfile,
           SUB_STEPS.parseIssuerKeys,
+          SUB_STEPS.checkImagesIntegrity,
           SUB_STEPS.compareHashes,
           SUB_STEPS.checkMerkleRoot,
           SUB_STEPS.checkReceipt,

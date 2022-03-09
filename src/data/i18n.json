@@ -44,7 +44,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel": "Compare addresses",
-      "compareIssuingAddressLabelPending": "Comparing addresses"
+      "compareIssuingAddressLabelPending": "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Reason given:",
@@ -146,7 +148,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Dérivation de l'adresse d'émission depuis la clé publique",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Dérivation de l'adresse d'émission depuis la clé publique",
       "compareIssuingAddressLabel":  "Comparaison des adresses",
-      "compareIssuingAddressLabelPending":  "Comparaison des adresses"
+      "compareIssuingAddressLabelPending":  "Comparaison des adresses",
+      "checkImagesIntegrityLabel":  "Vérification de l'Intégrité des Images",
+      "checkImagesIntegrityLabelPending":  "Vérification de l'Intégrité des Images"
     },
     "revocation": {
       "preReason": "Raison :",
@@ -248,7 +252,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derivar la dirección del emisor desde la llave pública",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Derivando la dirección del emisor desde la llave pública",
       "compareIssuingAddressLabel":  "Comparar direcciones",
-      "compareIssuingAddressLabelPending":  "Comparando direcciones"
+      "compareIssuingAddressLabelPending":  "Comparando direcciones",
+      "checkImagesIntegrityLabel":  "Comprobar Integridad de las Imagens",
+      "checkImagesIntegrityLabelPending":  "Comprobando Integridad de las Imagens"
     },
     "revocation": {
       "preReason": "Razón dada:",
@@ -350,7 +356,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Raġuni mogħtija:",
@@ -452,7 +460,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Motivo indicato:",
@@ -554,7 +564,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "理由：",

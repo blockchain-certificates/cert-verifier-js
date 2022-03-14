@@ -1,5 +1,4 @@
-import { HashlinkVerifier } from '../hashlink/HashlinkVerifier';
-import { HashlinkModel } from '../hashlink';
+import { HashlinkVerifier, HashlinkModel } from '@blockcerts/hashlink-verifier';
 
 function replaceHashlinksWithUrls (display: string, urls: string[], hashlinks: string[]): string {
   urls.forEach((url, i) => {

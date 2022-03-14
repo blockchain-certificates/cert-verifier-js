@@ -1,3 +1,5 @@
+import { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
 import parseJSON, { ParsedCertificate } from './parsers/index';
 import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
@@ -12,11 +14,9 @@ import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { SignatureImage } from './models';
 import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
-import { HashlinkVerifier } from './parsers/hashlink/HashlinkVerifier';
 import { BlockcertsV3Display } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
 import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import { ExplorerAPI } from '@blockcerts/explorer-lookup';
 
 export interface ExplorerURLs {
   main: string;

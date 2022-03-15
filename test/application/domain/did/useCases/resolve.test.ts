@@ -26,7 +26,7 @@ describe('domain did resolve test suite', function () {
 
   describe('custom resolver option', function () {
     beforeEach(function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request').resolves('{}');
+      requestStub.resolves('{}');
     });
 
     describe('given no custom resolver is specified', function () {

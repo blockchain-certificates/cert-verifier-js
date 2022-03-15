@@ -1,4 +1,5 @@
 import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import Versions from './constants/certificateVersions';
@@ -13,7 +14,6 @@ import { IVerificationMapItem } from './domain/certificates/useCases/getVerifica
 import { Receipt } from './models/Receipt';
 import { MerkleProof2019 } from './models/MerkleProof2019';
 import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import { HashlinkVerifier } from './parsers/hashlink';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 

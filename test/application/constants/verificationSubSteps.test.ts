@@ -18,6 +18,12 @@ const expectedSubSteps = {
     labelPending: language.checkExpiresDateLabelPending,
     parentStep: VerificationSteps.statusCheck
   },
+  [SUB_STEPS.checkImagesIntegrity]: {
+    code: SUB_STEPS.checkImagesIntegrity,
+    label: language.checkImagesIntegrityLabel,
+    labelPending: language.checkImagesIntegrityLabelPending,
+    parentStep: VerificationSteps.formatValidation
+  },
   [SUB_STEPS.checkIssuerSignature]: {
     code: SUB_STEPS.checkIssuerSignature,
     label: language.checkIssuerSignatureLabel,

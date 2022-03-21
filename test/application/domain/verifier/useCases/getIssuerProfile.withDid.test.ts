@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import fixtureBlockcertsV3Did from '../../../../fixtures/v3/testnet-v3-did.json';
-import { Issuer } from '../../../../../src/models/Issuer';
+import type { Issuer } from '../../../../../src/models/Issuer';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../../fixtures/issuer-profile.json';

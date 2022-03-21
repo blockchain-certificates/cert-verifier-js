@@ -1,15 +1,16 @@
 import parseV1 from './parseV1';
 import parseV2 from './parseV2';
 import parseV3 from './parseV3';
-import { IBlockchainObject } from '../constants/blockchains';
-import Versions from '../constants/certificateVersions';
-import { Issuer } from '../models/Issuer';
-import { MerkleProof2019 } from '../models/MerkleProof2019';
-import { Blockcerts } from '../models/Blockcerts';
-import { Receipt } from '../models/Receipt';
-import { SignatureImage } from '../models';
-import { BlockcertsVersion, retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
-import { BlockcertsV3Display } from '../models/BlockcertsV3';
+import type { IBlockchainObject } from '../constants/blockchains';
+import type Versions from '../constants/certificateVersions';
+import type { Issuer } from '../models/Issuer';
+import type { MerkleProof2019 } from '../models/MerkleProof2019';
+import type { Blockcerts } from '../models/Blockcerts';
+import type { Receipt } from '../models/Receipt';
+import type { SignatureImage } from '../models';
+import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
+import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
+import type { BlockcertsV3Display } from '../models/BlockcertsV3';
 
 export const versionParserMap = {
   1: parseV1,

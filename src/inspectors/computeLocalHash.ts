@@ -6,7 +6,7 @@ import sha256 from 'sha256';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
-import { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
+import type { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
 import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts';
 
 export function getUnmappedFields (normalized: string): string[] | null {

@@ -4,12 +4,14 @@
  * @param issuerProfileJson
  * @returns {*}
  */
-export default function parseRevocationKey (issuerProfileJson) {
+import type { Issuer } from '../../../models/Issuer';
+
+export default function parseRevocationKey (issuerProfileJson?: Issuer): string {
   if (!issuerProfileJson || !Object.prototype.hasOwnProperty.call(issuerProfileJson, 'revocationKeys')) {
-    return null;
+    return '';
   }
   if (issuerProfileJson.revocationKeys.length > 0) {
     return issuerProfileJson.revocationKeys[0].key;
   }
-  return null;
+  return '';
 }

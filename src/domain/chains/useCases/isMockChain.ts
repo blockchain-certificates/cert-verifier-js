@@ -1,5 +1,5 @@
 import { BLOCKCHAINS } from '../../../constants';
-import { IBlockchainObject } from '../../../constants/blockchains';
+import type { IBlockchainObject } from '../../../constants/blockchains';
 
 export default function isMockChain (chain: IBlockchainObject): boolean {
   if (chain) {

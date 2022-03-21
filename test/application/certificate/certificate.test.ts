@@ -1,7 +1,7 @@
 import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
-import { CertificateOptions } from '../../../src/certificate';
-import { TransactionData } from '../../../src/models/TransactionData';
+import type { CertificateOptions } from '../../../src/certificate';
+import type { TransactionData } from '../../../src/models/TransactionData';
 import domain from '../../../src/domain';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 

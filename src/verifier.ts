@@ -1,19 +1,19 @@
-import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
-import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
+import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import Versions from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
-import { Blockcerts } from './models/Blockcerts';
-import { IBlockchainObject } from './constants/blockchains';
-import { Issuer, IssuerPublicKeyList } from './models/Issuer';
+import type { Blockcerts } from './models/Blockcerts';
+import type { IBlockchainObject } from './constants/blockchains';
+import type { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
-import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import { Receipt } from './models/Receipt';
-import { MerkleProof2019 } from './models/MerkleProof2019';
-import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { Receipt } from './models/Receipt';
+import type { MerkleProof2019 } from './models/MerkleProof2019';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 

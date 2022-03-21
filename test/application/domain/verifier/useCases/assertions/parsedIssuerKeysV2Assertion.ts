@@ -1,4 +1,4 @@
-import { IssuerPublicKeyList } from '../../../../../../src/models/Issuer';
+import type { IssuerPublicKeyList } from '../../../../../../src/models/Issuer';
 
 const keyObjectsAssertion: IssuerPublicKeyList = {
   '0x41cDa1D87Fd6297c5ea4C8BE56c41A1276956EF1': {

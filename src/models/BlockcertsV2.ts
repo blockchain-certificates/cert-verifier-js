@@ -1,5 +1,5 @@
-import { JsonLDContext } from './Blockcerts';
-import { MerkleProof2017 } from './MerkleProof2017';
+import type { JsonLDContext } from './Blockcerts';
+import type { MerkleProof2017 } from './MerkleProof2017';
 
 interface RecipientProfile {
   type: string[];

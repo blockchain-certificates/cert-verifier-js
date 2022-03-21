@@ -1,10 +1,11 @@
 import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
 import { SUB_STEPS } from '../constants/verificationSubSteps';
-import Versions, { isV3 } from '../constants/certificateVersions';
+import type Versions from '../constants/certificateVersions';
+import { isV3 } from '../constants/certificateVersions';
 import { toByteArray } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
-import { Receipt } from '../models/Receipt';
+import type { Receipt } from '../models/Receipt';
 
 export default function ensureValidReceipt (receipt: Receipt, version: Versions): void {
   let proofHash = receipt.targetHash;

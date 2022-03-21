@@ -1,5 +1,5 @@
 import { versionParserMap } from '../index';
-import { JsonLDContext } from '../../models/Blockcerts';
+import type { JsonLDContext } from '../../models/Blockcerts';
 import { isString } from '../../helpers/string';
 import Versions from '../../constants/certificateVersions';
 

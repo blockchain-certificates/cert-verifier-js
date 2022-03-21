@@ -1,4 +1,4 @@
-import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 interface IDidContext {
   '@base': string;

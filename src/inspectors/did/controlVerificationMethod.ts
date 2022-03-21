@@ -1,4 +1,4 @@
-import { IDidDocument } from '../../models/DidDocument';
+import type { IDidDocument } from '../../models/DidDocument';
 import { VerifierError } from '../../models';
 import { SUB_STEPS } from '../../constants';
 import domain from '../../domain';

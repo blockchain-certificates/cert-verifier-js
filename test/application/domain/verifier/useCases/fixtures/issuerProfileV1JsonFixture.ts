@@ -1,4 +1,4 @@
-import { Issuer } from '../../../../../../src/models/Issuer';
+import type { Issuer } from '../../../../../../src/models/Issuer';
 
 const issuerProfile: Issuer = {
   issuerKeys: [

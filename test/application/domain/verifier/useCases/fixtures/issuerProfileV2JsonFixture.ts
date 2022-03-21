@@ -1,4 +1,4 @@
-import { Issuer } from '../../../../../../src/models/Issuer';
+import type { Issuer } from '../../../../../../src/models/Issuer';
 
 const issuerProfile: Issuer = {
   '@context': ['https://w3id.org/openbadges/v2', 'https://w3id.org/blockcerts/v2'],

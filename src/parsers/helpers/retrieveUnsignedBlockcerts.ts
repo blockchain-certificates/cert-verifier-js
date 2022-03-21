@@ -1,6 +1,6 @@
-import { Blockcerts, UnsignedBlockcerts } from '../../models/Blockcerts';
-import { BlockcertsV3 } from '../../models/BlockcertsV3';
-import { BlockcertsV2 } from '../../models/BlockcertsV2';
+import type { Blockcerts, UnsignedBlockcerts } from '../../models/Blockcerts';
+import type { BlockcertsV3 } from '../../models/BlockcertsV3';
+import type { BlockcertsV2 } from '../../models/BlockcertsV2';
 import { isV3 } from '../../constants/certificateVersions';
 import { retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
 

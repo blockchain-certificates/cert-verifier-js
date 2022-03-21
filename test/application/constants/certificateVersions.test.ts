@@ -1,4 +1,5 @@
-import Versions, { isV1, isV3 } from '../../../src/constants/certificateVersions';
+import type Versions from '../../../src/constants/certificateVersions';
+import { isV1, isV3 } from '../../../src/constants/certificateVersions';
 
 describe('certificateVersions test suite', function () {
   describe('isV1 method', function () {

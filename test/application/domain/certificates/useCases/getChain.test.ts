@@ -122,7 +122,7 @@ describe('domain certificates get chain use case test suite', function () {
 
   describe('given it is called without a signature', function () {
     const addressFixture = '1234567890abcdefghij';
-    const result = domain.certificates.getChain(addressFixture);
+    const result = (domain.certificates as any).getChain(addressFixture);
     const assertion = BLOCKCHAINS.bitcoin;
 
     it('should return the correct the chain object', function () {

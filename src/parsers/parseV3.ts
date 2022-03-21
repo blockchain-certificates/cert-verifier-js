@@ -1,10 +1,10 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
 import domain from '../domain';
-import { Issuer } from '../models/Issuer';
-import { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
-import { BlockcertsV3 } from '../models/BlockcertsV3';
-import { ParsedCertificate } from './index';
-import Versions from '../constants/certificateVersions';
+import type { Issuer } from '../models/Issuer';
+import type { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
+import type { BlockcertsV3 } from '../models/BlockcertsV3';
+import type { ParsedCertificate } from './index';
+import type Versions from '../constants/certificateVersions';
 
 function parseSignature (signature): ProofValueMerkleProof2019 {
   const base58Decoder = new Decoder(signature.proofValue);

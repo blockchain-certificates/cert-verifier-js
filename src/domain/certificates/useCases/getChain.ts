@@ -1,9 +1,10 @@
-import { BLOCKCHAINS, IBlockchainObject } from '../../../constants/blockchains';
+import type { IBlockchainObject } from '../../../constants/blockchains';
+import { BLOCKCHAINS } from '../../../constants/blockchains';
 import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
 import { capitalize } from '../../../helpers/string';
-import { Receipt } from '../../../models/Receipt';
-import { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
+import type { Receipt } from '../../../models/Receipt';
+import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 
 // merkleRoot2019: see https://w3c-dvcg.github.io/lds-merkle-proof-2019/#blockchain-keymap
 function getMerkleRoot2019Chain (anchor): IBlockchainObject {

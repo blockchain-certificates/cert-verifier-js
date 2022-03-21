@@ -2,7 +2,7 @@ import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
 import { SUB_STEPS } from '../constants/verificationSubSteps';
 import { getText } from '../domain/i18n/useCases';
-import { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer';
+import type { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer';
 
 function getCaseInsensitiveKey (obj: IssuerPublicKeyList, value: string): ParsedKeyObjectV2 {
   let key = null;

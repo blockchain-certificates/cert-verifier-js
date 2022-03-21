@@ -2,8 +2,8 @@ import { dateToUnixTimestamp } from '../../../helpers/date';
 import { SUB_STEPS } from '../../../constants';
 import { Key, VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
-import { NullableNumber } from '../../../models/helpers';
-import { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
+import type { NullableNumber } from '../../../models/helpers';
+import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
 
 /**
  * createKeyObject

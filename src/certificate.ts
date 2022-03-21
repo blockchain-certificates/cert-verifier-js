@@ -1,22 +1,24 @@
-import { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
-import parseJSON, { ParsedCertificate } from './parsers/index';
-import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
+import type { ParsedCertificate } from './parsers/index';
+import parseJSON from './parsers/index';
+import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
+import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
-import { Blockcerts } from './models/Blockcerts';
-import { IBlockchainObject } from './constants/blockchains';
-import Versions from './constants/certificateVersions';
+import type { Blockcerts } from './models/Blockcerts';
+import type { IBlockchainObject } from './constants/blockchains';
+import type Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
-import { Issuer } from './models/Issuer';
-import { Receipt } from './models/Receipt';
-import { MerkleProof2019 } from './models/MerkleProof2019';
-import { SignatureImage } from './models';
-import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
-import { BlockcertsV3Display } from './models/BlockcertsV3';
+import type { Issuer } from './models/Issuer';
+import type { Receipt } from './models/Receipt';
+import type { MerkleProof2019 } from './models/MerkleProof2019';
+import type { SignatureImage } from './models';
+import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
+import type { BlockcertsV3Display } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
-import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
 export interface ExplorerURLs {
   main: string;

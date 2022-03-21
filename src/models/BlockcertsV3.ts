@@ -1,6 +1,6 @@
-import { Issuer } from './Issuer';
-import { MerkleProof2019 } from './MerkleProof2019';
-import { JsonLDContext } from './Blockcerts';
+import type { Issuer } from './Issuer';
+import type { MerkleProof2019 } from './MerkleProof2019';
+import type { JsonLDContext } from './Blockcerts';
 
 export interface VerifiableCredential {
   '@context': JsonLDContext;

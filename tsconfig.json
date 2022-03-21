@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "target": "es6",

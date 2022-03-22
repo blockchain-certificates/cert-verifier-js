@@ -1,9 +1,9 @@
 import domain from '../domain';
 import { CERTIFICATE_VERSIONS } from '../constants';
 import getSignatureImages from './helpers/getSignatureImage';
-import { IBlockchainObject } from '../constants/blockchains';
-import { BlockcertsV2 } from '../models/BlockcertsV2';
-import { ParsedCertificate } from './index';
+import type { IBlockchainObject } from '../constants/blockchains';
+import type { BlockcertsV2 } from '../models/BlockcertsV2';
+import type { ParsedCertificate } from './index';
 
 /**
  * parseV2

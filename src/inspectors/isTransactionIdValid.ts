@@ -8,7 +8,7 @@ import { SUB_STEPS } from '../constants/verificationSubSteps';
  * @param transactionId
  * @returns {string}
  */
-export default function isTransactionIdValid (transactionId) {
+export default function isTransactionIdValid (transactionId: string): string {
   if (typeof transactionId === 'string' && transactionId.length > 0) {
     return transactionId;
   } else {

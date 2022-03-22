@@ -1,13 +1,16 @@
 import { NETWORKS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
-import Versions, { isV3 } from '../../../constants/certificateVersions';
-import { IVerificationSubstep, SUB_STEPS, substepsList } from '../../../constants/verificationSubSteps';
-import getMainVerificationSteps, {
+import type Versions from '../../../constants/certificateVersions';
+import { isV3 } from '../../../constants/certificateVersions';
+import type { IVerificationSubstep } from '../../../constants/verificationSubSteps';
+import { SUB_STEPS, substepsList } from '../../../constants/verificationSubSteps';
+import type {
   TVerificationStepsList,
   VerificationSteps
 } from '../../../constants/verificationSteps';
-import { IBlockchainObject } from '../../../constants/blockchains';
+import getMainVerificationSteps from '../../../constants/verificationSteps';
+import type { IBlockchainObject } from '../../../constants/blockchains';
 
 export interface IVerificationMapItem {
   code: VerificationSteps;
@@ -35,6 +38,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
       SUB_STEPS.getIssuerProfile,
       SUB_STEPS.parseIssuerKeys,
       SUB_STEPS.compareHashes,
+      SUB_STEPS.checkImagesIntegrity,
       SUB_STEPS.checkMerkleRoot,
       SUB_STEPS.checkReceipt,
       SUB_STEPS.controlVerificationMethod,
@@ -48,6 +52,7 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
     [NETWORKS.testnet]: [
       SUB_STEPS.computeLocalHash,
       SUB_STEPS.compareHashes,
+      SUB_STEPS.checkImagesIntegrity,
       SUB_STEPS.checkReceipt,
       SUB_STEPS.controlVerificationMethod,
       SUB_STEPS.retrieveVerificationMethodPublicKey,

@@ -1,6 +1,6 @@
 import domain from '../../../../../src/domain';
 import { BLOCKCHAINS } from '../../../../../src';
-import { ITransactionLink } from '../../../../../src/domain/certificates/useCases/getTransactionLink';
+import type { ITransactionLink } from '../../../../../src/domain/certificates/useCases/getTransactionLink';
 
 describe('domain certificates get transaction link use case test suite', function () {
   const transactionIdFixture = 'transaction-id-assertion';
@@ -24,7 +24,7 @@ describe('domain certificates get transaction link use case test suite', functio
 
   describe('given it is called without a chain', function () {
     it('should return null', function () {
-      expect(domain.certificates.getTransactionLink(transactionIdFixture)).toBe(null);
+      expect((domain.certificates as any).getTransactionLink(transactionIdFixture)).toBe(null);
     });
   });
 
@@ -36,7 +36,7 @@ describe('domain certificates get transaction link use case test suite', functio
 
   describe('given it is called without parameter', function () {
     it('should return null', function () {
-      expect(domain.certificates.getTransactionLink()).toBe(null);
+      expect((domain.certificates as any).getTransactionLink()).toBe(null);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { IssuerPublicKeyList } from '../../../src/models/Issuer';
+import type { IssuerPublicKeyList } from '../../../src/models/Issuer';
 import { ensureValidIssuingKey } from '../../../src/inspectors';
 
 describe('ensureValidIssuingKey inspector test suite', function () {

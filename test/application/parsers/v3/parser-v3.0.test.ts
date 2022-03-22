@@ -4,6 +4,9 @@ import parseJSON from '../../../../src/parsers/index';
 import v3IssuerProfile from '../../../assertions/v3.0-issuer-profile.json';
 import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import assertionProofValue from '../../../assertions/testnet-v3.0-did-signature-merkle2019.json';
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 
 const fixture = FIXTURES.BlockcertsV3;
 const assertionIssuerProfile = {
@@ -11,7 +14,7 @@ const assertionIssuerProfile = {
   didDocument
 };
 
-describe('Parser test suite', function () {
+describe('Parser v3 test suite', function () {
   describe('given it is called with a invalid format v3 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
@@ -23,13 +26,21 @@ describe('Parser test suite', function () {
 
   describe('given it is called with valid v3 certificate data', function () {
     let parsedCertificate;
+    let requestStub;
 
     beforeEach(async function () {
+      requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({ url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ` })
+        .resolves(JSON.stringify({ didDocument }));
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      }).resolves(JSON.stringify(v3IssuerProfile));
       parsedCertificate = await parseJSON(fixture);
     });
 
     afterEach(function () {
       parsedCertificate = null;
+      requestStub.restore();
     });
 
     it('should set the chain of the certificate object', function () {
@@ -67,6 +78,10 @@ describe('Parser test suite', function () {
 
     it('should set the the version of the certificate object', function () {
       expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0);
+    });
+
+    it('should return the display property', function () {
+      expect(parsedCertificate.display).toEqual(fixture.display);
     });
 
     describe('when the expirationDate is set', function () {

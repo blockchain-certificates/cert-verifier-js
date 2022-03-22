@@ -1,6 +1,8 @@
-import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import { IBlockchainObject, SupportedChains } from '../../constants/blockchains';
-import { ISecp256k1PublicKeyJwk, publicKeyUInt8ArrayFromJwk } from '../../helpers/keyUtils';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { IBlockchainObject } from '../../constants/blockchains';
+import { SupportedChains } from '../../constants/blockchains';
+import type { ISecp256k1PublicKeyJwk } from '../../helpers/keyUtils';
+import { publicKeyUInt8ArrayFromJwk } from '../../helpers/keyUtils';
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../../helpers/issuingAddress';
 import domain from '../../domain';
 import { baseError } from './index';

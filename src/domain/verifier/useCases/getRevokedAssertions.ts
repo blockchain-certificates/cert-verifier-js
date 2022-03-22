@@ -2,7 +2,7 @@ import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
 import { SUB_STEPS } from '../../../constants';
 import { getText } from '../../i18n/useCases';
-import { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
+import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
 import { safelyAppendUrlParameter } from '../../../helpers/url';
 
 const ASSERTION_ID_NAME: string = 'assertionId';

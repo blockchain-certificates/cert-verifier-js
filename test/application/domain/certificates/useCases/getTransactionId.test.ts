@@ -1,4 +1,5 @@
 import domain from '../../../../../src/domain/index';
+import type { Receipt } from '../../../../../src/models/Receipt';
 
 describe('domain certificates get transaction id use case test suite', function () {
   describe('given it is called with a valid certificate receipt', function () {
@@ -9,7 +10,7 @@ describe('domain certificates get transaction id use case test suite', function 
             sourceId: 'source-id-assertion'
           }]
         };
-        expect(domain.certificates.getTransactionId(receiptFixture)).toBe('source-id-assertion');
+        expect(domain.certificates.getTransactionId(receiptFixture as Receipt)).toBe('source-id-assertion');
       });
     });
 

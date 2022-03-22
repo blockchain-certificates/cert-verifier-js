@@ -1,18 +1,21 @@
-import { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import Versions from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
-import { Blockcerts } from './models/Blockcerts';
-import { IBlockchainObject } from './constants/blockchains';
-import { Issuer, IssuerPublicKeyList } from './models/Issuer';
+import type { Blockcerts } from './models/Blockcerts';
+import type { IBlockchainObject } from './constants/blockchains';
+import type { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps } from './constants/verificationSteps';
 import { SUB_STEPS } from './constants/verificationSubSteps';
-import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import { Receipt } from './models/Receipt';
-import { MerkleProof2019 } from './models/MerkleProof2019';
-import { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { Receipt } from './models/Receipt';
+import type { MerkleProof2019 } from './models/MerkleProof2019';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import { VerifierError } from './models';
+import { getText } from './domain/i18n/useCases';
 
 const log = debug('Verifier');
 
@@ -45,6 +48,7 @@ export default class Verifier {
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private readonly hashlinkVerifier: HashlinkVerifier;
   private localHash: string;
   private issuerPublicKeyList: IssuerPublicKeyList;
   private verificationMethodPublicKey: IDidDocumentPublicKey;
@@ -53,12 +57,13 @@ export default class Verifier {
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
+      hashlinkVerifier: HashlinkVerifier;
       receipt: Receipt;
       revocationKey: string;
       transactionId: string;
@@ -71,6 +76,7 @@ export default class Verifier {
     this.expires = expires;
     this.id = id;
     this.issuer = issuer;
+    this.hashlinkVerifier = hashlinkVerifier;
     this.receipt = receipt;
     this.revocationKey = revocationKey;
     this.version = version;
@@ -184,6 +190,19 @@ export default class Verifier {
         chain: this.chain.code,
         explorerAPIs: this.explorerAPIs
       })
+    );
+  }
+
+  private async checkImagesIntegrity (): Promise<void> {
+    await this._doAction(
+      SUB_STEPS.checkImagesIntegrity,
+      async () => {
+        await this.hashlinkVerifier.verifyHashlinkTable()
+          .catch((error) => {
+            console.error('hashlink verification error', error);
+            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
+          });
+      }
     );
   }
 

@@ -1,7 +1,7 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import { ec } from 'elliptic';
 import { keccak256 } from 'js-sha3';
-import { IBlockchainObject } from '../constants/blockchains';
+import type { IBlockchainObject } from '../constants/blockchains';
 
 export function computeBitcoinAddressFromPublicKey (publicKey: Buffer, chain: IBlockchainObject): string {
   return bitcoin.payments.p2pkh({ pubkey: publicKey, network: bitcoin.networks[chain.code] }).address;

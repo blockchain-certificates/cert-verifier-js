@@ -44,7 +44,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel": "Compare addresses",
-      "compareIssuingAddressLabelPending": "Comparing addresses"
+      "compareIssuingAddressLabelPending": "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Reason given:",
@@ -66,7 +68,6 @@
       "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",
       "couldNotConfirmTx": "Could not confirm the transaction",
       "ensureHashesEqual": "Computed hash does not match remote hash",
-      "ensureIssuerSignature": "Issuer key does not match derived address.",
       "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
       "ensureNotExpired": "This certificate has expired.",
       "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
@@ -98,7 +99,8 @@
       "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
       "parseBlockstreamResponse": "Number of transaction confirmations were less than the minimum required, according to Blockstream API",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
-      "unableToGetRemoteHash": "Unable to get remote hash"
+      "unableToGetRemoteHash": "Unable to get remote hash",
+      "checkImagesIntegrity":"Image integrity verification proved that the content was modified after issuance."
     }
   },
   "fr": {
@@ -146,7 +148,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Dérivation de l'adresse d'émission depuis la clé publique",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Dérivation de l'adresse d'émission depuis la clé publique",
       "compareIssuingAddressLabel":  "Comparaison des adresses",
-      "compareIssuingAddressLabelPending":  "Comparaison des adresses"
+      "compareIssuingAddressLabelPending":  "Comparaison des adresses",
+      "checkImagesIntegrityLabel":  "Vérification de l'Intégrité des Images",
+      "checkImagesIntegrityLabelPending":  "Vérification de l'Intégrité des Images"
     },
     "revocation": {
       "preReason": "Raison :",
@@ -168,7 +172,6 @@
       "checkEtherScanConfirmations": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API EtherScan",
       "couldNotConfirmTx": "Impossible de confirmer la transaction",
       "ensureHashesEqual": "Calcul du hash local différent du hash distant",
-      "ensureIssuerSignature": "La clé de l'émetteur ne correspond pas à l'adresse dérivée",
       "ensureMerkleRootEqual": "Le Merkle root ne correspond pas au hash distant",
       "ensureNotExpired": "Certificat expiré",
       "ensureValidReceipt": "Erreur d'écriture du reçu. Un problème est survenu lors de la navigation de l'arbre Merkle du reçu.",
@@ -200,7 +203,8 @@
       "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
       "parseBlockstreamResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockstream",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
-      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant"
+      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant",
+      "checkImagesIntegrity": "La vérification des images a prouvé que le contenu a été modifié après l'émission."
     }
   },
   "es": {
@@ -248,7 +252,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derivar la dirección del emisor desde la llave pública",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Derivando la dirección del emisor desde la llave pública",
       "compareIssuingAddressLabel":  "Comparar direcciones",
-      "compareIssuingAddressLabelPending":  "Comparando direcciones"
+      "compareIssuingAddressLabelPending":  "Comparando direcciones",
+      "checkImagesIntegrityLabel":  "Comprobar Integridad de las Imagens",
+      "checkImagesIntegrityLabelPending":  "Comprobando Integridad de las Imagens"
     },
     "revocation": {
       "preReason": "Razón dada:",
@@ -270,7 +276,6 @@
       "checkEtherScanConfirmations": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API EtherScan",
       "couldNotConfirmTx": "No se ha podido confirmar la transacción",
       "ensureHashesEqual": "La cadena binaria calculada no corresponde con la cadena binaria remota",
-      "ensureIssuerSignature": "La llave del emisor no corresponde con la dirección obtenida",
       "ensureMerkleRootEqual": "La raíz Merkle no corresponde con la cadena binaria remota",
       "ensureNotExpired": "Este certificado ha expirado",
       "ensureValidReceipt": "El recibo está malformado. Hubo un problema navegando el árbol Merkle en el recibo",
@@ -302,7 +307,8 @@
       "parseBlockCypherResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockcypher",
       "parseBlockstreamResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockstream",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
-      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota"
+      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota",
+      "checkImagesIntegrity": "La verificación de la integridad de los imagens provó alteración del contenido después de la emisión."
     }
   },
   "mt": {
@@ -350,7 +356,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Raġuni mogħtija:",
@@ -372,7 +380,6 @@
       "checkEtherScanConfirmations": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont EtherScan API",
       "couldNotConfirmTx": "Ma setgħetx tiġi kkonfermata t-tranżazzjoni",
       "ensureHashesEqual": "Il-hash ikkalkulat ma jikkorrispondix mar-remote hash",
-      "ensureIssuerSignature": "Iċ-ċavetta tal-emittent ma taqbilx mal-indirizz derivat",
       "ensureMerkleRootEqual": "Merkle root ma taqbilx mar-remote hash",
       "ensureNotExpired": "Dan iċ-ċertifikat skada",
       "ensureValidReceipt": "L-irċevuta hija malformata. Kien hemm problema fin-navigazzjoni tal-merkle tree fl-irċevuta",
@@ -404,7 +411,8 @@
       "parseBlockCypherResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockcypher API",
       "parseBlockstreamResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockstream API",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
-      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash"
+      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash",
+      "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   },
   "it-IT": {
@@ -452,7 +460,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "Motivo indicato:",
@@ -474,7 +484,6 @@
       "checkEtherScanConfirmations": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API EtherScan",
       "couldNotConfirmTx": "Impossibile confermare la transazione",
       "ensureHashesEqual": "L'hash calcolato non corrisponde all'hash remoto",
-      "ensureIssuerSignature": "La chiave dell'issuer non corrisponde all'indirizzo derivato.",
       "ensureMerkleRootEqual": "La radice di Merkle non corrisponde all'hash remoto.",
       "ensureNotExpired": "Questo certificato è scaduto.",
       "ensureValidReceipt": "La ricevuta è malformata. C'è stato un problema nella navigazione dell'albero di Merkle nella ricevuta.",
@@ -506,7 +515,8 @@
       "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
       "parseBlockstreamResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockstream",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
-      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto"
+      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto",
+      "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   },
   "ja": {
@@ -554,7 +564,9 @@
       "deriveIssuingAddressFromPublicKeyLabel": "Derive Issuing Address from Public Key",
       "deriveIssuingAddressFromPublicKeyLabelPending": "Deriving Issuing Address from Public Key",
       "compareIssuingAddressLabel":  "Compare addresses",
-      "compareIssuingAddressLabelPending":  "Comparing addresses"
+      "compareIssuingAddressLabelPending":  "Comparing addresses",
+      "checkImagesIntegrityLabel":  "Verify Images Integrity",
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
     },
     "revocation": {
       "preReason": "理由：",
@@ -576,7 +588,6 @@
       "checkEtherScanConfirmations": "EtherScan APIによると、必要最小限の取引確認の数に達しませんでした",
       "couldNotConfirmTx": "取引を確認できませんでした",
       "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
-      "ensureIssuerSignature": "発行者の鍵が得られたアドレスと一致しませんでした",
       "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",
       "ensureNotExpired": "この証明書の有効期限が切れています",
       "ensureValidReceipt": "レシートが異常です。レシート内のMerkle treeを辿る際に問題が発生しました。",
@@ -608,7 +619,8 @@
       "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseBlockstreamResponse": "Blockstream APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseIssuerKeys": "発行者識別データからJSONをパースできません",
-      "unableToGetRemoteHash": "リモートハッシュを取得できません"
+      "unableToGetRemoteHash": "リモートハッシュを取得できません",
+      "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   }
 }

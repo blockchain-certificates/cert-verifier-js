@@ -9,12 +9,20 @@ export default [{
   code: VerificationSteps.formatValidation,
   label: defaultLanguageSet.steps.formatValidationLabel,
   labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
-  subSteps: [{
-    code: SUB_STEPS.computeLocalHash,
-    label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-    labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-    parentStep: VerificationSteps.formatValidation
-  }]
+  subSteps: [
+    {
+      code: SUB_STEPS.computeLocalHash,
+      label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+      labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
+      parentStep: VerificationSteps.formatValidation
+    },
+    {
+      code: SUB_STEPS.checkImagesIntegrity,
+      label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
+      labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
+      parentStep: VerificationSteps.formatValidation
+    }
+  ]
 }, {
   code: VerificationSteps.hashComparison,
   label: defaultLanguageSet.steps.hashComparisonLabel,

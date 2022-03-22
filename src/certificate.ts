@@ -1,19 +1,24 @@
+import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
-import parseJSON, { ParsedCertificate } from './parsers/index';
-import Verifier, { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
-import { DEFAULT_OPTIONS, TRANSACTION_APIS } from './constants';
+import type { ParsedCertificate } from './parsers/index';
+import parseJSON from './parsers/index';
+import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
+import Verifier from './verifier';
+import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
-import { Blockcerts } from './models/Blockcerts';
-import { IBlockchainObject } from './constants/blockchains';
-import Versions from './constants/certificateVersions';
+import type { Blockcerts } from './models/Blockcerts';
+import type { IBlockchainObject } from './constants/blockchains';
+import type Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
-import { Issuer } from './models/Issuer';
-import { Receipt } from './models/Receipt';
-import { MerkleProof2019 } from './models/MerkleProof2019';
-import { SignatureImage } from './models';
-import { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
-import { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import type { Issuer } from './models/Issuer';
+import type { Receipt } from './models/Receipt';
+import type { MerkleProof2019 } from './models/MerkleProof2019';
+import type { SignatureImage } from './models';
+import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
+import type { BlockcertsV3Display } from './models/BlockcertsV3';
+import convertHashlink from './parsers/helpers/convertHashlink';
+import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
 export interface ExplorerURLs {
   main: string;
@@ -35,6 +40,7 @@ export default class Certificate {
   public certificateJson: Blockcerts;
   public chain: IBlockchainObject;
   public description?: string; // v1
+  public display?: BlockcertsV3Display;
   public expires: string;
   public explorerAPIs: ExplorerAPI[] = [];
   public id: string;
@@ -59,6 +65,7 @@ export default class Certificate {
   public transactionId: string;
   public transactionLink: string;
   public version: Versions;
+  public hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
 
@@ -76,6 +83,7 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
+    this.hashlinkVerifier = new HashlinkVerifier();
   }
 
   async init (): Promise<void> {
@@ -87,6 +95,7 @@ export default class Certificate {
       expires: this.expires,
       id: this.id,
       issuer: this.issuer,
+      hashlinkVerifier: this.hashlinkVerifier,
       receipt: this.receipt,
       revocationKey: this.revocationKey,
       transactionId: this.transactionId,
@@ -108,7 +117,7 @@ export default class Certificate {
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
     }
-    this._setProperties(parsedCertificate);
+    await this._setProperties(parsedCertificate);
   }
 
   private _setOptions (options: CertificateOptions): void {
@@ -125,10 +134,11 @@ export default class Certificate {
     currentLocale.locale = this.locale;
   }
 
-  private _setProperties ({
+  private async _setProperties ({
     certificateImage,
     chain,
     description,
+    display,
     expires,
     id,
     isFormatValid,
@@ -147,7 +157,7 @@ export default class Certificate {
     signatureImage,
     subtitle,
     version
-  }: ParsedCertificate): void {
+  }: ParsedCertificate): Promise<void> {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
     this.chain = chain;
@@ -169,9 +179,23 @@ export default class Certificate {
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
     this.version = version;
+    this.display = await this.parseHashlinksInDisplay(display);
 
     // Transaction ID, link & raw link
     this._setTransactionDetails();
+  }
+
+  async parseHashlinksInDisplay (display: BlockcertsV3Display): Promise<BlockcertsV3Display> {
+    const modifiedDisplay = deepCopy<BlockcertsV3Display>(display);
+    if (!modifiedDisplay) {
+      return;
+    }
+
+    if (modifiedDisplay.contentMediaType !== 'text/html') { // TODO: enum supported content media types
+      return modifiedDisplay;
+    }
+    modifiedDisplay.content = await convertHashlink(modifiedDisplay.content, this.hashlinkVerifier);
+    return modifiedDisplay;
   }
 
   private _setTransactionDetails (): void {

@@ -1,4 +1,4 @@
-import { IDidDocument } from '../../../models/DidDocument';
+import type { IDidDocument } from '../../../models/DidDocument';
 import { request } from '@blockcerts/explorer-lookup';
 import DidResolver from '../valueObjects/didResolver';
 

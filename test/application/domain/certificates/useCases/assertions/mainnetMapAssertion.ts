@@ -1,5 +1,5 @@
 import { VerificationSteps } from '../../../../../../src/constants/verificationSteps';
-import { IVerificationMapItem } from '../../../../../../src/domain/certificates/useCases/getVerificationMap';
+import type { IVerificationMapItem } from '../../../../../../src/domain/certificates/useCases/getVerificationMap';
 import { SUB_STEPS } from '../../../../../../src/constants/verificationSubSteps';
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
@@ -40,6 +40,12 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
         code: SUB_STEPS.parseIssuerKeys,
         label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
         labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
+        parentStep: VerificationSteps.formatValidation
+      },
+      {
+        code: SUB_STEPS.checkImagesIntegrity,
+        label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
+        labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
         parentStep: VerificationSteps.formatValidation
       }
     ]

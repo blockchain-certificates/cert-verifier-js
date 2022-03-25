@@ -22,7 +22,7 @@ async function decodeHashlinks (hashlinks: string[], hl: HashlinkVerifier): Prom
 export default async function convertHashlink (display: string, hl: HashlinkVerifier): Promise<string> {
   const hashlinkTest = /hl:{1}[a-zA-Z0-9]+:{1}[a-zA-Z0-9]+/gm;
   const hashlinksMatch = [...display.matchAll(hashlinkTest)];
-  const hashlinks = hashlinksMatch.filter(value => !!value).map(match => match[0]);
+  const hashlinks = hashlinksMatch.map(match => match[0]).filter(value => !!value);
 
   if (hashlinks.length) {
     const urls: string[] = await decodeHashlinks(hashlinks, hl);

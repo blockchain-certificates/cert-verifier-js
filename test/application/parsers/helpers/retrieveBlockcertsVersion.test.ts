@@ -34,20 +34,6 @@ describe('retrieveBlockcertsVersion test suite', function () {
     });
   });
 
-  describe('when provided with the contexts of a v3 alpha certificate', function () {
-    beforeEach(function () {
-      output = retrieveBlockcertsVersion(Fixtures.BlockcertsV3AlphaCustomContext['@context']);
-    });
-
-    it('should return versionNumber 3', function () {
-      expect(output.versionNumber).toBe(3);
-    });
-
-    it('should return version v3 alpha', function () {
-      expect(output.version).toBe(Versions.V3_0_alpha);
-    });
-  });
-
   describe('when provided with the contexts of a v3 beta certificate', function () {
     beforeEach(function () {
       output = retrieveBlockcertsVersion(Fixtures.BlockcertsV3Beta['@context']);

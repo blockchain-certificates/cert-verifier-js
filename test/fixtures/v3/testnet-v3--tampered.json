@@ -1,15 +1,9 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    {
-      "Blockcerts": {
-        "@id": "bc:Blockcerts",
-        "@type": "@id"
-      }
-    },
     "https://w3id.org/blockcerts/v3"
   ],
-  "id": "urn:uuid:13172c8c-efa5-49e1-9f69-a67ba6bd9937",
+  "id": "13172c8c-efa5-49e1-9f69-a67ba6bd9937",
   "type": [
     "VerifiableCredential",
     "BlockcertsCredential"
@@ -27,8 +21,8 @@
     "name": "Julien Fraichot",
     "claim": {
       "type": "Blockcerts",
-      "id": "urn:uuid:41015b98-fc99-447c-b211-ef6782147fb3",
-      "name": "V3 issuance",
+      "id": "41015b98-fc99-447c-b211-ef6782147fb3",
+      "name": "Julien is the best",
       "description": "A v3 working example for test purposes",
       "criteria": "it has been issued"
     }
@@ -40,9 +34,9 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2022-04-06T09:36:47.862257",
-    "proofValue": "zMcm4LfQFUZkWZyNC8JAymYnje51grRtJtZ1eajGCTciYmMf8XBXQSr1SYuPDGryJUJpiy1E3NUb7tHQ2wtdLtf8nqHbiDxXE377rA1vX6PkA1rJic9ezdQMDB1YhLULxTMb1y1EsXpeFRMaawJDq8eL2hAWtWYfqz5hPGRAFBYLVWjeRQs2evu8o2RcQMiPpatpQMPUWs9BBij6oPsFRoD3TNHo4whPTF8emQyNAGbHCgeso2i7gFokFVvdwP1mcJH6uy2hjjAGoxqyDWxPrqFSM5Ts59TcUW4Hysuz8rs5n22dh12",
+    "created": "2022-03-08T12:20:39.213837",
+    "proofValue": "zMcm4LfQFUZkWZxnps1K3ocCueuL61zWMKNhX5Z2xgmDBFadyvLeTMpk4VCYSHG1eVrDHPwd9mQD1HfnKqhP4hxRygN4PeX1njgxV5VZ5u5kUed8FZprNtYBUrfoYUcTo62PR9thUY6qmrGAxtQ9jD2bSFTutpnsZcGGY3tQUWixwA5D58v7CEp3BWCj4ARJ4afJ23AvbCzscRaiYfyx1Te7oES1cuQ2A5WNPBsaJYUaUGLSwrn4mBUk6aFRd1vVCDKXMPnXLxYHxroZcD2xwXktRUBdJQyYfFDzGsgi6Uj4hYvFCQF",
     "proofPurpose": "assertionMethod",
-    "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-2"
+    "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1"
   }
 }

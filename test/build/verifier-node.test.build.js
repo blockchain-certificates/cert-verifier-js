@@ -27,7 +27,7 @@ describe('verifier build test suite', function () {
   });
 
   it('works as expected with a v3 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
+    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3CustomContext);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.message).toEqual({

@@ -1,12 +1,13 @@
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import FIXTURES from '../../fixtures';
-import signatureAssertion from '../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
-import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
+import signatureAssertion from '../../assertions/testnet-v3.0-did-signature-merkle2019.json';
+import issuerProfileAssertion from '../../assertions/v3.0-issuer-profile.json';
+import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
-const assertionTransactionId = '1e956a31736ad3bddf6302ba56050a3a36983610afeb9919256fd4d82e5dc175';
+const assertionTransactionId = '140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e';
 
 describe('Certificate entity test suite', function () {
-  const fixture = FIXTURES.BlockcertsV3AlphaCustomContext;
+  const fixture = FIXTURES.BlockcertsV3;
 
   describe('constructor method', function () {
     describe('given it is called with valid v3 certificate data', function () {
@@ -22,7 +23,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0_alpha);
+        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0);
       });
 
       it('should set the decoded signature as the receipt to the certificate object', function () {
@@ -42,12 +43,14 @@ describe('Certificate entity test suite', function () {
         expect(certificate.expires).toEqual((fixture as any).expirationDate);
       });
 
-      it('should set the metadataJson property', function () {
-        expect(certificate.metadataJson).toEqual(fixture.metadataJson);
+      it('should set the metadata property', function () {
+        expect(certificate.metadataJson).toEqual(fixture.metadata);
       });
 
       it('should set the issuer property', function () {
-        expect(certificate.issuer).toEqual(issuerProfileAssertion);
+        const expectedOutput = JSON.parse(JSON.stringify(issuerProfileAssertion));
+        expectedOutput.didDocument = didDocument;
+        expect(certificate.issuer).toEqual(expectedOutput);
       });
 
       it('should set the issuedOn property', function () {

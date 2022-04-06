@@ -1,12 +1,12 @@
 import BlockcertsV3 from './v3/testnet-v3-did.json';
 import BlockcertsV3Hashlink from './v3/testnet-v3-hashlink.json';
 import BlockcertsV3NoHashlink from './v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
+import BlockcertsV3Tampered from './v3/testnet-v3--tampered.json';
 import BlockcertsV3Png from './v3/testnet-v3.png.json';
+import BlockcertsV3CustomContext from './v3/testnet-v3-custom-context.json';
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
 import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
-import BlockcertsV3AlphaTampered from './v3/blockcerts-3.0-alpha--tampered.json';
-import BlockcertsV3AlphaNoIssuerProfile from './v3/blockcerts-3.0-alpha--no-issuer-profile.json';
 import EthereumMainV2Valid from './v2/ethereum-main-valid-2.0.json';
 import EthereumMainInvalidMerkleRoot from './v2/ethereum-merkle-root-unmatch-2.0.json';
 import EthereumMainRevoked from './v2/ethereum-revoked-2.0.json';
@@ -34,8 +34,8 @@ export default {
   BlockcertsV3Beta,
   BlockcertsV3Alpha,
   BlockcertsV3AlphaCustomContext,
-  BlockcertsV3AlphaTampered,
-  BlockcertsV3AlphaNoIssuerProfile,
+  BlockcertsV3CustomContext,
+  BlockcertsV3Tampered,
   EthereumMainV2Valid,
   EthereumMainInvalidMerkleRoot,
   EthereumMainRevoked,

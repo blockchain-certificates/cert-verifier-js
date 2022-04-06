@@ -50,7 +50,9 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
     format: 'application/nquads',
     documentLoader: customLoader
   };
-  if (expandContext) {
+  // turning off as expandContext is not an option of pyld and it messes with hashing
+  // eslint-disable-next-line no-constant-condition
+  if (false) {
     normalizeArgs.expandContext = expandContext;
   }
 

@@ -12,12 +12,12 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           sinon.stub(domain.verifier, 'lookForTx').resolves({
-            remoteHash: '2b065c69c70432e9f082629939733afd2343e83f45939519986e9a09cf8ccd08',
-            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
-            time: '2020-03-11T14:48:23.000Z',
-            revokedAddresses: []
+            remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
+            issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+            time: '2022-04-05T18:45:30.000Z',
+            revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3Alpha);
+          certificate = new Certificate(FIXTURES.BlockcertsV3);
           await certificate.init();
         });
 
@@ -52,7 +52,7 @@ describe('Certificate test suite', function () {
 
         it('should set the publicKey property on the certificate', async function () {
           await certificate.verify();
-          expect(certificate.publicKey).toBe('0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3');
+          expect(certificate.publicKey).toBe('mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am');
         });
       });
 
@@ -61,12 +61,12 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           sinon.stub(domain.verifier, 'lookForTx').resolves({
-            remoteHash: 'a16e3677d1f0ddae82642b6995937d3082fdef3323431cf6d0ada4acb893f4cc',
-            issuingAddress: '0x7e30a37763e6ba1ffede1750bbefb4c60b17a1b3',
-            time: '2020-02-04T13:52:09.000Z',
-            revokedAddresses: []
+            remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
+            issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+            time: '2022-04-05T18:45:30.000Z',
+            revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaTampered);
+          certificate = new Certificate(FIXTURES.BlockcertsV3Tampered);
           await certificate.init();
         });
 
@@ -95,12 +95,12 @@ describe('Certificate test suite', function () {
 
         beforeEach(async function () {
           sinon.stub(domain.verifier, 'lookForTx').resolves({
-            remoteHash: '2c7afa4f8192bd8d0e243da2044306b2183527270ef6fd76854c34a1288756ba',
-            issuingAddress: 'n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4',
-            time: '2021-05-06T14:35:09.000Z',
-            revokedAddresses: ['n2h5AGW1xtnSFeXNr6SCSwXty6kP42Pri4']
+            remoteHash: '731225437616acfe1d4d3d671a27afefc15576c7d9911dab4acaf63f8fa09e8d',
+            issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+            time: '2022-03-24T21:50:16.000Z',
+            revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3AlphaCustomContext);
+          certificate = new Certificate(FIXTURES.BlockcertsV3CustomContext);
           await certificate.init();
         });
 

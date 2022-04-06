@@ -8,6 +8,7 @@ import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 import type { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
 import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts';
+import { isObject } from '../helpers/object';
 
 export function getUnmappedFields (normalized: string): string[] | null {
   const normalizedArray = normalized.split('\n');
@@ -23,16 +24,13 @@ export function getUnmappedFields (normalized: string): string[] | null {
 }
 
 export default async function computeLocalHash (document: Blockcerts): Promise<string> {
-  let expandContext = document['@context'];
-  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document);
-  if (CONFIG.CheckForUnmappedFields) {
-    // @ts-expect-error: we are checking if @vocab may already be defined in the document
-    if (expandContext.find(x => x === Object(x) && '@vocab' in x)) {
-      expandContext = null;
-    } else {
-      expandContext.push({ '@vocab': 'http://fallback.org/' });
-    }
+  // the previous implementation was using a reference of @context, thus always adding @vocab to @context,
+  // thus passing the information down to jsonld regardless of the configuration option. We explicitly do that now,
+  // since we want to make sure unmapped fields are detected.
+  if (!document['@context'].find((context: any) => isObject(context) && '@vocab' in context)) {
+    document['@context'].push({ '@vocab': 'http://fallback.org/' });
   }
+  const theDocument: UnsignedBlockcerts = retrieveUnsignedBlockcerts(document);
 
   const customLoader = function (url): any {
     if (url in preloadedContexts) {
@@ -50,11 +48,6 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
     format: 'application/nquads',
     documentLoader: customLoader
   };
-  // turning off as expandContext is not an option of pyld and it messes with hashing
-  // eslint-disable-next-line no-constant-condition
-  if (false) {
-    normalizeArgs.expandContext = expandContext;
-  }
 
   let normalizedDocument;
   try {

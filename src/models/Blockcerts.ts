@@ -11,8 +11,8 @@ export interface AnyProperties {
 
 interface CustomJsonLDContextDefinition {
   [key: string]: {
-    '@id': string;
-    '@type': string;
+    '@id'?: string;
+    '@type'?: string;
   } | string;
 }
 

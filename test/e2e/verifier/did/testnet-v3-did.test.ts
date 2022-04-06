@@ -11,9 +11,9 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
     describe('and the verification method refers to a DID', function () {
       it('should resolve the DID document', async function () {
         sinon.stub(domain.verifier, 'lookForTx').resolves({
-          remoteHash: '05b306c28ac8f6e775b6e18052bc82d9c8fa430632a99294a38239e07a2595bd',
+          remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-          time: '2022-02-03T14:08:54.000Z',
+          time: '2022-04-05T18:45:30.000Z',
           revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
         });
         const requestStub = sinon.stub(ExplorerLookup, 'request');

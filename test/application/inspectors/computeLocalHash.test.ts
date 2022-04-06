@@ -1,4 +1,4 @@
-import blockcertsV3Fixture from '../../fixtures/v3/blockcerts-3.0-alpha.json';
+import blockcertsV3Fixture from '../../fixtures/v3/testnet-v3-did.json';
 import computeLocalHash, { getUnmappedFields } from '../../../src/inspectors/computeLocalHash';
 
 describe('computeLocalHash test suite', function () {
@@ -10,7 +10,7 @@ describe('computeLocalHash test suite', function () {
   describe('given it receives a document', function () {
     it('should return the SHA-256 hashed version', async function () {
       const output = await computeLocalHash(fixture);
-      expect(output).toBe('5a44e794431569f4b50a44336c3d445085f09ac5785e38e133385fb486ada9c5');
+      expect(output).toBe('eca54e560dd43cccd900fa4bb9221f144d4c451c24beeddfd82e31db842bced1');
     });
   });
 

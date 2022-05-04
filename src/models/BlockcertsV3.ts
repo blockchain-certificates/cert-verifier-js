@@ -2,6 +2,16 @@ import type { Issuer } from './Issuer';
 import type { MerkleProof2019 } from './MerkleProof2019';
 import type { JsonLDContext } from './Blockcerts';
 
+export interface VCProof {
+  type: string;
+  created?: string;
+  proofValue: string;
+  proofPurpose?: string;
+  verificationMethod?: string;
+  chainedProofType?: string;
+  previousProof?: VCProof;
+}
+
 export interface VerifiableCredential {
   '@context': JsonLDContext;
   id: string;
@@ -35,13 +45,7 @@ export interface VerifiableCredential {
   }>;
   validFrom?: string; // expect dateTime
   validUntil?: string; // expect dateTime
-  proof: {
-    type: string;
-    created?: string;
-    proofValue: string;
-    proofPurpose?: string;
-    verificationMethod?: string;
-  };
+  proof: VCProof | VCProof[];
 }
 
 export interface BlockcertsV3Display {

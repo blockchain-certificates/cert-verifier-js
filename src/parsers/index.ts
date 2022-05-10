@@ -10,7 +10,7 @@ import type { Receipt } from '../models/Receipt';
 import type { SignatureImage } from '../models';
 import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
-import type { BlockcertsV3Display } from '../models/BlockcertsV3';
+import type { BlockcertsV3Display, VCProof } from '../models/BlockcertsV3';
 
 export const versionParserMap = {
   1: parseV1,
@@ -41,7 +41,7 @@ export interface ParsedCertificate {
   signatureImage?: SignatureImage[];
   subtitle?: string;
   version: Versions;
-  proof?: MerkleProof2019;
+  proof?: VCProof | VCProof[];
 }
 
 export {

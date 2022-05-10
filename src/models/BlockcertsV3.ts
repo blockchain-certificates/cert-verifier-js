@@ -1,5 +1,4 @@
 import type { Issuer } from './Issuer';
-import type { MerkleProof2019 } from './MerkleProof2019';
 import type { JsonLDContext } from './Blockcerts';
 
 export interface VCProof {
@@ -73,7 +72,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;
-  proof: MerkleProof2019;
+  proof: VCProof | VCProof[];
 
   /**
    * @deprecated v3 alpha only

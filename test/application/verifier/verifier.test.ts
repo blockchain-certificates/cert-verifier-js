@@ -167,12 +167,12 @@ describe('Verifier entity test suite', function () {
     describe('given it is provided with the verificationStep object', function () {
       it('should extract the sub steps', function () {
         const expectedOutput = [
-          SUB_STEPS.getTransactionId,
-          SUB_STEPS.computeLocalHash,
-          SUB_STEPS.fetchRemoteHash,
           SUB_STEPS.getIssuerProfile,
           SUB_STEPS.parseIssuerKeys,
           SUB_STEPS.checkImagesIntegrity,
+          SUB_STEPS.getTransactionId,
+          SUB_STEPS.computeLocalHash,
+          SUB_STEPS.fetchRemoteHash,
           SUB_STEPS.compareHashes,
           SUB_STEPS.checkMerkleRoot,
           SUB_STEPS.checkReceipt,

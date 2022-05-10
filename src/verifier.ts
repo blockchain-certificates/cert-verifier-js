@@ -16,6 +16,7 @@ import type { MerkleProof2019 } from './models/MerkleProof2019';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
+import type { VCProof } from './models/BlockcertsV3';
 
 const log = debug('Verifier');
 
@@ -40,7 +41,7 @@ export default class Verifier {
   public id: string;
   public issuer: Issuer;
   public receipt: Receipt;
-  public proof?: MerkleProof2019;
+  public proof?: VCProof | VCProof[];
   public revocationKey: string;
   public version: Versions;
   public transactionId: string;
@@ -72,15 +73,15 @@ export default class Verifier {
       proof?: MerkleProof2019;
     }
   ) {
-    this.chain = chain;
+    this.chain = chain; // MerkleProof2017/2019 concern
     this.expires = expires;
     this.id = id;
     this.issuer = issuer;
     this.hashlinkVerifier = hashlinkVerifier;
-    this.receipt = receipt;
+    this.receipt = receipt; // MerkleProof2017/2019 concern
     this.revocationKey = revocationKey;
     this.version = version;
-    this.transactionId = transactionId;
+    this.transactionId = transactionId; // MerkleProof2017/2019 concern
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
     // Get the full verification step-by-step map
@@ -94,6 +95,7 @@ export default class Verifier {
     this._stepsStatuses = [];
   }
 
+  // // MerkleProof2017/2019 concern
   getIssuingAddress (): string {
     if (!this.txData) {
       console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
@@ -168,6 +170,7 @@ export default class Verifier {
     // defined by this.verify interface
   }
 
+  // merkle proof 2019
   private async getTransactionId (): Promise<void> {
     await this._doAction(
       SUB_STEPS.getTransactionId,
@@ -175,6 +178,7 @@ export default class Verifier {
     );
   }
 
+  // merkle proof 2019
   private async computeLocalHash (): Promise<void> {
     this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
@@ -182,6 +186,7 @@ export default class Verifier {
     );
   }
 
+  // merkle proof 2019
   private async fetchRemoteHash (): Promise<void> {
     this.txData = await this._doAction(
       SUB_STEPS.fetchRemoteHash,
@@ -220,18 +225,21 @@ export default class Verifier {
     );
   }
 
+  // merkle proof 2019
   private async compareHashes (): Promise<void> {
     await this._doAction(SUB_STEPS.compareHashes, () => {
       inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
     });
   }
 
+  // merkle proof 2019
   private async checkMerkleRoot (): Promise<void> {
     await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
       inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
     );
   }
 
+  // merkle proof 2019
   private async checkReceipt (): Promise<void> {
     await this._doAction(SUB_STEPS.checkReceipt, () =>
       inspectors.ensureValidReceipt(this.receipt, this.version)
@@ -279,18 +287,21 @@ export default class Verifier {
     });
   }
 
+  // merkle proof 2019
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
       this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
     });
   }
 
+  // merkle proof 2019
   private async deriveIssuingAddressFromPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
       this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
     });
   }
 
+  // merkle proof 2019
   private async compareIssuingAddress (): Promise<void> {
     await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
       inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);

@@ -11,12 +11,6 @@ export default [{
   labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
   subSteps: [
     {
-      code: SUB_STEPS.computeLocalHash,
-      label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-      labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-      parentStep: VerificationSteps.formatValidation
-    },
-    {
       code: SUB_STEPS.checkImagesIntegrity,
       label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
       labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
@@ -24,20 +18,28 @@ export default [{
     }
   ]
 }, {
-  code: VerificationSteps.hashComparison,
-  label: defaultLanguageSet.steps.hashComparisonLabel,
-  labelPending: defaultLanguageSet.steps.hashComparisonLabelPending,
-  subSteps: [{
-    code: SUB_STEPS.compareHashes,
-    label: defaultLanguageSet.subSteps.compareHashesLabel,
-    labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-    parentStep: VerificationSteps.hashComparison
-  }, {
-    code: SUB_STEPS.checkReceipt,
-    label: defaultLanguageSet.subSteps.checkReceiptLabel,
-    labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-    parentStep: VerificationSteps.hashComparison
-  }]
+  code: VerificationSteps.signatureVerification,
+  label: defaultLanguageSet.steps.signatureVerificationLabel,
+  labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
+  subSteps: [
+    {
+      code: SUB_STEPS.computeLocalHash,
+      label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+      labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
+      parentStep: VerificationSteps.signatureVerification
+    },
+    {
+      code: SUB_STEPS.compareHashes,
+      label: defaultLanguageSet.subSteps.compareHashesLabel,
+      labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
+      parentStep: VerificationSteps.signatureVerification
+    },
+    {
+      code: SUB_STEPS.checkReceipt,
+      label: defaultLanguageSet.subSteps.checkReceiptLabel,
+      labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
+      parentStep: VerificationSteps.signatureVerification
+    }]
 }, {
   code: VerificationSteps.statusCheck,
   label: defaultLanguageSet.steps.statusCheckLabel,

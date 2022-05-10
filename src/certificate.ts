@@ -16,7 +16,7 @@ import type { Receipt } from './models/Receipt';
 import type { MerkleProof2019 } from './models/MerkleProof2019';
 import type { SignatureImage } from './models';
 import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
-import type { BlockcertsV3Display } from './models/BlockcertsV3';
+import type { BlockcertsV3Display, VCProof } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
@@ -52,7 +52,7 @@ export default class Certificate {
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
   public publicKey?: string;
-  public proof?: MerkleProof2019;
+  public proof?: VCProof | VCProof[];
   public rawTransactionLink: string;
   public receipt: Receipt;
   public recipientFullName: string;

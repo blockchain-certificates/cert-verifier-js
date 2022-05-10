@@ -8,7 +8,7 @@ export const final = 'final';
 
 export enum VerificationSteps {
   formatValidation = 'formatValidation',
-  hashComparison = 'hashComparison',
+  signatureVerification = 'signatureVerification',
   identityVerification = 'identityVerification',
   statusCheck = 'statusCheck',
   final = 'final'
@@ -29,9 +29,9 @@ export default function getMainVerificationSteps (hasDid: boolean = false): TVer
       labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
       subSteps: []
     },
-    [VerificationSteps.hashComparison]: {
-      label: defaultLanguageSet.steps.hashComparisonLabel,
-      labelPending: defaultLanguageSet.steps.hashComparisonLabelPending,
+    [VerificationSteps.signatureVerification]: {
+      label: defaultLanguageSet.steps.signatureVerificationLabel,
+      labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
       subSteps: []
     },
     ...(hasDid) && {

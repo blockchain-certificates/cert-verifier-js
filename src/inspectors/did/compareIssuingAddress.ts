@@ -1,5 +1,5 @@
 import { VerifierError } from '../../models';
-import { SUB_STEPS } from '../../constants';
+import { SUB_STEPS } from '../../constants/verificationSteps';
 import domain from '../../domain';
 import { baseError } from './index';
 

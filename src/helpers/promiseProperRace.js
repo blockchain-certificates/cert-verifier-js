@@ -1,5 +1,5 @@
 import VerifierError from '../models/verifierError';
-import * as SUB_STEPS from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSteps';
 import debug from 'debug';
 import { getText } from '../domain/i18n/useCases';
 

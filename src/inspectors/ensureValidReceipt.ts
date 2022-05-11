@@ -1,6 +1,6 @@
 import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSteps';
 import type Versions from '../constants/certificateVersions';
 import { isV3 } from '../constants/certificateVersions';
 import { toByteArray } from '../helpers/data';

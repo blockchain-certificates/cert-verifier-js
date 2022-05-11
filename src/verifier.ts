@@ -8,8 +8,7 @@ import * as inspectors from './inspectors';
 import type { Blockcerts } from './models/Blockcerts';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Issuer, IssuerPublicKeyList } from './models/Issuer';
-import { VerificationSteps } from './constants/verificationSteps';
-import { SUB_STEPS } from './constants/verificationSubSteps';
+import { VerificationSteps, SUB_STEPS } from './constants/verificationSteps';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { Receipt } from './models/Receipt';
 import type { MerkleProof2019 } from './models/MerkleProof2019';
@@ -283,14 +282,14 @@ export default class Verifier {
 
   private async controlVerificationMethod (): Promise<void> {
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
-      inspectors.controlVerificationMethod(this.issuer.didDocument, this.proof.verificationMethod);
+      inspectors.controlVerificationMethod(this.issuer.didDocument, (this.proof as VCProof).verificationMethod);
     });
   }
 
   // merkle proof 2019
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, (this.proof as VCProof).verificationMethod);
     });
   }
 

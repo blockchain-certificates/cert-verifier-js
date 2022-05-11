@@ -1,6 +1,6 @@
 import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 import type { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer';
 

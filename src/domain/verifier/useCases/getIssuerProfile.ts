@@ -1,6 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
-import { SUB_STEPS } from '../../../constants';
+import { SUB_STEPS } from '../../../constants/verificationSteps';
 import { getText } from '../../i18n/useCases';
 import type { Issuer } from '../../../models/Issuer';
 import domain from '../../../domain';

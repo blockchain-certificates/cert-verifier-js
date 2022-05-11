@@ -1,8 +1,9 @@
-import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
-import { substepsList } from '../../../src/constants/verificationSubSteps';
+import { SUB_STEPS } from '../../../src/constants/verificationSteps';
+import { getText } from '../../../src/domain/i18n/useCases';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -32,7 +33,7 @@ describe('Certificate test suite', function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
             code: SUB_STEPS.getTransactionId,
-            label: substepsList.getTransactionId.labelPending,
+            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 
@@ -83,7 +84,7 @@ describe('Certificate test suite', function () {
           const updates = [];
           const assertionStep = {
             code: SUB_STEPS.checkRevokedStatus,
-            label: substepsList.checkRevokedStatus.labelPending,
+            label: getText('subSteps', `${SUB_STEPS.checkRevokedStatus}LabelPending`),
             status: VERIFICATION_STATUSES.FAILURE,
             errorMessage: 'This certificate has been revoked by the issuer. Reason given: Issued in error.'
           };

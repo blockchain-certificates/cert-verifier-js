@@ -1,5 +1,5 @@
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSubSteps';
+import { SUB_STEPS } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 
 export default function ensureMerkleRootEqual (merkleRoot: string, remoteHash: string): boolean {

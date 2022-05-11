@@ -1,6 +1,5 @@
-import { VerificationSteps } from '../../../../../../src/constants/verificationSteps';
+import { VerificationSteps, SUB_STEPS } from '../../../../../../src/constants/verificationSteps';
 import type { IVerificationMapItem } from '../../../../../../src/domain/certificates/useCases/getVerificationMap';
-import { SUB_STEPS } from '../../../../../../src/constants/verificationSubSteps';
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
 

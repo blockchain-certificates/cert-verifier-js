@@ -1,5 +1,5 @@
 import { dateToUnixTimestamp } from '../../../helpers/date';
-import { SUB_STEPS } from '../../../constants';
+import { SUB_STEPS } from '../../../constants/verificationSteps';
 import { Key, VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
 import type { NullableNumber } from '../../../models/helpers';

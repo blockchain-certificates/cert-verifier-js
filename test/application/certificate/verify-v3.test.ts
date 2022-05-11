@@ -1,8 +1,9 @@
-import { Certificate, STEPS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
-import { substepsList } from '../../../src/constants/verificationSubSteps';
+import { getText } from '../../../src/domain/i18n/useCases';
+import { SUB_STEPS } from '../../../src/constants/verificationSteps';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -30,7 +31,7 @@ describe('Certificate test suite', function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
             code: SUB_STEPS.getTransactionId,
-            label: substepsList.getTransactionId.labelPending,
+            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 
@@ -113,7 +114,7 @@ describe('Certificate test suite', function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
             code: SUB_STEPS.getTransactionId,
-            label: substepsList.getTransactionId.labelPending,
+            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 

@@ -2,13 +2,8 @@ import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import type Versions from '../../../constants/certificateVersions';
 import { isV3 } from '../../../constants/certificateVersions';
-import type { IVerificationSubstep } from '../../../constants/verificationSubSteps';
-import { SUB_STEPS, substepsList } from '../../../constants/verificationSubSteps';
-import type {
-  TVerificationStepsList,
-  VerificationSteps
-} from '../../../constants/verificationSteps';
-import getMainVerificationSteps from '../../../constants/verificationSteps';
+import type { IVerificationSubstep } from '../../../constants/verificationSteps';
+import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps';
 import type { IBlockchainObject } from '../../../constants/blockchains';
 
 export interface IVerificationMapItem {
@@ -43,38 +38,43 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
   return verificationSteps;
 }
 
-/**
- * stepsObjectToArray
- *
- * Turn an object with steps as properties to an array
- *
- * @param stepsObject
- * @returns {{code: string}[]}
- */
-function stepsObjectToArray (stepsObject: TVerificationStepsList): IVerificationMapItem[] {
-  return Object.keys(stepsObject).map(stepCode => {
-    return {
-      ...stepsObject[stepCode],
-      code: stepCode,
-      label: getText('steps', `${stepCode}Label`),
-      labelPending: getText('steps', `${stepCode}LabelPending`)
-    };
-  });
-}
+const verificationMap = {
+  [VerificationSteps.formatValidation]: [
+    SUB_STEPS.getIssuerProfile,
+    SUB_STEPS.parseIssuerKeys,
+    SUB_STEPS.checkImagesIntegrity
+  ],
+  [VerificationSteps.signatureVerification]: [
+    SUB_STEPS.getTransactionId,
+    SUB_STEPS.computeLocalHash,
+    SUB_STEPS.fetchRemoteHash,
+    SUB_STEPS.compareHashes,
+    SUB_STEPS.checkMerkleRoot,
+    SUB_STEPS.checkReceipt
+  ],
+  [VerificationSteps.identityVerification]: [
+    SUB_STEPS.controlVerificationMethod,
+    SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.deriveIssuingAddressFromPublicKey,
+    SUB_STEPS.compareIssuingAddress
+  ],
+  [VerificationSteps.statusCheck]: [
+    SUB_STEPS.checkRevokedStatus,
+    SUB_STEPS.checkAuthenticity,
+    SUB_STEPS.checkExpiresDate
+  ]
+};
 
-/**
- * setSubStepsToSteps
- *
- * Takes an array of sub-steps and set them to their proper parent step
- *
- * @param subSteps
- * @returns {any}
- */
-function setSubStepsToSteps (subSteps: IVerificationSubstep[], hasDid: boolean): TVerificationStepsList {
-  const steps = getMainVerificationSteps(hasDid);
-  subSteps
-    .forEach(subStep => !!steps[subStep.parentStep] && steps[subStep.parentStep].subSteps.push(subStep));
-  return steps;
+function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substepsList: SUB_STEPS[]): IVerificationSubstep[] {
+  const childSteps: SUB_STEPS[] = verificationMap[parentStepKey];
+  const filteredChildSteps: SUB_STEPS[] = childSteps.filter(childStep => substepsList.includes(childStep));
+
+  return filteredChildSteps.map(childStep => ({
+    code: childStep,
+    label: getText('subSteps', `${childStep}Label`),
+    labelPending: getText('subSteps', `${childStep}LabelPending`),
+    parentStep: parentStepKey
+  }));
 }
 
 /**
@@ -82,22 +82,13 @@ function setSubStepsToSteps (subSteps: IVerificationSubstep[], hasDid: boolean):
  *
  * Builds a full steps array (with subSteps property) from an array of sub-steps
  *
- * @param subStepMap
- * @returns {Array}
  */
-function getFullStepsFromSubSteps (subStepMap: SUB_STEPS[], hasDid: boolean): IVerificationMapItem[] {
-  const subSteps: IVerificationSubstep[] = subStepMap.map(stepCode => {
-    const subStep = Object.assign({}, substepsList[stepCode]);
-    return {
-      ...subStep,
-      label: getText('subSteps', `${stepCode}Label`),
-      labelPending: getText('subSteps', `${stepCode}LabelPending`)
-    };
-  });
-
-  const steps = setSubStepsToSteps(subSteps, hasDid);
-
-  return stepsObjectToArray(steps);
+function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[], hasDid: boolean): IVerificationMapItem[] {
+  const steps = getParentVerificationSteps(hasDid);
+  return Object.keys(steps).map(parentStepKey => ({
+    ...steps[parentStepKey],
+    subSteps: filterSubStepsForParentStep((parentStepKey as VerificationSteps), verificationSubStepsList)
+  }));
 }
 
 /**
@@ -113,5 +104,5 @@ export default function getVerificationMap (chain: IBlockchainObject, version: V
     return [];
   }
 
-  return getFullStepsFromSubSteps(getVerificationStepsForChain(chain, version), hasDid);
+  return getFullStepsWithSubSteps(getVerificationStepsForChain(chain, version), hasDid);
 }

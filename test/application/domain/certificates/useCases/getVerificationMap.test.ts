@@ -1,10 +1,10 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS, SUB_STEPS } from '../../../../../src';
+import { BLOCKCHAINS } from '../../../../../src';
 import mocknetMapAssertion from './assertions/mocknetMapAssertion';
 import mainnetMapAssertion from './assertions/mainnetMapAssertion';
 import Versions from '../../../../../src/constants/certificateVersions';
 import type { IVerificationMapItem } from '../../../../../src/domain/certificates/useCases/getVerificationMap';
-import { VerificationSteps } from '../../../../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../../../../src/constants/verificationSteps';
 import i18n from '../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../src/constants/currentLocale';
 

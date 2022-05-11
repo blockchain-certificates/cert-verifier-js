@@ -48,7 +48,7 @@ export type TVerificationStepsList = {
   };
 };
 
-export default function getParentVerificationSteps (hasDid: boolean = false): TVerificationStepsList {
+export default function getParentVerificationSteps (): TVerificationStepsList {
   return {
     [VerificationSteps.formatValidation]: {
       code: VerificationSteps.formatValidation,
@@ -62,13 +62,11 @@ export default function getParentVerificationSteps (hasDid: boolean = false): TV
       labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
       subSteps: []
     },
-    ...(hasDid) && {
-      [VerificationSteps.identityVerification]: {
-        code: VerificationSteps.identityVerification,
-        label: defaultLanguageSet.steps.identityVerificationLabel,
-        labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
-        subSteps: []
-      }
+    [VerificationSteps.identityVerification]: {
+      code: VerificationSteps.identityVerification,
+      label: defaultLanguageSet.steps.identityVerificationLabel,
+      labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
+      subSteps: []
     },
     [VerificationSteps.statusCheck]: {
       code: VerificationSteps.statusCheck,

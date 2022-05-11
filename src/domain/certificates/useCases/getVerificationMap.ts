@@ -18,7 +18,7 @@ function removeStep (map: string[], step: string): void {
   map.splice(stepIndex, 1);
 }
 
-export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, version: Versions, hasDid: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (chainsService.isMockChain(chain)) {
@@ -33,6 +33,13 @@ export function getVerificationStepsForChain (chain: IBlockchainObject, version:
 
   if (isV3(version)) {
     removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
+  }
+
+  if (!hasDid) {
+    removeStep(verificationSteps, SUB_STEPS.controlVerificationMethod);
+    removeStep(verificationSteps, SUB_STEPS.retrieveVerificationMethodPublicKey);
+    removeStep(verificationSteps, SUB_STEPS.deriveIssuingAddressFromPublicKey);
+    removeStep(verificationSteps, SUB_STEPS.compareIssuingAddress);
   }
 
   return verificationSteps;
@@ -77,32 +84,20 @@ function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substeps
   }));
 }
 
-/**
- * getFullStepsFromSubSteps
- *
- * Builds a full steps array (with subSteps property) from an array of sub-steps
- *
- */
-function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[], hasDid: boolean): IVerificationMapItem[] {
-  const steps = getParentVerificationSteps(hasDid);
-  return Object.keys(steps).map(parentStepKey => ({
-    ...steps[parentStepKey],
-    subSteps: filterSubStepsForParentStep((parentStepKey as VerificationSteps), verificationSubStepsList)
-  }));
+function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVerificationMapItem[] {
+  const steps = getParentVerificationSteps();
+  return Object.keys(steps)
+    .map(parentStepKey => ({
+      ...steps[parentStepKey],
+      subSteps: filterSubStepsForParentStep((parentStepKey as VerificationSteps), verificationSubStepsList)
+    }))
+    .filter(parentStep => parentStep.subSteps.length > 0);
 }
 
-/**
- * getVerificationMap
- *
- * Get verification map from the chain
- *
- * @param chain
- * @returns {Array}
- */
 export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): IVerificationMapItem[] {
   if (!chain) {
     return [];
   }
 
-  return getFullStepsWithSubSteps(getVerificationStepsForChain(chain, version), hasDid);
+  return getFullStepsWithSubSteps(getVerificationStepsForCurrentCase(chain, version, hasDid));
 }

@@ -48,6 +48,7 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     }
     return keyMap;
   } catch (e) {
+    console.log(e);
     throw new VerifierError(
       SUB_STEPS.parseIssuerKeys,
       getText('errors', 'parseIssuerKeys')

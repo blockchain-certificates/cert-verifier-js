@@ -15,7 +15,9 @@ export interface IVerificationMapItem {
 
 function removeStep (map: string[], step: string): void {
   const stepIndex = map.findIndex(subStep => subStep === step);
-  map.splice(stepIndex, 1);
+  if (stepIndex > -1) {
+    map.splice(stepIndex, 1);
+  }
 }
 
 export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, version: Versions, hasDid: boolean): SUB_STEPS[] {
@@ -41,6 +43,16 @@ export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, ve
     removeStep(verificationSteps, SUB_STEPS.deriveIssuingAddressFromPublicKey);
     removeStep(verificationSteps, SUB_STEPS.compareIssuingAddress);
   }
+
+  // TEMPORARY, DO NOT COMMIT
+  removeStep(verificationSteps, SUB_STEPS.getTransactionId);
+  removeStep(verificationSteps, SUB_STEPS.computeLocalHash);
+  removeStep(verificationSteps, SUB_STEPS.fetchRemoteHash);
+  removeStep(verificationSteps, SUB_STEPS.compareHashes);
+  removeStep(verificationSteps, SUB_STEPS.checkMerkleRoot);
+  removeStep(verificationSteps, SUB_STEPS.checkReceipt);
+  removeStep(verificationSteps, SUB_STEPS.checkAuthenticity);
+  removeStep(verificationSteps, SUB_STEPS.parseIssuerKeys);
 
   return verificationSteps;
 }

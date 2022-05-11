@@ -63,7 +63,7 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
   }
 
   let issuerProfile: Issuer;
-
+  console.log('got issuer address', issuerAddress);
   if (isDidUri(issuerAddress)) {
     // TODO: it could be that the issuer profile is embedded, or that it is distant,
     //  but we found a did document so the rest of the function does not apply
@@ -85,9 +85,12 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
+  console.log('fetching address', issuerAddress);
   issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch(() => {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
   }));
+
+  console.log('issuerProfile');
 
   if (!isValidProfile(issuerProfile) && !isValidV1Profile(issuerProfile)) {
     throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);

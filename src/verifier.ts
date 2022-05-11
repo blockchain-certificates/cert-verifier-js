@@ -11,11 +11,11 @@ import type { Issuer, IssuerPublicKeyList } from './models/Issuer';
 import { VerificationSteps, SUB_STEPS } from './constants/verificationSteps';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { Receipt } from './models/Receipt';
-import type { MerkleProof2019 } from './models/MerkleProof2019';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import type { VCProof } from './models/BlockcertsV3';
+import MerkleProof2019 from './suites/MerkleProof2019';
 
 const log = debug('Verifier');
 
@@ -54,6 +54,7 @@ export default class Verifier {
   private verificationMethodPublicKey: IDidDocumentPublicKey;
   private derivedIssuingAddress: string;
   public verificationSteps: IVerificationMapItem[];
+  public supportedVerificationSuites: any;
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
@@ -69,7 +70,7 @@ export default class Verifier {
       transactionId: string;
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
-      proof?: MerkleProof2019;
+      proof?: any;
     }
   ) {
     this.chain = chain; // MerkleProof2017/2019 concern
@@ -93,6 +94,9 @@ export default class Verifier {
     // Final verification result
     // Init status as success, we will update the final status at the end
     this._stepsStatuses = [];
+    this.supportedVerificationSuites = {
+      MerkleProof2019
+    };
   }
 
   // // MerkleProof2017/2019 concern
@@ -107,12 +111,27 @@ export default class Verifier {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
+    console.log('main verification process', this.verificationProcess);
+
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
         return;
       }
       await this[verificationStep]();
     }
+
+    const merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
+      actionMethod: this._doAction.bind(this),
+      document: this.documentToVerify,
+      transactionId: this.transactionId,
+      chain: this.chain,
+      explorerAPIs: this.explorerAPIs,
+      receipt: this.receipt,
+      version: this.version,
+      issuer: this.issuer
+    });
+
+    await merkleProofVerifier.verify();
 
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
@@ -128,7 +147,9 @@ export default class Verifier {
 
   private async _doAction (step: string, action: () => any): Promise<any> {
     // If not failing already
+    console.log('running action', step);
     if (this._isFailing()) {
+      console.log('is failing');
       return;
     }
 
@@ -192,6 +213,7 @@ export default class Verifier {
   }
 
   private async checkImagesIntegrity (): Promise<void> {
+    console.log(SUB_STEPS.checkImagesIntegrity);
     await this._doAction(
       SUB_STEPS.checkImagesIntegrity,
       async () => {
@@ -212,6 +234,7 @@ export default class Verifier {
   }
 
   private async parseIssuerKeys (): Promise<void> {
+    console.log(SUB_STEPS.parseIssuerKeys);
     this.issuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer)
@@ -240,6 +263,7 @@ export default class Verifier {
   }
 
   private async checkRevokedStatus (): Promise<void> {
+    console.log(SUB_STEPS.checkRevokedStatus);
     let keys;
     let revokedAddresses;
     if (this.version === Versions.V1_2) {
@@ -263,12 +287,14 @@ export default class Verifier {
   }
 
   private async checkAuthenticity (): Promise<void> {
+    console.log(SUB_STEPS.checkAuthenticity);
     await this._doAction(SUB_STEPS.checkAuthenticity, () =>
       inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
     );
   }
 
   private async checkExpiresDate (): Promise<void> {
+    console.log(SUB_STEPS.checkExpiresDate);
     await this._doAction(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
     );
@@ -314,6 +340,8 @@ export default class Verifier {
    * whether or not the current verification is failing
    */
   _isFailing (): boolean {
+    const failingStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
+    failingStep && console.log('failed step', failingStep);
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 

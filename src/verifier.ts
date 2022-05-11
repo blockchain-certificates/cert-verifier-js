@@ -16,6 +16,7 @@ import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import type { VCProof } from './models/BlockcertsV3';
 import MerkleProof2019 from './suites/MerkleProof2019';
+import MerkleProof2017 from './suites/MerkleProof2017';
 
 const log = debug('Verifier');
 
@@ -95,6 +96,7 @@ export default class Verifier {
     // Init status as success, we will update the final status at the end
     this._stepsStatuses = [];
     this.supportedVerificationSuites = {
+      MerkleProof2017,
       MerkleProof2019
     };
   }

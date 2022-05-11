@@ -78,10 +78,6 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.sealImage).toEqual(fixture.badge.issuer.image);
     });
 
-    it('should set the signature of the certificate object', function () {
-      expect(parsedCertificate.signature).toEqual(null);
-    });
-
     it('should set 1 signatureImage to the certificate object', function () {
       expect(parsedCertificate.signatureImage.length).toEqual(1);
     });

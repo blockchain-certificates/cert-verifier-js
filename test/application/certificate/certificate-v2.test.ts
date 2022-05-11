@@ -72,10 +72,6 @@ describe('Certificate entity test suite', function () {
         expect(certificate.sealImage).toEqual(fixture.badge.issuer.image);
       });
 
-      it('should set signature of the certificate object', function () {
-        expect(certificate.signature).toEqual(null);
-      });
-
       it('should set 1 signatureImage to the certificate object', function () {
         expect(certificate.signatureImage.length).toEqual(1);
       });

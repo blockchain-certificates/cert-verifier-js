@@ -4,13 +4,16 @@ import getSignatureImages from './helpers/getSignatureImage';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type { ParsedCertificate } from './index';
+import type { VCProof } from '../models/BlockcertsV3';
+import type { MerkleProof2017 } from '../models/MerkleProof2017';
 
-/**
- * parseV2
- *
- * @param certificateJson
- * @returns {Certificate}
- */
+function convertAsVCProof (signature: MerkleProof2017): VCProof {
+  return {
+    type: 'MerkleProof2017',
+    proofValue: signature.merkleRoot
+  };
+}
+
 export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertificate {
   const { id, expires, signature: receipt, badge } = certificateJson;
   const { image: certificateImage, name, description, subtitle, issuer } = badge;
@@ -41,7 +44,7 @@ export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertifica
     recordLink: id,
     revocationKey,
     sealImage,
-    signature: null,
+    proof: convertAsVCProof(certificateJson.signature),
     signatureImage,
     subtitle,
     version

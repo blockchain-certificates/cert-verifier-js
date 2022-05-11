@@ -159,29 +159,25 @@ describe('Verifier entity test suite', function () {
     });
   });
 
-  describe('groomVerificationProcess method', function () {
-    beforeEach(function () {
-      verifierInstance = new Verifier(verifierParamFixture);
-    });
-
-    describe('given it is provided with the verificationStep object', function () {
-      it('should extract the sub steps', function () {
+  describe('verificationProcess property', function () {
+    describe('when the process is for a mainnet v2 certs with no DID', function () {
+      it('should be set accordingly', function () {
+        verifierInstance = new Verifier(verifierParamFixture);
         const expectedOutput = [
-          SUB_STEPS.getIssuerProfile,
-          SUB_STEPS.parseIssuerKeys,
-          SUB_STEPS.checkImagesIntegrity,
           SUB_STEPS.getTransactionId,
           SUB_STEPS.computeLocalHash,
           SUB_STEPS.fetchRemoteHash,
+          SUB_STEPS.getIssuerProfile,
+          SUB_STEPS.parseIssuerKeys,
           SUB_STEPS.compareHashes,
+          SUB_STEPS.checkImagesIntegrity,
           SUB_STEPS.checkMerkleRoot,
           SUB_STEPS.checkReceipt,
           SUB_STEPS.checkRevokedStatus,
           SUB_STEPS.checkAuthenticity,
           SUB_STEPS.checkExpiresDate
         ];
-        const output = verifierInstance.groomVerificationProcess(mainnetMapAssertion);
-        expect(output).toEqual(expectedOutput);
+        expect(verifierInstance.verificationProcess).toEqual(expectedOutput);
       });
     });
   });

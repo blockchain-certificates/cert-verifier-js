@@ -94,10 +94,13 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     .filter(parentStep => parentStep.subSteps.length > 0);
 }
 
-export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): IVerificationMapItem[] {
-  if (!chain) {
-    return [];
-  }
-
-  return getFullStepsWithSubSteps(getVerificationStepsForCurrentCase(chain, version, hasDid));
+export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): {
+  verificationMap: IVerificationMapItem[];
+  verificationProcess: SUB_STEPS[];
+} {
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(chain, version, hasDid);
+  return {
+    verificationProcess,
+    verificationMap: getFullStepsWithSubSteps(verificationProcess)
+  };
 }

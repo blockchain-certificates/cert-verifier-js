@@ -83,9 +83,10 @@ export default class Verifier {
     this.transactionId = transactionId; // MerkleProof2017/2019 concern
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
-    // Get the full verification step-by-step map
-    this.verificationSteps = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
-    this.verificationProcess = this.groomVerificationProcess(this.verificationSteps);
+
+    const verificationModel = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
+    this.verificationSteps = verificationModel.verificationMap;
+    this.verificationProcess = verificationModel.verificationProcess;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
@@ -116,13 +117,6 @@ export default class Verifier {
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     return erroredStep ? this._failed(erroredStep) : this._succeed();
-  }
-
-  groomVerificationProcess (verificationSteps: IVerificationMapItem[]): SUB_STEPS[] {
-    return verificationSteps.reduce((subStepsList: SUB_STEPS[], step: IVerificationMapItem) => {
-      step.subSteps.forEach(subStep => subStepsList.push(subStep.code));
-      return subStepsList;
-    }, []);
   }
 
   _getRevocationListUrl (distantIssuerProfile: Issuer): any { // TODO: define revocationList type

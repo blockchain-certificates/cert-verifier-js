@@ -1,4 +1,3 @@
-import { NETWORKS } from '../../../constants';
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
 import type Versions from '../../../constants/certificateVersions';
@@ -19,54 +18,29 @@ export interface IVerificationMapItem {
   subSteps: IVerificationSubstep[];
 }
 
-type TNetworkVerificationStepList = {
-  [key in NETWORKS]: SUB_STEPS[];
-};
-
 function removeStep (map: string[], step: string): void {
   const stepIndex = map.findIndex(subStep => subStep === step);
   map.splice(stepIndex, 1);
 }
 
 export function getVerificationStepsForChain (chain: IBlockchainObject, version: Versions): SUB_STEPS[] {
-  const network = chainsService.isMockChain(chain) ? NETWORKS.testnet : NETWORKS.mainnet;
-  const networkVerificationMap: TNetworkVerificationStepList = {
-    [NETWORKS.mainnet]: [
-      SUB_STEPS.getTransactionId,
-      SUB_STEPS.computeLocalHash,
-      SUB_STEPS.fetchRemoteHash,
-      SUB_STEPS.getIssuerProfile,
-      SUB_STEPS.parseIssuerKeys,
-      SUB_STEPS.compareHashes,
-      SUB_STEPS.checkImagesIntegrity,
-      SUB_STEPS.checkMerkleRoot,
-      SUB_STEPS.checkReceipt,
-      SUB_STEPS.controlVerificationMethod,
-      SUB_STEPS.retrieveVerificationMethodPublicKey,
-      SUB_STEPS.deriveIssuingAddressFromPublicKey,
-      SUB_STEPS.compareIssuingAddress,
-      SUB_STEPS.checkRevokedStatus,
-      SUB_STEPS.checkAuthenticity,
-      SUB_STEPS.checkExpiresDate
-    ],
-    [NETWORKS.testnet]: [
-      SUB_STEPS.computeLocalHash,
-      SUB_STEPS.compareHashes,
-      SUB_STEPS.checkImagesIntegrity,
-      SUB_STEPS.checkReceipt,
-      SUB_STEPS.controlVerificationMethod,
-      SUB_STEPS.retrieveVerificationMethodPublicKey,
-      SUB_STEPS.deriveIssuingAddressFromPublicKey,
-      SUB_STEPS.compareIssuingAddress,
-      SUB_STEPS.checkExpiresDate
-    ]
-  };
+  const verificationSteps = Object.values(SUB_STEPS);
 
-  if (isV3(version)) {
-    removeStep(networkVerificationMap[network], SUB_STEPS.getIssuerProfile);
+  if (chainsService.isMockChain(chain)) {
+    removeStep(verificationSteps, SUB_STEPS.getTransactionId);
+    removeStep(verificationSteps, SUB_STEPS.fetchRemoteHash);
+    removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
+    removeStep(verificationSteps, SUB_STEPS.parseIssuerKeys);
+    removeStep(verificationSteps, SUB_STEPS.checkMerkleRoot);
+    removeStep(verificationSteps, SUB_STEPS.checkRevokedStatus);
+    removeStep(verificationSteps, SUB_STEPS.checkAuthenticity);
   }
 
-  return networkVerificationMap[network];
+  if (isV3(version)) {
+    removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
+  }
+
+  return verificationSteps;
 }
 
 /**

@@ -24,23 +24,17 @@ const expectedSubSteps = {
     labelPending: language.checkImagesIntegrityLabelPending,
     parentStep: VerificationSteps.formatValidation
   },
-  [SUB_STEPS.checkIssuerSignature]: {
-    code: SUB_STEPS.checkIssuerSignature,
-    label: language.checkIssuerSignatureLabel,
-    labelPending: language.checkIssuerSignatureLabelPending,
-    parentStep: VerificationSteps.statusCheck
-  },
   [SUB_STEPS.checkMerkleRoot]: {
     code: SUB_STEPS.checkMerkleRoot,
     label: language.checkMerkleRootLabel,
     labelPending: language.checkMerkleRootLabelPending,
-    parentStep: VerificationSteps.hashComparison
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.checkReceipt]: {
     code: SUB_STEPS.checkReceipt,
     label: language.checkReceiptLabel,
     labelPending: language.checkReceiptLabelPending,
-    parentStep: VerificationSteps.hashComparison
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.checkRevokedStatus]: {
     code: SUB_STEPS.checkRevokedStatus,
@@ -52,19 +46,19 @@ const expectedSubSteps = {
     code: SUB_STEPS.compareHashes,
     label: language.compareHashesLabel,
     labelPending: language.compareHashesLabelPending,
-    parentStep: VerificationSteps.hashComparison
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.computeLocalHash]: {
     code: SUB_STEPS.computeLocalHash,
     label: language.computeLocalHashLabel,
     labelPending: language.computeLocalHashLabelPending,
-    parentStep: VerificationSteps.formatValidation
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.fetchRemoteHash]: {
     code: SUB_STEPS.fetchRemoteHash,
     label: language.fetchRemoteHashLabel,
     labelPending: language.fetchRemoteHashLabelPending,
-    parentStep: VerificationSteps.formatValidation
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.getIssuerProfile]: {
     code: SUB_STEPS.getIssuerProfile,
@@ -76,7 +70,7 @@ const expectedSubSteps = {
     code: SUB_STEPS.getTransactionId,
     label: language.getTransactionIdLabel,
     labelPending: language.getTransactionIdLabelPending,
-    parentStep: VerificationSteps.formatValidation
+    parentStep: VerificationSteps.signatureVerification
   },
   [SUB_STEPS.parseIssuerKeys]: {
     code: SUB_STEPS.parseIssuerKeys,

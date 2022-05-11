@@ -23,10 +23,8 @@ enum SUB_STEPS {
   checkImagesIntegrity = 'checkImagesIntegrity',
   checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
   checkReceipt = 'checkReceipt', // MerkleProof2019 specific
-  checkIssuerSignature = 'checkIssuerSignature',
-  checkIssuerIdentity = 'checkIssuerIdentity',
-  checkAuthenticity = 'checkAuthenticity',
   checkRevokedStatus = 'checkRevokedStatus',
+  checkAuthenticity = 'checkAuthenticity',
   checkExpiresDate = 'checkExpiresDate',
   controlVerificationMethod = 'controlVerificationMethod',
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
@@ -62,7 +60,6 @@ const subStepsMap = {
     SUB_STEPS.compareIssuingAddress
   ],
   [VerificationSteps.statusCheck]: [
-    SUB_STEPS.checkIssuerSignature,
     SUB_STEPS.checkAuthenticity,
     SUB_STEPS.checkRevokedStatus,
     SUB_STEPS.checkExpiresDate

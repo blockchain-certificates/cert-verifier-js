@@ -8,6 +8,13 @@ import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import { SUB_STEPS } from '../constants/verificationSteps';
 
+function removeStep (map: string[], step: string): void {
+  const stepIndex = map.findIndex(subStep => subStep === step);
+  if (stepIndex > -1) {
+    map.splice(stepIndex, 1);
+  }
+}
+
 export default class MerkleProof2017 {
   public verificationProcess = [
     SUB_STEPS.getTransactionId,
@@ -51,6 +58,7 @@ export default class MerkleProof2017 {
     this.receipt = receipt;
     this.version = version;
     this.issuer = issuer;
+    this.adaptVerificationProcessToChain();
   }
 
   async verify (): Promise<void> {
@@ -59,6 +67,18 @@ export default class MerkleProof2017 {
         return;
       }
       await this[verificationStep]();
+    }
+  }
+
+  private adaptVerificationProcessToChain (): void {
+    if (domain.chains.isMockChain(this.chain)) {
+      removeStep(this.verificationProcess, SUB_STEPS.getTransactionId);
+      removeStep(this.verificationProcess, SUB_STEPS.fetchRemoteHash);
+      removeStep(this.verificationProcess, SUB_STEPS.getIssuerProfile);
+      removeStep(this.verificationProcess, SUB_STEPS.parseIssuerKeys);
+      removeStep(this.verificationProcess, SUB_STEPS.checkMerkleRoot);
+      removeStep(this.verificationProcess, SUB_STEPS.checkRevokedStatus);
+      removeStep(this.verificationProcess, SUB_STEPS.checkAuthenticity);
     }
   }
 

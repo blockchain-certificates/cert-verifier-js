@@ -8,7 +8,7 @@ import * as inspectors from './inspectors';
 import type { Blockcerts } from './models/Blockcerts';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Issuer } from './models/Issuer';
-import { VerificationSteps, SUB_STEPS } from './constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { Receipt } from './models/Receipt';
 import { VerifierError } from './models';
@@ -131,7 +131,7 @@ export default class Verifier {
       await this[verificationStep]();
     }
 
-    if (this.merkleProofVerifier.verifyIdentity && !!this.issuer.didDocument) {
+    if (this.merkleProofVerifier.verifyIdentity) {
       await this.merkleProofVerifier.verifyIdentity();
     }
 

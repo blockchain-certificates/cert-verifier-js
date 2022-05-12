@@ -85,7 +85,9 @@ export default class MerkleProof2019 {
   }
 
   async verifyIdentity (): Promise<void> {
-    await this.verifyProcess(this.identityVerificationProcess);
+    if (this.issuer.didDocument) {
+      await this.verifyProcess(this.identityVerificationProcess);
+    }
   }
 
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {

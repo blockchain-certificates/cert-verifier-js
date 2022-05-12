@@ -1,7 +1,7 @@
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
-import type { ParsedCertificate } from './parsers/index';
+import type { ParsedCertificate } from './parsers';
 import parseJSON from './parsers/index';
 import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import Verifier from './verifier';

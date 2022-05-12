@@ -1,18 +1,27 @@
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
+import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v2 certificate data', function () {
       let certificate;
+      let requestStub
 
       beforeEach(async function () {
+        requestStub = sinon.stub(ExplorerLookup, 'request');
+        requestStub.withArgs({
+          url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+        }).resolves(JSON.stringify(v2IssuerProfile));
         certificate = new Certificate(fixture);
         await certificate.init();
       });
 
       afterEach(function () {
         certificate = null;
+        sinon.restore();
       });
 
       it('should set the certificateJson of the certificate object', function () {
@@ -40,7 +49,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set issuer of the certificate object', function () {
-        expect(certificate.issuer).toEqual(fixture.badge.issuer);
+        expect(certificate.issuer).toEqual(v2IssuerProfile);
       });
 
       it('should set metadataJson of the certificate object', function () {
@@ -69,7 +78,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set sealImage of the certificate object', function () {
-        expect(certificate.sealImage).toEqual(fixture.badge.issuer.image);
+        expect(certificate.sealImage).toEqual(v2IssuerProfile.image);
       });
 
       it('should set 1 signatureImage to the certificate object', function () {

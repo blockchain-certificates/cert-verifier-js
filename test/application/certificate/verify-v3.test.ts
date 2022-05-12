@@ -27,11 +27,11 @@ describe('Certificate test suite', function () {
           sinon.restore();
         });
 
-        it('should call it with the step, the text and the status', async function () {
+        it('should call the verification callback with the step, the text and the status', async function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
-            code: SUB_STEPS.getTransactionId,
-            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
+            code: SUB_STEPS.checkExpiresDate,
+            label: getText('subSteps', `${SUB_STEPS.checkExpiresDate}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 
@@ -111,11 +111,11 @@ describe('Certificate test suite', function () {
           certificate = null;
         });
 
-        it('should call it with the step, the text and the status', async function () {
+        it('should call the callback function with the step, the text and the status', async function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
-            code: SUB_STEPS.getTransactionId,
-            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
+            code: SUB_STEPS.checkExpiresDate,
+            label: getText('subSteps', `${SUB_STEPS.checkExpiresDate}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 

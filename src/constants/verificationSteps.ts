@@ -14,22 +14,22 @@ export enum VerificationSteps {
 }
 
 export enum SUB_STEPS {
-  getTransactionId = 'getTransactionId', // MerkleProof2019 specific
-  computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
-  fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
-  getIssuerProfile = 'getIssuerProfile',
-  parseIssuerKeys = 'parseIssuerKeys',
-  compareHashes = 'compareHashes', // MerkleProof2019 specific
+  // getTransactionId = 'getTransactionId', // MerkleProof2019 specific
+  // computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
+  // fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
+  // getIssuerProfile = 'getIssuerProfile',
+  // parseIssuerKeys = 'parseIssuerKeys',
+  // compareHashes = 'compareHashes', // MerkleProof2019 specific
   checkImagesIntegrity = 'checkImagesIntegrity',
-  checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
-  checkReceipt = 'checkReceipt', // MerkleProof2019 specific
+  // checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
+  // checkReceipt = 'checkReceipt', // MerkleProof2019 specific
   checkRevokedStatus = 'checkRevokedStatus',
-  checkAuthenticity = 'checkAuthenticity',
+  // checkAuthenticity = 'checkAuthenticity',
   checkExpiresDate = 'checkExpiresDate',
-  controlVerificationMethod = 'controlVerificationMethod',
-  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
-  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
-  compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
+  controlVerificationMethod = 'controlVerificationMethod'
+  // retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  // deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
+  // compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
 }
 
 export interface IVerificationSubstep {

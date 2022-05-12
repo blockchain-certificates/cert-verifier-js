@@ -32,8 +32,8 @@ describe('Certificate test suite', function () {
         it('should call it with the step, the text and the status', async function () {
           const callbackSpy = sinon.spy();
           const assertionStep = {
-            code: SUB_STEPS.getTransactionId,
-            label: getText('subSteps', `${SUB_STEPS.getTransactionId}LabelPending`),
+            code: SUB_STEPS.checkRevokedStatus,
+            label: getText('subSteps', `${SUB_STEPS.checkRevokedStatus}LabelPending`),
             status: VERIFICATION_STATUSES.SUCCESS
           };
 

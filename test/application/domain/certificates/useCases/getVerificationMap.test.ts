@@ -28,8 +28,8 @@ describe('domain certificates get verification map use case test suite', functio
       it('should return a mainnet verification map without the getIssuerProfile step', function () {
         const result: IVerificationMapItem[] = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin, Versions.V3_0).verificationMap;
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(mainnetMapAssertion));
-        const getIssuerProfileIndex = expectedOutput[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
-        expectedOutput[0].subSteps.splice(getIssuerProfileIndex, 1);
+        // const getIssuerProfileIndex = expectedOutput[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
+        // expectedOutput[0].subSteps.splice(getIssuerProfileIndex, 1);
         expect(result).toEqual(expectedOutput);
       });
     });
@@ -39,41 +39,18 @@ describe('domain certificates get verification map use case test suite', functio
         const result: IVerificationMapItem[] = domain.certificates.getVerificationMap(BLOCKCHAINS.bitcoin, Versions.V3_0_beta, true).verificationMap;
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(mainnetMapAssertion));
         // remove because v3
-        const getIssuerProfileIndex = expectedOutput[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
-        expectedOutput[0].subSteps.splice(getIssuerProfileIndex, 1);
+        // const getIssuerProfileIndex = expectedOutput[0].subSteps.findIndex(subStep => subStep.code === SUB_STEPS.getIssuerProfile);
+        // expectedOutput[0].subSteps.splice(getIssuerProfileIndex, 1);
 
         // add because did
-        expectedOutput.splice(2, 0, {
-          code: VerificationSteps.identityVerification,
-          label: defaultLanguageSet.steps.identityVerificationLabel,
-          labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
-          subSteps: [
-            {
-              code: SUB_STEPS.controlVerificationMethod,
-              label: defaultLanguageSet.subSteps.controlVerificationMethodLabel,
-              labelPending: defaultLanguageSet.subSteps.controlVerificationMethodLabelPending,
-              parentStep: VerificationSteps.identityVerification
-            },
-            {
-              code: SUB_STEPS.retrieveVerificationMethodPublicKey,
-              label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
-              labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
-              parentStep: VerificationSteps.identityVerification
-            },
-            {
-              code: SUB_STEPS.deriveIssuingAddressFromPublicKey,
-              label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
-              labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,
-              parentStep: VerificationSteps.identityVerification
-            },
-            {
-              code: SUB_STEPS.compareIssuingAddress,
-              label: defaultLanguageSet.subSteps.compareIssuingAddressLabel,
-              labelPending: defaultLanguageSet.subSteps.compareIssuingAddressLabelPending,
-              parentStep: VerificationSteps.identityVerification
-            }
-          ]
-        });
+        expectedOutput.find(step => step.code === VerificationSteps.identityVerification).subSteps = [
+          {
+            code: SUB_STEPS.controlVerificationMethod,
+            label: defaultLanguageSet.subSteps.controlVerificationMethodLabel,
+            labelPending: defaultLanguageSet.subSteps.controlVerificationMethodLabelPending,
+            parentStep: VerificationSteps.identityVerification
+          }
+        ];
 
         expect(result).toEqual(expectedOutput);
       });

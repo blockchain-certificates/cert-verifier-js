@@ -24,62 +24,52 @@ export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, ve
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (chainsService.isMockChain(chain)) {
-    removeStep(verificationSteps, SUB_STEPS.getTransactionId);
-    removeStep(verificationSteps, SUB_STEPS.fetchRemoteHash);
-    removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
-    removeStep(verificationSteps, SUB_STEPS.parseIssuerKeys);
-    removeStep(verificationSteps, SUB_STEPS.checkMerkleRoot);
+    // removeStep(verificationSteps, SUB_STEPS.getTransactionId);
+    // removeStep(verificationSteps, SUB_STEPS.fetchRemoteHash);
+    // removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
+    // removeStep(verificationSteps, SUB_STEPS.parseIssuerKeys);
+    // removeStep(verificationSteps, SUB_STEPS.checkMerkleRoot);
     removeStep(verificationSteps, SUB_STEPS.checkRevokedStatus);
-    removeStep(verificationSteps, SUB_STEPS.checkAuthenticity);
+    // removeStep(verificationSteps, SUB_STEPS.checkAuthenticity);
   }
 
   if (isV3(version)) {
-    removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
+    // removeStep(verificationSteps, SUB_STEPS.getIssuerProfile);
   }
 
   if (!hasDid) {
     removeStep(verificationSteps, SUB_STEPS.controlVerificationMethod);
-    removeStep(verificationSteps, SUB_STEPS.retrieveVerificationMethodPublicKey);
-    removeStep(verificationSteps, SUB_STEPS.deriveIssuingAddressFromPublicKey);
-    removeStep(verificationSteps, SUB_STEPS.compareIssuingAddress);
+    // removeStep(verificationSteps, SUB_STEPS.retrieveVerificationMethodPublicKey);
+    // removeStep(verificationSteps, SUB_STEPS.deriveIssuingAddressFromPublicKey);
+    // removeStep(verificationSteps, SUB_STEPS.compareIssuingAddress);
   }
-
-  // TEMPORARY, DO NOT COMMIT
-  removeStep(verificationSteps, SUB_STEPS.getTransactionId);
-  removeStep(verificationSteps, SUB_STEPS.computeLocalHash);
-  removeStep(verificationSteps, SUB_STEPS.fetchRemoteHash);
-  removeStep(verificationSteps, SUB_STEPS.compareHashes);
-  removeStep(verificationSteps, SUB_STEPS.checkMerkleRoot);
-  removeStep(verificationSteps, SUB_STEPS.checkReceipt);
-  removeStep(verificationSteps, SUB_STEPS.checkAuthenticity);
-  removeStep(verificationSteps, SUB_STEPS.parseIssuerKeys);
 
   return verificationSteps;
 }
 
 const verificationMap = {
   [VerificationSteps.formatValidation]: [
-    SUB_STEPS.getIssuerProfile,
-    SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.checkImagesIntegrity
   ],
   [VerificationSteps.signatureVerification]: [
-    SUB_STEPS.getTransactionId,
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.fetchRemoteHash,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkMerkleRoot,
-    SUB_STEPS.checkReceipt
+    // SUB_STEPS.getIssuerProfile,
+    // SUB_STEPS.parseIssuerKeys,
+    // SUB_STEPS.getTransactionId,
+    // SUB_STEPS.computeLocalHash,
+    // SUB_STEPS.fetchRemoteHash,
+    // SUB_STEPS.compareHashes,
+    // SUB_STEPS.checkMerkleRoot,
+    // SUB_STEPS.checkAuthenticity,
+    // SUB_STEPS.checkReceipt
   ],
   [VerificationSteps.identityVerification]: [
     SUB_STEPS.controlVerificationMethod,
-    SUB_STEPS.retrieveVerificationMethodPublicKey,
-    SUB_STEPS.deriveIssuingAddressFromPublicKey,
-    SUB_STEPS.compareIssuingAddress
+    // SUB_STEPS.retrieveVerificationMethodPublicKey,
+    // SUB_STEPS.deriveIssuingAddressFromPublicKey,
+    // SUB_STEPS.compareIssuingAddress
   ],
   [VerificationSteps.statusCheck]: [
     SUB_STEPS.checkRevokedStatus,
-    SUB_STEPS.checkAuthenticity,
     SUB_STEPS.checkExpiresDate
   ]
 };
@@ -102,8 +92,8 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     .map(parentStepKey => ({
       ...steps[parentStepKey],
       subSteps: filterSubStepsForParentStep((parentStepKey as VerificationSteps), verificationSubStepsList)
-    }))
-    .filter(parentStep => parentStep.subSteps.length > 0);
+    }));
+    // .filter(parentStep => parentStep.subSteps.length > 0);
 }
 
 export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): {

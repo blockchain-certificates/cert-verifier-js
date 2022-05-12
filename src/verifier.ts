@@ -56,6 +56,7 @@ export default class Verifier {
   private derivedIssuingAddress: string;
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
+  public merkleProofVerifier: any;
   readonly verificationProcess: SUB_STEPS[];
 
   constructor (
@@ -99,6 +100,18 @@ export default class Verifier {
       MerkleProof2017,
       MerkleProof2019
     };
+
+    this.merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
+      actionMethod: this._doAction.bind(this),
+      document: this.documentToVerify,
+      transactionId: this.transactionId,
+      chain: this.chain,
+      explorerAPIs: this.explorerAPIs,
+      receipt: this.receipt,
+      version: this.version,
+      issuer: this.issuer,
+      proof: this.proof
+    });
   }
 
   // // MerkleProof2017/2019 concern
@@ -114,26 +127,19 @@ export default class Verifier {
     this._stepsStatuses = [];
 
     console.log('main verification process', this.verificationProcess);
+    await this.merkleProofVerifier.verifyProof();
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
+        console.log('verification logic for', verificationStep, 'not implemented');
         return;
       }
       await this[verificationStep]();
     }
 
-    const merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
-      actionMethod: this._doAction.bind(this),
-      document: this.documentToVerify,
-      transactionId: this.transactionId,
-      chain: this.chain,
-      explorerAPIs: this.explorerAPIs,
-      receipt: this.receipt,
-      version: this.version,
-      issuer: this.issuer
-    });
-
-    await merkleProofVerifier.verify();
+    if (this.merkleProofVerifier.verifyIdentity && !!this.issuer.didDocument) {
+      await this.merkleProofVerifier.verifyIdentity();
+    }
 
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
@@ -187,35 +193,34 @@ export default class Verifier {
   }
 
   // merkle proof 2019
-  private async getTransactionId (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.getTransactionId,
-      () => inspectors.isTransactionIdValid(this.transactionId)
-    );
-  }
-
-  // merkle proof 2019
-  private async computeLocalHash (): Promise<void> {
-    this.localHash = await this._doAction(
-      SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify)
-    );
-  }
-
-  // merkle proof 2019
-  private async fetchRemoteHash (): Promise<void> {
-    this.txData = await this._doAction(
-      SUB_STEPS.fetchRemoteHash,
-      async () => await domain.verifier.lookForTx({
-        transactionId: this.transactionId,
-        chain: this.chain.code,
-        explorerAPIs: this.explorerAPIs
-      })
-    );
-  }
+  // private async getTransactionId (): Promise<void> {
+  //   await this._doAction(
+  //     SUB_STEPS.getTransactionId,
+  //     () => inspectors.isTransactionIdValid(this.transactionId)
+  //   );
+  // }
+  //
+  // // merkle proof 2019
+  // private async computeLocalHash (): Promise<void> {
+  //   this.localHash = await this._doAction(
+  //     SUB_STEPS.computeLocalHash,
+  //     async () => await inspectors.computeLocalHash(this.documentToVerify)
+  //   );
+  // }
+  //
+  // // merkle proof 2019
+  // private async fetchRemoteHash (): Promise<void> {
+  //   this.txData = await this._doAction(
+  //     SUB_STEPS.fetchRemoteHash,
+  //     async () => await domain.verifier.lookForTx({
+  //       transactionId: this.transactionId,
+  //       chain: this.chain.code,
+  //       explorerAPIs: this.explorerAPIs
+  //     })
+  //   );
+  // }
 
   private async checkImagesIntegrity (): Promise<void> {
-    console.log(SUB_STEPS.checkImagesIntegrity);
     await this._doAction(
       SUB_STEPS.checkImagesIntegrity,
       async () => {
@@ -228,41 +233,40 @@ export default class Verifier {
     );
   }
 
-  private async getIssuerProfile (): Promise<void> {
-    this.issuer = await this._doAction(
-      SUB_STEPS.getIssuerProfile,
-      async () => await domain.verifier.getIssuerProfile(this.issuer)
-    );
-  }
-
-  private async parseIssuerKeys (): Promise<void> {
-    console.log(SUB_STEPS.parseIssuerKeys);
-    this.issuerPublicKeyList = await this._doAction(
-      SUB_STEPS.parseIssuerKeys,
-      () => domain.verifier.parseIssuerKeys(this.issuer)
-    );
-  }
-
-  // merkle proof 2019
-  private async compareHashes (): Promise<void> {
-    await this._doAction(SUB_STEPS.compareHashes, () => {
-      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
-    });
-  }
-
-  // merkle proof 2019
-  private async checkMerkleRoot (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
-    );
-  }
-
-  // merkle proof 2019
-  private async checkReceipt (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt, this.version)
-    );
-  }
+  // private async getIssuerProfile (): Promise<void> {
+  //   this.issuer = await this._doAction(
+  //     SUB_STEPS.getIssuerProfile,
+  //     async () => await domain.verifier.getIssuerProfile(this.issuer)
+  //   );
+  // }
+  //
+  // private async parseIssuerKeys (): Promise<void> {
+  //   this.issuerPublicKeyList = await this._doAction(
+  //     SUB_STEPS.parseIssuerKeys,
+  //     () => domain.verifier.parseIssuerKeys(this.issuer)
+  //   );
+  // }
+  //
+  // // merkle proof 2019
+  // private async compareHashes (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.compareHashes, () => {
+  //     inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
+  //   });
+  // }
+  //
+  // // merkle proof 2019
+  // private async checkMerkleRoot (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
+  //     inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
+  //   );
+  // }
+  //
+  // // merkle proof 2019
+  // private async checkReceipt (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.checkReceipt, () =>
+  //     inspectors.ensureValidReceipt(this.receipt, this.version)
+  //   );
+  // }
 
   private async checkRevokedStatus (): Promise<void> {
     console.log(SUB_STEPS.checkRevokedStatus);
@@ -288,15 +292,13 @@ export default class Verifier {
     );
   }
 
-  private async checkAuthenticity (): Promise<void> {
-    console.log(SUB_STEPS.checkAuthenticity);
-    await this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
-    );
-  }
+  // private async checkAuthenticity (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.checkAuthenticity, () =>
+  //     inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
+  //   );
+  // }
 
   private async checkExpiresDate (): Promise<void> {
-    console.log(SUB_STEPS.checkExpiresDate);
     await this._doAction(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
     );
@@ -308,26 +310,25 @@ export default class Verifier {
     });
   }
 
-  // merkle proof 2019
-  private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, (this.proof as VCProof).verificationMethod);
-    });
-  }
-
-  // merkle proof 2019
-  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
-      this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
-    });
-  }
-
-  // merkle proof 2019
-  private async compareIssuingAddress (): Promise<void> {
-    await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
-      inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
-    });
-  }
+  // private async retrieveVerificationMethodPublicKey (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
+  //     this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, (this.proof as VCProof).verificationMethod);
+  //   });
+  // }
+  //
+  // // merkle proof 2019
+  // private async deriveIssuingAddressFromPublicKey (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
+  //     this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
+  //   });
+  // }
+  //
+  // // merkle proof 2019
+  // private async compareIssuingAddress (): Promise<void> {
+  //   await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
+  //     inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
+  //   });
+  // }
 
   /**
    * Returns a failure final step message

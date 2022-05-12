@@ -1,6 +1,9 @@
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import FIXTURES from '../../fixtures';
 import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
 import parseJSON from '../../../src/parsers/index';
+import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
 const fixture = FIXTURES.MainnetV2Valid;
 
@@ -16,13 +19,19 @@ describe('Parser test suite', function () {
 
   describe('given it is called with valid v2 certificate data', function () {
     let parsedCertificate;
+    let requestStub;
 
     beforeEach(async function () {
+      requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({
+        url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+      }).resolves(JSON.stringify(v2IssuerProfile));
       parsedCertificate = await parseJSON(fixture);
     });
 
     afterEach(function () {
       parsedCertificate = null;
+      sinon.restore();
     });
 
     it('should set the certificateImage of the certificate object', function () {
@@ -46,7 +55,7 @@ describe('Parser test suite', function () {
     });
 
     it('should set the issuer of the certificate object', function () {
-      expect(parsedCertificate.issuer).toEqual(fixture.badge.issuer);
+      expect(parsedCertificate.issuer).toEqual(v2IssuerProfile);
     });
 
     it('should set metadataJson of the certificate object', function () {
@@ -75,7 +84,7 @@ describe('Parser test suite', function () {
     });
 
     it('should set the sealImage of the certificate object', function () {
-      expect(parsedCertificate.sealImage).toEqual(fixture.badge.issuer.image);
+      expect(parsedCertificate.sealImage).toEqual(v2IssuerProfile.image);
     });
 
     it('should set 1 signatureImage to the certificate object', function () {

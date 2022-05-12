@@ -27,7 +27,10 @@ describe('Verifier entity test suite', function () {
     version: CERTIFICATE_VERSIONS.V2_0,
     explorerAPIs: undefined,
     verificationSteps: mainnetMapAssertion,
-    hashlinkVerifier: new HashlinkVerifier()
+    hashlinkVerifier: new HashlinkVerifier(),
+    proof: {
+      type: 'MerkleProof2017'
+    }
   };
 
   afterEach(function () {
@@ -164,17 +167,17 @@ describe('Verifier entity test suite', function () {
       it('should be set accordingly', function () {
         verifierInstance = new Verifier(verifierParamFixture);
         const expectedOutput = [
-          SUB_STEPS.getTransactionId,
-          SUB_STEPS.computeLocalHash,
-          SUB_STEPS.fetchRemoteHash,
-          SUB_STEPS.getIssuerProfile,
-          SUB_STEPS.parseIssuerKeys,
-          SUB_STEPS.compareHashes,
+          // SUB_STEPS.getTransactionId,
+          // SUB_STEPS.computeLocalHash,
+          // SUB_STEPS.fetchRemoteHash,
+          // SUB_STEPS.getIssuerProfile,
+          // SUB_STEPS.parseIssuerKeys,
+          // SUB_STEPS.compareHashes,
           SUB_STEPS.checkImagesIntegrity,
-          SUB_STEPS.checkMerkleRoot,
-          SUB_STEPS.checkReceipt,
+          // SUB_STEPS.checkMerkleRoot,
+          // SUB_STEPS.checkReceipt,
           SUB_STEPS.checkRevokedStatus,
-          SUB_STEPS.checkAuthenticity,
+          // SUB_STEPS.checkAuthenticity,
           SUB_STEPS.checkExpiresDate
         ];
         expect(verifierInstance.verificationProcess).toEqual(expectedOutput);

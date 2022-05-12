@@ -6,6 +6,7 @@ import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type { ParsedCertificate } from './index';
 import type { VCProof } from '../models/BlockcertsV3';
 import type { MerkleProof2017 } from '../models/MerkleProof2017';
+import type { Issuer } from '../models/Issuer';
 
 function convertAsVCProof (signature: MerkleProof2017): VCProof {
   return {
@@ -14,9 +15,9 @@ function convertAsVCProof (signature: MerkleProof2017): VCProof {
   };
 }
 
-export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertificate {
+export default async function parseV2 (certificateJson: BlockcertsV2): Promise<ParsedCertificate> {
   const { id, expires, signature: receipt, badge } = certificateJson;
-  const { image: certificateImage, name, description, subtitle, issuer } = badge;
+  const { image: certificateImage, name, description, subtitle, issuer: issuerProfileUrl } = badge;
   const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
   const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 
@@ -26,8 +27,9 @@ export default function parseV2 (certificateJson: BlockcertsV2): ParsedCertifica
   const metadataJson = certificateJson.metadataJson;
   const recipientFullName = recipientProfile.name;
   const revocationKey = null;
-  const sealImage = issuer.image;
   const signatureImage = getSignatureImages(badge.signatureLines, version);
+  const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
+  const sealImage = issuer.image;
 
   return {
     certificateImage,

@@ -6,10 +6,30 @@ import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
-import { SUB_STEPS } from '../constants/verificationSteps';
+import type { VCProof } from '../models/BlockcertsV3';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+
+enum SUB_STEPS {
+  getTransactionId = 'getTransactionId', // MerkleProof2019 specific
+  computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
+  fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
+  getIssuerProfile = 'getIssuerProfile',
+  parseIssuerKeys = 'parseIssuerKeys',
+  compareHashes = 'compareHashes', // MerkleProof2019 specific
+  checkImagesIntegrity = 'checkImagesIntegrity',
+  checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
+  checkReceipt = 'checkReceipt', // MerkleProof2019 specific
+  checkRevokedStatus = 'checkRevokedStatus',
+  checkAuthenticity = 'checkAuthenticity',
+  checkExpiresDate = 'checkExpiresDate',
+  controlVerificationMethod = 'controlVerificationMethod',
+  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
+  compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
+}
 
 export default class MerkleProof2019 {
-  public verificationProcess = [
+  public proofVerificationProcess = [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
     SUB_STEPS.fetchRemoteHash,
@@ -18,6 +38,12 @@ export default class MerkleProof2019 {
     SUB_STEPS.checkReceipt,
     SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.checkAuthenticity
+  ];
+
+  public identityVerificationProcess = [
+    SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.deriveIssuingAddressFromPublicKey,
+    SUB_STEPS.compareIssuingAddress
   ];
 
   public transactionId: string;
@@ -30,6 +56,9 @@ export default class MerkleProof2019 {
   public version: Versions; // Version can be ignored in MerkleProof2019
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
+  public verificationMethodPublicKey: IDidDocumentPublicKey;
+  public derivedIssuingAddress: string;
+  public proof: VCProof;
 
   constructor ({
     actionMethod = null,
@@ -39,7 +68,8 @@ export default class MerkleProof2019 {
     explorerAPIs = null,
     receipt = null,
     version = null,
-    issuer = null
+    issuer = null,
+    proof = null
   }) {
     if (actionMethod) {
       this._doAction = actionMethod;
@@ -51,10 +81,19 @@ export default class MerkleProof2019 {
     this.receipt = receipt;
     this.version = version;
     this.issuer = issuer;
+    this.proof = proof;
   }
 
-  async verify (): Promise<void> {
-    for (const verificationStep of this.verificationProcess) {
+  async verifyProof (): Promise<void> {
+    await this.verifyProcess(this.proofVerificationProcess);
+  }
+
+  async verifyIdentity (): Promise<void> {
+    await this.verifyProcess(this.identityVerificationProcess);
+  }
+
+  private async verifyProcess (process: SUB_STEPS[]): Promise<void> {
+    for (const verificationStep of process) {
       if (!this[verificationStep]) {
         return;
       }
@@ -81,6 +120,7 @@ export default class MerkleProof2019 {
   }
 
   private async fetchRemoteHash (): Promise<void> {
+    console.log(SUB_STEPS.fetchRemoteHash);
     this.txData = await this._doAction(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
@@ -89,6 +129,7 @@ export default class MerkleProof2019 {
         explorerAPIs: this.explorerAPIs
       })
     );
+    console.log(this.txData);
   }
 
   private async compareHashes (): Promise<void> {
@@ -119,8 +160,31 @@ export default class MerkleProof2019 {
 
   private async checkAuthenticity (): Promise<void> {
     console.log(SUB_STEPS.checkAuthenticity);
+    console.log(this.txData);
     await this._doAction(SUB_STEPS.checkAuthenticity, () =>
       inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
     );
+  }
+
+  // ##### DID CORRELATION #####
+
+  private async retrieveVerificationMethodPublicKey (): Promise<void> {
+    await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
+      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+    });
+  }
+
+  // merkle proof 2019
+  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
+    await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
+      this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
+    });
+  }
+
+  // merkle proof 2019
+  private async compareIssuingAddress (): Promise<void> {
+    await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
+      inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
+    });
   }
 }

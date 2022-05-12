@@ -8,6 +8,7 @@ import { safelyAppendUrlParameter } from '../../../helpers/url';
 const ASSERTION_ID_NAME: string = 'assertionId';
 
 export default async function getRevokedAssertions (revocationListUrl: string, assertionId?: string): Promise<RevokedAssertion[]> {
+  console.log(revocationListUrl, assertionId);
   if (!revocationListUrl) {
     return [];
   }
@@ -19,7 +20,7 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
   }
 
   const response: any = await request({ url: revocationListUrl }).catch(() => {
-    throw new VerifierError(SUB_STEPS.parseIssuerKeys, errorMessage);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, errorMessage);
   });
 
   const issuerRevocationJson: RevocationList = JSON.parse(response);

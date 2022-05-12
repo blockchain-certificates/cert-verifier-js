@@ -6,13 +6,31 @@ import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
-import { SUB_STEPS } from '../constants/verificationSteps';
 
 function removeStep (map: string[], step: string): void {
   const stepIndex = map.findIndex(subStep => subStep === step);
   if (stepIndex > -1) {
     map.splice(stepIndex, 1);
   }
+}
+
+enum SUB_STEPS {
+  getTransactionId = 'getTransactionId', // MerkleProof2019 specific
+  computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
+  fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
+  getIssuerProfile = 'getIssuerProfile', // MerkleProof2019 specific
+  parseIssuerKeys = 'parseIssuerKeys',
+  compareHashes = 'compareHashes', // MerkleProof2019 specific
+  checkImagesIntegrity = 'checkImagesIntegrity',
+  checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
+  checkReceipt = 'checkReceipt', // MerkleProof2019 specific
+  checkRevokedStatus = 'checkRevokedStatus',
+  checkAuthenticity = 'checkAuthenticity',
+  checkExpiresDate = 'checkExpiresDate',
+  controlVerificationMethod = 'controlVerificationMethod',
+  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
+  compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
 }
 
 export default class MerkleProof2017 {
@@ -61,9 +79,10 @@ export default class MerkleProof2017 {
     this.adaptVerificationProcessToChain();
   }
 
-  async verify (): Promise<void> {
+  async verifyProof (): Promise<void> {
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
+        console.log('verification logic for', verificationStep, 'not implemented');
         return;
       }
       await this[verificationStep]();
@@ -74,7 +93,6 @@ export default class MerkleProof2017 {
     if (domain.chains.isMockChain(this.chain)) {
       removeStep(this.verificationProcess, SUB_STEPS.getTransactionId);
       removeStep(this.verificationProcess, SUB_STEPS.fetchRemoteHash);
-      removeStep(this.verificationProcess, SUB_STEPS.getIssuerProfile);
       removeStep(this.verificationProcess, SUB_STEPS.parseIssuerKeys);
       removeStep(this.verificationProcess, SUB_STEPS.checkMerkleRoot);
       removeStep(this.verificationProcess, SUB_STEPS.checkRevokedStatus);
@@ -98,6 +116,7 @@ export default class MerkleProof2017 {
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify)
     );
+    console.log('MkPr2017 localhash', this.localHash);
   }
 
   private async fetchRemoteHash (): Promise<void> {
@@ -109,9 +128,11 @@ export default class MerkleProof2017 {
         explorerAPIs: this.explorerAPIs
       })
     );
+    console.log('MkPr2017 txdata', this.txData);
   }
 
   private async compareHashes (): Promise<void> {
+    console.log(SUB_STEPS.compareHashes, 'local', this.localHash, 'receipt', this.receipt.targetHash);
     await this._doAction(SUB_STEPS.compareHashes, () => {
       inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
     });
@@ -130,7 +151,6 @@ export default class MerkleProof2017 {
   }
 
   private async parseIssuerKeys (): Promise<void> {
-    console.log(SUB_STEPS.parseIssuerKeys);
     this.issuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer)
@@ -138,7 +158,6 @@ export default class MerkleProof2017 {
   }
 
   private async checkAuthenticity (): Promise<void> {
-    console.log(SUB_STEPS.checkAuthenticity);
     await this._doAction(SUB_STEPS.checkAuthenticity, () =>
       inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
     );

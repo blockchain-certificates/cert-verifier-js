@@ -1,6 +1,5 @@
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
 import sha256 from 'sha256';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
@@ -53,13 +52,13 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
     normalizedDocument = await jsonld.normalize(theDocument, normalizeArgs);
   } catch (e) {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.computeLocalHash, getText('errors', 'failedJsonLdNormalization'));
+    throw new VerifierError('computeLocalHash', getText('errors', 'failedJsonLdNormalization'));
   }
 
   const unmappedFields: string[] = getUnmappedFields(normalizedDocument);
   if (unmappedFields) {
     throw new VerifierError(
-      SUB_STEPS.computeLocalHash,
+      'computeLocalHash',
       `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
     );
   } else {

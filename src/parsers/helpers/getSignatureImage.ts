@@ -9,7 +9,7 @@ import { CERTIFICATE_VERSIONS } from '../../constants';
  * @returns {Array}
  * @private
  */
-export default function getSignatureImages (signatureRawObject, certificateVersion): SignatureImage[] {
+export default function getSignatureImages (signatureRawObject, certificateVersion: CERTIFICATE_VERSIONS): SignatureImage[] {
   const signatureImageObjects = [];
 
   switch (certificateVersion) {

@@ -1,6 +1,5 @@
 import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
 import type Versions from '../constants/certificateVersions';
 import { isV3 } from '../constants/certificateVersions';
 import { toByteArray } from '../helpers/data';
@@ -12,7 +11,7 @@ export default function ensureValidReceipt (receipt: Receipt, version: Versions)
   const merkleRoot = receipt.merkleRoot;
 
   if (isV3(version) && !!receipt.proof) {
-    throw new VerifierError(SUB_STEPS.checkReceipt, getText('errors', 'invalidMerkleVersion'));
+    throw new VerifierError('checkReceipt', getText('errors', 'invalidMerkleVersion'));
   }
 
   try {
@@ -31,7 +30,7 @@ export default function ensureValidReceipt (receipt: Receipt, version: Versions)
           proofHash = sha256(appendedBuffer);
         } else {
           throw new VerifierError(
-            SUB_STEPS.checkReceipt,
+            'checkReceipt',
             'Trigger catch error.'
           );
         }
@@ -39,14 +38,14 @@ export default function ensureValidReceipt (receipt: Receipt, version: Versions)
     }
   } catch (e) {
     throw new VerifierError(
-      SUB_STEPS.checkReceipt,
+      'checkReceipt',
       getText('errors', 'ensureValidReceipt')
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
-      SUB_STEPS.checkReceipt,
+      'checkReceipt',
       getText('errors', 'invalidMerkleReceipt')
     );
   }

@@ -10,22 +10,18 @@ import type { VCProof } from '../models/BlockcertsV3';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 enum SUB_STEPS {
-  getTransactionId = 'getTransactionId', // MerkleProof2019 specific
-  computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
-  fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
-  getIssuerProfile = 'getIssuerProfile',
+  getTransactionId = 'getTransactionId',
+  computeLocalHash = 'computeLocalHash',
+  fetchRemoteHash = 'fetchRemoteHash',
   parseIssuerKeys = 'parseIssuerKeys',
-  compareHashes = 'compareHashes', // MerkleProof2019 specific
+  compareHashes = 'compareHashes',
   checkImagesIntegrity = 'checkImagesIntegrity',
-  checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
-  checkReceipt = 'checkReceipt', // MerkleProof2019 specific
-  checkRevokedStatus = 'checkRevokedStatus',
-  checkAuthenticity = 'checkAuthenticity',
-  checkExpiresDate = 'checkExpiresDate',
-  controlVerificationMethod = 'controlVerificationMethod',
+  checkMerkleRoot = 'checkMerkleRoot',
+  checkReceipt = 'checkReceipt',
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
-  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
-  compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
+  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey',
+  compareIssuingAddress = 'compareIssuingAddress',
+  checkAuthenticity = 'checkAuthenticity'
 }
 
 export default class MerkleProof2019 {
@@ -95,6 +91,7 @@ export default class MerkleProof2019 {
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {
     for (const verificationStep of process) {
       if (!this[verificationStep]) {
+        console.error('verification logic for', verificationStep, 'not implemented');
         return;
       }
       await this[verificationStep]();
@@ -120,7 +117,6 @@ export default class MerkleProof2019 {
   }
 
   private async fetchRemoteHash (): Promise<void> {
-    console.log(SUB_STEPS.fetchRemoteHash);
     this.txData = await this._doAction(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
@@ -129,7 +125,6 @@ export default class MerkleProof2019 {
         explorerAPIs: this.explorerAPIs
       })
     );
-    console.log(this.txData);
   }
 
   private async compareHashes (): Promise<void> {
@@ -151,7 +146,6 @@ export default class MerkleProof2019 {
   }
 
   private async parseIssuerKeys (): Promise<void> {
-    console.log(SUB_STEPS.parseIssuerKeys);
     this.issuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer)
@@ -159,8 +153,6 @@ export default class MerkleProof2019 {
   }
 
   private async checkAuthenticity (): Promise<void> {
-    console.log(SUB_STEPS.checkAuthenticity);
-    console.log(this.txData);
     await this._doAction(SUB_STEPS.checkAuthenticity, () =>
       inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
     );

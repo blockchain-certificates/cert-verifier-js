@@ -15,22 +15,14 @@ function removeStep (map: string[], step: string): void {
 }
 
 enum SUB_STEPS {
-  getTransactionId = 'getTransactionId', // MerkleProof2019 specific
-  computeLocalHash = 'computeLocalHash', // MerkleProof2019 specific
-  fetchRemoteHash = 'fetchRemoteHash', // MerkleProof2019 specific
-  getIssuerProfile = 'getIssuerProfile', // MerkleProof2019 specific
+  getTransactionId = 'getTransactionId',
+  computeLocalHash = 'computeLocalHash',
+  fetchRemoteHash = 'fetchRemoteHash',
   parseIssuerKeys = 'parseIssuerKeys',
-  compareHashes = 'compareHashes', // MerkleProof2019 specific
-  checkImagesIntegrity = 'checkImagesIntegrity',
-  checkMerkleRoot = 'checkMerkleRoot', // MerkleProof2019 specific
-  checkReceipt = 'checkReceipt', // MerkleProof2019 specific
-  checkRevokedStatus = 'checkRevokedStatus',
-  checkAuthenticity = 'checkAuthenticity',
-  checkExpiresDate = 'checkExpiresDate',
-  controlVerificationMethod = 'controlVerificationMethod',
-  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
-  deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey', // MerkleProof2019 specific
-  compareIssuingAddress = 'compareIssuingAddress' // MerkleProof2019 specific
+  compareHashes = 'compareHashes',
+  checkMerkleRoot = 'checkMerkleRoot',
+  checkReceipt = 'checkReceipt',
+  checkAuthenticity = 'checkAuthenticity'
 }
 
 export default class MerkleProof2017 {
@@ -82,7 +74,7 @@ export default class MerkleProof2017 {
   async verifyProof (): Promise<void> {
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
-        console.log('verification logic for', verificationStep, 'not implemented');
+        console.error('verification logic for', verificationStep, 'not implemented');
         return;
       }
       await this[verificationStep]();
@@ -95,7 +87,6 @@ export default class MerkleProof2017 {
       removeStep(this.verificationProcess, SUB_STEPS.fetchRemoteHash);
       removeStep(this.verificationProcess, SUB_STEPS.parseIssuerKeys);
       removeStep(this.verificationProcess, SUB_STEPS.checkMerkleRoot);
-      removeStep(this.verificationProcess, SUB_STEPS.checkRevokedStatus);
       removeStep(this.verificationProcess, SUB_STEPS.checkAuthenticity);
     }
   }
@@ -116,7 +107,6 @@ export default class MerkleProof2017 {
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify)
     );
-    console.log('MkPr2017 localhash', this.localHash);
   }
 
   private async fetchRemoteHash (): Promise<void> {
@@ -128,11 +118,9 @@ export default class MerkleProof2017 {
         explorerAPIs: this.explorerAPIs
       })
     );
-    console.log('MkPr2017 txdata', this.txData);
   }
 
   private async compareHashes (): Promise<void> {
-    console.log(SUB_STEPS.compareHashes, 'local', this.localHash, 'receipt', this.receipt.targetHash);
     await this._doAction(SUB_STEPS.compareHashes, () => {
       inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
     });

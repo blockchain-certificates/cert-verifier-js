@@ -1,6 +1,5 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
-import { SUB_STEPS } from '../../../constants/verificationSteps';
 import { getText } from '../../i18n/useCases';
 import type { Issuer } from '../../../models/Issuer';
 import domain from '../../../domain';
@@ -55,7 +54,7 @@ function isValidProfile (profile: Issuer): boolean {
 export default async function getIssuerProfile (issuerAddress: Issuer | string): Promise<Issuer> {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
   if (typeof issuerAddress === 'object') {
@@ -63,7 +62,6 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
   }
 
   let issuerProfile: Issuer;
-  console.log('got issuer address', issuerAddress);
   if (isDidUri(issuerAddress)) {
     // TODO: it could be that the issuer profile is embedded, or that it is distant,
     //  but we found a did document so the rest of the function does not apply
@@ -79,21 +77,18 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
         ...issuerProfile
       };
     } catch (e) {
-      throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${e as string}`);
+      throw new VerifierError('getIssuerProfile', `${errorMessage} - ${e as string}`);
     }
   } else if (!isValidUrl(issuerAddress)) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
-  console.log('fetching address', issuerAddress);
   issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch(() => {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, errorMessage);
+    throw new VerifierError('getIssuerProfile', errorMessage);
   }));
 
-  console.log('issuerProfile');
-
   if (!isValidProfile(issuerProfile) && !isValidV1Profile(issuerProfile)) {
-    throw new VerifierError(SUB_STEPS.getIssuerProfile, `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
   }
 
   return issuerProfile;

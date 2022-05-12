@@ -8,7 +8,7 @@ describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v2 certificate data', function () {
       let certificate;
-      let requestStub
+      let requestStub;
 
       beforeEach(async function () {
         requestStub = sinon.stub(ExplorerLookup, 'request');

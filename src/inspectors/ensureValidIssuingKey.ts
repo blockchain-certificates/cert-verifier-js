@@ -1,6 +1,5 @@
 import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 import type { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer';
 
@@ -36,7 +35,7 @@ export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIs
 
   if (errorMessage) {
     throw new VerifierError(
-      SUB_STEPS.checkAuthenticity,
+      'checkAuthenticity',
       getText('errors', errorMessage)
     );
   }

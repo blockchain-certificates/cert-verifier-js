@@ -1,5 +1,4 @@
 import { dateToUnixTimestamp } from '../../../helpers/date';
-import { SUB_STEPS } from '../../../constants/verificationSteps';
 import { Key, VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
 import type { NullableNumber } from '../../../models/helpers';
@@ -50,7 +49,7 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
   } catch (e) {
     console.log(e);
     throw new VerifierError(
-      SUB_STEPS.parseIssuerKeys,
+      'parseIssuerKeys',
       getText('errors', 'parseIssuerKeys')
     );
   }

@@ -1,6 +1,5 @@
 import VerifierError from '../models/verifierError';
 import { getText } from '../domain/i18n/useCases';
-import { SUB_STEPS } from '../constants/verificationSteps';
 
 /**
  * isTransactionIdValid
@@ -13,7 +12,7 @@ export default function isTransactionIdValid (transactionId: string): string {
     return transactionId;
   } else {
     throw new VerifierError(
-      SUB_STEPS.getTransactionId,
+      'getTransactionId',
       getText('errors', 'isTransactionIdValid')
     );
   }

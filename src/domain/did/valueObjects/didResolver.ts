@@ -3,7 +3,7 @@ export const universalResolverUrl = 'https://dev.uniresolver.io/1.0/identifiers'
 const DidResolver = {
   value: universalResolverUrl,
 
-  set url (value) {
+  set url (value: string) {
     this.value = value;
   },
 

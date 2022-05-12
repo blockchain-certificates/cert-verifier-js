@@ -13,7 +13,6 @@ import type Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
 import type { Issuer } from './models/Issuer';
 import type { Receipt } from './models/Receipt';
-import type { MerkleProof2019 } from './models/MerkleProof2019';
 import type { SignatureImage } from './models';
 import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
 import type { BlockcertsV3Display, VCProof } from './models/BlockcertsV3';

@@ -1,8 +1,8 @@
 import { Certificate } from '../../src';
 import FIXTURES from '../fixtures';
-import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did.json';
-import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest.json';
-import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet.json';
+import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
+import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest';
+import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';

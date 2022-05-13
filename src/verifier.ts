@@ -52,7 +52,7 @@ export default class Verifier {
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
   public merkleProofVerifier: any;
-  readonly verificationProcess: SUB_STEPS[];
+  public verificationProcess: SUB_STEPS[];
 
   constructor (
     { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
@@ -82,10 +82,6 @@ export default class Verifier {
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
 
-    const verificationModel = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
-    this.verificationSteps = verificationModel.verificationMap;
-    this.verificationProcess = verificationModel.verificationProcess;
-
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
     // Final verification result
@@ -107,9 +103,11 @@ export default class Verifier {
       issuer: this.issuer,
       proof: this.proof
     });
+
+    this.prepareVerificationProcess();
   }
 
-  // // MerkleProof2017/2019 concern
+  // MerkleProof2017/2019 concern
   getIssuingAddress (): string {
     if (!this.txData) {
       console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
@@ -145,6 +143,35 @@ export default class Verifier {
       return this.issuer.revocationList;
     }
     return distantIssuerProfile.revocationList;
+  }
+
+  private prepareVerificationProcess (): void {
+    const verificationModel = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
+    this.verificationSteps = verificationModel.verificationMap;
+    this.verificationProcess = verificationModel.verificationProcess;
+
+    this.registerSignatureVerificationSteps();
+    this.registerIdentityVerificationSteps();
+
+    this.verificationSteps = this.verificationSteps.filter(parentStep => parentStep.subSteps.length > 0);
+  }
+
+  private registerSignatureVerificationSteps (): void {
+    const parentStep = VerificationSteps.signatureVerification;
+    this.verificationSteps
+      .find(step => step.code === parentStep)
+      .subSteps = this.merkleProofVerifier.getProofVerificationSteps(parentStep);
+  }
+
+  private registerIdentityVerificationSteps (): void {
+    const parentStep = VerificationSteps.identityVerification;
+    const parentBlock = this.verificationSteps
+      .find(step => step.code === parentStep);
+
+    parentBlock.subSteps = [
+      ...parentBlock.subSteps,
+      ...this.merkleProofVerifier.getIdentityVerificationSteps(parentStep)
+    ];
   }
 
   private async _doAction (step: string, action: () => any): Promise<any> {

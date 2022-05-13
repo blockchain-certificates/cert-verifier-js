@@ -21,7 +21,7 @@ export enum SUB_STEPS {
 }
 
 export interface IVerificationSubstep {
-  code: SUB_STEPS;
+  code: string;
   label: string;
   labelPending: string;
   parentStep: VerificationSteps;

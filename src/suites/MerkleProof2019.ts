@@ -8,6 +8,8 @@ import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { VCProof } from '../models/BlockcertsV3';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { IVerificationSubstep } from '../constants/verificationSteps';
+import { getText } from '../domain/i18n/useCases';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -88,6 +90,24 @@ export default class MerkleProof2019 {
     if (this.issuer.didDocument) {
       await this.verifyProcess(this.identityVerificationProcess);
     }
+  }
+
+  getProofVerificationSteps (parentStepKey): IVerificationSubstep[] {
+    return this.proofVerificationProcess.map(childStep => ({
+      code: childStep,
+      label: getText('subSteps', `${childStep}Label`),
+      labelPending: getText('subSteps', `${childStep}LabelPending`),
+      parentStep: parentStepKey
+    }));
+  }
+
+  getIdentityVerificationSteps (parentStepKey): IVerificationSubstep[] {
+    return this.identityVerificationProcess.map(childStep => ({
+      code: childStep,
+      label: getText('subSteps', `${childStep}Label`),
+      labelPending: getText('subSteps', `${childStep}LabelPending`),
+      parentStep: parentStepKey
+    }));
   }
 
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {

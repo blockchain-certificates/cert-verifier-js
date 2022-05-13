@@ -6,6 +6,8 @@ import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
+import type { IVerificationSubstep } from '../constants/verificationSteps';
+import { getText } from '../domain/i18n/useCases';
 
 function removeStep (map: string[], step: string): void {
   const stepIndex = map.findIndex(subStep => subStep === step);
@@ -79,6 +81,19 @@ export default class MerkleProof2017 {
       }
       await this[verificationStep]();
     }
+  }
+
+  getProofVerificationSteps (parentStepKey): IVerificationSubstep[] {
+    return this.verificationProcess.map(childStep => ({
+      code: childStep,
+      label: getText('subSteps', `${childStep}Label`),
+      labelPending: getText('subSteps', `${childStep}LabelPending`),
+      parentStep: parentStepKey
+    }));
+  }
+
+  getIdentityVerificationSteps (): IVerificationSubstep[] {
+    return [];
   }
 
   private adaptVerificationProcessToChain (): void {

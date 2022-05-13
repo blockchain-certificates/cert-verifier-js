@@ -92,7 +92,6 @@ export default class Verifier {
     this.merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
       actionMethod: this._doAction.bind(this),
       document: this.documentToVerify,
-      chain: this.chain,
       explorerAPIs: this.explorerAPIs,
       receipt: this.receipt,
       version: this.version,

@@ -53,7 +53,6 @@ export default class MerkleProof2017 {
   constructor ({
     actionMethod = null,
     document = null,
-    chain = null,
     explorerAPIs = null,
     receipt = null,
     version = null,
@@ -63,11 +62,11 @@ export default class MerkleProof2017 {
       this._doAction = actionMethod;
     }
     this.documentToVerify = document;
-    this.chain = chain;
     this.explorerAPIs = explorerAPIs;
     this.receipt = receipt;
     this.version = version;
     this.issuer = issuer;
+    this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.adaptVerificationProcessToChain();
   }

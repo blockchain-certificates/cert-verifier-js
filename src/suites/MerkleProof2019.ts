@@ -61,7 +61,6 @@ export default class MerkleProof2019 {
   constructor ({
     actionMethod = null,
     document = null,
-    chain = null, // TODO: this could be extracted from the proof locally.
     explorerAPIs = null,
     receipt = null, // TODO: see if we can merge proof and receipt
     version = null, // TODO: can be retrieved locally. Necessary?
@@ -72,12 +71,12 @@ export default class MerkleProof2019 {
       this._doAction = actionMethod;
     }
     this.documentToVerify = document;
-    this.chain = chain;
     this.explorerAPIs = explorerAPIs;
     this.receipt = receipt;
     this.version = version;
     this.issuer = issuer;
     this.proof = proof;
+    this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
   }
 

@@ -43,7 +43,6 @@ export default class Verifier {
   public proof?: VCProof | VCProof[];
   public revocationKey: string;
   public version: Versions;
-  public transactionId: string;
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
@@ -55,7 +54,7 @@ export default class Verifier {
   public verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, transactionId, version, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, version, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
@@ -64,7 +63,6 @@ export default class Verifier {
       hashlinkVerifier: HashlinkVerifier;
       receipt: Receipt;
       revocationKey: string;
-      transactionId: string;
       version: Versions;
       explorerAPIs?: ExplorerAPI[];
       proof?: any;
@@ -78,7 +76,6 @@ export default class Verifier {
     this.receipt = receipt;
     this.revocationKey = revocationKey;
     this.version = version;
-    this.transactionId = transactionId;
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
 
@@ -95,7 +92,6 @@ export default class Verifier {
     this.merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
       actionMethod: this._doAction.bind(this),
       document: this.documentToVerify,
-      transactionId: this.transactionId,
       chain: this.chain,
       explorerAPIs: this.explorerAPIs,
       receipt: this.receipt,

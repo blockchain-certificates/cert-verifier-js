@@ -97,7 +97,6 @@ export default class Certificate {
       hashlinkVerifier: this.hashlinkVerifier,
       receipt: this.receipt,
       revocationKey: this.revocationKey,
-      transactionId: this.transactionId,
       version: this.version,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proof: this.proof
@@ -180,7 +179,6 @@ export default class Certificate {
     this.version = version;
     this.display = await this.parseHashlinksInDisplay(display);
 
-    // Transaction ID, link & raw link
     this._setTransactionDetails();
   }
 

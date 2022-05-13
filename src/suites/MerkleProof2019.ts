@@ -61,18 +61,16 @@ export default class MerkleProof2019 {
   constructor ({
     actionMethod = null,
     document = null,
-    transactionId = '',
-    chain = null,
+    chain = null, // TODO: this could be extracted from the proof locally.
     explorerAPIs = null,
-    receipt = null,
-    version = null,
+    receipt = null, // TODO: see if we can merge proof and receipt
+    version = null, // TODO: can be retrieved locally. Necessary?
     issuer = null,
-    proof = null
+    proof = null // TODO: see if we can merge proof and receipt. Proof can be gotten from document
   }) {
     if (actionMethod) {
       this._doAction = actionMethod;
     }
-    this.transactionId = transactionId;
     this.documentToVerify = document;
     this.chain = chain;
     this.explorerAPIs = explorerAPIs;
@@ -80,6 +78,7 @@ export default class MerkleProof2019 {
     this.version = version;
     this.issuer = issuer;
     this.proof = proof;
+    this.transactionId = domain.certificates.getTransactionId(this.receipt);
   }
 
   async verifyProof (): Promise<void> {

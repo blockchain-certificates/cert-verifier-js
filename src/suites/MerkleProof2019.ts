@@ -10,6 +10,7 @@ import type { VCProof } from '../models/BlockcertsV3';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { IVerificationSubstep } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
+import { retrieveBlockcertsVersion } from '../parsers';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -63,7 +64,6 @@ export default class MerkleProof2019 {
     document = null,
     explorerAPIs = null,
     receipt = null, // TODO: see if we can merge proof and receipt
-    version = null, // TODO: can be retrieved locally. Necessary?
     issuer = null,
     proof = null // TODO: see if we can merge proof and receipt. Proof can be gotten from document
   }) {
@@ -73,7 +73,7 @@ export default class MerkleProof2019 {
     this.documentToVerify = document;
     this.explorerAPIs = explorerAPIs;
     this.receipt = receipt;
-    this.version = version;
+    this.version = retrieveBlockcertsVersion(this.documentToVerify['@context']).version; // TODO: assess if necessary
     this.issuer = issuer;
     this.proof = proof;
     this.chain = domain.certificates.getChain('', this.receipt);

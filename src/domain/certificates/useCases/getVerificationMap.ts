@@ -19,7 +19,7 @@ function removeStep (map: string[], step: string): void {
   }
 }
 
-export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, version: Versions, hasDid: boolean): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, hasDid: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (chainsService.isMockChain(chain)) {
@@ -68,11 +68,11 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-export default function getVerificationMap (chain: IBlockchainObject, version: Versions, hasDid: boolean = false): {
+export default function getVerificationMap (chain: IBlockchainObject, hasDid: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];
 } {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(chain, version, hasDid);
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(chain, hasDid);
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

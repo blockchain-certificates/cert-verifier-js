@@ -8,6 +8,7 @@ import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { IVerificationSubstep } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
+import { retrieveBlockcertsVersion } from '../parsers';
 
 function removeStep (map: string[], step: string): void {
   const stepIndex = map.findIndex(subStep => subStep === step);
@@ -55,7 +56,6 @@ export default class MerkleProof2017 {
     document = null,
     explorerAPIs = null,
     receipt = null,
-    version = null,
     issuer = null
   }) {
     if (actionMethod) {
@@ -64,7 +64,7 @@ export default class MerkleProof2017 {
     this.documentToVerify = document;
     this.explorerAPIs = explorerAPIs;
     this.receipt = receipt;
-    this.version = version;
+    this.version = retrieveBlockcertsVersion(this.documentToVerify['@context']).version; // TODO: assess if necessary
     this.issuer = issuer;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);

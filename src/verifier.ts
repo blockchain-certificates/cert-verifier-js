@@ -2,7 +2,7 @@ import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
-import Versions from './constants/certificateVersions';
+import Versions, { isV1 } from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import type { Blockcerts } from './models/Blockcerts';
@@ -94,7 +94,6 @@ export default class Verifier {
       document: this.documentToVerify,
       explorerAPIs: this.explorerAPIs,
       receipt: this.receipt,
-      version: this.version,
       issuer: this.issuer,
       proof: this.proof
     });
@@ -141,7 +140,7 @@ export default class Verifier {
   }
 
   private prepareVerificationProcess (): void {
-    const verificationModel = domain.certificates.getVerificationMap(this.chain, this.version, !!this.issuer.didDocument);
+    const verificationModel = domain.certificates.getVerificationMap(this.chain, !!this.issuer.didDocument);
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
 

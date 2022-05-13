@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
+import { BLOCKCHAINS, Certificate } from '../../../src';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
@@ -99,10 +99,6 @@ describe('Certificate entity test suite', function () {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.signature.anchors[0].sourceId}`;
         expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
-      });
-
-      it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V2_0);
       });
     });
   });

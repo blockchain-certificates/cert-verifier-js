@@ -4,7 +4,6 @@ import type { Issuer } from '../models/Issuer';
 import type { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
-import type Versions from '../constants/certificateVersions';
 
 function parseReceipt (proof: VCProof | VCProof[]): ProofValueMerkleProof2019 {
   let merkleProof2019: VCProof;
@@ -25,7 +24,7 @@ function getRecipientFullName (certificateJson): string {
   return credentialSubject.name || '';
 }
 
-export default async function parseV3 (certificateJson: BlockcertsV3, version: Versions): Promise<ParsedCertificate> {
+export default async function parseV3 (certificateJson: BlockcertsV3): Promise<ParsedCertificate> {
   const receipt = parseReceipt(certificateJson.proof);
   const { issuer: issuerProfileUrl, metadataJson, metadata, issuanceDate, id, expirationDate, display } = certificateJson;
   const certificateMetadata = metadata || metadataJson;
@@ -41,7 +40,6 @@ export default async function parseV3 (certificateJson: BlockcertsV3, version: V
     proof: certificateJson.proof,
     receipt,
     recipientFullName: getRecipientFullName(certificateJson),
-    recordLink: id,
-    version
+    recordLink: id
   };
 }

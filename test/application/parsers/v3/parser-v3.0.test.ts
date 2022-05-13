@@ -1,5 +1,5 @@
 import FIXTURES from '../../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
+import { BLOCKCHAINS } from '../../../../src/constants';
 import parseJSON from '../../../../src/parsers/index';
 import v3IssuerProfile from '../../../assertions/v3.0-issuer-profile.json';
 import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -74,10 +74,6 @@ describe('Parser v3 test suite', function () {
 
     it('should set recordLink of the certificate object', function () {
       expect(parsedCertificate.recordLink).toBe(fixture.id);
-    });
-
-    it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0);
     });
 
     it('should return the display property', function () {

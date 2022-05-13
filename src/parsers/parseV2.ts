@@ -1,5 +1,4 @@
 import domain from '../domain';
-import { CERTIFICATE_VERSIONS } from '../constants';
 import getSignatureImages from './helpers/getSignatureImage';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
@@ -21,13 +20,12 @@ export default async function parseV2 (certificateJson: BlockcertsV2): Promise<P
   const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
   const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 
-  const version = CERTIFICATE_VERSIONS.V2_0;
   const chain: IBlockchainObject = domain.certificates.getChain(issuerKey, certificateJson.signature);
   const issuedOn = certificateJson.issuedOn;
   const metadataJson = certificateJson.metadataJson;
   const recipientFullName = recipientProfile.name;
   const revocationKey = null;
-  const signatureImage = getSignatureImages(badge.signatureLines, version);
+  const signatureImage = getSignatureImages(badge.signatureLines);
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
   const sealImage = issuer.image;
 
@@ -48,7 +46,6 @@ export default async function parseV2 (certificateJson: BlockcertsV2): Promise<P
     sealImage,
     proof: convertAsVCProof(certificateJson.signature),
     signatureImage,
-    subtitle,
-    version
+    subtitle
   };
 }

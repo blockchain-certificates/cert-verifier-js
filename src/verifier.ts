@@ -2,7 +2,6 @@ import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
-import Versions, { isV1 } from './constants/certificateVersions';
 import domain from './domain';
 import * as inspectors from './inspectors';
 import type { Blockcerts } from './models/Blockcerts';
@@ -42,7 +41,6 @@ export default class Verifier {
   public receipt: Receipt;
   public proof?: VCProof | VCProof[];
   public revocationKey: string;
-  public version: Versions;
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
@@ -54,7 +52,7 @@ export default class Verifier {
   public verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, version, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, explorerAPIs, proof }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
@@ -63,7 +61,6 @@ export default class Verifier {
       hashlinkVerifier: HashlinkVerifier;
       receipt: Receipt;
       revocationKey: string;
-      version: Versions;
       explorerAPIs?: ExplorerAPI[];
       proof?: any;
     }
@@ -75,7 +72,6 @@ export default class Verifier {
     this.hashlinkVerifier = hashlinkVerifier;
     this.receipt = receipt;
     this.revocationKey = revocationKey;
-    this.version = version;
     this.explorerAPIs = explorerAPIs;
     this.proof = proof;
 
@@ -219,22 +215,12 @@ export default class Verifier {
   }
 
   private async checkRevokedStatus (): Promise<void> {
-    let keys;
-    let revokedAddresses;
-    if (this.version === Versions.V1_2) {
-      revokedAddresses = this.txData.revokedAddresses;
-      keys = [
-        domain.verifier.parseRevocationKey(this.issuer),
-        this.revocationKey
-      ];
-    } else {
-      // Get revoked assertions
-      revokedAddresses = await this._doAction(
-        null,
-        async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
-      );
-      keys = this.id;
-    }
+    // Get revoked assertions
+    const revokedAddresses = await this._doAction(
+      null,
+      async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
+    );
+    const keys = this.id;
 
     await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
       inspectors.ensureNotRevoked(revokedAddresses, keys)

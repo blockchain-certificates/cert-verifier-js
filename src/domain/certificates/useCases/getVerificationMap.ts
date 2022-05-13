@@ -1,6 +1,5 @@
 import chainsService from '../../chains';
 import { getText } from '../../i18n/useCases';
-import type Versions from '../../../constants/certificateVersions';
 import type { IVerificationSubstep } from '../../../constants/verificationSteps';
 import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps';
 import type { IBlockchainObject } from '../../../constants/blockchains';

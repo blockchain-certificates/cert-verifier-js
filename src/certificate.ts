@@ -9,7 +9,6 @@ import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import type { Blockcerts } from './models/Blockcerts';
 import type { IBlockchainObject } from './constants/blockchains';
-import type Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
 import type { Issuer } from './models/Issuer';
 import type { Receipt } from './models/Receipt';
@@ -63,7 +62,6 @@ export default class Certificate {
   public subtitle?: string; // v1
   public transactionId: string;
   public transactionLink: string;
-  public version: Versions;
   public hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
@@ -97,7 +95,6 @@ export default class Certificate {
       hashlinkVerifier: this.hashlinkVerifier,
       receipt: this.receipt,
       revocationKey: this.revocationKey,
-      version: this.version,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proof: this.proof
     });
@@ -106,7 +103,7 @@ export default class Certificate {
 
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
     const verificationStatus = await this.verifier.verify(stepCallback);
-    // this.publicKey = this.verifier.getIssuingAddress();
+    // this.publicKey = this.verifier.getIssuingAddress(); // TODO: re-enable
     return verificationStatus;
   }
 
@@ -153,8 +150,7 @@ export default class Certificate {
     sealImage,
     signature,
     signatureImage,
-    subtitle,
-    version
+    subtitle
   }: ParsedCertificate): Promise<void> {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
@@ -176,7 +172,6 @@ export default class Certificate {
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-    this.version = version;
     this.display = await this.parseHashlinksInDisplay(display);
 
     this._setTransactionDetails();

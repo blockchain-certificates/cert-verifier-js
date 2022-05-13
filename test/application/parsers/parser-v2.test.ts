@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import FIXTURES from '../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
+import { BLOCKCHAINS } from '../../../src/constants';
 import parseJSON from '../../../src/parsers/index';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
@@ -89,10 +89,6 @@ describe('Parser test suite', function () {
 
     it('should set 1 signatureImage to the certificate object', function () {
       expect(parsedCertificate.signatureImage.length).toEqual(1);
-    });
-
-    it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V2_0);
     });
   });
 });

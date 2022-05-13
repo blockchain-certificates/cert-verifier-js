@@ -1,5 +1,5 @@
 import FIXTURES from '../../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
+import { BLOCKCHAINS } from '../../../../src/constants';
 import parseJSON from '../../../../src/parsers/index';
 import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
 import assertionProofValue from '../../../assertions/v3.0-alpha-learningmachine-signature-merkle2019.json';
@@ -58,10 +58,6 @@ describe('Parser test suite', function () {
 
     it('should set recordLink of the certificate object', function () {
       expect(parsedCertificate.recordLink).toBe(fixture.id);
-    });
-
-    it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0_alpha);
     });
 
     describe('when the expirationDate is set', function () {

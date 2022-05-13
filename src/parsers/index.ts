@@ -2,7 +2,6 @@ import parseV1 from './parseV1';
 import parseV2 from './parseV2';
 import parseV3 from './parseV3';
 import type { IBlockchainObject } from '../constants/blockchains';
-import type Versions from '../constants/certificateVersions';
 import type { Issuer } from '../models/Issuer';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Receipt } from '../models/Receipt';
@@ -39,7 +38,6 @@ export interface ParsedCertificate {
   signature?: string;
   signatureImage?: SignatureImage[];
   subtitle?: string;
-  version: Versions;
   proof?: VCProof | VCProof[];
 }
 
@@ -50,7 +48,7 @@ export {
 export default async function parseJSON (certificateJson: Blockcerts): Promise<ParsedCertificate> {
   try {
     const blockcertsVersion: BlockcertsVersion = retrieveBlockcertsVersion(certificateJson['@context']);
-    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson, blockcertsVersion.version);
+    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (error) {

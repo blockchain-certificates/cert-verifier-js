@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '../../../src';
+import { BLOCKCHAINS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
@@ -23,7 +23,6 @@ describe('Verifier entity test suite', function () {
     issuer: fixture.badge.issuer,
     receipt: fixture.signature,
     revocationKey: null,
-    version: CERTIFICATE_VERSIONS.V2_0,
     explorerAPIs: undefined,
     hashlinkVerifier: new HashlinkVerifier(),
     proof: {
@@ -63,10 +62,6 @@ describe('Verifier entity test suite', function () {
 
       it('should set the revocationKey to the verifier object', function () {
         expect(verifierInstance.revocationKey).toBe(verifierParamFixture.revocationKey);
-      });
-
-      it('should set the version to the verifier object', function () {
-        expect(verifierInstance.version).toBe(verifierParamFixture.version);
       });
 
       describe('explorerAPIs', function () {

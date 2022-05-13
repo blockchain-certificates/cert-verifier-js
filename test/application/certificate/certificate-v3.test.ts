@@ -1,4 +1,4 @@
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
+import { BLOCKCHAINS, Certificate } from '../../../src';
 import FIXTURES from '../../fixtures';
 import signatureAssertion from '../../assertions/testnet-v3.0-did-signature-merkle2019.json';
 import issuerProfileAssertion from '../../assertions/v3.0-issuer-profile.json';
@@ -20,10 +20,6 @@ describe('Certificate entity test suite', function () {
 
       afterEach(function () {
         certificate = null;
-      });
-
-      it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V3_0);
       });
 
       it('should set the decoded signature as the receipt to the certificate object', function () {

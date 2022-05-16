@@ -26,7 +26,7 @@ enum SUB_STEPS {
   checkAuthenticity = 'checkAuthenticity'
 }
 
-function parseReceipt (proof: VCProof | VCProof[]): Receipt {
+export function parseReceipt (proof: VCProof | VCProof[]): Receipt {
   let merkleProof2019: VCProof;
 
   if (Array.isArray(proof)) {

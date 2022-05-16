@@ -1,5 +1,6 @@
 import i18n from '../data/i18n.json';
 import currentLocale from './currentLocale';
+import type { IVerificationMapItem } from '../domain/certificates/useCases/getVerificationMap'; // TODO: circular dependency
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
@@ -20,20 +21,8 @@ export enum SUB_STEPS {
   controlVerificationMethod = 'controlVerificationMethod'
 }
 
-export interface IVerificationSubstep {
-  code: string;
-  label: string;
-  labelPending: string;
-  parentStep: VerificationSteps;
-}
-
 export type TVerificationStepsList = {
-  [key in VerificationSteps]?: {
-    code: string;
-    label: string;
-    labelPending: string;
-    subSteps: IVerificationSubstep[];
-  };
+  [key in VerificationSteps]?: IVerificationMapItem;
 };
 
 export default function getParentVerificationSteps (): TVerificationStepsList {

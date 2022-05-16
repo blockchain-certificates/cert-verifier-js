@@ -8,8 +8,7 @@ import type { Receipt } from '../models/Receipt';
 import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import type { IVerificationSubstep } from '../constants/verificationSteps';
-import { getText } from '../domain/i18n/useCases';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import { retrieveBlockcertsVersion } from '../parsers';
 
 enum SUB_STEPS {
@@ -99,22 +98,16 @@ export default class MerkleProof2019 {
     }
   }
 
-  getProofVerificationSteps (parentStepKey): IVerificationSubstep[] {
-    return this.proofVerificationProcess.map(childStep => ({
-      code: childStep,
-      label: getText('subSteps', `${childStep}Label`),
-      labelPending: getText('subSteps', `${childStep}LabelPending`),
-      parentStep: parentStepKey
-    }));
+  getProofVerificationSteps (parentStepKey): VerificationSubstep[] {
+    return this.proofVerificationProcess.map(childStepKey =>
+      domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
+    );
   }
 
-  getIdentityVerificationSteps (parentStepKey): IVerificationSubstep[] {
-    return this.identityVerificationProcess.map(childStep => ({
-      code: childStep,
-      label: getText('subSteps', `${childStep}Label`),
-      labelPending: getText('subSteps', `${childStep}LabelPending`),
-      parentStep: parentStepKey
-    }));
+  getIdentityVerificationSteps (parentStepKey): VerificationSubstep[] {
+    return this.identityVerificationProcess.map(childStepKey =>
+      domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
+    );
   }
 
   getIssuerPublicKey (): string {

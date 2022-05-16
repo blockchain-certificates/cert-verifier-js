@@ -1,14 +1,14 @@
 import chainsService from '../../chains';
-import { getText } from '../../i18n/useCases';
-import type { IVerificationSubstep } from '../../../constants/verificationSteps';
-import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps';
+import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
 import type { IBlockchainObject } from '../../../constants/blockchains';
+import domain from '../../index';
+import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
 
 export interface IVerificationMapItem {
   code: VerificationSteps;
   label: string;
   labelPending: string;
-  subSteps: IVerificationSubstep[];
+  subSteps: VerificationSubstep[];
 }
 
 function removeStep (map: string[], step: string): void {
@@ -46,16 +46,13 @@ const verificationMap = {
   ]
 };
 
-function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substepsList: SUB_STEPS[]): IVerificationSubstep[] {
+function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substepsList: SUB_STEPS[]): VerificationSubstep[] {
   const childSteps: SUB_STEPS[] = verificationMap[parentStepKey];
   const filteredChildSteps: SUB_STEPS[] = childSteps.filter(childStep => substepsList.includes(childStep));
 
-  return filteredChildSteps.map(childStep => ({
-    code: childStep,
-    label: getText('subSteps', `${childStep}Label`),
-    labelPending: getText('subSteps', `${childStep}LabelPending`),
-    parentStep: parentStepKey
-  }));
+  return filteredChildSteps.map(childStepKey =>
+    domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
+  );
 }
 
 function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVerificationMapItem[] {

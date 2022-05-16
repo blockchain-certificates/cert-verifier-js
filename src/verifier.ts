@@ -1,19 +1,19 @@
-import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
-import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import domain from './domain';
 import * as inspectors from './inspectors';
+import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
+import { VerifierError } from './models';
+import { getText } from './domain/i18n/useCases';
+import MerkleProof2019 from './suites/MerkleProof2019';
+import MerkleProof2017 from './suites/MerkleProof2017';
+import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Issuer } from './models/Issuer';
-import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
-import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import { VerifierError } from './models';
-import { getText } from './domain/i18n/useCases';
 import type { BlockcertsV3 } from './models/BlockcertsV3';
-import MerkleProof2019 from './suites/MerkleProof2019';
-import MerkleProof2017 from './suites/MerkleProof2017';
+import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
 const log = debug('Verifier');
 

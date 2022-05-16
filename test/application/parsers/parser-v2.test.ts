@@ -10,7 +10,7 @@ describe('Parser test suite', function () {
   describe('given it is called with a invalid format v2 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
-      delete fixtureCopy.verification;
+      fixtureCopy.badge.issuer = 'not a url';
       const parsedCertificate = await parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });

@@ -19,7 +19,7 @@ export default [
     ]
   },
   {
-    code: VerificationSteps.signatureVerification,
+    code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
     subSteps: [
@@ -27,49 +27,49 @@ export default [
         code: 'getTransactionId',
         label: defaultLanguageSet.subSteps.getTransactionIdLabel,
         labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'computeLocalHash',
         label: defaultLanguageSet.subSteps.computeLocalHashLabel,
         labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'fetchRemoteHash',
         label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
         labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'compareHashes',
         label: defaultLanguageSet.subSteps.compareHashesLabel,
         labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'checkMerkleRoot',
         label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
         labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'checkReceipt',
         label: defaultLanguageSet.subSteps.checkReceiptLabel,
         labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'parseIssuerKeys',
         label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
         labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       },
       {
         code: 'checkAuthenticity',
         label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
         labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
-        parentStep: VerificationSteps.signatureVerification
+        parentStep: VerificationSteps.proofVerification
       }
     ]
   },

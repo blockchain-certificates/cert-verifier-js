@@ -142,7 +142,7 @@ export default class Verifier {
   }
 
   private registerSignatureVerificationSteps (): void {
-    const parentStep = VerificationSteps.signatureVerification;
+    const parentStep = VerificationSteps.proofVerification;
     this.verificationSteps
       .find(step => step.code === parentStep)
       .subSteps = this.merkleProofVerifier.getProofVerificationSteps(parentStep);

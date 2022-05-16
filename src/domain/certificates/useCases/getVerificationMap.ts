@@ -36,7 +36,7 @@ const verificationMap = {
   [VerificationSteps.formatValidation]: [
     SUB_STEPS.checkImagesIntegrity
   ],
-  [VerificationSteps.signatureVerification]: [],
+  [VerificationSteps.proofVerification]: [],
   [VerificationSteps.identityVerification]: [
     SUB_STEPS.controlVerificationMethod
   ],

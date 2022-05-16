@@ -19,7 +19,7 @@ export default [
     ]
   },
   {
-    code: VerificationSteps.signatureVerification,
+    code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
     subSteps: [

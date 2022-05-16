@@ -7,7 +7,7 @@ export const final = 'final';
 
 export enum VerificationSteps {
   formatValidation = 'formatValidation',
-  signatureVerification = 'signatureVerification',
+  proofVerification = 'proofVerification',
   identityVerification = 'identityVerification',
   statusCheck = 'statusCheck',
   final = 'final'
@@ -44,8 +44,8 @@ export default function getParentVerificationSteps (): TVerificationStepsList {
       labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
       subSteps: []
     },
-    [VerificationSteps.signatureVerification]: {
-      code: VerificationSteps.signatureVerification,
+    [VerificationSteps.proofVerification]: {
+      code: VerificationSteps.proofVerification,
       label: defaultLanguageSet.steps.signatureVerificationLabel,
       labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
       subSteps: []

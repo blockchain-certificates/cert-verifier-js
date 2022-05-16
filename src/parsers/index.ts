@@ -18,7 +18,6 @@ export const versionParserMap = {
 
 export interface ParsedCertificate {
   certificateImage?: string;
-  chain: IBlockchainObject;
   description?: string;
   display?: BlockcertsV3Display;
   expires?: string;

@@ -101,6 +101,10 @@ export default class MerkleProof2017 {
     return this.txData.issuingAddress;
   }
 
+  getChain (): IBlockchainObject {
+    return this.chain;
+  }
+
   private adaptVerificationProcessToChain (): void {
     if (domain.chains.isMockChain(this.chain)) {
       removeStep(this.verificationProcess, SUB_STEPS.getTransactionId);

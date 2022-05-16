@@ -11,7 +11,6 @@ export default async function parseV2 (certificateJson: BlockcertsV2): Promise<P
   const issuerKey = certificateJson.verification.publicKey || certificateJson.verification.creator;
   const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
 
-  const chain: IBlockchainObject = domain.certificates.getChain(issuerKey, certificateJson.signature);
   const issuedOn = certificateJson.issuedOn;
   const metadataJson = certificateJson.metadataJson;
   const recipientFullName = recipientProfile.name;
@@ -22,7 +21,6 @@ export default async function parseV2 (certificateJson: BlockcertsV2): Promise<P
 
   return {
     certificateImage,
-    chain,
     description,
     expires,
     id,

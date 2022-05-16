@@ -117,6 +117,10 @@ export default class MerkleProof2019 {
     return this.txData.issuingAddress;
   }
 
+  getChain (): IBlockchainObject {
+    return this.chain;
+  }
+
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {
     for (const verificationStep of process) {
       if (!this[verificationStep]) {

@@ -38,10 +38,6 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.certificateImage).toEqual(fixture.badge.image);
     });
 
-    it('should set the chain of the certificate object', function () {
-      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.bitcoin);
-    });
-
     it('should set the description of the certificate object', function () {
       expect(parsedCertificate.description).toEqual(fixture.badge.description);
     });

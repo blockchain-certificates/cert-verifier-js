@@ -10,10 +10,10 @@ import MerkleProof2017 from './suites/MerkleProof2017';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
-import type { IBlockchainObject } from './constants/blockchains';
 import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3 } from './models/BlockcertsV3';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { IBlockchainObject } from './constants/blockchains';
 
 const log = debug('Verifier');
 
@@ -33,7 +33,6 @@ export interface IFinalVerificationStatus {
 }
 
 export default class Verifier {
-  public chain: IBlockchainObject;
   public expires: string;
   public id: string;
   public issuer: Issuer;
@@ -49,9 +48,8 @@ export default class Verifier {
   public verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
+    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
       certificateJson: Blockcerts;
-      chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
@@ -60,7 +58,6 @@ export default class Verifier {
       explorerAPIs?: ExplorerAPI[];
     }
   ) {
-    this.chain = chain;
     this.expires = expires;
     this.id = id;
     this.issuer = issuer;
@@ -92,6 +89,14 @@ export default class Verifier {
     return this.merkleProofVerifier.getIssuerPublicKey();
   }
 
+  getChain (): IBlockchainObject {
+    return this.merkleProofVerifier.getChain();
+  }
+
+  getVerificationSteps (): IVerificationMapItem[] {
+    return this.verificationSteps;
+  }
+
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
@@ -115,7 +120,7 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  _getRevocationListUrl (distantIssuerProfile: Issuer): string {
+  private getRevocationListUrl (): string {
     return this.issuer.revocationList;
   }
 
@@ -207,7 +212,7 @@ export default class Verifier {
   }
 
   private async checkRevokedStatus (): Promise<void> {
-    const revocationListUrl = this._getRevocationListUrl(this.issuer);
+    const revocationListUrl = this.getRevocationListUrl();
 
     if (!revocationListUrl) {
       console.warn('No revocation list url was set on the issuer.');
@@ -256,7 +261,7 @@ export default class Verifier {
    * Returns a final success message
    */
   _succeed (): IFinalVerificationStatus {
-    const message = domain.chains.isMockChain(this.chain)
+    const message = domain.chains.isMockChain(this.merkleProofVerifier.getChain())
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
     log(message);

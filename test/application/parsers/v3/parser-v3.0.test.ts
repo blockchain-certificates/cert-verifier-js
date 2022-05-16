@@ -43,10 +43,6 @@ describe('Parser v3 test suite', function () {
       requestStub.restore();
     });
 
-    it('should set the chain of the certificate object', function () {
-      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.testnet);
-    });
-
     it('should set the id of the certificate object', function () {
       expect(parsedCertificate.id).toEqual(fixture.id);
     });

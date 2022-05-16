@@ -17,7 +17,6 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
   const certificateMetadata = metadata || metadataJson;
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
   return {
-    chain: domain.certificates.getChain('', receipt),
     display,
     expires: expirationDate,
     issuedOn: issuanceDate,

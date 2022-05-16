@@ -14,6 +14,7 @@ import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3 } from './models/BlockcertsV3';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { IBlockchainObject } from './constants/blockchains';
+import type { Receipt } from './models/Receipt';
 
 const log = debug('Verifier');
 
@@ -91,6 +92,10 @@ export default class Verifier {
 
   getChain (): IBlockchainObject {
     return this.merkleProofVerifier.getChain();
+  }
+
+  getReceipt (): Receipt {
+    return this.merkleProofVerifier.getReceipt();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {

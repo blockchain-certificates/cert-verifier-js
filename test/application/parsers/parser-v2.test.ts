@@ -61,10 +61,6 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.name).toEqual(fixture.badge.name);
     });
 
-    it('should set the receipt of the certificate object', function () {
-      expect(parsedCertificate.receipt).toEqual(fixture.signature);
-    });
-
     it('should set the recipientFullName of the certificate object', function () {
       const fullNameAssertion = fixture.recipientProfile.name;
       expect(parsedCertificate.recipientFullName).toEqual(fullNameAssertion);

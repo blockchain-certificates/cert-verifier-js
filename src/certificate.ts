@@ -140,7 +140,6 @@ export default class Certificate {
     metadataJson,
     name,
     publicKey,
-    receipt,
     recipientFullName,
     recordLink,
     revocationKey,
@@ -159,7 +158,6 @@ export default class Certificate {
     this.metadataJson = metadataJson;
     this.name = name;
     this.publicKey = publicKey;
-    this.receipt = receipt;
     this.recipientFullName = recipientFullName;
     this.recordLink = recordLink;
     this.revocationKey = revocationKey;
@@ -185,6 +183,7 @@ export default class Certificate {
 
   private setTransactionDetails (): void {
     this.chain = this.verifier.getChain();
+    this.receipt = this.verifier.getReceipt();
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
     this.rawTransactionLink = transactionLinks.rawTransactionLink;

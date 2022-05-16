@@ -105,6 +105,10 @@ export default class MerkleProof2017 {
     return this.chain;
   }
 
+  getReceipt (): Receipt {
+    return this.receipt;
+  }
+
   private adaptVerificationProcessToChain (): void {
     if (domain.chains.isMockChain(this.chain)) {
       removeStep(this.verificationProcess, SUB_STEPS.getTransactionId);

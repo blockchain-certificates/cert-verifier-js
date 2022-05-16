@@ -1,7 +1,6 @@
 import FIXTURES from '../../../fixtures';
 import parseJSON from '../../../../src/parsers/index';
 import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
-import assertionProofValue from '../../../assertions/v3.0-beta-signature-merkle2019.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 
@@ -22,7 +21,7 @@ describe('Parser test suite', function () {
   describe('given it is called with a invalid format v3 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
-      delete fixtureCopy.proof;
+      fixtureCopy.issuer = 'not a url';
       const parsedCertificate = await parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });
@@ -53,10 +52,6 @@ describe('Parser test suite', function () {
 
     it('should set metadataJson of the certificate object', function () {
       expect(parsedCertificate.metadataJson).toEqual(fixture.metadata);
-    });
-
-    it('should set the receipt of the certificate object', function () {
-      expect(parsedCertificate.receipt).toEqual(assertionProofValue);
     });
 
     it('should set the recipientFullName of the certificate object', function () {

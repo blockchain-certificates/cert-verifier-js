@@ -3,7 +3,6 @@ import parseV2 from './parseV2';
 import parseV3 from './parseV3';
 import type { Issuer } from '../models/Issuer';
 import type { Blockcerts } from '../models/Blockcerts';
-import type { Receipt } from '../models/Receipt';
 import type { SignatureImage } from '../models';
 import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
@@ -28,7 +27,6 @@ export interface ParsedCertificate {
   metadataJson?: string;
   name?: string;
   publicKey?: string;
-  receipt: Receipt;
   recipientFullName?: string;
   recordLink?: string;
   revocationKey?: string;

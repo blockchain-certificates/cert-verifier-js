@@ -47,7 +47,7 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     }
     return keyMap;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw new VerifierError(
       'parseIssuerKeys',
       getText('errors', 'parseIssuerKeys')

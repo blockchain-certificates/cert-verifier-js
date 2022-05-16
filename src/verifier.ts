@@ -88,12 +88,8 @@ export default class Verifier {
     this.prepareVerificationProcess();
   }
 
-  // MerkleProof2017/2019 concern
-  getIssuingAddress (): string {
-    if (!this.txData) {
-      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
-    }
-    return this.txData?.issuingAddress;
+  getIssuerPublicKey (): string {
+    return this.merkleProofVerifier.getIssuerPublicKey();
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {

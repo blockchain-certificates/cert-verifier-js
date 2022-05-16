@@ -117,6 +117,13 @@ export default class MerkleProof2019 {
     }));
   }
 
+  getIssuerPublicKey (): string {
+    if (!this.txData) {
+      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+    }
+    return this.txData.issuingAddress;
+  }
+
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {
     for (const verificationStep of process) {
       if (!this[verificationStep]) {

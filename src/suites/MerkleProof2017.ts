@@ -48,7 +48,7 @@ export default class MerkleProof2017 {
   public chain: IBlockchainObject;
   public explorerAPIs: ExplorerAPI[];
   public receipt: Receipt;
-  public version: Versions; // Version can be ignored in MerkleProof2019
+  public version: Versions;
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
 
@@ -92,6 +92,13 @@ export default class MerkleProof2017 {
 
   getIdentityVerificationSteps (): IVerificationSubstep[] {
     return [];
+  }
+
+  getIssuerPublicKey (): string {
+    if (!this.txData) {
+      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+    }
+    return this.txData.issuingAddress;
   }
 
   private adaptVerificationProcessToChain (): void {

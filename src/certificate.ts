@@ -100,7 +100,7 @@ export default class Certificate {
 
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
     const verificationStatus = await this.verifier.verify(stepCallback);
-    // this.publicKey = this.verifier.getIssuingAddress(); // TODO: re-enable
+    this.publicKey = this.verifier.getIssuerPublicKey();
     return verificationStatus;
   }
 

@@ -21,7 +21,6 @@ describe('Verifier entity test suite', function () {
     expires: '',
     id: fixture.id,
     issuer: fixture.badge.issuer,
-    receipt: fixture.signature,
     revocationKey: null,
     explorerAPIs: undefined,
     hashlinkVerifier: new HashlinkVerifier(),
@@ -54,10 +53,6 @@ describe('Verifier entity test suite', function () {
 
       it('should set the issuer to the verifier object', function () {
         expect(verifierInstance.issuer).toEqual(verifierParamFixture.issuer);
-      });
-
-      it('should set the receipt to the verifier object', function () {
-        expect(verifierInstance.receipt).toBe(verifierParamFixture.receipt);
       });
 
       it('should set the revocationKey to the verifier object', function () {

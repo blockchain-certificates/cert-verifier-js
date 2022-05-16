@@ -9,10 +9,9 @@ import type { IBlockchainObject } from './constants/blockchains';
 import type { Issuer } from './models/Issuer';
 import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
-import type { Receipt } from './models/Receipt';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
-import type { VCProof } from './models/BlockcertsV3';
+import type { BlockcertsV3 } from './models/BlockcertsV3';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 
@@ -38,8 +37,6 @@ export default class Verifier {
   public expires: string;
   public id: string;
   public issuer: Issuer;
-  public receipt: Receipt;
-  public proof?: VCProof | VCProof[];
   public revocationKey: string;
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
@@ -52,17 +49,15 @@ export default class Verifier {
   public verificationProcess: SUB_STEPS[];
 
   constructor (
-    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, receipt, revocationKey, explorerAPIs, proof }: {
+    { certificateJson, chain, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
       certificateJson: Blockcerts;
       chain: IBlockchainObject;
       expires: string;
       id: string;
       issuer: Issuer;
       hashlinkVerifier: HashlinkVerifier;
-      receipt: Receipt;
       revocationKey: string;
       explorerAPIs?: ExplorerAPI[];
-      proof?: any;
     }
   ) {
     this.chain = chain;
@@ -70,10 +65,8 @@ export default class Verifier {
     this.id = id;
     this.issuer = issuer;
     this.hashlinkVerifier = hashlinkVerifier;
-    this.receipt = receipt;
     this.revocationKey = revocationKey;
     this.explorerAPIs = explorerAPIs;
-    this.proof = proof;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
@@ -85,13 +78,11 @@ export default class Verifier {
       MerkleProof2019
     };
 
-    this.merkleProofVerifier = new this.supportedVerificationSuites[(this.proof as VCProof).type]({
+    this.merkleProofVerifier = new this.supportedVerificationSuites[this.getProofType(this.documentToVerify)]({
       actionMethod: this._doAction.bind(this),
       document: this.documentToVerify,
       explorerAPIs: this.explorerAPIs,
-      receipt: this.receipt,
-      issuer: this.issuer,
-      proof: this.proof
+      issuer: this.issuer
     });
 
     this.prepareVerificationProcess();
@@ -133,6 +124,14 @@ export default class Verifier {
       return this.issuer.revocationList;
     }
     return distantIssuerProfile.revocationList;
+  }
+
+  private getProofType (document: Blockcerts): string {
+    if ('proof' in document) {
+      return document.proof.type; // TODO: Make model getter
+    } else if ('signature' in document) {
+      return document.signature.type[0]; // TODO: Make model getter
+    }
   }
 
   private prepareVerificationProcess (): void {
@@ -234,8 +233,9 @@ export default class Verifier {
   }
 
   private async controlVerificationMethod (): Promise<void> {
+    // only v3 support
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
-      inspectors.controlVerificationMethod(this.issuer.didDocument, (this.proof as VCProof).verificationMethod);
+      inspectors.controlVerificationMethod(this.issuer.didDocument, (this.documentToVerify as BlockcertsV3).proof.verificationMethod);
     });
   }
 

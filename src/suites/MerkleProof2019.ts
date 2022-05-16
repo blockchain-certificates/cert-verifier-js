@@ -1,13 +1,13 @@
+import { Decoder } from '@vaultie/lds-merkle-proof-2019';
+import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
-import type { Blockcerts } from '../models/Blockcerts';
-import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
-import type { VCProof } from '../models/BlockcertsV3';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IVerificationSubstep } from '../constants/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 import { retrieveBlockcertsVersion } from '../parsers';
@@ -25,6 +25,19 @@ enum SUB_STEPS {
   deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey',
   compareIssuingAddress = 'compareIssuingAddress',
   checkAuthenticity = 'checkAuthenticity'
+}
+
+function parseReceipt (proof: VCProof | VCProof[]): Receipt {
+  let merkleProof2019: VCProof;
+
+  if (Array.isArray(proof)) {
+    merkleProof2019 = proof.find(p => p.type === 'MerkleProof2019' || p.chainedProofType === 'MerkleProof2019');
+  } else {
+    merkleProof2019 = proof;
+  }
+
+  const base58Decoder = new Decoder(merkleProof2019.proofValue);
+  return base58Decoder.decode();
 }
 
 export default class MerkleProof2019 {
@@ -47,7 +60,7 @@ export default class MerkleProof2019 {
 
   public transactionId: string;
   public localHash: string;
-  public documentToVerify: Blockcerts;
+  public documentToVerify: BlockcertsV3;
   public txData: TransactionData;
   public chain: IBlockchainObject;
   public explorerAPIs: ExplorerAPI[];
@@ -57,25 +70,21 @@ export default class MerkleProof2019 {
   public issuer: Issuer;
   public verificationMethodPublicKey: IDidDocumentPublicKey;
   public derivedIssuingAddress: string;
-  public proof: VCProof;
 
   constructor ({
     actionMethod = null,
     document = null,
     explorerAPIs = null,
-    receipt = null, // TODO: see if we can merge proof and receipt
-    issuer = null,
-    proof = null // TODO: see if we can merge proof and receipt. Proof can be gotten from document
+    issuer = null
   }) {
     if (actionMethod) {
       this._doAction = actionMethod;
     }
     this.documentToVerify = document;
     this.explorerAPIs = explorerAPIs;
-    this.receipt = receipt;
+    this.receipt = parseReceipt(this.documentToVerify.proof);
     this.version = retrieveBlockcertsVersion(this.documentToVerify['@context']).version; // TODO: assess if necessary
     this.issuer = issuer;
-    this.proof = proof;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
   }
@@ -182,7 +191,7 @@ export default class MerkleProof2019 {
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.proof.verificationMethod);
+      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.documentToVerify.proof.verificationMethod);
     });
   }
 

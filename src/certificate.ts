@@ -14,7 +14,7 @@ import type { Issuer } from './models/Issuer';
 import type { Receipt } from './models/Receipt';
 import type { SignatureImage } from './models';
 import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
-import type { BlockcertsV3Display, VCProof } from './models/BlockcertsV3';
+import type { BlockcertsV3Display } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 
@@ -50,7 +50,6 @@ export default class Certificate {
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
   public publicKey?: string;
-  public proof?: VCProof | VCProof[];
   public rawTransactionLink: string;
   public receipt: Receipt;
   public recipientFullName: string;
@@ -93,10 +92,8 @@ export default class Certificate {
       id: this.id,
       issuer: this.issuer,
       hashlinkVerifier: this.hashlinkVerifier,
-      receipt: this.receipt,
       revocationKey: this.revocationKey,
-      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
-      proof: this.proof
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
     this.verificationSteps = this.verifier.verificationSteps;
   }
@@ -142,7 +139,6 @@ export default class Certificate {
     metadataJson,
     name,
     publicKey,
-    proof,
     receipt,
     recipientFullName,
     recordLink,
@@ -162,7 +158,6 @@ export default class Certificate {
     this.issuer = issuer;
     this.metadataJson = metadataJson;
     this.name = name;
-    this.proof = proof;
     this.publicKey = publicKey;
     this.receipt = receipt;
     this.recipientFullName = recipientFullName;

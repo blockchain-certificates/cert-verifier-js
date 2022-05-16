@@ -1,4 +1,4 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v3/proof-chain-example.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
@@ -47,7 +47,7 @@ describe('proof chain example', function () {
         ]
       }
     }));
-    const instance = new Certificate(fixture);
+    const instance = new Certificate(fixture as any);
     await instance.init();
     const result = await instance.verify();
     expect(result.message).toBe('success');

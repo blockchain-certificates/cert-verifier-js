@@ -3,16 +3,7 @@ import getSignatureImages from './helpers/getSignatureImage';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type { ParsedCertificate } from './index';
-import type { VCProof } from '../models/BlockcertsV3';
-import type { MerkleProof2017 } from '../models/MerkleProof2017';
 import type { Issuer } from '../models/Issuer';
-
-function convertAsVCProof (signature: MerkleProof2017): VCProof {
-  return {
-    type: 'MerkleProof2017',
-    proofValue: signature.merkleRoot
-  };
-}
 
 export default async function parseV2 (certificateJson: BlockcertsV2): Promise<ParsedCertificate> {
   const { id, expires, signature: receipt, badge } = certificateJson;
@@ -44,7 +35,6 @@ export default async function parseV2 (certificateJson: BlockcertsV2): Promise<P
     recordLink: id,
     revocationKey,
     sealImage,
-    proof: convertAsVCProof(certificateJson.signature),
     signatureImage,
     subtitle
   };

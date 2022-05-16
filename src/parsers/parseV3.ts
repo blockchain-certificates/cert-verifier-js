@@ -1,16 +1,15 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
 import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
-import type { ProofValueMerkleProof2019 } from '../models/MerkleProof2019';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
+import type { Receipt } from '../models/Receipt';
 
-function parseReceipt (proof: VCProof | VCProof[]): ProofValueMerkleProof2019 {
+function parseReceipt (proof: VCProof | VCProof[]): Receipt {
   let merkleProof2019: VCProof;
 
   if (Array.isArray(proof)) {
-    // TODO: this assumes that the merkle proof is always ChainedProof2021, which it shouldn't
-    merkleProof2019 = proof.find(p => p.type === 'ChainedProof2021' && p.chainedProofType === 'MerkleProof2019');
+    merkleProof2019 = proof.find(p => p.type === 'MerkleProof2019' || p.chainedProofType === 'MerkleProof2019');
   } else {
     merkleProof2019 = proof;
   }
@@ -25,7 +24,7 @@ function getRecipientFullName (certificateJson): string {
 }
 
 export default async function parseV3 (certificateJson: BlockcertsV3): Promise<ParsedCertificate> {
-  const receipt = parseReceipt(certificateJson.proof);
+  const receipt: Receipt = parseReceipt(certificateJson.proof);
   const { issuer: issuerProfileUrl, metadataJson, metadata, issuanceDate, id, expirationDate, display } = certificateJson;
   const certificateMetadata = metadata || metadataJson;
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
@@ -37,7 +36,6 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     id,
     issuer,
     metadataJson: certificateMetadata,
-    proof: certificateJson.proof,
     receipt,
     recipientFullName: getRecipientFullName(certificateJson),
     recordLink: id

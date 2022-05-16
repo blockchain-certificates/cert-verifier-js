@@ -218,11 +218,10 @@ Shape of the returned object can be checked here: https://github.com/blockchain-
 ### Constants
 Several constants are being exposed:
 ```javascript
-import { BLOCKCHAINS, STEPS, SUB_STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js';
+import { BLOCKCHAINS, STEPS, CERTIFICATE_VERSIONS, VERIFICATION_STATUSES } from '@blockcerts/cert-verifier-js';
 ```
 - [`BLOCKCHAINS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/blockchains.js): descriptive object of all blockchains supported by the library
 - [`STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification steps (top level)
-- [`SUB_STEPS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationSteps.js): descriptive object of all verification substeps
 - [`CERTIFICATE_VERSIONS`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js): list of all certificate versions
 - [`VERIFICATION_STATUSES`](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/verificationStatuses.js)
 

@@ -95,8 +95,12 @@ export default class MerkleProof2017 {
   }
 
   getIssuerPublicKey (): string {
+    if (domain.chains.isMockChain(this.chain)) {
+      return 'This mock chain does not support issuing addresses';
+    }
     if (!this.txData) {
       console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+      return;
     }
     return this.txData.issuingAddress;
   }

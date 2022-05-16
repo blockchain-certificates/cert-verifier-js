@@ -15,8 +15,8 @@ describe('Certificate test suite', function () {
     let certificate;
 
     beforeEach(function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request');
       lookForTxStub = sinon.stub(domain.verifier, 'lookForTx');
+      requestStub = sinon.stub(ExplorerLookup, 'request');
 
       requestStub.withArgs({
         url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
@@ -33,8 +33,6 @@ describe('Certificate test suite', function () {
 
     describe('given the callback parameter is passed', function () {
       describe('when the certificate is valid', function () {
-        let certificate;
-
         beforeEach(async function () {
           lookForTxStub.resolves({
             remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
@@ -80,8 +78,6 @@ describe('Certificate test suite', function () {
       });
 
       describe('when the certificate is invalid', function () {
-        let certificate;
-
         beforeEach(async function () {
           lookForTxStub.resolves({
             remoteHash: '4f877ca8cf3029c248e53cc93b6929ca28af2f11092785efcbc99127c9695d9d',

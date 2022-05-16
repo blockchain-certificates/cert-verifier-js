@@ -1,4 +1,3 @@
-import chainsService from '../../chains';
 import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
 import type { IBlockchainObject } from '../../../constants/blockchains';
 import domain from '../../index';
@@ -18,12 +17,8 @@ function removeStep (map: string[], step: string): void {
   }
 }
 
-export function getVerificationStepsForCurrentCase (chain: IBlockchainObject, hasDid: boolean): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (hasDid: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
-
-  if (chainsService.isMockChain(chain)) {
-    removeStep(verificationSteps, SUB_STEPS.checkRevokedStatus);
-  }
 
   if (!hasDid) {
     removeStep(verificationSteps, SUB_STEPS.controlVerificationMethod);
@@ -64,11 +59,11 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-export default function getVerificationMap (chain: IBlockchainObject, hasDid: boolean = false): {
+export default function getVerificationMap (hasDid: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];
 } {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(chain, hasDid);
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid);
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

@@ -49,6 +49,12 @@ export default [
     labelPending: defaultLanguageSet.steps.statusCheckLabelPending,
     subSteps: [
       {
+        code: SUB_STEPS.checkRevokedStatus,
+        label: defaultLanguageSet.subSteps.checkRevokedStatusLabel,
+        labelPending: defaultLanguageSet.subSteps.checkRevokedStatusLabelPending,
+        parentStep: VerificationSteps.statusCheck
+      },
+      {
         code: SUB_STEPS.checkExpiresDate,
         label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
         labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,

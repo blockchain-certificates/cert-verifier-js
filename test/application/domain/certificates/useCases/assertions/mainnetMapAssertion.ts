@@ -11,18 +11,6 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
     label: defaultLanguageSet.steps.formatValidationLabel,
     labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
     subSteps: [
-      // {
-      //   code: SUB_STEPS.getIssuerProfile,
-      //   label: defaultLanguageSet.subSteps.getIssuerProfileLabel,
-      //   labelPending: defaultLanguageSet.subSteps.getIssuerProfileLabelPending,
-      //   parentStep: VerificationSteps.formatValidation
-      // },
-      // {
-      //   code: SUB_STEPS.parseIssuerKeys,
-      //   label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
-      //   labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
-      //   parentStep: VerificationSteps.formatValidation
-      // },
       {
         code: SUB_STEPS.checkImagesIntegrity,
         label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
@@ -35,44 +23,7 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
     code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
-    subSteps: [
-      // {
-      //   code: SUB_STEPS.getTransactionId,
-      //   label: defaultLanguageSet.subSteps.getTransactionIdLabel,
-      //   labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.computeLocalHash,
-      //   label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-      //   labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.fetchRemoteHash,
-      //   label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
-      //   labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.compareHashes,
-      //   label: defaultLanguageSet.subSteps.compareHashesLabel,
-      //   labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.checkMerkleRoot,
-      //   label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
-      //   labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.checkReceipt,
-      //   label: defaultLanguageSet.subSteps.checkReceiptLabel,
-      //   labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // }
-    ]
+    subSteps: []
   },
   {
     code: VerificationSteps.identityVerification,
@@ -91,12 +42,6 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
         labelPending: defaultLanguageSet.subSteps.checkRevokedStatusLabelPending,
         parentStep: VerificationSteps.statusCheck
       },
-      // {
-      //   code: SUB_STEPS.checkAuthenticity,
-      //   label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
-      //   labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
-      //   parentStep: VerificationSteps.statusCheck
-      // },
       {
         code: SUB_STEPS.checkExpiresDate,
         label: defaultLanguageSet.subSteps.checkExpiresDateLabel,

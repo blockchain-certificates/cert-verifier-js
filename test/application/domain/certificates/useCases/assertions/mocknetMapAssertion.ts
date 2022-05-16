@@ -22,26 +22,7 @@ export default [
     code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
-    subSteps: [
-      // {
-      //   code: SUB_STEPS.computeLocalHash,
-      //   label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-      //   labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.compareHashes,
-      //   label: defaultLanguageSet.subSteps.compareHashesLabel,
-      //   labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // },
-      // {
-      //   code: SUB_STEPS.checkReceipt,
-      //   label: defaultLanguageSet.subSteps.checkReceiptLabel,
-      //   labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-      //   parentStep: VerificationSteps.signatureVerification
-      // }
-    ]
+    subSteps: []
   },
   {
     code: VerificationSteps.identityVerification,
@@ -53,11 +34,19 @@ export default [
     code: VerificationSteps.statusCheck,
     label: defaultLanguageSet.steps.statusCheckLabel,
     labelPending: defaultLanguageSet.steps.statusCheckLabelPending,
-    subSteps: [{
-      code: SUB_STEPS.checkExpiresDate,
-      label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
-      labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,
-      parentStep: VerificationSteps.statusCheck
-    }]
+    subSteps: [
+      {
+        code: SUB_STEPS.checkRevokedStatus,
+        label: defaultLanguageSet.subSteps.checkRevokedStatusLabel,
+        labelPending: defaultLanguageSet.subSteps.checkRevokedStatusLabelPending,
+        parentStep: VerificationSteps.statusCheck
+      },
+      {
+        code: SUB_STEPS.checkExpiresDate,
+        label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
+        labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,
+        parentStep: VerificationSteps.statusCheck
+      }
+    ]
   }
 ];

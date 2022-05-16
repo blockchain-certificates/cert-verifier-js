@@ -115,11 +115,8 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  _getRevocationListUrl (distantIssuerProfile: Issuer): any { // TODO: define revocationList type
-    if (this.issuer?.revocationList) {
-      return this.issuer.revocationList;
-    }
-    return distantIssuerProfile.revocationList;
+  _getRevocationListUrl (distantIssuerProfile: Issuer): string {
+    return this.issuer.revocationList;
   }
 
   private getProofType (document: Blockcerts): string {
@@ -131,7 +128,7 @@ export default class Verifier {
   }
 
   private prepareVerificationProcess (): void {
-    const verificationModel = domain.certificates.getVerificationMap(this.chain, !!this.issuer.didDocument);
+    const verificationModel = domain.certificates.getVerificationMap(!!this.issuer.didDocument);
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
 
@@ -210,15 +207,19 @@ export default class Verifier {
   }
 
   private async checkRevokedStatus (): Promise<void> {
-    // Get revoked assertions
-    const revokedAddresses = await this._doAction(
+    const revocationListUrl = this._getRevocationListUrl(this.issuer);
+
+    if (!revocationListUrl) {
+      console.warn('No revocation list url was set on the issuer.');
+      return;
+    }
+    const revokedCertificatesIds = await this._doAction(
       null,
-      async () => await domain.verifier.getRevokedAssertions(this._getRevocationListUrl(this.issuer), this.id)
+      async () => await domain.verifier.getRevokedAssertions(revocationListUrl, this.id)
     );
-    const keys = this.id;
 
     await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
-      inspectors.ensureNotRevoked(revokedAddresses, keys)
+      inspectors.ensureNotRevoked(revokedCertificatesIds, this.id)
     );
   }
 

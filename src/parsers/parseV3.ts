@@ -1,4 +1,3 @@
-import { Decoder } from '@vaultie/lds-merkle-proof-2019';
 import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
 import type { BlockcertsV3 } from '../models/BlockcertsV3';

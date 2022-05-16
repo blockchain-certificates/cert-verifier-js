@@ -1,7 +1,6 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import FIXTURES from '../../fixtures';
-import { BLOCKCHAINS } from '../../../src/constants';
 import parseJSON from '../../../src/parsers/index';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 

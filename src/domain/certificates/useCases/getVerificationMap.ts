@@ -1,5 +1,4 @@
 import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
-import type { IBlockchainObject } from '../../../constants/blockchains';
 import domain from '../../index';
 import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
 

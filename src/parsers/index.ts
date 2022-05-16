@@ -1,7 +1,6 @@
 import parseV1 from './parseV1';
 import parseV2 from './parseV2';
 import parseV3 from './parseV3';
-import type { IBlockchainObject } from '../constants/blockchains';
 import type { Issuer } from '../models/Issuer';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Receipt } from '../models/Receipt';

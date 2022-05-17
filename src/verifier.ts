@@ -9,6 +9,7 @@ import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
 import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
+import { difference } from './helpers/array';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
@@ -17,6 +18,7 @@ import type { BlockcertsV3 } from './models/BlockcertsV3';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
 import type { IVerificationMapItem } from './models/VerificationMap';
+import type { Suite } from './models/Suite';
 
 const log = debug('Verifier');
 
@@ -48,6 +50,7 @@ export default class Verifier {
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
   public merkleProofVerifier: any;
+  public proofVerifiers: Suite[];
   public verificationProcess: SUB_STEPS[];
 
   constructor (
@@ -73,18 +76,8 @@ export default class Verifier {
     // Final verification result
     // Init status as success, we will update the final status at the end
     this._stepsStatuses = [];
-    this.supportedVerificationSuites = {
-      MerkleProof2017,
-      MerkleProof2019
-    };
 
-    this.merkleProofVerifier = new this.supportedVerificationSuites[this.getProofType(this.documentToVerify)]({
-      actionMethod: this._doAction.bind(this),
-      document: this.documentToVerify,
-      explorerAPIs: this.explorerAPIs,
-      issuer: this.issuer
-    });
-
+    this.instantiateProofVerifiers();
     this.prepareVerificationProcess();
   }
 
@@ -131,12 +124,41 @@ export default class Verifier {
     return this.issuer.revocationList;
   }
 
-  private getProofType (document: Blockcerts): string {
+  private getProofTypes (document: Blockcerts): string[] {
     if ('proof' in document) {
-      return getMerkleProof2019ProofType(document); // TODO: Make model getter
+      if (Array.isArray(document.proof)) {
+        return document.proof.map(p => {
+          if (p.type === 'ChainedProof2021') {
+            return p.chainedProofType;
+          }
+          return p.type;
+        });
+      }
+      return [getMerkleProof2019ProofType(document)];
     } else if ('signature' in document) {
-      return getMerkleProof2017ProofType(document);
+      return [getMerkleProof2017ProofType(document)];
     }
+  }
+
+  private instantiateProofVerifiers (): void {
+    this.supportedVerificationSuites = {
+      MerkleProof2017,
+      MerkleProof2019
+    };
+    const proofTypes: string[] = this.getProofTypes(this.documentToVerify);
+
+    const unsupportedVerificationSuites = difference(Object.keys(this.supportedVerificationSuites), proofTypes);
+
+    if (unsupportedVerificationSuites.length) {
+      throw new Error(`No support for proof verification of type: ${unsupportedVerificationSuites.join(', ')}`);
+    }
+
+    this.proofVerifiers = proofTypes.map(proofType => new this.supportedVerificationSuites[proofType]({
+      actionMethod: this._doAction.bind(this),
+      document: this.documentToVerify,
+      explorerAPIs: this.explorerAPIs,
+      issuer: this.issuer
+    }));
   }
 
   private prepareVerificationProcess (): void {

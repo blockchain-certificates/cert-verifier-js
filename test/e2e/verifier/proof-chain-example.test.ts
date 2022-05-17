@@ -5,7 +5,7 @@ import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 
 describe('proof chain example', function () {
-  xit('verifies as expected', async function () {
+  it('verifies as expected', async function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({
       url: `${universalResolverUrl}/${fixture.issuer}`

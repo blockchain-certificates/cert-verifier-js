@@ -69,6 +69,7 @@ export default class MerkleProof2019 {
   public issuer: Issuer;
   public verificationMethodPublicKey: IDidDocumentPublicKey;
   public derivedIssuingAddress: string;
+  public hasDid: boolean;
 
   constructor ({
     actionMethod = null,
@@ -86,6 +87,7 @@ export default class MerkleProof2019 {
     this.issuer = issuer;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
+    this.hasDid = !!this.issuer.didDocument;
   }
 
   async verifyProof (): Promise<void> {
@@ -93,7 +95,7 @@ export default class MerkleProof2019 {
   }
 
   async verifyIdentity (): Promise<void> {
-    if (this.issuer.didDocument) {
+    if (this.hasDid) {
       await this.verifyProcess(this.identityVerificationProcess);
     }
   }
@@ -105,6 +107,9 @@ export default class MerkleProof2019 {
   }
 
   getIdentityVerificationSteps (parentStepKey): VerificationSubstep[] {
+    if (!this.hasDid) {
+      return [];
+    }
     return this.identityVerificationProcess.map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );

@@ -1,6 +1,7 @@
 import { Certificate } from '../../src';
 import FIXTURES from '../fixtures';
 import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
+import verificationsStepsNoDID from '../assertions/verification-steps-v3-no-did';
 import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest';
 import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet';
 import sinon from 'sinon';
@@ -41,7 +42,7 @@ describe('Certificate API Contract test suite', function () {
       expect(instance.verificationSteps).toEqual(verificationsStepsV2Mainnet);
     });
 
-    it('is available for a certificate with DID', async function () {
+    it('is available for a V3 certificate with DID', async function () {
       requestStub.withArgs({
         url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
       }).resolves(JSON.stringify({ didDocument }));
@@ -51,6 +52,15 @@ describe('Certificate API Contract test suite', function () {
       const instance = new Certificate(FIXTURES.BlockcertsV3);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsWithDID);
+    });
+
+    it('is available for a V3 certificate without DID', async function () {
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      }).resolves(JSON.stringify(fixtureIssuerProfile));
+      const instance = new Certificate(FIXTURES.BlockcertsV3NoDid);
+      await instance.init();
+      expect(instance.verificationSteps).toEqual(verificationsStepsNoDID);
     });
   });
 });

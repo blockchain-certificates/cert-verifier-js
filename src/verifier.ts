@@ -7,6 +7,7 @@ import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
+import Ed25519Signature2020 from './suites/Ed25519Signature2020';
 import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
 import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
 import { difference } from './helpers/array';
@@ -82,15 +83,15 @@ export default class Verifier {
   }
 
   getIssuerPublicKey (): string {
-    return this.merkleProofVerifier.getIssuerPublicKey();
+    return this.proofVerifiers[1].getIssuerPublicKey();
   }
 
   getChain (): IBlockchainObject {
-    return this.merkleProofVerifier.getChain();
+    return (this.proofVerifiers[1] as any).getChain();
   }
 
   getReceipt (): Receipt {
-    return this.merkleProofVerifier.getReceipt();
+    return (this.proofVerifiers[1] as any).getReceipt();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {
@@ -143,7 +144,8 @@ export default class Verifier {
   private instantiateProofVerifiers (): void {
     this.supportedVerificationSuites = {
       MerkleProof2017,
-      MerkleProof2019
+      MerkleProof2019,
+      Ed25519Signature2020
     };
     const proofTypes: string[] = this.getProofTypes(this.documentToVerify);
 
@@ -169,25 +171,41 @@ export default class Verifier {
     this.registerSignatureVerificationSteps();
     this.registerIdentityVerificationSteps();
 
-    this.verificationSteps = this.verificationSteps.filter(parentStep => parentStep.subSteps.length > 0);
+    this.verificationSteps = this.verificationSteps.filter(parentStep =>
+      parentStep.subSteps?.length > 0 || parentStep.suites?.length > 0
+    );
   }
 
   private registerSignatureVerificationSteps (): void {
     const parentStep = VerificationSteps.proofVerification;
     this.verificationSteps
       .find(step => step.code === parentStep)
-      .subSteps = this.merkleProofVerifier.getProofVerificationSteps(parentStep);
+      .suites = [
+        {
+          proofType: 'Ed25519Signature2020',
+          subSteps: this.proofVerifiers[0].getProofVerificationSteps(parentStep)
+        },
+        {
+          proofType: 'MerkleProof2019',
+          subSteps: this.proofVerifiers[1].getProofVerificationSteps(parentStep)
+        }
+      ];
   }
 
   private registerIdentityVerificationSteps (): void {
     const parentStep = VerificationSteps.identityVerification;
-    const parentBlock = this.verificationSteps
-      .find(step => step.code === parentStep);
-
-    parentBlock.subSteps = [
-      ...parentBlock.subSteps,
-      ...this.merkleProofVerifier.getIdentityVerificationSteps(parentStep)
-    ];
+    this.verificationSteps
+      .find(step => step.code === parentStep)
+      .suites = [
+        {
+          proofType: 'Ed25519Signature2020',
+          subSteps: this.proofVerifiers[0].getIdentityVerificationSteps(parentStep)
+        },
+        {
+          proofType: 'MerkleProof2019',
+          subSteps: this.proofVerifiers[1].getIdentityVerificationSteps(parentStep)
+        }
+      ];
   }
 
   private async _doAction (step: string, action: () => any): Promise<any> {

@@ -5,5 +5,9 @@ export interface IVerificationMapItem {
   code: VerificationSteps;
   label: string;
   labelPending: string;
-  subSteps: VerificationSubstep[];
+  subSteps?: VerificationSubstep[];
+  suites?: Array<{
+    proofType: string;
+    subSteps: VerificationSubstep[];
+  }>;
 }

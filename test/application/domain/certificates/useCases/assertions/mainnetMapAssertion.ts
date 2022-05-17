@@ -1,7 +1,7 @@
 import { VerificationSteps, SUB_STEPS } from '../../../../../../src/constants/verificationSteps';
-import type { IVerificationMapItem } from '../../../../../../src/domain/certificates/useCases/getVerificationMap';
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
+import type { IVerificationMapItem } from '../../../../../../src/models/VerificationMap';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 

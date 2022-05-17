@@ -1,10 +1,10 @@
 import domain from '../../../../../src/domain';
 import mocknetMapAssertion from './assertions/mocknetMapAssertion';
 import mainnetMapAssertion from './assertions/mainnetMapAssertion';
-import type { IVerificationMapItem } from '../../../../../src/domain/certificates/useCases/getVerificationMap';
 import { SUB_STEPS, VerificationSteps } from '../../../../../src/constants/verificationSteps';
 import i18n from '../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../src/constants/currentLocale';
+import type { IVerificationMapItem } from '../../../../../src/models/VerificationMap';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 

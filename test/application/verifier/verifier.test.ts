@@ -6,12 +6,12 @@ import { BLOCKCHAINS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
-import type { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
 import FIXTURES from '../../fixtures';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
 import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
+import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;

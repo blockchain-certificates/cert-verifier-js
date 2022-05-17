@@ -16,7 +16,7 @@ import type { SignatureImage } from './models';
 import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
 import type { BlockcertsV3Display } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
-import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { IVerificationMapItem } from './models/VerificationMap';
 
 export interface ExplorerURLs {
   main: string;

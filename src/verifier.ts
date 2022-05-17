@@ -15,6 +15,8 @@ import type { BlockcertsV3 } from './models/BlockcertsV3';
 import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
+import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
+import { getMerkleProof2019ProofType } from './models/MerkleProof2019';
 
 const log = debug('Verifier');
 
@@ -131,9 +133,9 @@ export default class Verifier {
 
   private getProofType (document: Blockcerts): string {
     if ('proof' in document) {
-      return document.proof.type; // TODO: Make model getter
+      return getMerkleProof2019ProofType(document); // TODO: Make model getter
     } else if ('signature' in document) {
-      return document.signature.type[0]; // TODO: Make model getter
+      return getMerkleProof2017ProofType(document);
     }
   }
 

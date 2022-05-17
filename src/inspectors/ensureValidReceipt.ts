@@ -1,18 +1,12 @@
 import sha256 from 'sha256';
 import VerifierError from '../models/verifierError';
-import type Versions from '../constants/certificateVersions';
-import { isV3 } from '../constants/certificateVersions';
 import { toByteArray } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 import type { Receipt } from '../models/Receipt';
 
-export default function ensureValidReceipt (receipt: Receipt, version: Versions): void {
+export default function ensureValidReceipt (receipt: Receipt): void {
   let proofHash = receipt.targetHash;
   const merkleRoot = receipt.merkleRoot;
-
-  if (isV3(version) && !!receipt.proof) {
-    throw new VerifierError('checkReceipt', getText('errors', 'invalidMerkleVersion'));
-  }
 
   try {
     const proof = receipt.proof || receipt.path;

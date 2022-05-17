@@ -4,11 +4,9 @@ import type { Blockcerts } from '../models/Blockcerts';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
-import type Versions from '../constants/certificateVersions';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import { retrieveBlockcertsVersion } from '../parsers';
 import { removeEntry } from '../helpers/array';
 
 enum SUB_STEPS {
@@ -41,7 +39,6 @@ export default class MerkleProof2017 {
   public chain: IBlockchainObject;
   public explorerAPIs: ExplorerAPI[];
   public receipt: Receipt;
-  public version: Versions;
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
 
@@ -57,7 +54,6 @@ export default class MerkleProof2017 {
     this.documentToVerify = document;
     this.explorerAPIs = explorerAPIs;
     this.receipt = (this.documentToVerify as BlockcertsV2).signature;
-    this.version = retrieveBlockcertsVersion(this.documentToVerify['@context']).version; // TODO: assess if necessary
     this.issuer = issuer;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
@@ -156,7 +152,7 @@ export default class MerkleProof2017 {
 
   private async checkReceipt (): Promise<void> {
     await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt, this.version)
+      inspectors.ensureValidReceipt(this.receipt)
     );
   }
 

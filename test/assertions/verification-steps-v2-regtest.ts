@@ -22,24 +22,30 @@ export default [
     code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
-    subSteps: [
+    subSteps: [],
+    suites: [
       {
-        code: 'computeLocalHash',
-        label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-        labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'compareHashes',
-        label: defaultLanguageSet.subSteps.compareHashesLabel,
-        labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'checkReceipt',
-        label: defaultLanguageSet.subSteps.checkReceiptLabel,
-        labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-        parentStep: VerificationSteps.proofVerification
+        proofType: 'MerkleProof2017',
+        subSteps: [
+          {
+            code: 'computeLocalHash',
+            label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+            labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'compareHashes',
+            label: defaultLanguageSet.subSteps.compareHashesLabel,
+            labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'checkReceipt',
+            label: defaultLanguageSet.subSteps.checkReceiptLabel,
+            labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          }
+        ]
       }
     ]
   },

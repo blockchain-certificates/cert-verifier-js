@@ -22,54 +22,60 @@ export default [
     code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
-    subSteps: [
+    subSteps: [],
+    suites: [
       {
-        code: 'getTransactionId',
-        label: defaultLanguageSet.subSteps.getTransactionIdLabel,
-        labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'computeLocalHash',
-        label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-        labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'fetchRemoteHash',
-        label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
-        labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'compareHashes',
-        label: defaultLanguageSet.subSteps.compareHashesLabel,
-        labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'checkMerkleRoot',
-        label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
-        labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'checkReceipt',
-        label: defaultLanguageSet.subSteps.checkReceiptLabel,
-        labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'parseIssuerKeys',
-        label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
-        labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
-        parentStep: VerificationSteps.proofVerification
-      },
-      {
-        code: 'checkAuthenticity',
-        label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
-        labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
-        parentStep: VerificationSteps.proofVerification
+        proofType: 'MerkleProof2019',
+        subSteps: [
+          {
+            code: 'getTransactionId',
+            label: defaultLanguageSet.subSteps.getTransactionIdLabel,
+            labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'computeLocalHash',
+            label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+            labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'fetchRemoteHash',
+            label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
+            labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'compareHashes',
+            label: defaultLanguageSet.subSteps.compareHashesLabel,
+            labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'checkMerkleRoot',
+            label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
+            labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'checkReceipt',
+            label: defaultLanguageSet.subSteps.checkReceiptLabel,
+            labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'parseIssuerKeys',
+            label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
+            labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'checkAuthenticity',
+            label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
+            labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          }
+        ]
       }
     ]
   },
@@ -83,24 +89,31 @@ export default [
         label: defaultLanguageSet.subSteps.controlVerificationMethodLabel,
         labelPending: defaultLanguageSet.subSteps.controlVerificationMethodLabelPending,
         parentStep: VerificationSteps.identityVerification
-      },
+      }
+    ],
+    suites: [
       {
-        code: 'retrieveVerificationMethodPublicKey',
-        label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
-        labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
-        parentStep: VerificationSteps.identityVerification
-      },
-      {
-        code: 'deriveIssuingAddressFromPublicKey',
-        label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
-        labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,
-        parentStep: VerificationSteps.identityVerification
-      },
-      {
-        code: 'compareIssuingAddress',
-        label: defaultLanguageSet.subSteps.compareIssuingAddressLabel,
-        labelPending: defaultLanguageSet.subSteps.compareIssuingAddressLabelPending,
-        parentStep: VerificationSteps.identityVerification
+        proofType: 'MerkleProof2019',
+        subSteps: [
+          {
+            code: 'retrieveVerificationMethodPublicKey',
+            label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
+            labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
+            parentStep: VerificationSteps.identityVerification
+          },
+          {
+            code: 'deriveIssuingAddressFromPublicKey',
+            label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
+            labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,
+            parentStep: VerificationSteps.identityVerification
+          },
+          {
+            code: 'compareIssuingAddress',
+            label: defaultLanguageSet.subSteps.compareIssuingAddressLabel,
+            labelPending: defaultLanguageSet.subSteps.compareIssuingAddressLabelPending,
+            parentStep: VerificationSteps.identityVerification
+          }
+        ]
       }
     ]
   },

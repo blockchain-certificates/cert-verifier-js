@@ -8,6 +8,10 @@ export function difference (array1: any[] = [], array2: any[] = []): any[] {
   return array2.filter(value => !array1.includes(value));
 }
 
+export function lastEntry (array: any[]): any {
+  return array[array.length - 1];
+}
+
 export function removeEntry (map: any[], key: any): void {
   const stepIndex = map.findIndex(entry => entry === key);
   if (stepIndex > -1) {

@@ -43,6 +43,7 @@ export default class MerkleProof2017 extends Suite {
   public receipt: Receipt;
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
+  public type = 'MerkleProof2017';
 
   constructor (props: SuiteAPI) {
     super(props);

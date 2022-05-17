@@ -70,6 +70,7 @@ export default class MerkleProof2019 extends Suite {
   public verificationMethodPublicKey: IDidDocumentPublicKey;
   public derivedIssuingAddress: string;
   public hasDid: boolean;
+  public type = 'MerkleProof2019';
 
   constructor (props: SuiteAPI) {
     super(props);

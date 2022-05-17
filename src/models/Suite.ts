@@ -26,6 +26,7 @@ interface OptionalSuiteMethods {
 }
 
 export abstract class Suite implements OptionalSuiteMethods {
+  abstract type: string;
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
   constructor (props: SuiteAPI) {}
   // this function executes the proof verification logic, as added to the Proof Verification step

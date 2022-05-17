@@ -12,6 +12,7 @@ export default class Ed25519Signature2020 extends Suite {
 
   public documentToVerify: Blockcerts;
   public issuer: Issuer;
+  public type = 'Ed25519Signature2020';
 
   constructor (props: SuiteAPI) {
     super(props);

@@ -10,7 +10,7 @@ import MerkleProof2017 from './suites/MerkleProof2017';
 import Ed25519Signature2020 from './suites/Ed25519Signature2020';
 import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
 import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
-import { difference } from './helpers/array';
+import { difference, lastEntry } from './helpers/array';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
@@ -83,15 +83,18 @@ export default class Verifier {
   }
 
   getIssuerPublicKey (): string {
-    return this.proofVerifiers[1].getIssuerPublicKey();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerPublicKey();
   }
 
   getChain (): IBlockchainObject {
-    return (this.proofVerifiers[1] as any).getChain();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getChain();
   }
 
   getReceipt (): Receipt {
-    return (this.proofVerifiers[1] as any).getReceipt();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getReceipt();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {
@@ -102,7 +105,8 @@ export default class Verifier {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
-    await this.merkleProofVerifier.verifyProof();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    await lastEntry(this.proofVerifiers).verifyProof();
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
@@ -112,8 +116,9 @@ export default class Verifier {
       await this[verificationStep]();
     }
 
-    if (this.merkleProofVerifier.verifyIdentity) {
-      await this.merkleProofVerifier.verifyIdentity();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    if (lastEntry(this.proofVerifiers).verifyIdentity) {
+      await lastEntry(this.proofVerifiers).verifyIdentity();
     }
 
     // Send final callback update for global verification status
@@ -172,7 +177,7 @@ export default class Verifier {
     this.registerIdentityVerificationSteps();
 
     this.verificationSteps = this.verificationSteps.filter(parentStep =>
-      parentStep.subSteps?.length > 0 || parentStep.suites?.length > 0
+      parentStep.subSteps?.length > 0 || parentStep.suites?.some(suite => suite.subSteps.length > 0)
     );
   }
 
@@ -180,32 +185,25 @@ export default class Verifier {
     const parentStep = VerificationSteps.proofVerification;
     this.verificationSteps
       .find(step => step.code === parentStep)
-      .suites = [
-        {
-          proofType: 'Ed25519Signature2020',
-          subSteps: this.proofVerifiers[0].getProofVerificationSteps(parentStep)
-        },
-        {
-          proofType: 'MerkleProof2019',
-          subSteps: this.proofVerifiers[1].getProofVerificationSteps(parentStep)
-        }
-      ];
+      .suites = this.getSuiteSubsteps(parentStep);
+  }
+
+  private getSuiteSubsteps (parentStep: VerificationSteps): any {
+    const targetMethodMap = {
+      [VerificationSteps.proofVerification]: 'getProofVerificationSteps',
+      [VerificationSteps.identityVerification]: 'getIdentityVerificationSteps'
+    };
+    return this.proofVerifiers.map(proofVerifier => ({
+      proofType: proofVerifier.type,
+      subSteps: proofVerifier[targetMethodMap[parentStep]](parentStep)
+    }));
   }
 
   private registerIdentityVerificationSteps (): void {
     const parentStep = VerificationSteps.identityVerification;
     this.verificationSteps
       .find(step => step.code === parentStep)
-      .suites = [
-        {
-          proofType: 'Ed25519Signature2020',
-          subSteps: this.proofVerifiers[0].getIdentityVerificationSteps(parentStep)
-        },
-        {
-          proofType: 'MerkleProof2019',
-          subSteps: this.proofVerifiers[1].getIdentityVerificationSteps(parentStep)
-        }
-      ];
+      .suites = this.getSuiteSubsteps(parentStep);
   }
 
   private async _doAction (step: string, action: () => any): Promise<any> {
@@ -302,7 +300,8 @@ export default class Verifier {
   }
 
   _succeed (): IFinalVerificationStatus {
-    const message = domain.chains.isMockChain(this.merkleProofVerifier.getChain())
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    const message = domain.chains.isMockChain(lastEntry(this.proofVerifiers).getChain())
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
     log(message);

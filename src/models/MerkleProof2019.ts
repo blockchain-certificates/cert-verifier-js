@@ -16,3 +16,7 @@ export interface MerklePath {
 export function getMerkleProof2019ProofType (document: BlockcertsV3): string {
   return document.proof.type;
 }
+
+export function getMerkleProof2019VerificationMethod (document: BlockcertsV3): string {
+  return document.proof.verificationMethod;
+}

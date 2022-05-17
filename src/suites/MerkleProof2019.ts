@@ -10,6 +10,7 @@ import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import { retrieveBlockcertsVersion } from '../parsers';
+import { getMerkleProof2019VerificationMethod } from '../models/MerkleProof2019';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -204,7 +205,11 @@ export default class MerkleProof2019 {
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      this.verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(this.issuer.didDocument, this.documentToVerify.proof.verificationMethod);
+      this.verificationMethodPublicKey = inspectors
+        .retrieveVerificationMethodPublicKey(
+          this.issuer.didDocument,
+          getMerkleProof2019VerificationMethod(this.documentToVerify)
+        );
     });
   }
 

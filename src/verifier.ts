@@ -244,29 +244,23 @@ export default class Verifier {
   private async controlVerificationMethod (): Promise<void> {
     // only v3 support
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
-      inspectors.controlVerificationMethod(this.issuer.didDocument, (this.documentToVerify as BlockcertsV3).proof.verificationMethod);
+      inspectors.controlVerificationMethod(
+        this.issuer.didDocument,
+        getMerkleProof2019ProofType(this.documentToVerify as BlockcertsV3)
+      );
     });
   }
 
-  /**
-   * Returns a failure final step message
-   */
   _failed (errorStep: IVerificationStepCallbackAPI): IFinalVerificationStatus {
     const message: string = errorStep.errorMessage;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
 
-  /**
-   * whether or not the current verification is failing
-   */
   _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  /**
-   * Returns a final success message
-   */
   _succeed (): IFinalVerificationStatus {
     const message = domain.chains.isMockChain(this.merkleProofVerifier.getChain())
       ? domain.i18n.getText('success', 'mocknet')
@@ -279,9 +273,6 @@ export default class Verifier {
     return { code: VerificationSteps.final, status, message };
   }
 
-  /**
-   * calls the origin callback to update on a step status
-   */
   private _updateStatusCallback (code: string, label: string, status: string, errorMessage = ''): void {
     if (code != null) {
       const update: IVerificationStepCallbackAPI = { code, label, status };

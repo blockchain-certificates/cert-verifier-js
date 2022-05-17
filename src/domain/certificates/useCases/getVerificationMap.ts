@@ -1,6 +1,7 @@
 import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
+import { removeEntry } from '../../../helpers/array';
 
 export interface IVerificationMapItem {
   code: VerificationSteps;
@@ -9,18 +10,11 @@ export interface IVerificationMapItem {
   subSteps: VerificationSubstep[];
 }
 
-function removeStep (map: string[], step: string): void {
-  const stepIndex = map.findIndex(subStep => subStep === step);
-  if (stepIndex > -1) {
-    map.splice(stepIndex, 1);
-  }
-}
-
 export function getVerificationStepsForCurrentCase (hasDid: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (!hasDid) {
-    removeStep(verificationSteps, SUB_STEPS.controlVerificationMethod);
+    removeEntry(verificationSteps, SUB_STEPS.controlVerificationMethod);
   }
 
   return verificationSteps;

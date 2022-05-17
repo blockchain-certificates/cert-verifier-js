@@ -9,13 +9,7 @@ import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import { retrieveBlockcertsVersion } from '../parsers';
-
-function removeStep (map: string[], step: string): void {
-  const stepIndex = map.findIndex(subStep => subStep === step);
-  if (stepIndex > -1) {
-    map.splice(stepIndex, 1);
-  }
-}
+import { removeEntry } from '../helpers/array';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -111,11 +105,11 @@ export default class MerkleProof2017 {
 
   private adaptVerificationProcessToChain (): void {
     if (domain.chains.isMockChain(this.chain)) {
-      removeStep(this.verificationProcess, SUB_STEPS.getTransactionId);
-      removeStep(this.verificationProcess, SUB_STEPS.fetchRemoteHash);
-      removeStep(this.verificationProcess, SUB_STEPS.parseIssuerKeys);
-      removeStep(this.verificationProcess, SUB_STEPS.checkMerkleRoot);
-      removeStep(this.verificationProcess, SUB_STEPS.checkAuthenticity);
+      removeEntry(this.verificationProcess, SUB_STEPS.getTransactionId);
+      removeEntry(this.verificationProcess, SUB_STEPS.fetchRemoteHash);
+      removeEntry(this.verificationProcess, SUB_STEPS.parseIssuerKeys);
+      removeEntry(this.verificationProcess, SUB_STEPS.checkMerkleRoot);
+      removeEntry(this.verificationProcess, SUB_STEPS.checkAuthenticity);
     }
   }
 

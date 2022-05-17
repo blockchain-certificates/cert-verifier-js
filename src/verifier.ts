@@ -7,16 +7,16 @@ import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
+import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
+import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3 } from './models/BlockcertsV3';
-import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
-import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
-import { getMerkleProof2019ProofType } from './models/MerkleProof2019';
+import type { IVerificationMapItem } from './models/VerificationMap';
 
 const log = debug('Verifier');
 
@@ -246,7 +246,7 @@ export default class Verifier {
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(
         this.issuer.didDocument,
-        getMerkleProof2019ProofType(this.documentToVerify as BlockcertsV3)
+        getMerkleProof2019VerificationMethod(this.documentToVerify as BlockcertsV3)
       );
     });
   }

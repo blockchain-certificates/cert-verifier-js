@@ -1,14 +1,16 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
-import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
+import { getMerkleProof2019VerificationMethod } from '../models/MerkleProof2019';
+import { Suite } from '../models/Suite';
+import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import { getMerkleProof2019VerificationMethod } from '../models/MerkleProof2019';
+import type { SuiteAPI } from '../models/Suite';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -38,7 +40,7 @@ export function parseReceipt (proof: VCProof | VCProof[]): Receipt {
   return base58Decoder.decode();
 }
 
-export default class MerkleProof2019 {
+export default class MerkleProof2019 extends Suite {
   public proofVerificationProcess = [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
@@ -69,19 +71,13 @@ export default class MerkleProof2019 {
   public derivedIssuingAddress: string;
   public hasDid: boolean;
 
-  constructor ({
-    actionMethod = null,
-    document = null,
-    explorerAPIs = null,
-    issuer = null
-  }) {
-    if (actionMethod) {
-      this._doAction = actionMethod;
-    }
-    this.documentToVerify = document;
-    this.explorerAPIs = explorerAPIs;
+  constructor (props: SuiteAPI) {
+    super(props);
+    this._doAction = props.actionMethod;
+    this.documentToVerify = props.document as BlockcertsV3;
+    this.explorerAPIs = props.explorerAPIs;
+    this.issuer = props.issuer;
     this.receipt = parseReceipt(this.documentToVerify.proof);
-    this.issuer = issuer;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.hasDid = !!this.issuer.didDocument;
@@ -137,7 +133,7 @@ export default class MerkleProof2019 {
     }
   }
 
-  private async _doAction (step: SUB_STEPS, action): Promise<any> {
+  async _doAction (step: SUB_STEPS, action): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 

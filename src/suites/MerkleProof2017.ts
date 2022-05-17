@@ -1,5 +1,7 @@
 import * as inspectors from '../inspectors';
 import domain from '../domain';
+import { removeEntry } from '../helpers/array';
+import { Suite } from '../models/Suite';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IBlockchainObject } from '../constants/blockchains';
@@ -7,7 +9,7 @@ import type { Receipt } from '../models/Receipt';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import { removeEntry } from '../helpers/array';
+import type { SuiteAPI } from '../models/Suite';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -20,7 +22,7 @@ enum SUB_STEPS {
   checkAuthenticity = 'checkAuthenticity'
 }
 
-export default class MerkleProof2017 {
+export default class MerkleProof2017 extends Suite {
   public verificationProcess = [
     SUB_STEPS.getTransactionId,
     SUB_STEPS.computeLocalHash,
@@ -42,19 +44,15 @@ export default class MerkleProof2017 {
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
 
-  constructor ({
-    actionMethod = null,
-    document = null,
-    explorerAPIs = null,
-    issuer = null
-  }) {
-    if (actionMethod) {
-      this._doAction = actionMethod;
+  constructor (props: SuiteAPI) {
+    super(props);
+    if (props.actionMethod) {
+      this._doAction = props.actionMethod;
     }
-    this.documentToVerify = document;
-    this.explorerAPIs = explorerAPIs;
+    this.documentToVerify = props.document;
+    this.explorerAPIs = props.explorerAPIs;
+    this.issuer = props.issuer;
     this.receipt = (this.documentToVerify as BlockcertsV2).signature;
-    this.issuer = issuer;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.adaptVerificationProcessToChain();
@@ -109,7 +107,7 @@ export default class MerkleProof2017 {
     }
   }
 
-  private async _doAction (step: SUB_STEPS, action): Promise<any> {
+  async _doAction (step: SUB_STEPS, action): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 

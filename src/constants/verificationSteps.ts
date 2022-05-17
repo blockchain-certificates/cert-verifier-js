@@ -1,6 +1,6 @@
 import i18n from '../data/i18n.json';
 import currentLocale from './currentLocale';
-import type { IVerificationMapItem } from '../domain/certificates/useCases/getVerificationMap'; // TODO: circular dependency
+import type { IVerificationMapItem } from '../models/VerificationMap';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 

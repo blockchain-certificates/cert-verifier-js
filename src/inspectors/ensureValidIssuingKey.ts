@@ -17,7 +17,9 @@ function getCaseInsensitiveKey (obj: IssuerPublicKeyList, value: string): Parsed
 
 export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIssuingAddress: string, txTime: Date | string): void {
   let errorMessage: string = '';
+  console.log(keyMap, txIssuingAddress);
   const theKey: ParsedKeyObjectV2 = getCaseInsensitiveKey(keyMap, txIssuingAddress);
+  console.log(theKey);
   const txTimeToUnixTimestamp = dateToUnixTimestamp(txTime);
   if (theKey) {
     if (theKey.created && txTimeToUnixTimestamp <= theKey.created) {

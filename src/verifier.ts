@@ -105,8 +105,9 @@ export default class Verifier {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    await lastEntry(this.proofVerifiers).verifyProof();
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      await this.proofVerifiers[i].verifyProof();
+    }
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
@@ -116,9 +117,10 @@ export default class Verifier {
       await this[verificationStep]();
     }
 
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    if (lastEntry(this.proofVerifiers).verifyIdentity) {
-      await lastEntry(this.proofVerifiers).verifyIdentity();
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      if (this.proofVerifiers[i].verifyIdentity) {
+        await this.proofVerifiers[i].verifyIdentity();
+      }
     }
 
     // Send final callback update for global verification status

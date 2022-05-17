@@ -18,8 +18,6 @@ interface OptionalSuiteMethods {
   getIdentityVerificationSteps;
   getIssuerPublicKey;
   _doAction;
-  // this function executes the identity verification logic, as added to the Identity Verification step
-  verifyIdentity?: () => Promise<void>;
   // only needed for Blockchain anchoring suites
   getChain?: () => IBlockchainObject;
   getReceipt?: () => Receipt;
@@ -31,6 +29,8 @@ export abstract class Suite implements OptionalSuiteMethods {
   constructor (props: SuiteAPI) {}
   // this function executes the proof verification logic, as added to the Proof Verification step
   abstract verifyProof (): Promise<void>;
+  // this function executes the identity verification logic, as added to the Identity Verification step
+  abstract verifyIdentity (): Promise<void>;
   // returns the substeps of the Proof Verification step as defined by the suite.
   // This will populate the `subSteps` property of the Proof Verification step object
   abstract getProofVerificationSteps (parentStepKey: string): VerificationSubstep[];

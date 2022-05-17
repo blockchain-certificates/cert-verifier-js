@@ -36,6 +36,8 @@ export function parseReceipt (proof: VCProof | VCProof[]): Receipt {
     merkleProof2019 = proof;
   }
 
+  console.log(merkleProof2019);
+
   const base58Decoder = new Decoder(merkleProof2019.proofValue);
   return base58Decoder.decode();
 }
@@ -79,12 +81,14 @@ export default class MerkleProof2019 extends Suite {
     this.explorerAPIs = props.explorerAPIs;
     this.issuer = props.issuer;
     this.receipt = parseReceipt(this.documentToVerify.proof);
+    console.log(this.receipt);
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.hasDid = !!this.issuer.didDocument;
   }
 
   async verifyProof (): Promise<void> {
+    console.log('MerkleProof2019 verify proof');
     await this.verifyProcess(this.proofVerificationProcess);
   }
 

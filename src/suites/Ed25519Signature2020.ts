@@ -24,7 +24,12 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async verifyProof (): Promise<void> {}
+  async verifyProof (): Promise<void> {
+    console.log('ed25519 verify proof');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async verifyIdentity (): Promise<void> {}
 
   getProofVerificationSteps (parentStepKey): VerificationSubstep[] {
     return this.verificationProcess.map(childStepKey =>

@@ -1,8 +1,5 @@
 import type { Blockcerts, UnsignedBlockcerts } from '../../models/Blockcerts';
 import type { BlockcertsV3 } from '../../models/BlockcertsV3';
-import type { BlockcertsV2 } from '../../models/BlockcertsV2';
-import { isV3 } from '../../constants/certificateVersions';
-import { retrieveBlockcertsVersion } from './retrieveBlockcertsVersion';
 import { deepCopy } from '../../helpers/object';
 
 function deleteMerkleProof2019From (certificate: BlockcertsV3): Blockcerts {
@@ -20,11 +17,10 @@ function deleteMerkleProof2019From (certificate: BlockcertsV3): Blockcerts {
 
 export default function retrieveUnsignedBlockcerts (certificateJson: Blockcerts): UnsignedBlockcerts {
   const certificateCopy: Blockcerts = deepCopy<Blockcerts>(certificateJson);
-  const { version } = retrieveBlockcertsVersion(certificateJson['@context']);
-  if (isV3(version)) {
-    return deleteMerkleProof2019From(certificateCopy as BlockcertsV3);
-  } else {
-    delete (certificateCopy as BlockcertsV2).signature;
+  if ('proof' in certificateCopy) {
+    return deleteMerkleProof2019From(certificateCopy);
+  } else if ('signature' in certificateCopy) {
+    delete certificateCopy.signature;
   }
   return certificateCopy;
 }

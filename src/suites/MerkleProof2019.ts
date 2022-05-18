@@ -90,7 +90,6 @@ export default class MerkleProof2019 extends Suite {
 
   async verifyProof (): Promise<void> {
     await this.setIssuerFromProofVerificationMethod();
-    console.log('MerkleProof2019 verify proof');
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
@@ -229,7 +228,7 @@ export default class MerkleProof2019 extends Suite {
       this.verificationMethodPublicKey = inspectors
         .retrieveVerificationMethodPublicKey(
           this.issuer.didDocument,
-          getVCProofVerificationMethod({ proof: this.proof } as BlockcertsV3)
+          getVCProofVerificationMethod(this.proof)
         );
     });
   }

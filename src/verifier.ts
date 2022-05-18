@@ -303,7 +303,7 @@ export default class Verifier {
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(
         this.issuer.didDocument,
-        getVCProofVerificationMethod(this.documentToVerify as BlockcertsV3)
+        getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
       );
     });
   }

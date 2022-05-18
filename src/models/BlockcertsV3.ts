@@ -11,12 +11,12 @@ export interface VCProof {
   previousProof?: VCProof;
 }
 
-export function getVCProofVerificationMethod (document: BlockcertsV3): string {
-  if (Array.isArray(document.proof)) {
-    const initialProof: VCProof = document.proof.find(p => p.type !== 'ChainedProof2021');
+export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): string {
+  if (Array.isArray(proof)) {
+    const initialProof: VCProof = proof.find(p => p.type !== 'ChainedProof2021');
     return initialProof.verificationMethod;
   }
-  return document.proof.verificationMethod;
+  return proof.verificationMethod;
 }
 
 export interface VerifiableCredential {

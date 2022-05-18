@@ -224,13 +224,12 @@ export default class MerkleProof2019 extends Suite {
   }
 
   // ##### DID CORRELATION #####
-
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
       this.verificationMethodPublicKey = inspectors
         .retrieveVerificationMethodPublicKey(
           this.issuer.didDocument,
-          getVCProofVerificationMethod(this.documentToVerify)
+          getVCProofVerificationMethod({ proof: this.proof } as BlockcertsV3)
         );
     });
   }

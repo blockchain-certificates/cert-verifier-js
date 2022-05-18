@@ -32,10 +32,10 @@ describe('proof chain example', function () {
     expect(instance.verificationSteps).toEqual(multipleProofsVerificationSteps);
   });
 
-  it.only('verifies as expected', async function () {
+  it('verifies as expected', async function () {
     const instance = new Certificate(fixture as any);
     await instance.init();
     const result = await instance.verify();
-    expect(result.message).toBe('success');
+    expect(result.status).toBe('success');
   });
 });

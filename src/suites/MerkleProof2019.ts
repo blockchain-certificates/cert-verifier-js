@@ -1,8 +1,9 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
-import { getMerkleProof2019VerificationMethod } from '../models/MerkleProof2019';
 import { Suite } from '../models/Suite';
+import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
+import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { IBlockchainObject } from '../constants/blockchains';
@@ -35,8 +36,6 @@ export function parseReceipt (proof: VCProof | VCProof[]): Receipt {
   } else {
     merkleProof2019 = proof;
   }
-
-  console.log(merkleProof2019);
 
   const base58Decoder = new Decoder(merkleProof2019.proofValue);
   return base58Decoder.decode();
@@ -80,18 +79,17 @@ export default class MerkleProof2019 extends Suite {
     this._doAction = props.actionMethod;
     this.documentToVerify = props.document as BlockcertsV3;
     this.explorerAPIs = props.explorerAPIs;
-    // TODO: actually get issuer profile from here because we need to correlate the verification method
-    this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
+    this.issuer = props.issuer;
     this.validateProofType();
-    this.receipt = parseReceipt(this.documentToVerify.proof);
-    console.log(this.receipt);
+    this.receipt = parseReceipt(this.proof);
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
-    this.hasDid = !!this.issuer.didDocument;
+    this.setHasDid();
   }
 
   async verifyProof (): Promise<void> {
+    await this.setIssuerFromProofVerificationMethod();
     console.log('MerkleProof2019 verify proof');
     await this.verifyProcess(this.proofVerificationProcess);
   }
@@ -130,6 +128,22 @@ export default class MerkleProof2019 extends Suite {
 
   getReceipt (): Receipt {
     return this.receipt;
+  }
+
+  private async setIssuerFromProofVerificationMethod (): Promise<void> {
+    if (this.proof.type === 'ChainedProof2021') {
+      const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
+      this.issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
+    }
+  }
+
+  private setHasDid (): void {
+    if (this.proof.type === 'ChainedProof2021') {
+      const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
+      this.hasDid = isDidUri(issuerProfileUrl);
+      return;
+    }
+    this.hasDid = !!this.issuer.didDocument;
   }
 
   private validateProofType (): void {
@@ -216,7 +230,7 @@ export default class MerkleProof2019 extends Suite {
       this.verificationMethodPublicKey = inspectors
         .retrieveVerificationMethodPublicKey(
           this.issuer.didDocument,
-          getMerkleProof2019VerificationMethod(this.documentToVerify)
+          getVCProofVerificationMethod(this.documentToVerify)
         );
     });
   }

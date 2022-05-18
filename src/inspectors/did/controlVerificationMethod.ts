@@ -8,7 +8,7 @@ function getDocumentId (didDocument: IDidDocument): string {
   return didDocument.id;
 }
 
-export default function controlVerificationMethod (didDocument: IDidDocument, verificationMethod: string): void {
+export default function controlVerificationMethod (didDocument: IDidDocument, verificationMethod: string = ''): void {
   const documentId = getDocumentId(didDocument);
   const verificationDid = verificationMethod.split('#')[0];
   if (documentId !== verificationDid) {

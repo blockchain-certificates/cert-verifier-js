@@ -5,6 +5,8 @@ import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
 import didKeyDocument from '../../fixtures/did/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
+import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 
 describe('proof chain example', function () {
   beforeEach(function () {
@@ -12,6 +14,12 @@ describe('proof chain example', function () {
     requestStub.withArgs({
       url: `${universalResolverUrl}/${fixture.issuer}`
     }).resolves(JSON.stringify({ didDocument: didKeyDocument }));
+    requestStub.withArgs({
+      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
+    }).resolves(JSON.stringify({ didDocument }));
+    requestStub.withArgs({
+      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+    }).resolves(JSON.stringify(fixtureIssuerProfile));
   });
 
   afterEach(function () {
@@ -24,7 +32,7 @@ describe('proof chain example', function () {
     expect(instance.verificationSteps).toEqual(multipleProofsVerificationSteps);
   });
 
-  it('verifies as expected', async function () {
+  it.only('verifies as expected', async function () {
     const instance = new Certificate(fixture as any);
     await instance.init();
     const result = await instance.verify();

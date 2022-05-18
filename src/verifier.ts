@@ -8,8 +8,8 @@ import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 import Ed25519Signature2020 from './suites/Ed25519Signature2020';
-import { getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
 import { difference, lastEntry } from './helpers/array';
+import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
@@ -303,7 +303,7 @@ export default class Verifier {
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(
         this.issuer.didDocument,
-        getMerkleProof2019VerificationMethod(this.documentToVerify as BlockcertsV3)
+        getVCProofVerificationMethod(this.documentToVerify as BlockcertsV3)
       );
     });
   }

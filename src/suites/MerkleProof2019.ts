@@ -121,15 +121,19 @@ export default class MerkleProof2019 extends Suite {
     return this.receipt;
   }
 
+  private isProofChain (): boolean {
+    return this.proof.type === 'ChainedProof2021';
+  }
+
   private async setIssuerFromProofVerificationMethod (): Promise<void> {
-    if (this.proof.type === 'ChainedProof2021') {
+    if (this.isProofChain()) {
       const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
       this.issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
     }
   }
 
   private setHasDid (): void {
-    if (this.proof.type === 'ChainedProof2021') {
+    if (this.isProofChain()) {
       const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
       this.hasDid = isDidUri(issuerProfileUrl);
       return;
@@ -138,7 +142,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private validateProofType (): void {
-    const proofType = this.proof.type === 'ChainedProof2021' ? this.proof.chainedProofType : this.proof.type;
+    const proofType = this.isProofChain() ? this.proof.chainedProofType : this.proof.type;
     if (proofType !== this.type) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${proofType}`);
     }
@@ -225,14 +229,12 @@ export default class MerkleProof2019 extends Suite {
     });
   }
 
-  // merkle proof 2019
   private async deriveIssuingAddressFromPublicKey (): Promise<void> {
     await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
       this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
     });
   }
 
-  // merkle proof 2019
   private async compareIssuingAddress (): Promise<void> {
     await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
       inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);

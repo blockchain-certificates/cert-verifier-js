@@ -4,11 +4,14 @@ import type { Receipt } from './Receipt';
 import type { Blockcerts } from './Blockcerts';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { Issuer } from './Issuer';
+import type { VCProof } from './BlockcertsV3';
+import type { MerkleProof2017 } from './MerkleProof2017';
 
 export interface SuiteAPI {
   actionMethod: (step: string, action) => Promise<any>;
   document: Blockcerts;
   explorerAPIs: ExplorerAPI[];
+  proof: VCProof | MerkleProof2017;
   issuer: Issuer;
 }
 

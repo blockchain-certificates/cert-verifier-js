@@ -4,6 +4,7 @@ import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
+import type { VCProof } from '../models/BlockcertsV3';
 
 enum SUB_STEPS {}
 
@@ -12,6 +13,7 @@ export default class Ed25519Signature2020 extends Suite {
 
   public documentToVerify: Blockcerts;
   public issuer: Issuer;
+  public proof: VCProof;
   public type = 'Ed25519Signature2020';
 
   constructor (props: SuiteAPI) {
@@ -21,6 +23,8 @@ export default class Ed25519Signature2020 extends Suite {
     }
     this.documentToVerify = props.document;
     this.issuer = props.issuer;
+    this.proof = props.proof as VCProof;
+    this.validateProofType();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -47,5 +51,12 @@ export default class Ed25519Signature2020 extends Suite {
 
   async _doAction (step: string, action): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
+  }
+
+  private validateProofType (): void {
+    const proofType = this.proof.type === 'ChainedProof2021' ? this.proof.chainedProofType : this.proof.type;
+    if (proofType !== this.type) {
+      throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${proofType}`);
+    }
   }
 }

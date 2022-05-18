@@ -72,6 +72,7 @@ export default class MerkleProof2019 extends Suite {
   public verificationMethodPublicKey: IDidDocumentPublicKey;
   public derivedIssuingAddress: string;
   public hasDid: boolean;
+  public proof: VCProof;
   public type = 'MerkleProof2019';
 
   constructor (props: SuiteAPI) {
@@ -79,7 +80,10 @@ export default class MerkleProof2019 extends Suite {
     this._doAction = props.actionMethod;
     this.documentToVerify = props.document as BlockcertsV3;
     this.explorerAPIs = props.explorerAPIs;
+    // TODO: actually get issuer profile from here because we need to correlate the verification method
     this.issuer = props.issuer;
+    this.proof = props.proof as VCProof;
+    this.validateProofType();
     this.receipt = parseReceipt(this.documentToVerify.proof);
     console.log(this.receipt);
     this.chain = domain.certificates.getChain('', this.receipt);
@@ -126,6 +130,13 @@ export default class MerkleProof2019 extends Suite {
 
   getReceipt (): Receipt {
     return this.receipt;
+  }
+
+  private validateProofType (): void {
+    const proofType = this.proof.type === 'ChainedProof2021' ? this.proof.chainedProofType : this.proof.type;
+    if (proofType !== this.type) {
+      throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${proofType}`);
+    }
   }
 
   private async verifyProcess (process: SUB_STEPS[]): Promise<void> {

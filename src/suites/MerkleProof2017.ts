@@ -10,6 +10,7 @@ import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
+import type { MerkleProof2017 as TMerkleProof2017 } from '../models/MerkleProof2017';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -43,6 +44,7 @@ export default class MerkleProof2017 extends Suite {
   public receipt: Receipt;
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
+  public proof: TMerkleProof2017;
   public type = 'MerkleProof2017';
 
   constructor (props: SuiteAPI) {
@@ -53,6 +55,8 @@ export default class MerkleProof2017 extends Suite {
     this.documentToVerify = props.document;
     this.explorerAPIs = props.explorerAPIs;
     this.issuer = props.issuer;
+    this.proof = props.proof as TMerkleProof2017;
+    this.validateProofType();
     this.receipt = (this.documentToVerify as BlockcertsV2).signature;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
@@ -68,6 +72,9 @@ export default class MerkleProof2017 extends Suite {
       await this[verificationStep]();
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async verifyIdentity (): Promise<void> {}
 
   getProofVerificationSteps (parentStepKey): VerificationSubstep[] {
     return this.verificationProcess.map(childStepKey =>
@@ -96,6 +103,12 @@ export default class MerkleProof2017 extends Suite {
 
   getReceipt (): Receipt {
     return this.receipt;
+  }
+
+  private validateProofType (): void {
+    if (this.proof.type[0] !== this.type) {
+      throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${this.proof.type[0]}`);
+    }
   }
 
   private adaptVerificationProcessToChain (): void {

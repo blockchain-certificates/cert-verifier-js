@@ -8,14 +8,13 @@ import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 import Ed25519Signature2020 from './suites/Ed25519Signature2020';
-import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
-import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
+import { getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
 import { difference, lastEntry } from './helpers/array';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
-import type { BlockcertsV3 } from './models/BlockcertsV3';
+import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
 import type { IVerificationMapItem } from './models/VerificationMap';
@@ -31,6 +30,7 @@ export interface IVerificationStepCallbackAPI {
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
+type TVerifierProofMap = Map<number, VCProof>;
 
 export interface IFinalVerificationStatus {
   code: VerificationSteps.final;
@@ -50,9 +50,9 @@ export default class Verifier {
   private readonly hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
-  public merkleProofVerifier: any;
-  public proofVerifiers: Suite[];
+  public proofVerifiers: Suite[] = [];
   public verificationProcess: SUB_STEPS[];
+  public proofMap: TVerifierProofMap;
 
   constructor (
     { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
@@ -118,9 +118,7 @@ export default class Verifier {
     }
 
     for (let i = 0; i < this.proofVerifiers.length; i++) {
-      if (this.proofVerifiers[i].verifyIdentity) {
-        await this.proofVerifiers[i].verifyIdentity();
-      }
+      await this.proofVerifiers[i].verifyIdentity();
     }
 
     // Send final callback update for global verification status
@@ -132,20 +130,35 @@ export default class Verifier {
     return this.issuer.revocationList;
   }
 
-  private getProofTypes (document: Blockcerts): string[] {
+  private getProofTypes (): string[] {
+    const proofTypes: string[] = [];
+    this.proofMap.forEach(proof => {
+      let { type } = proof;
+      if (type === 'ChainedProof2021') {
+        type = proof.chainedProofType;
+      }
+      if (Array.isArray(type)) {
+        // Blockcerts v2/MerkleProof2017
+        type = type[0];
+      }
+      proofTypes.push(type);
+    });
+
+    return proofTypes;
+  }
+
+  private getProofMap (document: Blockcerts): TVerifierProofMap {
+    const proofMap = new Map();
     if ('proof' in document) {
       if (Array.isArray(document.proof)) {
-        return document.proof.map(p => {
-          if (p.type === 'ChainedProof2021') {
-            return p.chainedProofType;
-          }
-          return p.type;
-        });
+        document.proof.forEach((proof, i) => proofMap.set(i, proof));
+      } else {
+        proofMap.set(0, document.proof);
       }
-      return [getMerkleProof2019ProofType(document)];
     } else if ('signature' in document) {
-      return [getMerkleProof2017ProofType(document)];
+      proofMap.set(0, document.signature);
     }
+    return proofMap;
   }
 
   private instantiateProofVerifiers (): void {
@@ -154,7 +167,8 @@ export default class Verifier {
       MerkleProof2019,
       Ed25519Signature2020
     };
-    const proofTypes: string[] = this.getProofTypes(this.documentToVerify);
+    this.proofMap = this.getProofMap(this.documentToVerify);
+    const proofTypes: string[] = this.getProofTypes();
 
     const unsupportedVerificationSuites = difference(Object.keys(this.supportedVerificationSuites), proofTypes);
 
@@ -162,12 +176,15 @@ export default class Verifier {
       throw new Error(`No support for proof verification of type: ${unsupportedVerificationSuites.join(', ')}`);
     }
 
-    this.proofVerifiers = proofTypes.map(proofType => new this.supportedVerificationSuites[proofType]({
-      actionMethod: this._doAction.bind(this),
-      document: this.documentToVerify,
-      explorerAPIs: this.explorerAPIs,
-      issuer: this.issuer
-    }));
+    this.proofMap.forEach((proof, index) => {
+      this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]]({
+        actionMethod: this._doAction.bind(this),
+        document: this.documentToVerify,
+        proof,
+        explorerAPIs: this.explorerAPIs,
+        issuer: this.issuer
+      }));
+    });
   }
 
   private prepareVerificationProcess (): void {

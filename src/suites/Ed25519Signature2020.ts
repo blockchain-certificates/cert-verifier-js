@@ -1,8 +1,8 @@
 import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
-import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020/lib/Ed25519VerificationKey2020';
-import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020/lib/Ed25519Signature2020';
+import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
+import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
 import { Suite } from '../models/Suite';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';

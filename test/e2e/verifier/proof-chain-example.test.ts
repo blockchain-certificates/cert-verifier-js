@@ -32,10 +32,16 @@ describe('proof chain example', function () {
     expect(instance.verificationSteps).toEqual(multipleProofsVerificationSteps);
   });
 
-  it('verifies as expected', async function () {
+  it.only('verifies as expected', async function () {
     const instance = new Certificate(fixture as any);
     await instance.init();
     const result = await instance.verify();
+    expect(result.message).toEqual({
+      // eslint-disable-next-line no-template-curly-in-string
+      description: 'This is a valid ${chain} certificate.',
+      label: 'Verified',
+      linkText: 'View transaction link'
+    });
     expect(result.status).toBe('success');
   });
 });

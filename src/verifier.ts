@@ -19,6 +19,7 @@ import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
 import type { IVerificationMapItem } from './models/VerificationMap';
 import type { Suite } from './models/Suite';
+import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 
 const log = debug('Verifier');
 
@@ -27,6 +28,7 @@ export interface IVerificationStepCallbackAPI {
   label: string;
   status: string; // TODO: use enum
   errorMessage?: string;
+  parentStep: string;
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
@@ -38,6 +40,12 @@ export interface IFinalVerificationStatus {
   message: string;
 }
 
+interface StepVerificationStatus {
+  code: string;
+  status: string;
+  message?: string;
+}
+
 export default class Verifier {
   public expires: string;
   public id: string;
@@ -46,7 +54,7 @@ export default class Verifier {
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
-  private _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private _stepsStatuses: StepVerificationStatus[] = [];
   private readonly hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
@@ -73,10 +81,6 @@ export default class Verifier {
     this.explorerAPIs = explorerAPIs;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
-
-    // Final verification result
-    // Init status as success, we will update the final status at the end
-    this._stepsStatuses = [];
 
     this.instantiateProofVerifiers();
     this.prepareVerificationProcess();
@@ -226,7 +230,6 @@ export default class Verifier {
   }
 
   private async _doAction (step: string, action: () => any): Promise<any> {
-    // If not failing already
     if (this._isFailing()) {
       return;
     }
@@ -235,24 +238,23 @@ export default class Verifier {
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
-      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
+      this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING);
     }
 
     try {
       const res: any = await action();
       if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.SUCCESS);
+        this._stepsStatuses.push({ code: step, status: VERIFICATION_STATUSES.SUCCESS });
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, err.message);
         this._stepsStatuses.push({
           code: step,
-          label,
-          status: VERIFICATION_STATUSES.FAILURE,
-          errorMessage: err.message
+          message: err.message,
+          status: VERIFICATION_STATUSES.FAILURE
         });
       }
     }
@@ -308,17 +310,21 @@ export default class Verifier {
     });
   }
 
-  _failed (errorStep: IVerificationStepCallbackAPI): IFinalVerificationStatus {
-    const message: string = errorStep.errorMessage;
+  private findStepFromVerificationProcess (code: string): VerificationSubstep {
+    return domain.verifier.findVerificationSubstep(code, this.verificationSteps);
+  }
+
+  private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
+    const { message } = errorStep;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
 
-  _isFailing (): boolean {
+  private _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _succeed (): IFinalVerificationStatus {
+  private _succeed (): IFinalVerificationStatus {
     // TODO: temporary workaround to maintain MerkleProof201x data access
     const message = domain.chains.isMockChain(lastEntry(this.proofVerifiers).getChain())
       ? domain.i18n.getText('success', 'mocknet')
@@ -327,13 +333,19 @@ export default class Verifier {
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
+  private _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
     return { code: VerificationSteps.final, status, message };
   }
 
-  private _updateStatusCallback (code: string, label: string, status: string, errorMessage = ''): void {
+  private _updateStatusCallback (code: string, status: string, errorMessage = ''): void {
     if (code != null) {
-      const update: IVerificationStepCallbackAPI = { code, label, status };
+      const step: VerificationSubstep = this.findStepFromVerificationProcess(code);
+      const update: IVerificationStepCallbackAPI = {
+        code,
+        status,
+        parentStep: step.parentStep,
+        label: step.labelPending
+      };
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

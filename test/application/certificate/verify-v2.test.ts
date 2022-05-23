@@ -2,7 +2,7 @@ import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
-import { SUB_STEPS } from '../../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
 import { getText } from '../../../src/domain/i18n/useCases';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import v2RevocationList from '../../assertions/v2-revocation-list';
@@ -94,6 +94,7 @@ describe('Certificate test suite', function () {
           const assertionStep = {
             code: SUB_STEPS.checkRevokedStatus,
             label: getText('subSteps', `${SUB_STEPS.checkRevokedStatus}LabelPending`),
+            parentStep: VerificationSteps.statusCheck,
             status: VERIFICATION_STATUSES.FAILURE,
             errorMessage: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
           };

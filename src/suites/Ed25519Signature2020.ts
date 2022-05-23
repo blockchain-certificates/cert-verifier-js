@@ -16,14 +16,14 @@ import { deepCopy } from '../helpers/object';
 const { purposes: { AssertionProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
-  retrieveVerificationKey = 'retrieveVerificationKey',
-  checkDocumentStatus = 'checkDocumentStatus'
+  retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  checkDocumentSignature = 'checkDocumentSignature'
 }
 
 export default class Ed25519Signature2020 extends Suite {
   public verificationProcess = [
-    SUB_STEPS.retrieveVerificationKey,
-    SUB_STEPS.checkDocumentStatus
+    SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.checkDocumentSignature
   ];
 
   public documentToVerify: Blockcerts;
@@ -57,6 +57,8 @@ export default class Ed25519Signature2020 extends Suite {
   async verifyIdentity (): Promise<void> {}
 
   getProofVerificationSteps (parentStepKey): VerificationSubstep[] {
+    // TODO: for now we are relying on i18n from this package, eventually we would want to split it and make this suite
+    // TODO: standalone
     return this.verificationProcess.map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
@@ -111,15 +113,15 @@ export default class Ed25519Signature2020 extends Suite {
     return document;
   }
 
-  private async retrieveVerificationKey (): Promise<void> {
+  private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this._doAction(
-      SUB_STEPS.retrieveVerificationKey,
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
       async () => {
         const verificationMethod = this.issuer.didDocument.verificationMethod
           .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
 
         if (!verificationMethod) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationKey,
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
             'The verification method of the document does not match the provided issuer.');
         }
 
@@ -128,11 +130,11 @@ export default class Ed25519Signature2020 extends Suite {
         });
 
         if (!key) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationKey, 'Could not derive the verification key');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
 
         if (key.revoked) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationKey, 'The verification key has been revoked');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
         }
 
         return key;
@@ -140,8 +142,7 @@ export default class Ed25519Signature2020 extends Suite {
     );
   }
 
-  private async checkDocumentStatus (): Promise<void> {
-    console.log('checkDocumentStatus with key', this.verificationKey);
+  private async checkDocumentSignature (): Promise<void> {
     const suite = new Ed25519VerificationSuite({ key: this.verificationKey });
     suite.date = new Date(Date.now()).toISOString();
 
@@ -153,7 +154,7 @@ export default class Ed25519Signature2020 extends Suite {
 
     if (!verificationStatus.verified) {
       console.error(JSON.stringify(verificationStatus, null, 2));
-      throw new Error('Error validating the revocation list credential proof');
+      throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
     } else {
       console.log('Credential Ed25519 signature successfully verified');
     }

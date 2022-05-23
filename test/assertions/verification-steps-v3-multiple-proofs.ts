@@ -77,7 +77,20 @@ export default [
     suites: [
       {
         proofType: 'Ed25519Signature2020',
-        subSteps: []
+        subSteps: [
+          {
+            code: 'retrieveVerificationMethodPublicKey',
+            label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
+            labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
+            parentStep: VerificationSteps.proofVerification
+          },
+          {
+            code: 'checkDocumentSignature',
+            label: 'Check document signature',
+            labelPending: 'Checking document signature',
+            parentStep: VerificationSteps.proofVerification
+          }
+        ]
       },
       {
         proofType: 'MerkleProof2019',

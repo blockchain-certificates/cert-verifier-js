@@ -70,7 +70,10 @@ describe('Certificate API Contract test suite', function () {
         expect(instance.signers[0].chain).toBe(BLOCKCHAINS.testnet);
       });
 
-      it.todo('should expose the transactionId');
+      it('should expose the transactionId', function () {
+        expect(instance.signers[0].transactionId).toBe('140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e');
+      });
+
       it.todo('should expose the transactionLink');
     });
   });

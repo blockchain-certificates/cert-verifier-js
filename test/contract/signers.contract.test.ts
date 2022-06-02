@@ -5,7 +5,7 @@ import { Certificate } from '../../src';
 import domain from '../../src/domain';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
+import fixtureIssuerProfile from '../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../assertions/v3-revocation-list';
 
 describe('Certificate API Contract test suite', function () {
@@ -54,7 +54,10 @@ describe('Certificate API Contract test suite', function () {
         expect(instance.signers[0].issuerPublicKey).toBe('mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am');
       });
 
-      it.todo('should expose the issuerName');
+      it('should expose the issuerName', function () {
+        expect(instance.signers[0].issuerName).toBe('Blockcerts Organization');
+      });
+
       it.todo('should expose the issuerProfileDomain');
       it.todo('should expose the issuerProfileUrl');
       it.todo('should expose the chain');

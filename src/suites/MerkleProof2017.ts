@@ -97,6 +97,10 @@ export default class MerkleProof2017 extends Suite {
     return this.txData.issuingAddress;
   }
 
+  getIssuerName (): string {
+    return this.issuer.name;
+  }
+
   getChain (): IBlockchainObject {
     return this.chain;
   }

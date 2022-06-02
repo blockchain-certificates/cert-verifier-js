@@ -139,10 +139,11 @@ export default class Certificate {
       signatureSuiteType = this.certificateJson.signature.type[0];
     }
 
-    (this.signers as any).push({
+    this.signers.push({
       signingDate,
       signatureSuiteType,
-      issuerPublicKey: this.verifier.getIssuerPublicKey()
+      issuerPublicKey: this.verifier.getIssuerPublicKey(),
+      issuerName: this.verifier.getIssuerName()
     });
   }
 

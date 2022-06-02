@@ -91,6 +91,11 @@ export default class Verifier {
     return lastEntry(this.proofVerifiers).getIssuerPublicKey();
   }
 
+  getIssuerName (): string {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerName();
+  }
+
   getChain (): IBlockchainObject {
     // TODO: temporary workaround to maintain MerkleProof201x data access
     return lastEntry(this.proofVerifiers).getChain();

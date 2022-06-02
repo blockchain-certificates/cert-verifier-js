@@ -130,14 +130,18 @@ export default class Certificate {
 
   private setSigners (): void {
     let signingDate: string;
+    let signatureSuiteType: string;
     if ('proof' in this.certificateJson) {
       signingDate = this.certificateJson.proof.created;
+      signatureSuiteType = this.certificateJson.proof.type;
     } else {
       signingDate = this.certificateJson.issuedOn;
+      signatureSuiteType = this.certificateJson.signature.type[0];
     }
 
     (this.signers as any).push({
-      signingDate
+      signingDate,
+      signatureSuiteType
     });
   }
 

@@ -8,7 +8,7 @@ import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
 
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
-    describe('given there is only one signature to the document', function () {
+    describe('given there is only one signature to the V3 document', function () {
       let instance;
       let requestStub;
 
@@ -33,7 +33,9 @@ describe('Certificate API Contract test suite', function () {
         expect(instance.signers[0].signingDate).toBe('2022-04-05T13:43:10.870521');
       });
 
-      it.todo('should expose the signatureSuiteType');
+      it('should expose the signatureSuiteType', function () {
+        expect(instance.signers[0].signatureSuiteType).toBe('MerkleProof2019');
+      });
       it.todo('should expose the issuerPublicKey');
       it.todo('should expose the issuerName');
       it.todo('should expose the issuerProfileDomain');

@@ -145,7 +145,8 @@ export default class Certificate {
       issuerPublicKey: this.verifier.getIssuerPublicKey(),
       issuerName: this.verifier.getIssuerName(),
       issuerProfileDomain: this.verifier.getIssuerProfileDomain(),
-      issuerProfileUrl: this.verifier.getIssuerProfileUrl()
+      issuerProfileUrl: this.verifier.getIssuerProfileUrl(),
+      chain: this.verifier.getChain()
     });
   }
 

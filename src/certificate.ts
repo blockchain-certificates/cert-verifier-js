@@ -108,7 +108,6 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
     this.setTransactionDetails();
-    this.setSigners();
     this.verificationSteps = this.verifier.getVerificationSteps();
   }
 
@@ -116,6 +115,7 @@ export default class Certificate {
     const verificationStatus = await this.verifier.verify(stepCallback);
 
     this.publicKey = this.verifier.getIssuerPublicKey();
+    this.setSigners();
 
     return verificationStatus;
   }
@@ -141,7 +141,8 @@ export default class Certificate {
 
     (this.signers as any).push({
       signingDate,
-      signatureSuiteType
+      signatureSuiteType,
+      issuerPublicKey: this.verifier.getIssuerPublicKey()
     });
   }
 

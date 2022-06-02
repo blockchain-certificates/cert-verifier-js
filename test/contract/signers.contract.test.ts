@@ -62,7 +62,10 @@ describe('Certificate API Contract test suite', function () {
         expect(instance.signers[0].issuerProfileDomain).toBe('www.blockcerts.org');
       });
 
-      it.todo('should expose the issuerProfileUrl');
+      it('should expose the issuerProfileUrl', function () {
+        expect(instance.signers[0].issuerProfileUrl).toBe('https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json');
+      });
+
       it.todo('should expose the chain');
       it.todo('should expose the transactionId');
       it.todo('should expose the transactionLink');

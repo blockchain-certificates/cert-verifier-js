@@ -101,6 +101,11 @@ export default class Verifier {
     return lastEntry(this.proofVerifiers).getIssuerProfileDomain();
   }
 
+  getIssuerProfileUrl (): string {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerProfileUrl();
+  }
+
   getChain (): IBlockchainObject {
     // TODO: temporary workaround to maintain MerkleProof201x data access
     return lastEntry(this.proofVerifiers).getChain();

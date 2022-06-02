@@ -1,8 +1,9 @@
 import Certificate from './certificate';
-export * as STEPS from './constants/verificationSteps';
-export { VERIFICATION_STATUSES } from './constants/verificationStatuses';
+import VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 
-export { Certificate };
+export { Certificate, VerificationSubstep };
+export { VERIFICATION_STATUSES } from './constants/verificationStatuses';
+export * as STEPS from './constants/verificationSteps';
 export { getSupportedLanguages } from './domain/i18n/useCases';
 export { BLOCKCHAINS, CERTIFICATE_VERSIONS } from './constants';
 export { SignatureImage } from './models';

@@ -72,7 +72,7 @@ export default class Ed25519Signature2020 extends Suite {
     return 'not implemented';
   }
 
-  async _doAction (step: string, action): Promise<any> {
+  async _doAction (step: string, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
@@ -116,7 +116,7 @@ export default class Ed25519Signature2020 extends Suite {
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this._doAction(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
-      async () => {
+      async (): Promise<Ed25519VerificationKey2020> => {
         const verificationMethod = this.issuer.didDocument.verificationMethod
           .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
 
@@ -138,25 +138,32 @@ export default class Ed25519Signature2020 extends Suite {
         }
 
         return key;
-      }
+      },
+      this.type
     );
   }
 
   private async checkDocumentSignature (): Promise<void> {
-    const suite = new Ed25519VerificationSuite({ key: this.verificationKey });
-    suite.date = new Date(Date.now()).toISOString();
+    await this._doAction(
+      SUB_STEPS.checkDocumentSignature,
+      async (): Promise<void> => {
+        const suite = new Ed25519VerificationSuite({ key: this.verificationKey });
+        suite.date = new Date(Date.now()).toISOString();
 
-    const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
-      suite,
-      purpose: new AssertionProofPurpose(),
-      documentLoader: this.generateDocumentLoader()
-    });
+        const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
+          suite,
+          purpose: new AssertionProofPurpose(),
+          documentLoader: this.generateDocumentLoader()
+        });
 
-    if (!verificationStatus.verified) {
-      console.error(JSON.stringify(verificationStatus, null, 2));
-      throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
-    } else {
-      console.log('Credential Ed25519 signature successfully verified');
-    }
+        if (!verificationStatus.verified) {
+          console.error(JSON.stringify(verificationStatus, null, 2));
+          throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
+        } else {
+          console.log('Credential Ed25519 signature successfully verified');
+        }
+      },
+      this.type
+    );
   }
 }

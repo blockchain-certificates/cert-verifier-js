@@ -158,21 +158,23 @@ export default class MerkleProof2019 extends Suite {
     }
   }
 
-  async _doAction (step: SUB_STEPS, action): Promise<any> {
+  async _doAction (step: SUB_STEPS, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
   private async getTransactionId (): Promise<void> {
     await this._doAction(
       SUB_STEPS.getTransactionId,
-      () => inspectors.isTransactionIdValid(this.transactionId)
+      () => inspectors.isTransactionIdValid(this.transactionId),
+      this.type
     );
   }
 
   private async computeLocalHash (): Promise<void> {
     this.localHash = await this._doAction(
       SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify)
+      async () => await inspectors.computeLocalHash(this.documentToVerify),
+      this.type
     );
   }
 
@@ -183,61 +185,77 @@ export default class MerkleProof2019 extends Suite {
         transactionId: this.transactionId,
         chain: this.chain.code,
         explorerAPIs: this.explorerAPIs
-      })
+      }),
+      this.type
     );
   }
 
   private async compareHashes (): Promise<void> {
-    await this._doAction(SUB_STEPS.compareHashes, () => {
-      inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash);
-    });
+    await this._doAction(
+      SUB_STEPS.compareHashes,
+      () => inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash),
+      this.type
+    );
   }
 
   private async checkMerkleRoot (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkMerkleRoot, () =>
-      inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash)
+    await this._doAction(
+      SUB_STEPS.checkMerkleRoot,
+      () => inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash),
+      this.type
     );
   }
 
   private async checkReceipt (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkReceipt, () =>
-      inspectors.ensureValidReceipt(this.receipt)
+    await this._doAction(
+      SUB_STEPS.checkReceipt,
+      () => inspectors.ensureValidReceipt(this.receipt),
+      this.type
     );
   }
 
   private async parseIssuerKeys (): Promise<void> {
     this.issuerPublicKeyList = await this._doAction(
       SUB_STEPS.parseIssuerKeys,
-      () => domain.verifier.parseIssuerKeys(this.issuer)
+      () => domain.verifier.parseIssuerKeys(this.issuer),
+      this.type
     );
   }
 
   private async checkAuthenticity (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkAuthenticity, () =>
-      inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time)
+    await this._doAction(
+      SUB_STEPS.checkAuthenticity,
+      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time),
+      this.type
     );
   }
 
   // ##### DID CORRELATION #####
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    await this._doAction(SUB_STEPS.retrieveVerificationMethodPublicKey, () => {
-      this.verificationMethodPublicKey = inspectors
+    this.verificationMethodPublicKey = await this._doAction(
+      SUB_STEPS.retrieveVerificationMethodPublicKey,
+      () => inspectors
         .retrieveVerificationMethodPublicKey(
           this.issuer.didDocument,
           getVCProofVerificationMethod(this.proof)
-        );
-    });
+        ),
+      this.type
+    );
   }
 
   private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    await this._doAction(SUB_STEPS.deriveIssuingAddressFromPublicKey, () => {
-      this.derivedIssuingAddress = inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain);
-    });
+    this.derivedIssuingAddress = await this._doAction(
+      SUB_STEPS.deriveIssuingAddressFromPublicKey,
+      () => inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain),
+      this.type
+    );
   }
 
   private async compareIssuingAddress (): Promise<void> {
-    await this._doAction(SUB_STEPS.compareIssuingAddress, () => {
-      inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress);
-    });
+    await this._doAction(
+      SUB_STEPS.compareIssuingAddress,
+      () => inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress),
+      this.type
+    );
   }
 }

@@ -17,7 +17,7 @@ import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
-import type { IVerificationMapItem } from './models/VerificationMap';
+import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
 import type { Suite } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 
@@ -26,7 +26,7 @@ const log = debug('Verifier');
 export interface IVerificationStepCallbackAPI {
   code: string;
   label: string;
-  status: string; // TODO: use enum
+  status: VERIFICATION_STATUSES;
   errorMessage?: string;
   parentStep: string;
 }
@@ -36,13 +36,13 @@ type TVerifierProofMap = Map<number, VCProof>;
 
 export interface IFinalVerificationStatus {
   code: VerificationSteps.final;
-  status: string; // TODO: use enum
+  status: VERIFICATION_STATUSES;
   message: string;
 }
 
 interface StepVerificationStatus {
   code: string;
-  status: string;
+  status: VERIFICATION_STATUSES;
   message?: string;
 }
 
@@ -211,7 +211,7 @@ export default class Verifier {
       .suites = this.getSuiteSubsteps(parentStep);
   }
 
-  private getSuiteSubsteps (parentStep: VerificationSteps): any {
+  private getSuiteSubsteps (parentStep: VerificationSteps): IVerificationMapItemSuite[] {
     const targetMethodMap = {
       [VerificationSteps.proofVerification]: 'getProofVerificationSteps',
       [VerificationSteps.identityVerification]: 'getIdentityVerificationSteps'
@@ -229,7 +229,7 @@ export default class Verifier {
       .suites = this.getSuiteSubsteps(parentStep);
   }
 
-  private async _doAction (step: string, action: () => any): Promise<any> {
+  private async _doAction (step: string, action: () => any, verificationSuite?: string): Promise<any> {
     if (this._isFailing()) {
       return;
     }
@@ -238,19 +238,19 @@ export default class Verifier {
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
-      this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING);
+      this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING, verificationSuite);
     }
 
     try {
       const res: any = await action();
       if (step) {
-        this._updateStatusCallback(step, VERIFICATION_STATUSES.SUCCESS);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.SUCCESS, verificationSuite);
         this._stepsStatuses.push({ code: step, status: VERIFICATION_STATUSES.SUCCESS });
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
         this._stepsStatuses.push({
           code: step,
           message: err.message,
@@ -282,6 +282,7 @@ export default class Verifier {
 
     if (!revocationListUrl) {
       console.warn('No revocation list url was set on the issuer.');
+      await this._doAction(SUB_STEPS.checkRevokedStatus, () => true);
       return;
     }
     const revokedCertificatesIds = await this._doAction(
@@ -310,8 +311,8 @@ export default class Verifier {
     });
   }
 
-  private findStepFromVerificationProcess (code: string): VerificationSubstep {
-    return domain.verifier.findVerificationSubstep(code, this.verificationSteps);
+  private findStepFromVerificationProcess (code: string, verificationSuite: string): VerificationSubstep {
+    return domain.verifier.findVerificationSubstep(code, this.verificationSteps, verificationSuite);
   }
 
   private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
@@ -333,13 +334,13 @@ export default class Verifier {
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  private _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
+  private _setFinalStep ({ status, message }: { status: VERIFICATION_STATUSES; message: string }): IFinalVerificationStatus {
     return { code: VerificationSteps.final, status, message };
   }
 
-  private _updateStatusCallback (code: string, status: string, errorMessage = ''): void {
+  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {
     if (code != null) {
-      const step: VerificationSubstep = this.findStepFromVerificationProcess(code);
+      const step: VerificationSubstep = this.findStepFromVerificationProcess(code, verificationSuite);
       const update: IVerificationStepCallbackAPI = {
         code,
         status,

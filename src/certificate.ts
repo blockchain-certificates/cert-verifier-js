@@ -143,7 +143,8 @@ export default class Certificate {
       signingDate,
       signatureSuiteType,
       issuerPublicKey: this.verifier.getIssuerPublicKey(),
-      issuerName: this.verifier.getIssuerName()
+      issuerName: this.verifier.getIssuerName(),
+      issuerProfileDomain: this.verifier.getIssuerProfileDomain()
     });
   }
 

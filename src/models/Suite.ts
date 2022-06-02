@@ -42,6 +42,7 @@ export abstract class Suite implements OptionalSuiteMethods {
   abstract getIdentityVerificationSteps (parentStepKey: string): VerificationSubstep[];
   abstract getIssuerPublicKey (): string;
   abstract getIssuerName (): string;
+  abstract getIssuerProfileDomain (): string;
 
   // This method needs to become a reference to the `actionMethod` that's injected to the constructor.
   // `actionMethod` is bound to the verifier context to ensure proper execution of the steps

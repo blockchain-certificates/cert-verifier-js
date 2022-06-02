@@ -118,6 +118,11 @@ export default class MerkleProof2019 extends Suite {
     return this.issuer.name;
   }
 
+  getIssuerProfileDomain (): string {
+    const issuerProfileUrl = new URL(this.issuer.id);
+    return issuerProfileUrl?.hostname;
+  }
+
   getChain (): IBlockchainObject {
     return this.chain;
   }

@@ -91,13 +91,13 @@ export default class MerkleProof2019 extends Suite {
     }
   }
 
-  getProofVerificationSteps (parentStepKey): VerificationSubstep[] {
+  getProofVerificationSteps (parentStepKey: string): VerificationSubstep[] {
     return this.proofVerificationProcess.map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
   }
 
-  getIdentityVerificationSteps (parentStepKey): VerificationSubstep[] {
+  getIdentityVerificationSteps (parentStepKey: string): VerificationSubstep[] {
     if (!this.hasDid) {
       return [];
     }
@@ -109,6 +109,7 @@ export default class MerkleProof2019 extends Suite {
   getIssuerPublicKey (): string {
     if (!this.txData) {
       console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+      return '';
     }
     return this.txData.issuingAddress;
   }

@@ -33,6 +33,18 @@ export interface CertificateOptions {
   didResolverUrl?: string;
 }
 
+export interface Signers {
+  signingDate: string;
+  signatureSuiteType: string;
+  issuerPublicKey: string;
+  issuerName?: string;
+  issuerProfileDomain?: string;
+  issuerProfileUrl?: string;
+  chain?: IBlockchainObject;
+  transactionId?: string;
+  transactionLink?: string;
+}
+
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
@@ -64,6 +76,7 @@ export default class Certificate {
   public hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
+  public signers: Signers[] = [];
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -95,6 +108,7 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
     this.setTransactionDetails();
+    this.setSigners();
     this.verificationSteps = this.verifier.getVerificationSteps();
   }
 
@@ -112,6 +126,19 @@ export default class Certificate {
       throw new Error(parsedCertificate.error);
     }
     await this._setProperties(parsedCertificate);
+  }
+
+  private setSigners (): void {
+    let signingDate: string;
+    if ('proof' in this.certificateJson) {
+      signingDate = this.certificateJson.proof.created;
+    } else {
+      signingDate = this.certificateJson.issuedOn;
+    }
+
+    (this.signers as any).push({
+      signingDate
+    });
   }
 
   private _setOptions (options: CertificateOptions): void {

@@ -5,6 +5,7 @@ import { SUB_STEPS, VerificationSteps } from '../../../../../src/constants/verif
 import i18n from '../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../src/constants/currentLocale';
 import type { IVerificationMapItem } from '../../../../../src/models/VerificationMap';
+import { VERIFICATION_STATUSES } from '../../../../../src';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
@@ -41,7 +42,8 @@ describe('domain certificates get verification map use case test suite', functio
             code: SUB_STEPS.controlVerificationMethod,
             label: defaultLanguageSet.subSteps.controlVerificationMethodLabel,
             labelPending: defaultLanguageSet.subSteps.controlVerificationMethodLabelPending,
-            parentStep: VerificationSteps.identityVerification
+            parentStep: VerificationSteps.identityVerification,
+            status: VERIFICATION_STATUSES.DEFAULT
           }
         ];
 

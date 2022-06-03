@@ -1,6 +1,6 @@
 import { getText } from '../../i18n/useCases';
+import { VERIFICATION_STATUSES } from '../../../constants/verificationStatuses';
 import type { VerificationSteps } from '../../../constants/verificationSteps';
-import type { VERIFICATION_STATUSES } from '../../../constants/verificationStatuses';
 
 export default class VerificationSubstep {
   public code: string;
@@ -14,5 +14,6 @@ export default class VerificationSubstep {
     this.label = getText('subSteps', `${subStepKey}Label`);
     this.labelPending = getText('subSteps', `${subStepKey}LabelPending`);
     this.parentStep = parentStepKey;
+    this.status = VERIFICATION_STATUSES.DEFAULT;
   }
 }

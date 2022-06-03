@@ -8,31 +8,36 @@
         "code": "getTransactionId",
         "label": "Obtener Identificación de Transacción",
         "labelPending": "Obteniendo Identificación de Transacción",
-        "parentStep": "formatValidation"
+        "parentStep": "formatValidation",
+        "status":"standby"
       },
       {
         "code": "computeLocalHash",
         "label": "Calcular cadena binaria local",
         "labelPending": "Calculando cadena binaria local",
-        "parentStep": "formatValidation"
+        "parentStep": "formatValidation",
+        "status": "standby"
       },
       {
         "code": "fetchRemoteHash",
         "label": "Obtener cadena binaria remota",
         "labelPending": "Obeniendo cadena binaria remota",
-        "parentStep": "formatValidation"
+        "parentStep": "formatValidation",
+        "status": "standby"
       },
       {
         "code": "getIssuerProfile",
         "label": "Obtener perfil de emisor",
         "labelPending": "Obteniendo perfil de emisor",
-        "parentStep": "formatValidation"
+        "parentStep": "formatValidation",
+        "status": "standby"
       },
       {
         "code": "parseIssuerKeys",
         "label": "Analizar claves del emisor",
         "labelPending": "Analizando claves del emisor",
-        "parentStep": "formatValidation"
+        "parentStep": "formatValidation",
+        "status": "standby"
       }
     ]
   },
@@ -45,19 +50,22 @@
         "code": "compareHashes",
         "label": "Comparar cadenas binarias",
         "labelPending": "Comparando cadenas binarias",
-        "parentStep": "hashComparison"
+        "parentStep": "hashComparison",
+        "status": "standby"
       },
       {
         "code": "checkMerkleRoot",
         "label": "Verificar Merkle Root",
         "labelPending": "Verificando Merkle Root",
-        "parentStep": "hashComparison"
+        "parentStep": "hashComparison",
+        "status": "standby"
       },
       {
         "code": "checkReceipt",
         "label": "Verificar Recibo",
         "labelPending": "Verificando Recibo",
-        "parentStep": "hashComparison"
+        "parentStep": "hashComparison",
+        "status": "standby"
       }
     ]
   },
@@ -70,19 +78,22 @@
         "code": "checkRevokedStatus",
         "label": "Verificar Estado de Revocación",
         "labelPending": "Verificando Estado de Revocación",
-        "parentStep": "statusCheck"
+        "parentStep": "statusCheck",
+        "status": "standby"
       },
       {
         "code": "checkAuthenticity",
         "label": "Verificar Autenticidad",
         "labelPending": "Verificando Autenticidad",
-        "parentStep": "statusCheck"
+        "parentStep": "statusCheck",
+        "status": "standby"
       },
       {
         "code": "checkExpiresDate",
         "label": "Verificar Fechas de Expiración",
         "labelPending": "Verificando Fechas de Expiración",
-        "parentStep": "statusCheck"
+        "parentStep": "statusCheck",
+        "status": "standby"
       }
     ]
   }

@@ -68,40 +68,40 @@ describe('Certificate API Contract test suite', function () {
       });
 
       describe('MerkleProof2019 signature', function () {
-        xit('should expose the signingDate', function () {
-          expect(instance.signers[1].signingDate).toBe('2022-04-05T13:43:10.870521');
+        it('should expose the signingDate', function () {
+          expect(instance.signers[1].signingDate).toBe('2022-05-03T12:23:08.253777');
         });
 
-        xit('should expose the signatureSuiteType', function () {
+        it('should expose the signatureSuiteType', function () {
           expect(instance.signers[1].signatureSuiteType).toBe('MerkleProof2019');
         });
 
-        xit('should expose the issuerPublicKey', function () {
+        it('should expose the issuerPublicKey', function () {
           expect(instance.signers[1].issuerPublicKey).toBe('mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am');
         });
 
-        xit('should expose the issuerName', function () {
+        it('should expose the issuerName', function () {
           expect(instance.signers[1].issuerName).toBe('Blockcerts Organization');
         });
 
-        xit('should expose the issuerProfileDomain', function () {
+        it('should expose the issuerProfileDomain', function () {
           expect(instance.signers[1].issuerProfileDomain).toBe('www.blockcerts.org');
         });
 
-        xit('should expose the issuerProfileUrl', function () {
+        it('should expose the issuerProfileUrl', function () {
           expect(instance.signers[1].issuerProfileUrl).toBe('https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json');
         });
 
-        xit('should expose the chain', function () {
+        it('should expose the chain', function () {
           expect(instance.signers[1].chain).toBe(BLOCKCHAINS.testnet);
         });
 
-        xit('should expose the transactionId', function () {
-          expect(instance.signers[1].transactionId).toBe('140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e');
+        it('should expose the transactionId', function () {
+          expect(instance.signers[1].transactionId).toBe('26f18f59e6ed27f8f2122fb8d78ccb93e5fa6518ff35c81dbf292abae4524b98');
         });
 
-        xit('should expose the transactionLink', function () {
-          expect(instance.signers[1].transactionLink).toBe('https://testnet.blockchain.info/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e');
+        it('should expose the transactionLink', function () {
+          expect(instance.signers[1].transactionLink).toBe('https://testnet.blockchain.info/tx/26f18f59e6ed27f8f2122fb8d78ccb93e5fa6518ff35c81dbf292abae4524b98');
         });
       });
     });

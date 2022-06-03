@@ -58,12 +58,12 @@ describe('Certificate API Contract test suite', function () {
           expect(instance.signers[0].issuerName).toBe('');
         });
 
-        xit('should expose the issuerProfileDomain', function () {
-          expect(instance.signers[0].issuerProfileDomain).toBe('www.blockcerts.org');
+        it('should expose the issuerProfileDomain', function () {
+          expect(instance.signers[0].issuerProfileDomain).toBe('');
         });
 
-        xit('should expose the issuerProfileUrl', function () {
-          expect(instance.signers[0].issuerProfileUrl).toBe('https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json');
+        it('should expose the issuerProfileUrl', function () {
+          expect(instance.signers[0].issuerProfileUrl).toBe('');
         });
       });
 

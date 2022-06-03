@@ -83,11 +83,16 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   getIssuerProfileDomain (): string {
-    return 'not implemented';
+    try {
+      const issuerProfileUrl = new URL(this.getIssuerProfileUrl());
+      return issuerProfileUrl.hostname ?? '';
+    } catch (e) {
+      return '';
+    }
   }
 
   getIssuerProfileUrl (): string {
-    return 'not implemented';
+    return this.issuer.id ?? '';
   }
 
   getSigningDate (): string {

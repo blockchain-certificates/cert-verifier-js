@@ -80,7 +80,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;
-  proof: VCProof;
+  proof: VCProof | VCProof[];
 
   /**
    * @deprecated v3 alpha only

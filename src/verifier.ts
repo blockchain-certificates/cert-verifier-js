@@ -129,9 +129,9 @@ export default class Verifier {
       issuerName: proofVerifier.getIssuerName(),
       issuerProfileDomain: proofVerifier.getIssuerProfileDomain(),
       issuerProfileUrl: proofVerifier.getIssuerProfileUrl(),
-      chain: proofVerifier.getChain(),
-      transactionId: proofVerifier.getTransactionIdString(),
-      transactionLink: proofVerifier.getTransactionLink()
+      chain: proofVerifier.getChain?.(),
+      transactionId: proofVerifier.getTransactionIdString?.(),
+      transactionLink: proofVerifier.getTransactionLink?.()
     }));
   }
 

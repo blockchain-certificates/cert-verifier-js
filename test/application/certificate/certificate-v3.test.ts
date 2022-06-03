@@ -1,14 +1,11 @@
-import { BLOCKCHAINS, Certificate } from '../../../src';
+import { Certificate } from '../../../src';
 import FIXTURES from '../../fixtures';
-import signatureAssertion from '../../assertions/testnet-v3.0-did-signature-merkle2019.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 import notAnIssuerProfile from '../../fixtures/v3/testnet-v3--no-did.json';
-
-const assertionTransactionId = '140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e';
 
 describe('Certificate entity test suite', function () {
   const fixture = FIXTURES.BlockcertsV3;
@@ -41,24 +38,12 @@ describe('Certificate entity test suite', function () {
         certificate = null;
       });
 
-      it('should set the decoded signature as the receipt to the certificate object', function () {
-        expect(certificate.receipt).toEqual(signatureAssertion);
-      });
-
-      it('should set the transactionId to the certificate object', function () {
-        expect(certificate.transactionId).toEqual(assertionTransactionId);
-      });
-
-      it('should set the chain property', function () {
-        expect(certificate.chain).toEqual(BLOCKCHAINS.testnet);
-      });
-
       it('should set the expires property', function () {
         // not currently set in the fixture
         expect(certificate.expires).toEqual((fixture as any).expirationDate);
       });
 
-      it('should set the metadata property', function () {
+      it('should set the metadataJson property', function () {
         expect(certificate.metadataJson).toEqual(fixture.metadata);
       });
 
@@ -82,16 +67,6 @@ describe('Certificate entity test suite', function () {
 
       it('should set the recipientFullName property', function () {
         expect(certificate.recipientFullName).toEqual(fixture.credentialSubject.name);
-      });
-
-      it('should set the rawTransactionLink property', function () {
-        const rawTransactionLinkAssertion = `https://testnet.blockchain.info/rawtx/${assertionTransactionId}`;
-        expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
-      });
-
-      it('should set the transactionLink property', function () {
-        const transactionLinkAssertion = `https://testnet.blockchain.info/tx/${assertionTransactionId}`;
-        expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
     });
 

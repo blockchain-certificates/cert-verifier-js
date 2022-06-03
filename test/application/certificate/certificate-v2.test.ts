@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import { BLOCKCHAINS, Certificate } from '../../../src';
+import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
@@ -32,10 +32,6 @@ describe('Certificate entity test suite', function () {
         expect(certificate.certificateImage).toEqual(fixture.badge.image);
       });
 
-      it('should set chain of the certificate object', function () {
-        expect(certificate.chain).toEqual(BLOCKCHAINS.bitcoin);
-      });
-
       it('should set description of the certificate object', function () {
         expect(certificate.description).toEqual(fixture.badge.description);
       });
@@ -60,10 +56,6 @@ describe('Certificate entity test suite', function () {
         expect(certificate.name).toEqual(fixture.badge.name);
       });
 
-      it('should set receipt of the certificate object', function () {
-        expect(certificate.receipt).toEqual(fixture.signature);
-      });
-
       it('should set recipientFullName of the certificate object', function () {
         const fullNameAssertion = fixture.recipientProfile.name;
         expect(certificate.recipientFullName).toEqual(fullNameAssertion);
@@ -83,22 +75,6 @@ describe('Certificate entity test suite', function () {
 
       it('should set 1 signatureImage to the certificate object', function () {
         expect(certificate.signatureImage.length).toEqual(1);
-      });
-
-      it('should set transactionId to the certificate object', function () {
-        expect(certificate.transactionId).toEqual(fixture.signature.anchors[0].sourceId);
-      });
-
-      it('should set rawTransactionLink to the certificate object', function () {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${fixture.signature.anchors[0].sourceId}`;
-        expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
-      });
-
-      it('should set transactionLink to the certificate object', function () {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.signature.anchors[0].sourceId}`;
-        expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
       });
     });
   });

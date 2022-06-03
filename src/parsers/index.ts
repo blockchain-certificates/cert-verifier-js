@@ -26,7 +26,6 @@ export interface ParsedCertificate {
   issuer: Issuer;
   metadataJson?: string;
   name?: string;
-  publicKey?: string;
   recipientFullName?: string;
   recordLink?: string;
   revocationKey?: string;

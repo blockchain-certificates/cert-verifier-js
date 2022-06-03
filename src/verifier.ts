@@ -131,7 +131,8 @@ export default class Verifier {
       issuerProfileUrl: proofVerifier.getIssuerProfileUrl(),
       chain: proofVerifier.getChain?.(),
       transactionId: proofVerifier.getTransactionIdString?.(),
-      transactionLink: proofVerifier.getTransactionLink?.()
+      transactionLink: proofVerifier.getTransactionLink?.(),
+      rawTransactionLink: proofVerifier.getRawTransactionLink?.()
     }));
   }
 

@@ -66,6 +66,10 @@ describe('Certificate API Contract test suite', function () {
       it('should expose the transactionLink', function () {
         expect(instance.signers[0].transactionLink).toBe('https://blockchain.info/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
       });
+
+      it('should expose the rawTransactionLink', function () {
+        expect(instance.signers[0].rawTransactionLink).toBe('https://blockchain.info/rawtx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+      });
     });
   });
 });

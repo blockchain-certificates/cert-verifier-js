@@ -150,6 +150,11 @@ export default class MerkleProof2019 extends Suite {
     return transactionLinks.transactionLink;
   }
 
+  getRawTransactionLink (): string {
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.getTransactionIdString(), this.getChain());
+    return transactionLinks.rawTransactionLink;
+  }
+
   private isProofChain (): boolean {
     return this.proof.type === 'ChainedProof2021';
   }

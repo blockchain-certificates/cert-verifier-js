@@ -43,6 +43,7 @@ export interface Signers {
   chain?: IBlockchainObject;
   transactionId?: string;
   transactionLink?: string;
+  rawTransactionLink?: string;
 }
 
 export default class Certificate {

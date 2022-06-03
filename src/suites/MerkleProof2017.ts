@@ -133,6 +133,11 @@ export default class MerkleProof2017 extends Suite {
     return transactionLinks.transactionLink;
   }
 
+  getRawTransactionLink (): string {
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.getTransactionIdString(), this.getChain());
+    return transactionLinks.rawTransactionLink;
+  }
+
   private validateProofType (): void {
     if (this.proof.type[0] !== this.type) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${this.proof.type[0]}`);

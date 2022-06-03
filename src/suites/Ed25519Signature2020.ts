@@ -79,7 +79,7 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   getIssuerName (): string {
-    return 'not implemented';
+    return this.issuer.name ?? '';
   }
 
   getIssuerProfileDomain (): string {

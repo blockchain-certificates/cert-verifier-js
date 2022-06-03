@@ -53,8 +53,9 @@ describe('Certificate API Contract test suite', function () {
           expect(instance.signers[0].issuerPublicKey).toBe('z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs');
         });
 
-        xit('should expose the issuerName', function () {
-          expect(instance.signers[0].issuerName).toBe('Blockcerts Organization');
+        it('should expose the issuerName', function () {
+          // TODO: test a case where the issuerName would be properly set
+          expect(instance.signers[0].issuerName).toBe('');
         });
 
         xit('should expose the issuerProfileDomain', function () {

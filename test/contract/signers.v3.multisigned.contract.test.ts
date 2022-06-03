@@ -45,8 +45,8 @@ describe('Certificate API Contract test suite', function () {
           expect(instance.signers[0].signingDate).toBe('2022-05-02T16:36:22.933Z');
         });
 
-        xit('should expose the signatureSuiteType', function () {
-          expect(instance.signers[0].signatureSuiteType).toBe('MerkleProof2019');
+        it('should expose the signatureSuiteType', function () {
+          expect(instance.signers[0].signatureSuiteType).toBe('Ed25519Signature2020');
         });
 
         xit('should expose the issuerPublicKey', function () {

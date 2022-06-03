@@ -29,7 +29,7 @@ describe('proof chain example', function () {
       time: '2022-05-03T17:24:07.000Z',
       revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
     });
-    const instance = new Certificate(fixture as any);
+    instance = new Certificate(fixture as any);
     await instance.init();
   });
 

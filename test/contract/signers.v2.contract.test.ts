@@ -10,7 +10,7 @@ describe('Certificate API Contract test suite', function () {
     describe('given there is only one signature to the V3 document', function () {
       let instance;
 
-      beforeEach(async function () {
+      beforeAll(async function () {
         const requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
           url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
@@ -26,7 +26,7 @@ describe('Certificate API Contract test suite', function () {
         await instance.verify();
       });
 
-      afterEach(function () {
+      afterAll(function () {
         instance = null;
         sinon.restore();
       });

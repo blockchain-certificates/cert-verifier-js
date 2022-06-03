@@ -13,7 +13,7 @@ describe('Certificate API Contract test suite', function () {
     describe('given there is only one signature to the V3 document', function () {
       let instance;
 
-      beforeEach(async function () {
+      beforeAll(async function () {
         const requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
           url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
@@ -35,7 +35,7 @@ describe('Certificate API Contract test suite', function () {
         await instance.verify();
       });
 
-      afterEach(function () {
+      afterAll(function () {
         instance = null;
         sinon.restore();
       });

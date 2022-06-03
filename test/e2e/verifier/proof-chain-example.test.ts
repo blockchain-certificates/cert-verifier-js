@@ -7,9 +7,12 @@ import multipleProofsVerificationSteps from '../../assertions/verification-steps
 import didKeyDocument from '../../fixtures/did/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import domain from '../../../src/domain';
 
 describe('proof chain example', function () {
-  beforeEach(function () {
+  let instance;
+
+  beforeEach(async function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({
       url: `${universalResolverUrl}/${fixture.issuer}`
@@ -20,21 +23,25 @@ describe('proof chain example', function () {
     requestStub.withArgs({
       url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
     }).resolves(JSON.stringify(fixtureIssuerProfile));
+    sinon.stub(domain.verifier, 'lookForTx').resolves({
+      remoteHash: '8303d22a9f391f0ac7deb0cd2e19cf2d582f6c93c8ddbb88bfae241041b5f951',
+      issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+      time: '2022-05-03T17:24:07.000Z',
+      revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+    });
+    const instance = new Certificate(fixture as any);
+    await instance.init();
   });
 
   afterEach(function () {
     sinon.restore();
   });
 
-  it('creates the valid verification process', async function () {
-    const instance = new Certificate(fixture as any);
-    await instance.init();
+  it('creates the valid verification process', function () {
     expect(instance.verificationSteps).toEqual(multipleProofsVerificationSteps);
   });
 
   it('verifies as expected', async function () {
-    const instance = new Certificate(fixture as any);
-    await instance.init();
     const result = await instance.verify();
     expect(result.message).toEqual({
       // eslint-disable-next-line no-template-curly-in-string

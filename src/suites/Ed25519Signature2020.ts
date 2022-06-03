@@ -84,6 +84,10 @@ export default class Ed25519Signature2020 extends Suite {
     return 'not implemented';
   }
 
+  getSigningDate (): string {
+    return this.proof.created;
+  }
+
   async _doAction (step: string, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }

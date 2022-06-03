@@ -20,6 +20,7 @@ import type { Receipt } from './models/Receipt';
 import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
 import type { Suite } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
+import type { Signers } from './certificate';
 
 const log = debug('Verifier');
 
@@ -118,6 +119,20 @@ export default class Verifier {
 
   getVerificationSteps (): IVerificationMapItem[] {
     return this.verificationSteps;
+  }
+
+  getSignersData (): Signers[] {
+    return this.proofVerifiers.map(proofVerifier => ({
+      signingDate: proofVerifier.getSigningDate(),
+      signatureSuiteType: proofVerifier.type,
+      issuerPublicKey: proofVerifier.getIssuerPublicKey(),
+      issuerName: proofVerifier.getIssuerName(),
+      issuerProfileDomain: proofVerifier.getIssuerProfileDomain(),
+      issuerProfileUrl: proofVerifier.getIssuerProfileUrl(),
+      chain: proofVerifier.getChain(),
+      transactionId: proofVerifier.getTransactionIdString(),
+      transactionLink: proofVerifier.getTransactionLink()
+    }));
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {

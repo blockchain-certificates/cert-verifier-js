@@ -12,6 +12,7 @@ import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
+import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -127,12 +128,26 @@ export default class MerkleProof2019 extends Suite {
     return this.issuer.id;
   }
 
+  getSigningDate (): string {
+    return this.proof.created;
+  }
+
   getChain (): IBlockchainObject {
     return this.chain;
   }
 
   getReceipt (): Receipt {
     return this.receipt;
+  }
+
+  // TODO: rename inspector method to make this function `getTransactionId`
+  getTransactionIdString (): string {
+    return domain.certificates.getTransactionId(this.getReceipt());
+  }
+
+  getTransactionLink (): string {
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.getTransactionIdString(), this.getChain());
+    return transactionLinks.transactionLink;
   }
 
   private isProofChain (): boolean {

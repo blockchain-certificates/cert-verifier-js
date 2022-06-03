@@ -11,6 +11,7 @@ import type { BlockcertsV2 } from '../models/BlockcertsV2';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { MerkleProof2017 as TMerkleProof2017 } from '../models/MerkleProof2017';
+import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -110,12 +111,26 @@ export default class MerkleProof2017 extends Suite {
     return this.issuer.id;
   }
 
+  getSigningDate (): string {
+    return (this.documentToVerify as BlockcertsV2).issuedOn;
+  }
+
   getChain (): IBlockchainObject {
     return this.chain;
   }
 
   getReceipt (): Receipt {
     return this.receipt;
+  }
+
+  // TODO: rename inspector method to make this function `getTransactionId`
+  getTransactionIdString (): string {
+    return domain.certificates.getTransactionId(this.getReceipt());
+  }
+
+  getTransactionLink (): string {
+    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.getTransactionIdString(), this.getChain());
+    return transactionLinks.transactionLink;
   }
 
   private validateProofType (): void {

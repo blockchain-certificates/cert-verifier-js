@@ -129,27 +129,7 @@ export default class Certificate {
   }
 
   private setSigners (): void {
-    let signingDate: string;
-    let signatureSuiteType: string;
-    if ('proof' in this.certificateJson) {
-      signingDate = this.certificateJson.proof.created;
-      signatureSuiteType = this.certificateJson.proof.type;
-    } else {
-      signingDate = this.certificateJson.issuedOn;
-      signatureSuiteType = this.certificateJson.signature.type[0];
-    }
-
-    this.signers.push({
-      signingDate,
-      signatureSuiteType,
-      issuerPublicKey: this.verifier.getIssuerPublicKey(),
-      issuerName: this.verifier.getIssuerName(),
-      issuerProfileDomain: this.verifier.getIssuerProfileDomain(),
-      issuerProfileUrl: this.verifier.getIssuerProfileUrl(),
-      chain: this.verifier.getChain(),
-      transactionId: domain.certificates.getTransactionId(this.receipt),
-      transactionLink: this.transactionLink
-    });
+    this.signers = this.verifier.getSignersData();
   }
 
   private _setOptions (options: CertificateOptions): void {

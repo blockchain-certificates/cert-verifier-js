@@ -15,18 +15,7 @@ export interface SuiteAPI {
   issuer: Issuer;
 }
 
-interface OptionalSuiteMethods {
-  verifyProof;
-  getProofVerificationSteps;
-  getIdentityVerificationSteps;
-  getIssuerPublicKey;
-  _doAction;
-  // only needed for Blockchain anchoring suites
-  getChain?: () => IBlockchainObject;
-  getReceipt?: () => Receipt;
-}
-
-export abstract class Suite implements OptionalSuiteMethods {
+export abstract class Suite {
   abstract type: string;
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
   constructor (props: SuiteAPI) {}
@@ -44,6 +33,13 @@ export abstract class Suite implements OptionalSuiteMethods {
   abstract getIssuerName (): string;
   abstract getIssuerProfileDomain (): string;
   abstract getIssuerProfileUrl (): string;
+  abstract getSigningDate (): string;
+
+  // only needed for Blockchain anchoring suites
+  getChain? (): IBlockchainObject;
+  getReceipt? (): Receipt;
+  getTransactionIdString? (): string;
+  getTransactionLink? (): string;
 
   // This method needs to become a reference to the `actionMethod` that's injected to the constructor.
   // `actionMethod` is bound to the verifier context to ensure proper execution of the steps

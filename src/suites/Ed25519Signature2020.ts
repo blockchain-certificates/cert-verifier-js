@@ -69,7 +69,13 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    return 'not implemented';
+    const { verificationMethod } = this.proof;
+    const didDocument = this.issuer.didDocument;
+
+    // TODO: handle case when not dealing with a didDocument
+    const publicKey = didDocument.verificationMethod.find(vm => vm.id === verificationMethod);
+    // TODO: this might not always be this property
+    return publicKey.publicKeyMultibase;
   }
 
   getIssuerName (): string {

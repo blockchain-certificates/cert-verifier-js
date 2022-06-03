@@ -49,8 +49,8 @@ describe('Certificate API Contract test suite', function () {
           expect(instance.signers[0].signatureSuiteType).toBe('Ed25519Signature2020');
         });
 
-        xit('should expose the issuerPublicKey', function () {
-          expect(instance.signers[0].issuerPublicKey).toBe('mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am');
+        it('should expose the issuerPublicKey', function () {
+          expect(instance.signers[0].issuerPublicKey).toBe('z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs');
         });
 
         xit('should expose the issuerName', function () {

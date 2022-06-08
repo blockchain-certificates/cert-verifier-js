@@ -13,7 +13,7 @@ import v2IssuerProfile from '../assertions/v2-issuer-profile-5a4fe9931f607f0f345
 import v2RegtestIssuerProfile from '../assertions/v2-testnet-issuer-profile.json';
 
 describe('Certificate API Contract test suite', function () {
-  describe('VerificationSteps object', function () {
+  describe('verificationSteps property', function () {
     let requestStub;
 
     beforeEach(function () {

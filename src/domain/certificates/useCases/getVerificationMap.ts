@@ -46,6 +46,7 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
+// TODO: move this method to domain.verifier
 export default function getVerificationMap (hasDid: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];

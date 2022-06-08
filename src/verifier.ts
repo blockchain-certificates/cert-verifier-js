@@ -7,32 +7,44 @@ import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
-import { getMerkleProof2017ProofType } from './models/MerkleProof2017';
-import { getMerkleProof2019ProofType, getMerkleProof2019VerificationMethod } from './models/MerkleProof2019';
+import Ed25519Signature2020 from './suites/Ed25519Signature2020';
+import { difference, lastEntry } from './helpers/array';
+import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
-import type { BlockcertsV3 } from './models/BlockcertsV3';
+import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
 import type { IBlockchainObject } from './constants/blockchains';
 import type { Receipt } from './models/Receipt';
-import type { IVerificationMapItem } from './models/VerificationMap';
+import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
+import type { Suite } from './models/Suite';
+import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
+import type { Signers } from './certificate';
 
 const log = debug('Verifier');
 
 export interface IVerificationStepCallbackAPI {
   code: string;
   label: string;
-  status: string; // TODO: use enum
+  status: VERIFICATION_STATUSES;
   errorMessage?: string;
+  parentStep: string;
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
+type TVerifierProofMap = Map<number, VCProof>;
 
 export interface IFinalVerificationStatus {
   code: VerificationSteps.final;
-  status: string; // TODO: use enum
+  status: VERIFICATION_STATUSES;
   message: string;
+}
+
+interface StepVerificationStatus {
+  code: string;
+  status: VERIFICATION_STATUSES;
+  message?: string;
 }
 
 export default class Verifier {
@@ -43,12 +55,13 @@ export default class Verifier {
   public documentToVerify: Blockcerts;
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
-  private _stepsStatuses: any[]; // TODO: define stepStatus interface
+  private _stepsStatuses: StepVerificationStatus[] = [];
   private readonly hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: any;
-  public merkleProofVerifier: any;
+  public proofVerifiers: Suite[] = [];
   public verificationProcess: SUB_STEPS[];
+  public proofMap: TVerifierProofMap;
 
   constructor (
     { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
@@ -70,45 +83,66 @@ export default class Verifier {
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
 
-    // Final verification result
-    // Init status as success, we will update the final status at the end
-    this._stepsStatuses = [];
-    this.supportedVerificationSuites = {
-      MerkleProof2017,
-      MerkleProof2019
-    };
-
-    this.merkleProofVerifier = new this.supportedVerificationSuites[this.getProofType(this.documentToVerify)]({
-      actionMethod: this._doAction.bind(this),
-      document: this.documentToVerify,
-      explorerAPIs: this.explorerAPIs,
-      issuer: this.issuer
-    });
-
+    this.instantiateProofVerifiers();
     this.prepareVerificationProcess();
   }
 
   getIssuerPublicKey (): string {
-    return this.merkleProofVerifier.getIssuerPublicKey();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerPublicKey();
+  }
+
+  getIssuerName (): string {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerName();
+  }
+
+  getIssuerProfileDomain (): string {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerProfileDomain();
+  }
+
+  getIssuerProfileUrl (): string {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getIssuerProfileUrl();
   }
 
   getChain (): IBlockchainObject {
-    return this.merkleProofVerifier.getChain();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getChain();
   }
 
   getReceipt (): Receipt {
-    return this.merkleProofVerifier.getReceipt();
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    return lastEntry(this.proofVerifiers).getReceipt();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {
     return this.verificationSteps;
   }
 
+  getSignersData (): Signers[] {
+    return this.proofVerifiers.map(proofVerifier => ({
+      signingDate: proofVerifier.getSigningDate(),
+      signatureSuiteType: proofVerifier.type,
+      issuerPublicKey: proofVerifier.getIssuerPublicKey(),
+      issuerName: proofVerifier.getIssuerName(),
+      issuerProfileDomain: proofVerifier.getIssuerProfileDomain(),
+      issuerProfileUrl: proofVerifier.getIssuerProfileUrl(),
+      chain: proofVerifier.getChain?.(),
+      transactionId: proofVerifier.getTransactionIdString?.(),
+      transactionLink: proofVerifier.getTransactionLink?.(),
+      rawTransactionLink: proofVerifier.getRawTransactionLink?.()
+    }));
+  }
+
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
-    await this.merkleProofVerifier.verifyProof();
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      await this.proofVerifiers[i].verifyProof();
+    }
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
@@ -118,8 +152,8 @@ export default class Verifier {
       await this[verificationStep]();
     }
 
-    if (this.merkleProofVerifier.verifyIdentity) {
-      await this.merkleProofVerifier.verifyIdentity();
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      await this.proofVerifiers[i].verifyIdentity();
     }
 
     // Send final callback update for global verification status
@@ -131,12 +165,61 @@ export default class Verifier {
     return this.issuer.revocationList;
   }
 
-  private getProofType (document: Blockcerts): string {
+  private getProofTypes (): string[] {
+    const proofTypes: string[] = [];
+    this.proofMap.forEach(proof => {
+      let { type } = proof;
+      if (type === 'ChainedProof2021') {
+        type = proof.chainedProofType;
+      }
+      if (Array.isArray(type)) {
+        // Blockcerts v2/MerkleProof2017
+        type = type[0];
+      }
+      proofTypes.push(type);
+    });
+
+    return proofTypes;
+  }
+
+  private getProofMap (document: Blockcerts): TVerifierProofMap {
+    const proofMap = new Map();
     if ('proof' in document) {
-      return getMerkleProof2019ProofType(document); // TODO: Make model getter
+      if (Array.isArray(document.proof)) {
+        document.proof.forEach((proof, i) => proofMap.set(i, proof));
+      } else {
+        proofMap.set(0, document.proof);
+      }
     } else if ('signature' in document) {
-      return getMerkleProof2017ProofType(document);
+      proofMap.set(0, document.signature);
     }
+    return proofMap;
+  }
+
+  private instantiateProofVerifiers (): void {
+    this.supportedVerificationSuites = {
+      MerkleProof2017,
+      MerkleProof2019,
+      Ed25519Signature2020
+    };
+    this.proofMap = this.getProofMap(this.documentToVerify);
+    const proofTypes: string[] = this.getProofTypes();
+
+    const unsupportedVerificationSuites = difference(Object.keys(this.supportedVerificationSuites), proofTypes);
+
+    if (unsupportedVerificationSuites.length) {
+      throw new Error(`No support for proof verification of type: ${unsupportedVerificationSuites.join(', ')}`);
+    }
+
+    this.proofMap.forEach((proof, index) => {
+      this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]]({
+        actionMethod: this._doAction.bind(this),
+        document: this.documentToVerify,
+        proof,
+        explorerAPIs: this.explorerAPIs,
+        issuer: this.issuer
+      }));
+    });
   }
 
   private prepareVerificationProcess (): void {
@@ -147,29 +230,37 @@ export default class Verifier {
     this.registerSignatureVerificationSteps();
     this.registerIdentityVerificationSteps();
 
-    this.verificationSteps = this.verificationSteps.filter(parentStep => parentStep.subSteps.length > 0);
+    this.verificationSteps = this.verificationSteps.filter(parentStep =>
+      parentStep.subSteps?.length > 0 || parentStep.suites?.some(suite => suite.subSteps.length > 0)
+    );
   }
 
   private registerSignatureVerificationSteps (): void {
     const parentStep = VerificationSteps.proofVerification;
     this.verificationSteps
       .find(step => step.code === parentStep)
-      .subSteps = this.merkleProofVerifier.getProofVerificationSteps(parentStep);
+      .suites = this.getSuiteSubsteps(parentStep);
+  }
+
+  private getSuiteSubsteps (parentStep: VerificationSteps): IVerificationMapItemSuite[] {
+    const targetMethodMap = {
+      [VerificationSteps.proofVerification]: 'getProofVerificationSteps',
+      [VerificationSteps.identityVerification]: 'getIdentityVerificationSteps'
+    };
+    return this.proofVerifiers.map(proofVerifier => ({
+      proofType: proofVerifier.type,
+      subSteps: proofVerifier[targetMethodMap[parentStep]](parentStep)
+    }));
   }
 
   private registerIdentityVerificationSteps (): void {
     const parentStep = VerificationSteps.identityVerification;
-    const parentBlock = this.verificationSteps
-      .find(step => step.code === parentStep);
-
-    parentBlock.subSteps = [
-      ...parentBlock.subSteps,
-      ...this.merkleProofVerifier.getIdentityVerificationSteps(parentStep)
-    ];
+    this.verificationSteps
+      .find(step => step.code === parentStep)
+      .suites = this.getSuiteSubsteps(parentStep);
   }
 
-  private async _doAction (step: string, action: () => any): Promise<any> {
-    // If not failing already
+  private async _doAction (step: string, action: () => any, verificationSuite?: string): Promise<any> {
     if (this._isFailing()) {
       return;
     }
@@ -178,24 +269,23 @@ export default class Verifier {
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       log(label);
-      this._updateStatusCallback(step, label, VERIFICATION_STATUSES.STARTING);
+      this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING, verificationSuite);
     }
 
     try {
       const res: any = await action();
       if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.SUCCESS);
-        this._stepsStatuses.push({ step, label, status: VERIFICATION_STATUSES.SUCCESS });
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.SUCCESS, verificationSuite);
+        this._stepsStatuses.push({ code: step, status: VERIFICATION_STATUSES.SUCCESS });
       }
       return res;
     } catch (err) {
       if (step) {
-        this._updateStatusCallback(step, label, VERIFICATION_STATUSES.FAILURE, err.message);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
         this._stepsStatuses.push({
           code: step,
-          label,
-          status: VERIFICATION_STATUSES.FAILURE,
-          errorMessage: err.message
+          message: err.message,
+          status: VERIFICATION_STATUSES.FAILURE
         });
       }
     }
@@ -223,6 +313,7 @@ export default class Verifier {
 
     if (!revocationListUrl) {
       console.warn('No revocation list url was set on the issuer.');
+      await this._doAction(SUB_STEPS.checkRevokedStatus, () => true);
       return;
     }
     const revokedCertificatesIds = await this._doAction(
@@ -246,36 +337,47 @@ export default class Verifier {
     await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(
         this.issuer.didDocument,
-        getMerkleProof2019VerificationMethod(this.documentToVerify as BlockcertsV3)
+        getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
       );
     });
   }
 
-  _failed (errorStep: IVerificationStepCallbackAPI): IFinalVerificationStatus {
-    const message: string = errorStep.errorMessage;
+  private findStepFromVerificationProcess (code: string, verificationSuite: string): VerificationSubstep {
+    return domain.verifier.findVerificationSubstep(code, this.verificationSteps, verificationSuite);
+  }
+
+  private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
+    const { message } = errorStep;
     log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
 
-  _isFailing (): boolean {
+  private _isFailing (): boolean {
     return this._stepsStatuses.some(step => step.status === VERIFICATION_STATUSES.FAILURE);
   }
 
-  _succeed (): IFinalVerificationStatus {
-    const message = domain.chains.isMockChain(this.merkleProofVerifier.getChain())
+  private _succeed (): IFinalVerificationStatus {
+    // TODO: temporary workaround to maintain MerkleProof201x data access
+    const message = domain.chains.isMockChain(lastEntry(this.proofVerifiers).getChain())
       ? domain.i18n.getText('success', 'mocknet')
       : domain.i18n.getText('success', 'blockchain');
     log(message);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  _setFinalStep ({ status, message }: { status: string; message: string }): IFinalVerificationStatus {
+  private _setFinalStep ({ status, message }: { status: VERIFICATION_STATUSES; message: string }): IFinalVerificationStatus {
     return { code: VerificationSteps.final, status, message };
   }
 
-  private _updateStatusCallback (code: string, label: string, status: string, errorMessage = ''): void {
+  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {
     if (code != null) {
-      const update: IVerificationStepCallbackAPI = { code, label, status };
+      const step: VerificationSubstep = this.findStepFromVerificationProcess(code, verificationSuite);
+      const update: IVerificationStepCallbackAPI = {
+        code,
+        status,
+        parentStep: step.parentStep,
+        label: step.labelPending
+      };
       if (errorMessage) {
         update.errorMessage = errorMessage;
       }

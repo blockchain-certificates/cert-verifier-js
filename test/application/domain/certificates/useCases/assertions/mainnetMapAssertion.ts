@@ -2,6 +2,7 @@ import { VerificationSteps, SUB_STEPS } from '../../../../../../src/constants/ve
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
 import type { IVerificationMapItem } from '../../../../../../src/models/VerificationMap';
+import { VERIFICATION_STATUSES } from '../../../../../../src';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
@@ -15,7 +16,8 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
         code: SUB_STEPS.checkImagesIntegrity,
         label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
         labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
-        parentStep: VerificationSteps.formatValidation
+        parentStep: VerificationSteps.formatValidation,
+        status: VERIFICATION_STATUSES.DEFAULT
       }
     ]
   },
@@ -40,13 +42,15 @@ const mainnetStepMapAssertion: IVerificationMapItem[] = [
         code: SUB_STEPS.checkRevokedStatus,
         label: defaultLanguageSet.subSteps.checkRevokedStatusLabel,
         labelPending: defaultLanguageSet.subSteps.checkRevokedStatusLabelPending,
-        parentStep: VerificationSteps.statusCheck
+        parentStep: VerificationSteps.statusCheck,
+        status: VERIFICATION_STATUSES.DEFAULT
       },
       {
         code: SUB_STEPS.checkExpiresDate,
         label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
         labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,
-        parentStep: VerificationSteps.statusCheck
+        parentStep: VerificationSteps.statusCheck,
+        status: VERIFICATION_STATUSES.DEFAULT
       }
     ]
   }

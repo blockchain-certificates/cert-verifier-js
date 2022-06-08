@@ -11,6 +11,14 @@ export interface VCProof {
   previousProof?: VCProof;
 }
 
+export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): string {
+  if (Array.isArray(proof)) {
+    const initialProof: VCProof = proof.find(p => p.type !== 'ChainedProof2021');
+    return initialProof.verificationMethod;
+  }
+  return proof.verificationMethod;
+}
+
 export interface VerifiableCredential {
   '@context': JsonLDContext;
   id: string;
@@ -72,7 +80,7 @@ export interface BlockcertsV3 extends VerifiableCredential{
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;
-  proof: VCProof;
+  proof: VCProof | VCProof[];
 
   /**
    * @deprecated v3 alpha only

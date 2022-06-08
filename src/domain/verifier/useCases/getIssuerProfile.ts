@@ -3,15 +3,21 @@ import { VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
 import type { Issuer } from '../../../models/Issuer';
 import domain from '../../../domain';
+import type { IDidDocument } from '../../../models/DidDocument';
 
+// TODO: move these functions to url helper
 function isValidUrl (url: string): boolean {
   // https://stackoverflow.com/a/15734347/4064775
   const regex = /^(ftp|http|https):\/\/[^ "]+$/;
   return regex.test(url);
 }
 
-function isDidUri (url: string): boolean {
+export function isDidUri (url: string): boolean {
   return url.startsWith('did:', 0);
+}
+
+export function isDidKey (url: string): boolean {
+  return url.startsWith('did:key:', 0);
 }
 
 function isValidV1Profile (profile: Issuer): boolean {
@@ -45,12 +51,21 @@ function isValidProfile (profile: Issuer): boolean {
   return validTypes.includes(type.toLowerCase());
 }
 
-/**
- * getIssuerProfile
- *
- * @param issuerAddress: string
- * @returns {Promise<any>}
- */
+function createIssuerProfileFromDidKey (didDocument: IDidDocument): Issuer {
+  return {
+    '@context': [
+      'https://w3id.org/openbadges/v2',
+      'https://w3id.org/blockcerts/3.0'
+    ],
+    publicKey: [
+      {
+        created: new Date().toISOString(),
+        id: didDocument.id.split(':').pop()
+      }
+    ]
+  };
+}
+
 export default async function getIssuerProfile (issuerAddress: Issuer | string): Promise<Issuer> {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
@@ -66,17 +81,21 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
     // TODO: it could be that the issuer profile is embedded, or that it is distant,
     //  but we found a did document so the rest of the function does not apply
     try {
-      const didDocument = await domain.did.resolve(issuerAddress);
-      const issuerProfileUrl = await domain.did.getIssuerProfileUrl(didDocument);
-      if (issuerProfileUrl) {
-        issuerProfile = await getIssuerProfile(issuerProfileUrl);
+      const didDocument: IDidDocument = await domain.did.resolve(issuerAddress);
+      if (isDidKey(issuerAddress)) {
+        issuerProfile = createIssuerProfileFromDidKey(didDocument);
+      } else {
+        const issuerProfileUrl = await domain.did.getIssuerProfileUrl(didDocument);
+        if (issuerProfileUrl) {
+          issuerProfile = await getIssuerProfile(issuerProfileUrl);
+        }
       }
       return {
-        // TODO: return more data from the issuer profile
         didDocument,
         ...issuerProfile
       };
     } catch (e) {
+      console.error(e);
       throw new VerifierError('getIssuerProfile', `${errorMessage} - ${e as string}`);
     }
   } else if (!isValidUrl(issuerAddress)) {

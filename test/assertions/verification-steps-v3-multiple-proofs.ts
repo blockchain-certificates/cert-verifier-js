@@ -5,6 +5,65 @@ import { VERIFICATION_STATUSES } from '../../src';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
+const merkleProof2019VerificationSubsteps = [
+  {
+    code: 'getTransactionId',
+    label: defaultLanguageSet.subSteps.getTransactionIdLabel,
+    labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'computeLocalHash',
+    label: defaultLanguageSet.subSteps.computeLocalHashLabel,
+    labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'fetchRemoteHash',
+    label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
+    labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'compareHashes',
+    label: defaultLanguageSet.subSteps.compareHashesLabel,
+    labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'checkMerkleRoot',
+    label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
+    labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'checkReceipt',
+    label: defaultLanguageSet.subSteps.checkReceiptLabel,
+    labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'parseIssuerKeys',
+    label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
+    labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  },
+  {
+    code: 'checkAuthenticity',
+    label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
+    labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
+    parentStep: VerificationSteps.proofVerification,
+    status: VERIFICATION_STATUSES.DEFAULT
+  }
+];
+
 export default [
   {
     code: VerificationSteps.formatValidation,
@@ -27,65 +86,27 @@ export default [
     subSteps: [],
     suites: [
       {
-        proofType: 'MerkleProof2019',
+        proofType: 'Ed25519Signature2020',
         subSteps: [
           {
-            code: 'getTransactionId',
-            label: defaultLanguageSet.subSteps.getTransactionIdLabel,
-            labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,
+            code: 'retrieveVerificationMethodPublicKey',
+            label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
+            labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
             parentStep: VerificationSteps.proofVerification,
             status: VERIFICATION_STATUSES.DEFAULT
           },
           {
-            code: 'computeLocalHash',
-            label: defaultLanguageSet.subSteps.computeLocalHashLabel,
-            labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'fetchRemoteHash',
-            label: defaultLanguageSet.subSteps.fetchRemoteHashLabel,
-            labelPending: defaultLanguageSet.subSteps.fetchRemoteHashLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'compareHashes',
-            label: defaultLanguageSet.subSteps.compareHashesLabel,
-            labelPending: defaultLanguageSet.subSteps.compareHashesLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'checkMerkleRoot',
-            label: defaultLanguageSet.subSteps.checkMerkleRootLabel,
-            labelPending: defaultLanguageSet.subSteps.checkMerkleRootLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'checkReceipt',
-            label: defaultLanguageSet.subSteps.checkReceiptLabel,
-            labelPending: defaultLanguageSet.subSteps.checkReceiptLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'parseIssuerKeys',
-            label: defaultLanguageSet.subSteps.parseIssuerKeysLabel,
-            labelPending: defaultLanguageSet.subSteps.parseIssuerKeysLabelPending,
-            parentStep: VerificationSteps.proofVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
-            code: 'checkAuthenticity',
-            label: defaultLanguageSet.subSteps.checkAuthenticityLabel,
-            labelPending: defaultLanguageSet.subSteps.checkAuthenticityLabelPending,
+            code: 'checkDocumentSignature',
+            label: 'Check document signature',
+            labelPending: 'Checking document signature',
             parentStep: VerificationSteps.proofVerification,
             status: VERIFICATION_STATUSES.DEFAULT
           }
         ]
+      },
+      {
+        proofType: 'MerkleProof2019',
+        subSteps: merkleProof2019VerificationSubsteps
       }
     ]
   },
@@ -103,6 +124,10 @@ export default [
       }
     ],
     suites: [
+      {
+        proofType: 'Ed25519Signature2020',
+        subSteps: []
+      },
       {
         proofType: 'MerkleProof2019',
         subSteps: [

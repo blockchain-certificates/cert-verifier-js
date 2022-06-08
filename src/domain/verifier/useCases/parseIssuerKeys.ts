@@ -4,13 +4,6 @@ import { getText } from '../../i18n/useCases';
 import type { NullableNumber } from '../../../models/helpers';
 import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
 
-/**
- * createKeyObject
- *
- * @param rawKeyObject
- * @param finalPublicKey
- * @returns {Key}
- */
 function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   const created: NullableNumber = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
   const revoked: NullableNumber = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
@@ -24,11 +17,6 @@ function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   return new Key(publicKey, created, revoked, expires);
 }
 
-/**
- * parseIssuerKeys
- *
- * @param issuerProfileJson
- */
 export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPublicKeyList {
   try {
     const keyMap: IssuerPublicKeyList = {};

@@ -133,7 +133,7 @@ describe('Verifier entity test suite', function () {
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2' });
 
-        expect(verifierInstance._isFailing()).toBe(false);
+        expect((verifierInstance as any)._isFailing()).toBe(false);
       });
     });
     describe('when one check is failing', function () {
@@ -141,7 +141,7 @@ describe('Verifier entity test suite', function () {
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2' });
 
-        expect(verifierInstance._isFailing()).toBe(true);
+        expect((verifierInstance as any)._isFailing()).toBe(true);
       });
     });
   });

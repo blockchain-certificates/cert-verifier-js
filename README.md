@@ -138,7 +138,6 @@ The constructor automatically parses a certificate. Call `certificate.init()` to
 The certificate instance has the following properties:
 - `certificateImage`: `String`. Raw data of the certificate image
 - `certificateJson`: `Object`. Certificate JSON object
-- `chain`: `Object`. Chain the certificate was issued on
 - `description`: `String`. Description of the certificate
 - `expires`: `String|null`. Expiration date
 - `id`: `String`. Certificate's ID
@@ -148,18 +147,24 @@ The certificate instance has the following properties:
 - `locale`: `String`. Language code used by the verifier
 - `metadataJson`: `Object|null `. Certificate metadata object
 - `name`: `String`. Name of the certificate
-- `publicKey`: `String`. Certificate's public key
-- `receipt`: `Object`. Certificate's receipt
 - `recipientFullName`: `String`. Full name of recipient
 - `recordLink`: `String`. Link to the certificate record
 - `revocationKey`: `String|null`. Revocation key (if any)
 - `sealImage`: `String`. Raw data of the seal's image;
 - `signature`: `String|null`. Certificate's signature
 - `signatureImage`: [`SignatureImage[]`][signatureLineModel]. Array of certificate [signature lines][signatureLineModel].
+- `signers`: Signers[]. An object which exposes some information related to the signature(s) of the Blockcerts. Contains:
+  * `chain`?: `IBlockchainObject`.
+  * `issuerName`?: `string`. Chain the signature was issued on
+  * `issuerProfileDomain`?: `string`.
+  * `issuerProfileUrl`?: `string`.
+  * `issuerPublicKey`: `string`. Current signer's public key.
+  * `rawTransactionLink`?: `string`. Link to raw transaction data (JSON)
+  * `signatureSuiteType`: `string`.
+  * `signingDate`: `string`.
+  * `transactionId`?: `string`.
+  * `transactionLink`?: `string`. Browser link to Transaction details
 - `subtitle`: `String|null`. Subtitle of the certificate
-- `transactionId`: `String`. Transaction ID
-- `rawTransactionLink`: `String`. Raw transaction ID
-- `transactionLink`: `String`. Transaction link
 - `version`: `CertificateVersion`. [Version of the certificate](https://github.com/blockchain-certificates/cert-verifier-js/blob/master/src/constants/certificateVersions.js)
 
 [signatureLineModel]: src/models/signatureImage.js

@@ -37,7 +37,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
         expect(issuerProfile.didDocument).toEqual(didDocument);
       });
 
-      xit('should return the issuer profile found from the did', function () {
+      it('should return the issuer profile found from the did', function () {
         expect(issuerProfile.publicKey).toEqual([{
           id: 'ecdsa-koblitz-pubkey:mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           created: '2021-06-05T21:10:10.615+00:00'
@@ -47,6 +47,14 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
 
     describe('and the DID method is did:key', function () {
       it('should create an expanded issuer profile', async function () {
+        const initialDate = global.Date;
+        class MockDate {
+          toISOString (): string {
+            return '2022-06-10T18:29:41.468Z';
+          }
+        }
+        global.Date = MockDate as any;
+
         requestStub.withArgs({
           url: `${universalResolverUrl}/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs`
         }).resolves(JSON.stringify({ didDocument: didKeyDocument }));
@@ -65,6 +73,8 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
             }
           ]
         });
+
+        global.Date = initialDate;
       });
     });
   });

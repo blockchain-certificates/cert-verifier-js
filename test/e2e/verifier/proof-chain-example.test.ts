@@ -45,9 +45,8 @@ describe('proof chain example', function () {
     const result = await instance.verify();
     expect(result.message).toEqual({
       // eslint-disable-next-line no-template-curly-in-string
-      description: 'This is a valid ${chain} certificate.',
-      label: 'Verified',
-      linkText: 'View transaction link'
+      description: 'All the signatures of this certificate have successfully verified.',
+      label: 'Verified'
     });
     expect(result.status).toBe('success');
   });

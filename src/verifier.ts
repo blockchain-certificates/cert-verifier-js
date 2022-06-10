@@ -357,11 +357,18 @@ export default class Verifier {
   }
 
   private _succeed (): IFinalVerificationStatus {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    const message = domain.chains.isMockChain(lastEntry(this.proofVerifiers).getChain())
-      ? domain.i18n.getText('success', 'mocknet')
-      : domain.i18n.getText('success', 'blockchain');
-    log(message);
+    let message;
+
+    if (this.proofVerifiers.length === 1) {
+      message = domain.chains.isMockChain(this.proofVerifiers[0].getChain())
+        ? domain.i18n.getText('success', 'mocknet')
+        : domain.i18n.getText('success', 'blockchain');
+      log(message);
+    }
+
+    if (this.proofVerifiers.length > 1) {
+      message = domain.i18n.getText('success', 'multisign');
+    }
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 

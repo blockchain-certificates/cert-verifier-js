@@ -59,6 +59,10 @@
         "label": "Verified",
         "description": "This is a valid ${chain} certificate.",
         "linkText": "View transaction link"
+      },
+      "multisign": {
+        "label": "Verified",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
@@ -152,6 +156,10 @@
         "label": "Vérifié",
         "description": "Ceci est un certificat ${chain} valide.",
         "linkText": "Voir la transaction"
+      },
+      "multisign": {
+        "label": "Vérifié",
+        "description": "Toutes les signatures numériques de ce certificat ont été vérifiées avec succès."
       }
     },
     "errors": {
@@ -245,6 +253,10 @@
         "label": "Verificado",
         "description": "Este es un certificado válido de ${chain}.",
         "linkText": "Ver enlace de transacción"
+      },
+      "multisign": {
+        "label": "Verificado",
+        "description": "Todas las firmas digitales de este certificado han verificado con éxito."
       }
     },
     "errors": {
@@ -338,6 +350,10 @@
         "label": "Ivverifikat",
         "description": "Dan huwa ċertifikat ${chain} huwa validu.",
         "linkText": "Ara l-link tat-transazzjoni"
+      },
+      "multisign": {
+        "label": "Ivverifikat",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
@@ -431,6 +447,10 @@
         "label": "Verificato",
         "description": "Questo è un certificato ${chain} valido.",
         "linkText": "Vedi la transazione"
+      },
+      "multisign": {
+        "label": "Verificato",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
@@ -524,6 +544,10 @@
         "label": "認証されました",
         "description": "この証明書は有効な${chain}証明書です。",
         "linkText": "取引を確認する"
+      },
+      "multisign": {
+        "label": "認証されました",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {

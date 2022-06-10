@@ -8,15 +8,13 @@ import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 import Ed25519Signature2020 from './suites/Ed25519Signature2020';
-import { difference, lastEntry } from './helpers/array';
+import { difference } from './helpers/array';
 import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
-import type { IBlockchainObject } from './constants/blockchains';
-import type { Receipt } from './models/Receipt';
 import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
 import type { Suite } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
@@ -85,36 +83,6 @@ export default class Verifier {
 
     this.instantiateProofVerifiers();
     this.prepareVerificationProcess();
-  }
-
-  getIssuerPublicKey (): string {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getIssuerPublicKey();
-  }
-
-  getIssuerName (): string {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getIssuerName();
-  }
-
-  getIssuerProfileDomain (): string {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getIssuerProfileDomain();
-  }
-
-  getIssuerProfileUrl (): string {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getIssuerProfileUrl();
-  }
-
-  getChain (): IBlockchainObject {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getChain();
-  }
-
-  getReceipt (): Receipt {
-    // TODO: temporary workaround to maintain MerkleProof201x data access
-    return lastEntry(this.proofVerifiers).getReceipt();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {

@@ -39,10 +39,6 @@ describe('Verifier entity test suite', function () {
     });
 
     describe('given all parameters are passed', function () {
-      it('getChain should return the correct value', function () {
-        expect(verifierInstance.getChain()).toEqual(verifierParamFixture.chain);
-      });
-
       it('should set the expires to the verifier object', function () {
         expect(verifierInstance.expires).toBe(verifierParamFixture.expires);
       });

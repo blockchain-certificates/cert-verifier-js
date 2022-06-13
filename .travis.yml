@@ -6,13 +6,13 @@ branches:
   only:
     - master
 before_script:
-  #- npm run test
-  #- npm run lint
+  - npm run test
+  - npm run lint
 script:
   - npm run build
 after_script:
-  #- npm run test:coverage
-  #- npm run test:coverage:report
+  - npm run test:coverage
+  - npm run test:coverage:report
 after_success:
   # to make the build work through rollup with DID logic (https://github.com/blockchain-certificates/cert-verifier-js/pull/1257)
   # we are aliasing readable-stream to https://github.com/exogee-technology/readable-stream
@@ -22,8 +22,6 @@ after_success:
   - npm uninstall readable-stream
   - rm -rf ./node_modules
   - rm package-lock.json
-  - cat package.json
   - npm i --legacy-peer-deps
   - npm install readable-stream --legacy-peer-deps
-  - cat ./node_modules/readable-stream/package.json
   - npm run semantic-release

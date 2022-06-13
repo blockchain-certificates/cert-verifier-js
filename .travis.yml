@@ -20,8 +20,8 @@ after_success:
   # so we install the regular version of readable stream to enable expected use by semantic release
   # it is an inelegant patch but it's a quick solution to the problem and is acceptable as it is the last step of the CI
   - cat ./node_modules/readable-stream/package.json
-  - rm package-lock.json
   - npm uninstall readable-stream
+  - npm prune
   - cat ./node_modules/readable-stream/package.json
   - npm install readable-stream
   - cat ./node_modules/readable-stream/package.json

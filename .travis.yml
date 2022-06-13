@@ -21,6 +21,4 @@ after_success:
   # it is an inelegant patch but it's a quick solution to the problem and is acceptable as it is the last step of the CI
   - npm uninstall readable-stream
   - npm install readable-stream
-  - npm run semantic-release
-after_failure:
-  - cat  /home/travis/.npm/_logs/2021-02-08T14_3*-debug.log
+  - npm run semantic-release --verbose

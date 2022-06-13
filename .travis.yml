@@ -21,7 +21,9 @@ after_success:
   # it is an inelegant patch but it's a quick solution to the problem and is acceptable as it is the last step of the CI
   - npm uninstall readable-stream
   - rm -rf ./node_modules
-  - npm ci
+  - rm package-lock.json
+  - cat package.json
+  - npm i
   - npm install readable-stream
   - cat ./node_modules/readable-stream/package.json
   - npm run semantic-release

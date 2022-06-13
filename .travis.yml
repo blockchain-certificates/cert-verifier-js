@@ -19,10 +19,9 @@ after_success:
   # however this breaks semantic release because the shape of the export is different
   # so we install the regular version of readable stream to enable expected use by semantic release
   # it is an inelegant patch but it's a quick solution to the problem and is acceptable as it is the last step of the CI
-  - cat ./node_modules/readable-stream/package.json
   - npm uninstall readable-stream
-  - npm prune
-  - cat ./node_modules/readable-stream/package.json
+  - rm -rf ./node_modules
+  - npm ci
   - npm install readable-stream
   - cat ./node_modules/readable-stream/package.json
   - npm run semantic-release

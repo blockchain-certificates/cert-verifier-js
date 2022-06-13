@@ -1,7 +1,7 @@
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
-import type { ParsedCertificate } from './parsers/index';
+import type { ParsedCertificate } from './parsers';
 import parseJSON from './parsers/index';
 import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import Verifier from './verifier';
@@ -9,16 +9,12 @@ import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import type { Blockcerts } from './models/Blockcerts';
 import type { IBlockchainObject } from './constants/blockchains';
-import type Versions from './constants/certificateVersions';
 import { deepCopy } from './helpers/object';
 import type { Issuer } from './models/Issuer';
-import type { Receipt } from './models/Receipt';
-import type { MerkleProof2019 } from './models/MerkleProof2019';
 import type { SignatureImage } from './models';
-import type { ITransactionLink } from './domain/certificates/useCases/getTransactionLink';
 import type { BlockcertsV3Display } from './models/BlockcertsV3';
 import convertHashlink from './parsers/helpers/convertHashlink';
-import type { IVerificationMapItem } from './domain/certificates/useCases/getVerificationMap';
+import type { IVerificationMapItem } from './models/VerificationMap';
 
 export interface ExplorerURLs {
   main: string;
@@ -35,10 +31,22 @@ export interface CertificateOptions {
   didResolverUrl?: string;
 }
 
+export interface Signers {
+  chain?: IBlockchainObject;
+  issuerName?: string;
+  issuerProfileDomain?: string;
+  issuerProfileUrl?: string;
+  issuerPublicKey: string;
+  rawTransactionLink?: string;
+  signatureSuiteType: string;
+  signingDate: string;
+  transactionId?: string;
+  transactionLink?: string;
+}
+
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
-  public chain: IBlockchainObject;
   public description?: string; // v1
   public display?: BlockcertsV3Display;
   public expires: string;
@@ -48,23 +56,17 @@ export default class Certificate {
   public issuedOn: string;
   public issuer: Issuer;
   public locale: string; // enum?
-  public metadataJson: any; // TODO: define metadataJson interface. As abstract as can be as keys and values are open.
+  public metadataJson: any; // TODO: define metadataJson interface.
   public name?: string; // TODO: not formally set in V3
   public options: CertificateOptions;
-  public publicKey?: string;
-  public proof?: MerkleProof2019;
-  public rawTransactionLink: string;
-  public receipt: Receipt;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;
   public sealImage?: string; // v1
   public signature?: string; // v1
   public signatureImage?: SignatureImage[]; // v1
+  public signers: Signers[] = [];
   public subtitle?: string; // v1
-  public transactionId: string;
-  public transactionLink: string;
-  public version: Versions;
   public hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
@@ -91,24 +93,21 @@ export default class Certificate {
     await this.parseJson(this.certificateJson);
     this.verifier = new Verifier({
       certificateJson: this.certificateJson,
-      chain: this.chain,
       expires: this.expires,
       id: this.id,
       issuer: this.issuer,
       hashlinkVerifier: this.hashlinkVerifier,
-      receipt: this.receipt,
       revocationKey: this.revocationKey,
-      transactionId: this.transactionId,
-      version: this.version,
-      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
-      proof: this.proof
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
-    this.verificationSteps = this.verifier.verificationSteps;
+    this.verificationSteps = this.verifier.getVerificationSteps();
   }
 
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
     const verificationStatus = await this.verifier.verify(stepCallback);
-    this.publicKey = this.verifier.getIssuingAddress();
+
+    this.setSigners();
+
     return verificationStatus;
   }
 
@@ -118,6 +117,10 @@ export default class Certificate {
       throw new Error(parsedCertificate.error);
     }
     await this._setProperties(parsedCertificate);
+  }
+
+  private setSigners (): void {
+    this.signers = this.verifier.getSignersData();
   }
 
   private _setOptions (options: CertificateOptions): void {
@@ -136,7 +139,6 @@ export default class Certificate {
 
   private async _setProperties ({
     certificateImage,
-    chain,
     description,
     display,
     expires,
@@ -146,21 +148,16 @@ export default class Certificate {
     issuer,
     metadataJson,
     name,
-    publicKey,
-    proof,
-    receipt,
     recipientFullName,
     recordLink,
     revocationKey,
     sealImage,
     signature,
     signatureImage,
-    subtitle,
-    version
+    subtitle
   }: ParsedCertificate): Promise<void> {
     this.isFormatValid = isFormatValid;
     this.certificateImage = certificateImage;
-    this.chain = chain;
     this.description = description;
     this.expires = expires;
     this.id = id;
@@ -168,9 +165,6 @@ export default class Certificate {
     this.issuer = issuer;
     this.metadataJson = metadataJson;
     this.name = name;
-    this.proof = proof;
-    this.publicKey = publicKey;
-    this.receipt = receipt;
     this.recipientFullName = recipientFullName;
     this.recordLink = recordLink;
     this.revocationKey = revocationKey;
@@ -178,11 +172,7 @@ export default class Certificate {
     this.signature = signature;
     this.signatureImage = signatureImage;
     this.subtitle = subtitle;
-    this.version = version;
     this.display = await this.parseHashlinksInDisplay(display);
-
-    // Transaction ID, link & raw link
-    this._setTransactionDetails();
   }
 
   async parseHashlinksInDisplay (display: BlockcertsV3Display): Promise<BlockcertsV3Display> {
@@ -196,12 +186,5 @@ export default class Certificate {
     }
     modifiedDisplay.content = await convertHashlink(modifiedDisplay.content, this.hashlinkVerifier);
     return modifiedDisplay;
-  }
-
-  private _setTransactionDetails (): void {
-    this.transactionId = domain.certificates.getTransactionId(this.receipt);
-    const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.transactionId, this.chain);
-    this.rawTransactionLink = transactionLinks.rawTransactionLink;
-    this.transactionLink = transactionLinks.transactionLink;
   }
 }

@@ -1,6 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
-import { SUB_STEPS } from '../../../constants';
+import { SUB_STEPS } from '../../../constants/verificationSteps';
 import { getText } from '../../i18n/useCases';
 import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
 import { safelyAppendUrlParameter } from '../../../helpers/url';
@@ -19,7 +19,7 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
   }
 
   const response: any = await request({ url: revocationListUrl }).catch(() => {
-    throw new VerifierError(SUB_STEPS.parseIssuerKeys, errorMessage);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, errorMessage);
   });
 
   const issuerRevocationJson: RevocationList = JSON.parse(response);

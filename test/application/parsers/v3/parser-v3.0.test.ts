@@ -1,9 +1,7 @@
 import FIXTURES from '../../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
 import parseJSON from '../../../../src/parsers/index';
 import v3IssuerProfile from '../../../assertions/v3.0-issuer-profile.json';
 import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import assertionProofValue from '../../../assertions/testnet-v3.0-did-signature-merkle2019.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
@@ -18,7 +16,7 @@ describe('Parser v3 test suite', function () {
   describe('given it is called with a invalid format v3 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
-      delete fixtureCopy.proof;
+      fixtureCopy.issuer = 'not a url';
       const parsedCertificate = await parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });
@@ -43,10 +41,6 @@ describe('Parser v3 test suite', function () {
       requestStub.restore();
     });
 
-    it('should set the chain of the certificate object', function () {
-      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.testnet);
-    });
-
     it('should set the id of the certificate object', function () {
       expect(parsedCertificate.id).toEqual(fixture.id);
     });
@@ -63,10 +57,6 @@ describe('Parser v3 test suite', function () {
       expect(parsedCertificate.metadataJson).toEqual(fixture.metadata);
     });
 
-    it('should set the receipt of the certificate object', function () {
-      expect(parsedCertificate.receipt).toEqual(assertionProofValue);
-    });
-
     it('should set the recipientFullName of the certificate object', function () {
       const fullNameAssertion = fixture.credentialSubject.name;
       expect(parsedCertificate.recipientFullName).toEqual(fullNameAssertion);
@@ -74,10 +64,6 @@ describe('Parser v3 test suite', function () {
 
     it('should set recordLink of the certificate object', function () {
       expect(parsedCertificate.recordLink).toBe(fixture.id);
-    });
-
-    it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0);
     });
 
     it('should return the display property', function () {

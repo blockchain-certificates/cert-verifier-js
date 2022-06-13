@@ -16,4 +16,6 @@ preloadedContexts['https://www.blockcerts.org/schema/3.0-beta/context.json'] = C
 preloadedContexts['https://w3id.org/blockcerts/schema/3.0-beta/context.json'] = CONTEXTS.BLOCKCERTSV3_BETA;
 preloadedContexts['https://w3id.org/blockcerts/v3.0-beta'] = CONTEXTS.BLOCKCERTSV3_BETA;
 
+preloadedContexts['https://w3id.org/security/suites/ed25519-2020/v1'] = CONTEXTS.ED25519;
+
 export default preloadedContexts;

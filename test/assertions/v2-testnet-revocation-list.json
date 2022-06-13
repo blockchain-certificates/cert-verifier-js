@@ -1,0 +1,16 @@
+{
+  "@context": "https://w3id.org/openbadges/v2",
+  "id": "https://w3id.org/blockcerts/samples/2.0/revocation-list-testnet.json",
+  "type": "RevocationList",
+  "issuer": "https://w3id.org/blockcerts/samples/2.0/issuer-testnet.json",
+  "revokedAssertions": [
+    {
+      "id": "urn:uuid:93019408-acd8-4420-be5e-0400d643954a",
+      "revocationReason": "Honor code violation"
+    },
+    {
+      "id": "urn:uuid:eda7d784-c03b-40a2-ac10-4857e9627329",
+      "revocationReason": "Issued in error."
+    }
+  ]
+}

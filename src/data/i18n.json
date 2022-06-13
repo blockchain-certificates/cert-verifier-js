@@ -3,8 +3,8 @@
     "steps": {
       "formatValidationLabel": "Format validation",
       "formatValidationLabelPending": "Validating format",
-      "hashComparisonLabel": "Hash comparison",
-      "hashComparisonLabelPending": "Comparing hash",
+      "signatureVerificationLabel": "Proof Verification",
+      "signatureVerificationLabelPending": "Verifying Proof",
       "identityVerificationLabel": "Identity verification",
       "identityVerificationLabelPending": "Verifying identity",
       "statusCheckLabel": "Status check",
@@ -23,14 +23,12 @@
       "parseIssuerKeysLabelPending": "Parsing issuer keys",
       "compareHashesLabel": "Compare hashes",
       "compareHashesLabelPending": "Comparing hashes",
+      "checkDocumentSignatureLabel":"Check document signature",
+      "checkDocumentSignatureLabelPending":"Checking document signature",
       "checkMerkleRootLabel": "Check Merkle Root",
       "checkMerkleRootLabelPending": "Checking Merkle Root",
       "checkReceiptLabel": "Check Receipt",
       "checkReceiptLabelPending": "Checking Receipt",
-      "checkIssuerIdentityLabel": "Check Issuer Identity",
-      "checkIssuerIdentityLabelPending": "Checking Issuer Identity",
-      "checkIssuerSignatureLabel": "Check Issuer Signature",
-      "checkIssuerSignatureLabelPending": "Checking Issuer Signature",
       "checkAuthenticityLabel": "Check Authenticity",
       "checkAuthenticityLabelPending": "Checking Authenticity",
       "checkRevokedStatusLabel": "Check Revoked Status",
@@ -61,11 +59,14 @@
         "label": "Verified",
         "description": "This is a valid ${chain} certificate.",
         "linkText": "View transaction link"
+      },
+      "multisign": {
+        "label": "Verified",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
       "certificateNotValid": "This is not a valid certificate",
-      "checkEtherScanConfirmations": "Number of transaction confirmations were less than the minimum required, according to EtherScan API",
       "couldNotConfirmTx": "Could not confirm the transaction",
       "ensureHashesEqual": "Computed hash does not match remote hash",
       "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
@@ -91,15 +92,7 @@
       "isTransactionIdValid": "Cannot verify this certificate without a transaction ID to compare against.",
       "issuerProfileNotSet": "no issuer address given",
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
-      "lookForTxCouldNotConfirm": "Could not confirm the transaction. No blockchain apis returned a response. This could be because of rate limiting.",
-      "lookForTxDifferentAddresses": "Issuing addresses returned by the blockchain APIs were different",
-      "lookForTxDifferentRemoteHashes": "Remote hashes returned by the blockchain APIs were different",
-      "lookForTxInvalidAppConfig": "Invalid application configuration; check the CONFIG.MinimumBlockchainExplorers configuration value",
-      "lookForTxInvalidChain": "Invalid chain; does not map to known BlockchainExplorers.",
-      "parseBlockCypherResponse": "Number of transaction confirmations were less than the minimum required, according to Blockcypher API",
-      "parseBlockstreamResponse": "Number of transaction confirmations were less than the minimum required, according to Blockstream API",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
-      "unableToGetRemoteHash": "Unable to get remote hash",
       "checkImagesIntegrity":"Image integrity verification proved that the content was modified after issuance."
     }
   },
@@ -107,8 +100,8 @@
     "steps": {
       "formatValidationLabel": "Validation du format",
       "formatValidationLabelPending": "Validation du format",
-      "hashComparisonLabel": "Comparaison du hash",
-      "hashComparisonLabelPending": "Comparaison du hash",
+      "signatureVerificationLabel": "Vérification de la preuve",
+      "signatureVerificationLabelPending": "Vérification de la preuve",
       "identityVerificationLabel": "Vérification de l'identité",
       "identityVerificationLabelPending":  "Vérification de l'identité",
       "statusCheckLabel": "Vérification du status",
@@ -127,14 +120,12 @@
       "parseIssuerKeysLabelPending": "Traitement des clés de l'émetteur",
       "compareHashesLabel": "Comparaison des hash",
       "compareHashesLabelPending": "Comparaison des hashs",
+      "checkDocumentSignatureLabel": "Vérification de la signature du document",
+      "checkDocumentSignatureLabelPending": "Vérification de la signature du document",
       "checkMerkleRootLabel": "Vérification du Merkle Root",
       "checkMerkleRootLabelPending": "Vérification du  Merkle Root",
       "checkReceiptLabel": "Vérification du reçu",
       "checkReceiptLabelPending": "Vérification du reçu",
-      "checkIssuerIdentityLabel": "Vérification de l'identité de l'émetteur",
-      "checkIssuerIdentityLabelPending": "Vérification de l'identité de l'émetteur",
-      "checkIssuerSignatureLabel": "Vérification de la signature de l'émetteur",
-      "checkIssuerSignatureLabelPending": "Vérification de la signature de l'émetteur",
       "checkAuthenticityLabel": "Vérification de l'authenticité",
       "checkAuthenticityLabelPending": "Vérification de l'authenticité",
       "checkRevokedStatusLabel": "Vérification du status de révocation",
@@ -165,11 +156,14 @@
         "label": "Vérifié",
         "description": "Ceci est un certificat ${chain} valide.",
         "linkText": "Voir la transaction"
+      },
+      "multisign": {
+        "label": "Vérifié",
+        "description": "Toutes les signatures numériques de ce certificat ont été vérifiées avec succès."
       }
     },
     "errors": {
       "certificateNotValid": "Certificat invalide",
-      "checkEtherScanConfirmations": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API EtherScan",
       "couldNotConfirmTx": "Impossible de confirmer la transaction",
       "ensureHashesEqual": "Calcul du hash local différent du hash distant",
       "ensureMerkleRootEqual": "Le Merkle root ne correspond pas au hash distant",
@@ -195,15 +189,7 @@
       "isTransactionIdValid": "Impossible de vérifier ce certificat sans un identifiant de transaction valide",
       "issuerProfileNotSet": "l'URL de l'émetteur n'est pas définie",
       "issuerProfileInvalid": "le document distant ne semble pas être un profil d'émetteur valide",
-      "lookForTxCouldNotConfirm": "Impossible de confirmer la transaction. Aucune API blockchain n'a répondu. Potentiellement dû à une limite de débit réseau.",
-      "lookForTxDifferentAddresses": "Les adresses d'émission reçues de l'API blockchain ne concordent pas",
-      "lookForTxDifferentRemoteHashes": "Les hashs distants reçus de l'API blockchain ne concordent pas",
-      "lookForTxInvalidAppConfig": "Configuration de l'application invalide : vérifiez la valeur de configuration de CONFIG.MinimumBlockchainExplorers",
-      "lookForTxInvalidChain": "Chaine invalide : non liée à un BlockchainExplorers connu",
-      "parseBlockCypherResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockcypher",
-      "parseBlockstreamResponse": "Le nombre de confirmations de transaction n'atteint pas le minimum requis, d'après l'API Blockstream",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
-      "unableToGetRemoteHash": "Impossible d'obtenir le hash distant",
       "checkImagesIntegrity": "La vérification des images a prouvé que le contenu a été modifié après l'émission."
     }
   },
@@ -211,8 +197,8 @@
     "steps": {
       "formatValidationLabel": "Validación de formato",
       "formatValidationLabelPending": "Validando el formato",
-      "hashComparisonLabel": "Comparación de cadena binaria",
-      "hashComparisonLabelPending": "Comparando cadena binaria",
+      "signatureVerificationLabel": "Verificar prueba",
+      "signatureVerificationLabelPending": "Verificando prueba",
       "identityVerificationLabel": "Verificar identitad",
       "identityVerificationLabelPending":  "Verificando identitad",
       "statusCheckLabel": "Estado de Verificación",
@@ -231,14 +217,12 @@
       "parseIssuerKeysLabelPending": "Analizando claves del emisor",
       "compareHashesLabel": "Comparar cadenas binarias",
       "compareHashesLabelPending": "Comparando cadenas binarias",
+      "checkDocumentSignatureLabel": "Controlar firma del documento",
+      "checkDocumentSignatureLabelPending": "Controlando firma del documento",
       "checkMerkleRootLabel": "Verificar Merkle Root",
       "checkMerkleRootLabelPending": "Verificando Merkle Root",
       "checkReceiptLabel": "Verificar Recibo",
       "checkReceiptLabelPending": "Verificando Recibo",
-      "checkIssuerIdentityLabel": "Verificar Identitad del Emisor",
-      "checkIssuerIdentityLabelPending": "Verificando Identitad del Emisor",
-      "checkIssuerSignatureLabel": "Verificar Firma del Emisor",
-      "checkIssuerSignatureLabelPending": "Verificando Firma del Emisor",
       "checkAuthenticityLabel": "Verificar Autenticidad",
       "checkAuthenticityLabelPending": "Verificando Autenticidad",
       "checkRevokedStatusLabel": "Verificar Estado de Revocación",
@@ -269,11 +253,14 @@
         "label": "Verificado",
         "description": "Este es un certificado válido de ${chain}.",
         "linkText": "Ver enlace de transacción"
+      },
+      "multisign": {
+        "label": "Verificado",
+        "description": "Todas las firmas digitales de este certificado han verificado con éxito."
       }
     },
     "errors": {
       "certificateNotValid": "Este no es un certificado válido",
-      "checkEtherScanConfirmations": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API EtherScan",
       "couldNotConfirmTx": "No se ha podido confirmar la transacción",
       "ensureHashesEqual": "La cadena binaria calculada no corresponde con la cadena binaria remota",
       "ensureMerkleRootEqual": "La raíz Merkle no corresponde con la cadena binaria remota",
@@ -299,15 +286,7 @@
       "isTransactionIdValid": "No se puede verificar este certificado sin una identificación de transacción que sirva como comparación",
       "issuerProfileNotSet": "URL del emisor no definido",
       "issuerProfileInvalid": "el documento recogido no parece ser un perfil de emisor valido",
-      "lookForTxCouldNotConfirm": "No se ha podido confirmar la transacción. Ninguna del las APIs de blockchain generó una respuesta. Esto puede ser causado por limitaciones de tasa.",
-      "lookForTxDifferentAddresses": "Las direcciones emisoras generadas por las APIs del blockchain son distintas",
-      "lookForTxDifferentRemoteHashes": "Las cadenas binarias remotas generadas por las APIs del blockchain son distintas",
-      "lookForTxInvalidAppConfig": "Configuración de aplicación inválida; cheque el valor de configuración CONFIG.MinimumBlockchainExplorers",
-      "lookForTxInvalidChain": "Cadena inválida; no corresponde a BlockchainExplorers reconocidos",
-      "parseBlockCypherResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockcypher",
-      "parseBlockstreamResponse": "El número de transacciones confirmadas son menores que el mínimo requerido, de acuerdo al API Blockstream",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
-      "unableToGetRemoteHash": "No se ha podido obtener la cadena binaria remota",
       "checkImagesIntegrity": "La verificación de la integridad de los imagens provó alteración del contenido después de la emisión."
     }
   },
@@ -315,8 +294,8 @@
     "steps": {
       "formatValidationLabel": "Validazzjoni tal-format",
       "formatValidationLabelPending": "Il-format qed jiġi vvalidat",
-      "hashComparisonLabel": "Paragun tal-Hash",
-      "hashComparisonLabelPending": "Il-hash qed jiġi pparagunat",
+      "signatureVerificationLabel": "Proof Verification",
+      "signatureVerificationLabelPending": "Verifying Proof",
       "identityVerificationLabel": "Identity verification",
       "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "Status check",
@@ -335,14 +314,12 @@
       "parseIssuerKeysLabelPending": "Iċ-ċwievet tal-emittent qed jiġu estratti",
       "compareHashesLabel": "Ikkumpara l-hashes",
       "compareHashesLabelPending": "Il-hashes qed jiġu kkomparati",
+      "checkDocumentSignatureLabel": "Check document signature",
+      "checkDocumentSignatureLabelPending": "Checking document signature",
       "checkMerkleRootLabel": "Iċċekkja l-Merkle Root",
       "checkMerkleRootLabelPending": "Il-Merkle Root Qed Tiġi Ċċekkjata",
       "checkReceiptLabel": "Iċċekkja l-Irċevuta",
       "checkReceiptLabelPending": "L-Irċevuta Qed Tiġi Ċċekkjata",
-      "checkIssuerIdentityLabel": "Iċċekkja l-Identità tal-Emittent",
-      "checkIssuerIdentityLabelPending": "L-Identità tal-Emittent Qed Tiġi Ċċekkjata",
-      "checkIssuerSignatureLabel": "Iċċekkja l-Firma tal-Emittent",
-      "checkIssuerSignatureLabelPending": "Il-Firma tal-Emittent Qed Tiġi Ċċekkjata",
       "checkAuthenticityLabel": "Iċċekkja l-Awtentiċità",
       "checkAuthenticityLabelPending": "L-Awtentiċità Qed Tiġi Ċċekkjata",
       "checkRevokedStatusLabel": "Iċċekkja l-Istatus Revokat",
@@ -373,11 +350,14 @@
         "label": "Ivverifikat",
         "description": "Dan huwa ċertifikat ${chain} huwa validu.",
         "linkText": "Ara l-link tat-transazzjoni"
+      },
+      "multisign": {
+        "label": "Ivverifikat",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
       "certificateNotValid": "Dan mhux ċertifikat validu",
-      "checkEtherScanConfirmations": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont EtherScan API",
       "couldNotConfirmTx": "Ma setgħetx tiġi kkonfermata t-tranżazzjoni",
       "ensureHashesEqual": "Il-hash ikkalkulat ma jikkorrispondix mar-remote hash",
       "ensureMerkleRootEqual": "Merkle root ma taqbilx mar-remote hash",
@@ -403,15 +383,7 @@
       "isTransactionIdValid": "Dan iċ-ċertifikat ma jistax jiġi vverifikat mingħajr ID ta' tranżazzjoni mqabbla miegħu",
       "issuerProfileNotSet": "no issuer address given",
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
-      "lookForTxCouldNotConfirm": "It-tranżazzjoni ma setgħetx tiġi kkonferma. L-ebda blockchain apis ma rritorna rispons. Dan jista' jkun minħabba limitazzjoni tar-rata",
-      "lookForTxDifferentAddresses": "L-indirizzi tal-ħruġ mibgħuta lura mill-blockchain APIs kienu differenti",
-      "lookForTxDifferentRemoteHashes": "Ir-remote hashes mibgħuta lura mill-blockchain APIs kienu differenti",
-      "lookForTxInvalidAppConfig": "Konfigurazzjoni tal-applikazzjoni invalida; Iċċekkja l-valur konfigurattiv f' CONFIG.MinimumBlockchainExplorers",
-      "lookForTxInvalidChain": "Chain invalidu; BlockchainExplorers mhux qed isib chain magħrufa",
-      "parseBlockCypherResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockcypher API",
-      "parseBlockstreamResponse": "In-numru ta' konfermi tat-tranżazzjonijiet kienu inqas mill-minimu meħtieġ, skont Blockstream API",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
-      "unableToGetRemoteHash": "Mhux possibbli jinkiseb ir-remote hash",
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   },
@@ -419,8 +391,8 @@
     "steps": {
       "formatValidationLabel": "Convalidare formato",
       "formatValidationLabelPending": "Convalida formato",
-      "hashComparisonLabel": "Confrontare hash",
-      "hashComparisonLabelPending": "Confronta hash",
+      "signatureVerificationLabel": "Proof Verification",
+      "signatureVerificationLabelPending": "Verifying Proof",
       "identityVerificationLabel": "Identity verification",
       "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "Verificare stato",
@@ -439,14 +411,12 @@
       "parseIssuerKeysLabelPending": "Analizza chiavi issuer",
       "compareHashesLabel": "Confrontare gli hash",
       "compareHashesLabelPending": "Confronto hash",
+      "checkDocumentSignatureLabel": "Check document signature",
+      "checkDocumentSignatureLabelPending": "Checking document signature",
       "checkMerkleRootLabel": "Controllare radice di Merkle",
       "checkMerkleRootLabelPending": "Controllo radice di Merkle",
       "checkReceiptLabel": "Verificare ricevuta",
       "checkReceiptLabelPending": "Verifica ricevuta",
-      "checkIssuerIdentityLabel": "Verificare identità Issuer",
-      "checkIssuerIdentityLabelPending": "Verifica identità Issuer",
-      "checkIssuerSignatureLabel": "Verificare firma Issuer",
-      "checkIssuerSignatureLabelPending": "Verifica firma Issuer",
       "checkAuthenticityLabel": "Verificare autenticità",
       "checkAuthenticityLabelPending": "Verifica autenticità",
       "checkRevokedStatusLabel": "Verificare stato revocato",
@@ -477,11 +447,14 @@
         "label": "Verificato",
         "description": "Questo è un certificato ${chain} valido.",
         "linkText": "Vedi la transazione"
+      },
+      "multisign": {
+        "label": "Verificato",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
       "certificateNotValid": "Questo non è un certificato valido",
-      "checkEtherScanConfirmations": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API EtherScan",
       "couldNotConfirmTx": "Impossibile confermare la transazione",
       "ensureHashesEqual": "L'hash calcolato non corrisponde all'hash remoto",
       "ensureMerkleRootEqual": "La radice di Merkle non corrisponde all'hash remoto.",
@@ -507,15 +480,7 @@
       "isTransactionIdValid": "Impossibile verificare questo certificato senza un ID transazione da confrontare.",
       "issuerProfileNotSet": "no issuer address given",
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
-      "lookForTxCouldNotConfirm": "Impossibile confermare la transazione. Nessuna API blockchain ha risposto. Potrebbe essere a causa della limitazione della velocità.",
-      "lookForTxDifferentAddresses": "Gli indirizzi di emissione restituiti dalle API blockchain erano diversi",
-      "lookForTxDifferentRemoteHashes": "Gli hash remoti restituiti dalle API blockchain erano diversi",
-      "lookForTxInvalidAppConfig": "Configurazione dell'applicazione non valida, verificare il valore di configurazione di CONFIG.MinimumBlockchainExplorers",
-      "lookForTxInvalidChain": "Catena non valida; non mappa BlockchainExplorers noti.",
-      "parseBlockCypherResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockcypher",
-      "parseBlockstreamResponse": "Il numero di conferme delle transazioni era inferiore al minimo richiesto, secondo l'API Blockstream",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
-      "unableToGetRemoteHash": "Impossibile ottenere l'hash remoto",
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   },
@@ -523,8 +488,8 @@
     "steps": {
       "formatValidationLabel": "フォーマットの検証",
       "formatValidationLabelPending": "フォーマットを検証しています",
-      "hashComparisonLabel": "ハッシュの照合",
-      "hashComparisonLabelPending": "ハッシュを照合しています",
+      "signatureVerificationLabel": "Proof Verification",
+      "signatureVerificationLabelPending": "Verifying Proof",
       "identityVerificationLabel": "Identity verification",
       "identityVerificationLabelPending":  "Verifying identity",
       "statusCheckLabel": "ステータスの確認",
@@ -543,14 +508,12 @@
       "parseIssuerKeysLabelPending": "発行者の鍵をパースしています",
       "compareHashesLabel": "ハッシュの照合",
       "compareHashesLabelPending": "ハッシュを照合しています",
+      "checkDocumentSignatureLabel": "Check document signature",
+      "checkDocumentSignatureLabelPending": "Checking document signature",
       "checkMerkleRootLabel": "Merkle Rootの確認",
       "checkMerkleRootLabelPending": "Merkle Rootを確認しています",
       "checkReceiptLabel": "レシートの確認",
       "checkReceiptLabelPending": "レシートを確認しています",
-      "checkIssuerIdentityLabel": "Check Issuer Identity",
-      "checkIssuerIdentityLabelPending": "Checking Issuer Identity",
-      "checkIssuerSignatureLabel": "発行者の署名の確認",
-      "checkIssuerSignatureLabelPending": "発行者の署名を確認しています",
       "checkAuthenticityLabel": "真正性の確認",
       "checkAuthenticityLabelPending": "真正性を確認しています",
       "checkRevokedStatusLabel": "取消ステータスの確認",
@@ -581,11 +544,14 @@
         "label": "認証されました",
         "description": "この証明書は有効な${chain}証明書です。",
         "linkText": "取引を確認する"
+      },
+      "multisign": {
+        "label": "認証されました",
+        "description": "All the signatures of this certificate have successfully verified."
       }
     },
     "errors": {
       "certificateNotValid": "この証明書は有効ではありません",
-      "checkEtherScanConfirmations": "EtherScan APIによると、必要最小限の取引確認の数に達しませんでした",
       "couldNotConfirmTx": "取引を確認できませんでした",
       "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
       "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",
@@ -611,15 +577,7 @@
       "isTransactionIdValid": "照合するための取引IDがないため、この証明書を認証できません。",
       "issuerProfileNotSet": "no issuer address given",
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
-      "lookForTxCouldNotConfirm": "取引を確認できませんでした。全てのブロックチェーンAPIが返信しませんでした。 レート制限が原因になっている可能性があります。",
-      "lookForTxDifferentAddresses": "ブロックチェーンAPIから返された発行者アドレスが異なっていました",
-      "lookForTxDifferentRemoteHashes": "ブロックチェーンAPIから返されたリモートハッシュが異なっていました",
-      "lookForTxInvalidAppConfig": "アプリケーション設定が無効です。CONFIG.MinimumBlockchainExplorersの設定値を確認して下さい。",
-      "lookForTxInvalidChain": "チェーンが無効です。既知のBlockchainExplorersにマップできません。",
-      "parseBlockCypherResponse": "Blockcypher APIによると、必要最小限の取引確認の数に達しませんでした",
-      "parseBlockstreamResponse": "Blockstream APIによると、必要最小限の取引確認の数に達しませんでした",
       "parseIssuerKeys": "発行者識別データからJSONをパースできません",
-      "unableToGetRemoteHash": "リモートハッシュを取得できません",
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance."
     }
   }

@@ -1,6 +1,6 @@
 import type { IDidDocument } from '../../models/DidDocument';
 import { VerifierError } from '../../models';
-import { SUB_STEPS } from '../../constants';
+import { SUB_STEPS } from '../../constants/verificationSteps';
 import domain from '../../domain';
 import { baseError } from './index';
 
@@ -8,7 +8,7 @@ function getDocumentId (didDocument: IDidDocument): string {
   return didDocument.id;
 }
 
-export default function controlVerificationMethod (didDocument: IDidDocument, verificationMethod: string): void {
+export default function controlVerificationMethod (didDocument: IDidDocument, verificationMethod: string = ''): void {
   const documentId = getDocumentId(didDocument);
   const verificationDid = verificationMethod.split('#')[0];
   if (documentId !== verificationDid) {

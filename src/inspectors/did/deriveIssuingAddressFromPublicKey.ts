@@ -7,7 +7,6 @@ import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey
 import domain from '../../domain';
 import { baseError } from './index';
 import { VerifierError } from '../../models';
-import { SUB_STEPS } from '../../constants';
 
 export default function deriveIssuingAddressFromPublicKey (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
@@ -26,7 +25,7 @@ export default function deriveIssuingAddressFromPublicKey (verificationMethodPub
       break;
 
     default:
-      throw new VerifierError(SUB_STEPS.deriveIssuingAddressFromPublicKey, `${baseError} - ${domain.i18n.getText('errors', 'deriveIssuingAddressFromPublicKey')}`);
+      throw new VerifierError('deriveIssuingAddressFromPublicKey', `${baseError} - ${domain.i18n.getText('errors', 'deriveIssuingAddressFromPublicKey')}`);
   }
   return address;
 }

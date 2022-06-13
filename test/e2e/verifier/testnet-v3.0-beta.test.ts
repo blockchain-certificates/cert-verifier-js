@@ -3,7 +3,7 @@ import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
 import domain from '../../../src/domain';
 
-describe('given the certificate is a valid testnet (v2.0)', function () {
+describe('given the certificate is a valid testnet (v3.0b)', function () {
   it('should verify successfully', async function () {
     sinon.stub(domain.verifier, 'lookForTx').resolves({
       remoteHash: '2c7afa4f8192bd8d0e243da2044306b2183527270ef6fd76854c34a1288756ba',

@@ -2,16 +2,16 @@ import sinon from 'sinon';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS, SUB_STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { BLOCKCHAINS, VERIFICATION_STATUSES } from '../../../src';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
-import mainnetMapAssertion from '../domain/certificates/useCases/assertions/mainnetMapAssertion';
 import { deepCopy } from '../../../src/helpers/object';
-import type { IVerificationMapItem } from '../../../src/domain/certificates/useCases/getVerificationMap';
 import FIXTURES from '../../fixtures';
 import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import { VerificationSteps } from '../../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
+import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
+import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -21,13 +21,12 @@ describe('Verifier entity test suite', function () {
     expires: '',
     id: fixture.id,
     issuer: fixture.badge.issuer,
-    receipt: fixture.signature,
     revocationKey: null,
-    transactionId: fixture.signature.anchors[0].sourceId,
-    version: CERTIFICATE_VERSIONS.V2_0,
     explorerAPIs: undefined,
-    verificationSteps: mainnetMapAssertion,
-    hashlinkVerifier: new HashlinkVerifier()
+    hashlinkVerifier: new HashlinkVerifier(),
+    proof: {
+      type: 'MerkleProof2017'
+    }
   };
 
   afterEach(function () {
@@ -40,10 +39,6 @@ describe('Verifier entity test suite', function () {
     });
 
     describe('given all parameters are passed', function () {
-      it('should set the chain to the verifier object', function () {
-        expect(verifierInstance.chain).toEqual(verifierParamFixture.chain);
-      });
-
       it('should set the expires to the verifier object', function () {
         expect(verifierInstance.expires).toBe(verifierParamFixture.expires);
       });
@@ -56,20 +51,8 @@ describe('Verifier entity test suite', function () {
         expect(verifierInstance.issuer).toEqual(verifierParamFixture.issuer);
       });
 
-      it('should set the receipt to the verifier object', function () {
-        expect(verifierInstance.receipt).toBe(verifierParamFixture.receipt);
-      });
-
       it('should set the revocationKey to the verifier object', function () {
         expect(verifierInstance.revocationKey).toBe(verifierParamFixture.revocationKey);
-      });
-
-      it('should set the version to the verifier object', function () {
-        expect(verifierInstance.version).toBe(verifierParamFixture.version);
-      });
-
-      it('should set the transactionId to the verifier object', function () {
-        expect(verifierInstance.transactionId).toBe(verifierParamFixture.transactionId);
       });
 
       describe('explorerAPIs', function () {
@@ -115,7 +98,7 @@ describe('Verifier entity test suite', function () {
       });
 
       it('should set the verificationSteps property', function () {
-        const expectedSteps = deepCopy<IVerificationMapItem[]>(mainnetMapAssertion);
+        const expectedSteps = deepCopy<IVerificationMapItem[]>(verificationStepsV2Mainnet);
         expect(verifierInstance.verificationSteps).toEqual(expectedSteps);
       });
 
@@ -146,7 +129,7 @@ describe('Verifier entity test suite', function () {
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 2' });
 
-        expect(verifierInstance._isFailing()).toBe(false);
+        expect((verifierInstance as any)._isFailing()).toBe(false);
       });
     });
     describe('when one check is failing', function () {
@@ -154,34 +137,21 @@ describe('Verifier entity test suite', function () {
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 1', status: VERIFICATION_STATUSES.SUCCESS, action: 'Test Step 1' });
         (verifierInstance as any)._stepsStatuses.push({ step: 'testStep 2', status: VERIFICATION_STATUSES.FAILURE, action: 'Test Step 2' });
 
-        expect(verifierInstance._isFailing()).toBe(true);
+        expect((verifierInstance as any)._isFailing()).toBe(true);
       });
     });
   });
 
-  describe('groomVerificationProcess method', function () {
-    beforeEach(function () {
-      verifierInstance = new Verifier(verifierParamFixture);
-    });
-
-    describe('given it is provided with the verificationStep object', function () {
-      it('should extract the sub steps', function () {
+  describe('verificationProcess property', function () {
+    describe('when the process is for a mainnet v2 certs with no DID', function () {
+      it('should be set accordingly', function () {
+        verifierInstance = new Verifier(verifierParamFixture);
         const expectedOutput = [
-          SUB_STEPS.getTransactionId,
-          SUB_STEPS.computeLocalHash,
-          SUB_STEPS.fetchRemoteHash,
-          SUB_STEPS.getIssuerProfile,
-          SUB_STEPS.parseIssuerKeys,
           SUB_STEPS.checkImagesIntegrity,
-          SUB_STEPS.compareHashes,
-          SUB_STEPS.checkMerkleRoot,
-          SUB_STEPS.checkReceipt,
           SUB_STEPS.checkRevokedStatus,
-          SUB_STEPS.checkAuthenticity,
           SUB_STEPS.checkExpiresDate
         ];
-        const output = verifierInstance.groomVerificationProcess(mainnetMapAssertion);
-        expect(output).toEqual(expectedOutput);
+        expect(verifierInstance.verificationProcess).toEqual(expectedOutput);
       });
     });
   });

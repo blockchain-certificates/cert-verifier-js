@@ -1,6 +1,6 @@
-import type { IVerificationSubstep } from './verificationSubSteps';
 import i18n from '../data/i18n.json';
 import currentLocale from './currentLocale';
+import type { IVerificationMapItem } from '../models/VerificationMap';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
@@ -8,40 +8,45 @@ export const final = 'final';
 
 export enum VerificationSteps {
   formatValidation = 'formatValidation',
-  hashComparison = 'hashComparison',
+  proofVerification = 'proofVerification',
   identityVerification = 'identityVerification',
   statusCheck = 'statusCheck',
   final = 'final'
 }
 
+export enum SUB_STEPS {
+  checkImagesIntegrity = 'checkImagesIntegrity',
+  checkRevokedStatus = 'checkRevokedStatus',
+  checkExpiresDate = 'checkExpiresDate',
+  controlVerificationMethod = 'controlVerificationMethod'
+}
+
 export type TVerificationStepsList = {
-  [key in VerificationSteps]?: {
-    label: string;
-    labelPending: string;
-    subSteps: IVerificationSubstep[];
-  };
+  [key in VerificationSteps]?: IVerificationMapItem;
 };
 
-export default function getMainVerificationSteps (hasDid: boolean = false): TVerificationStepsList {
+export default function getParentVerificationSteps (): TVerificationStepsList {
   return {
     [VerificationSteps.formatValidation]: {
+      code: VerificationSteps.formatValidation,
       label: defaultLanguageSet.steps.formatValidationLabel,
       labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
       subSteps: []
     },
-    [VerificationSteps.hashComparison]: {
-      label: defaultLanguageSet.steps.hashComparisonLabel,
-      labelPending: defaultLanguageSet.steps.hashComparisonLabelPending,
+    [VerificationSteps.proofVerification]: {
+      code: VerificationSteps.proofVerification,
+      label: defaultLanguageSet.steps.signatureVerificationLabel,
+      labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,
       subSteps: []
     },
-    ...(hasDid) && {
-      [VerificationSteps.identityVerification]: {
-        label: defaultLanguageSet.steps.identityVerificationLabel,
-        labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
-        subSteps: []
-      }
+    [VerificationSteps.identityVerification]: {
+      code: VerificationSteps.identityVerification,
+      label: defaultLanguageSet.steps.identityVerificationLabel,
+      labelPending: defaultLanguageSet.steps.identityVerificationLabelPending,
+      subSteps: []
     },
     [VerificationSteps.statusCheck]: {
+      code: VerificationSteps.statusCheck,
       label: defaultLanguageSet.steps.statusCheckLabel,
       labelPending: defaultLanguageSet.steps.statusCheckLabelPending,
       subSteps: []

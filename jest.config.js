@@ -8,6 +8,6 @@ module.exports = {
     '^.+\\.(js)$': 'babel-jest'
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(@blockcerts/schemas)/)'
+    'node_modules/(?!(@digitalbazaar|@blockcerts|base58-universal|base64url-universal|crypto-ld)/)'
   ]
 };

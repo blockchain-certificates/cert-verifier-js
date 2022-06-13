@@ -5,6 +5,7 @@ import domain from '../../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import didDocument from '../../../fixtures/did/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-profile.json';
+import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
@@ -18,7 +19,7 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
         });
         const requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
-          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA'
+          url: `${universalResolverUrl}/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA`
         }).resolves(JSON.stringify({ didDocument }));
         requestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'

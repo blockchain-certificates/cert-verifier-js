@@ -1,17 +1,9 @@
 import { dateToUnixTimestamp } from '../../../helpers/date';
-import { SUB_STEPS } from '../../../constants';
 import { Key, VerifierError } from '../../../models';
 import { getText } from '../../i18n/useCases';
 import type { NullableNumber } from '../../../models/helpers';
 import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
 
-/**
- * createKeyObject
- *
- * @param rawKeyObject
- * @param finalPublicKey
- * @returns {Key}
- */
 function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   const created: NullableNumber = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
   const revoked: NullableNumber = rawKeyObject.revoked ? dateToUnixTimestamp(rawKeyObject.revoked) : null;
@@ -25,11 +17,6 @@ function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   return new Key(publicKey, created, revoked, expires);
 }
 
-/**
- * parseIssuerKeys
- *
- * @param issuerProfileJson
- */
 export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPublicKeyList {
   try {
     const keyMap: IssuerPublicKeyList = {};
@@ -48,8 +35,9 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     }
     return keyMap;
   } catch (e) {
+    console.error(e);
     throw new VerifierError(
-      SUB_STEPS.parseIssuerKeys,
+      'parseIssuerKeys',
       getText('errors', 'parseIssuerKeys')
     );
   }

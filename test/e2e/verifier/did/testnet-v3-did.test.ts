@@ -5,6 +5,7 @@ import domain from '../../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-profile.json';
+import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
@@ -18,7 +19,7 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
         });
         const requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
-          url: 'https://resolver.identity.foundation/1.0/identifiers/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ'
+          url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
         }).resolves(JSON.stringify({ didDocument }));
         requestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
@@ -27,7 +28,7 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
         const certificate = new Certificate(fixture);
         await certificate.init();
         const result = await certificate.verify();
-        // expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+        expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
         // eslint-disable-next-line no-template-curly-in-string
         expect(result.message).toEqual({ description: 'This is a valid ${chain} certificate.', label: 'Verified', linkText: 'View transaction link' });
         sinon.restore();

@@ -1,12 +1,8 @@
 import parseV1 from './parseV1';
 import parseV2 from './parseV2';
 import parseV3 from './parseV3';
-import type { IBlockchainObject } from '../constants/blockchains';
-import type Versions from '../constants/certificateVersions';
 import type { Issuer } from '../models/Issuer';
-import type { MerkleProof2019 } from '../models/MerkleProof2019';
 import type { Blockcerts } from '../models/Blockcerts';
-import type { Receipt } from '../models/Receipt';
 import type { SignatureImage } from '../models';
 import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
@@ -20,7 +16,6 @@ export const versionParserMap = {
 
 export interface ParsedCertificate {
   certificateImage?: string;
-  chain: IBlockchainObject;
   description?: string;
   display?: BlockcertsV3Display;
   expires?: string;
@@ -31,8 +26,6 @@ export interface ParsedCertificate {
   issuer: Issuer;
   metadataJson?: string;
   name?: string;
-  publicKey?: string;
-  receipt: Receipt;
   recipientFullName?: string;
   recordLink?: string;
   revocationKey?: string;
@@ -40,8 +33,6 @@ export interface ParsedCertificate {
   signature?: string;
   signatureImage?: SignatureImage[];
   subtitle?: string;
-  version: Versions;
-  proof?: MerkleProof2019;
 }
 
 export {
@@ -51,7 +42,7 @@ export {
 export default async function parseJSON (certificateJson: Blockcerts): Promise<ParsedCertificate> {
   try {
     const blockcertsVersion: BlockcertsVersion = retrieveBlockcertsVersion(certificateJson['@context']);
-    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson, blockcertsVersion.version);
+    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (error) {

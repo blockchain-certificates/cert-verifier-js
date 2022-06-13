@@ -1,16 +1,27 @@
 import FIXTURES from '../../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../../src/constants';
 import parseJSON from '../../../../src/parsers/index';
 import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
-import assertionProofValue from '../../../assertions/v3.0-beta-signature-merkle2019.json';
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 
 const fixture = FIXTURES.BlockcertsV3Beta;
 
 describe('Parser test suite', function () {
+  beforeEach(function () {
+    const requestStub = sinon.stub(ExplorerLookup, 'request');
+    requestStub.withArgs({
+      url: 'https://raw.githubusercontent.com/blockchain-certificates/cert-issuer/master/examples/issuer/profile.json'
+    }).resolves(JSON.stringify(assertionIssuerProfile));
+  });
+
+  afterEach(function () {
+    sinon.restore();
+  });
+
   describe('given it is called with a invalid format v3 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
-      delete fixtureCopy.proof;
+      fixtureCopy.issuer = 'not a url';
       const parsedCertificate = await parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });
@@ -25,10 +36,6 @@ describe('Parser test suite', function () {
 
     afterEach(function () {
       parsedCertificate = null;
-    });
-
-    it('should set the chain of the certificate object', function () {
-      expect(parsedCertificate.chain).toEqual(BLOCKCHAINS.testnet);
     });
 
     it('should set the id of the certificate object', function () {
@@ -47,10 +54,6 @@ describe('Parser test suite', function () {
       expect(parsedCertificate.metadataJson).toEqual(fixture.metadata);
     });
 
-    it('should set the receipt of the certificate object', function () {
-      expect(parsedCertificate.receipt).toEqual(assertionProofValue);
-    });
-
     it('should set the recipientFullName of the certificate object', function () {
       // not defined in current sample
       // const fullNameAssertion = fixture.credentialSubject.name;
@@ -59,10 +62,6 @@ describe('Parser test suite', function () {
 
     it('should set recordLink of the certificate object', function () {
       expect(parsedCertificate.recordLink).toBe(fixture.id);
-    });
-
-    it('should set the the version of the certificate object', function () {
-      expect(parsedCertificate.version).toEqual(CERTIFICATE_VERSIONS.V3_0_beta);
     });
 
     describe('when the expirationDate is set', function () {

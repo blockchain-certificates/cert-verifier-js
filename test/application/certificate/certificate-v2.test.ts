@@ -1,18 +1,27 @@
-import { BLOCKCHAINS, Certificate, CERTIFICATE_VERSIONS } from '../../../src';
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
+import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v2 certificate data', function () {
       let certificate;
+      let requestStub;
 
       beforeEach(async function () {
+        requestStub = sinon.stub(ExplorerLookup, 'request');
+        requestStub.withArgs({
+          url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+        }).resolves(JSON.stringify(v2IssuerProfile));
         certificate = new Certificate(fixture);
         await certificate.init();
       });
 
       afterEach(function () {
         certificate = null;
+        sinon.restore();
       });
 
       it('should set the certificateJson of the certificate object', function () {
@@ -21,10 +30,6 @@ describe('Certificate entity test suite', function () {
 
       it('should set certificateImage of the certificate object', function () {
         expect(certificate.certificateImage).toEqual(fixture.badge.image);
-      });
-
-      it('should set chain of the certificate object', function () {
-        expect(certificate.chain).toEqual(BLOCKCHAINS.bitcoin);
       });
 
       it('should set description of the certificate object', function () {
@@ -40,7 +45,7 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set issuer of the certificate object', function () {
-        expect(certificate.issuer).toEqual(fixture.badge.issuer);
+        expect(certificate.issuer).toEqual(v2IssuerProfile);
       });
 
       it('should set metadataJson of the certificate object', function () {
@@ -49,10 +54,6 @@ describe('Certificate entity test suite', function () {
 
       it('should set name to the certificate object', function () {
         expect(certificate.name).toEqual(fixture.badge.name);
-      });
-
-      it('should set receipt of the certificate object', function () {
-        expect(certificate.receipt).toEqual(fixture.signature);
       });
 
       it('should set recipientFullName of the certificate object', function () {
@@ -69,35 +70,11 @@ describe('Certificate entity test suite', function () {
       });
 
       it('should set sealImage of the certificate object', function () {
-        expect(certificate.sealImage).toEqual(fixture.badge.issuer.image);
-      });
-
-      it('should set signature of the certificate object', function () {
-        expect(certificate.signature).toEqual(null);
+        expect(certificate.sealImage).toEqual(v2IssuerProfile.image);
       });
 
       it('should set 1 signatureImage to the certificate object', function () {
         expect(certificate.signatureImage.length).toEqual(1);
-      });
-
-      it('should set transactionId to the certificate object', function () {
-        expect(certificate.transactionId).toEqual(fixture.signature.anchors[0].sourceId);
-      });
-
-      it('should set rawTransactionLink to the certificate object', function () {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const rawTransactionLinkAssertion = `https://blockchain.info/rawtx/${fixture.signature.anchors[0].sourceId}`;
-        expect(certificate.rawTransactionLink).toEqual(rawTransactionLinkAssertion);
-      });
-
-      it('should set transactionLink to the certificate object', function () {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const transactionLinkAssertion = `https://blockchain.info/tx/${fixture.signature.anchors[0].sourceId}`;
-        expect(certificate.transactionLink).toEqual(transactionLinkAssertion);
-      });
-
-      it('should set version to the certificate object', function () {
-        expect(certificate.version).toBe(CERTIFICATE_VERSIONS.V2_0);
       });
     });
   });

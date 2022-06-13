@@ -1,9 +1,9 @@
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import sinon from 'sinon';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';
 import fixtureBlockcertsV3Alpha from '../../../../fixtures/v3/blockcerts-3.0-alpha.json';
 import fixtureBlockcertsV2 from '../../../../fixtures/v2/mainnet-valid-2.0.json';
-import sinon from 'sinon';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   let stubRequest;
@@ -42,7 +42,7 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
       });
     });
 
-    describe('and the Blockcerts version is not 3.0-alpha', function () {
+    describe('and the Blockcerts version is v2', function () {
       it('should request the profile address from the issuer object', async function () {
         await getIssuerProfile(issuerAddressV2Fixture);
         expect(stubRequest.getCall(0).args).toEqual([{ url: issuerAddressV2Fixture.id }]);

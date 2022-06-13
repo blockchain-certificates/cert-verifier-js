@@ -23,7 +23,7 @@ after_success:
   - rm -rf ./node_modules
   - rm package-lock.json
   - cat package.json
-  - npm i
-  - npm install readable-stream
+  - npm i --legacy-peer-deps
+  - npm install readable-stream --legacy-peer-deps
   - cat ./node_modules/readable-stream/package.json
   - npm run semantic-release

@@ -1,6 +1,7 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import { ec } from 'elliptic';
 import { keccak256 } from 'js-sha3';
+import { Buffer as BufferPolyfill } from 'buffer';
 import type { IBlockchainObject } from '../constants/blockchains';
 
 export function computeBitcoinAddressFromPublicKey (publicKey: Buffer, chain: IBlockchainObject): string {
@@ -18,7 +19,8 @@ export function computeEthereumAddressFromPublicKey (publicKey: Buffer, chain: I
   // Convert to uncompressed format
   const publicKeyUncompressed = key.getPublic().encode('hex').slice(2);
 
+  const buffer = typeof Buffer === 'undefined' ? BufferPolyfill : Buffer;
   // Now apply keccak
-  const address: string = keccak256(Buffer.from(publicKeyUncompressed, 'hex')).slice(64 - 40);
+  const address: string = keccak256(buffer.from(publicKeyUncompressed, 'hex')).slice(64 - 40);
   return `0x${address.toString()}`;
 }

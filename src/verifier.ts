@@ -1,24 +1,23 @@
 import debug from 'debug';
-import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
-import domain from './domain';
-import * as inspectors from './inspectors';
-import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
-import { VerifierError } from './models';
-import { getText } from './domain/i18n/useCases';
-import MerkleProof2019 from './suites/MerkleProof2019';
-import MerkleProof2017 from './suites/MerkleProof2017';
-import Ed25519Signature2020 from './suites/Ed25519Signature2020';
-import { difference } from './helpers/array';
-import { getVCProofVerificationMethod } from './models/BlockcertsV3';
+import { VERIFICATION_STATUSES } from './constants/verificationStatuses.js';
+import domain from './domain/index.js';
+import * as inspectors from './inspectors/index.js';
+import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps.js';
+import VerifierError from './models/VerifierError.js';
+import MerkleProof2019 from './suites/MerkleProof2019.js';
+import MerkleProof2017 from './suites/MerkleProof2017.js';
+import Ed25519Signature2020 from './suites/Ed25519Signature2020.js';
+import { difference } from './helpers/array.js';
+import { getVCProofVerificationMethod } from './models/BlockcertsV3.js';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
-import type { Blockcerts } from './models/Blockcerts';
-import type { Issuer } from './models/Issuer';
-import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
-import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
-import type { Suite } from './models/Suite';
-import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
-import type { Signers } from './certificate';
+import type { Blockcerts } from './models/Blockcerts.js';
+import type { Issuer } from './models/Issuer.js';
+import type { BlockcertsV3, VCProof } from './models/BlockcertsV3.js';
+import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap.js';
+import type { Suite } from './models/Suite.js';
+import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep.js';
+import type { Signers } from './certificate.js';
 
 const log = debug('Verifier');
 
@@ -270,7 +269,7 @@ export default class Verifier {
         await this.hashlinkVerifier.verifyHashlinkTable()
           .catch((error) => {
             console.error('hashlink verification error', error);
-            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
+            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, domain.i18n.getText('errors', 'checkImagesIntegrity'));
           });
       }
     );

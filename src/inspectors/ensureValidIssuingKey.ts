@@ -1,7 +1,7 @@
-import { dateToUnixTimestamp } from '../helpers/date';
-import VerifierError from '../models/verifierError';
-import { getText } from '../domain/i18n/useCases';
-import type { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer';
+import { dateToUnixTimestamp } from '../helpers/date.js';
+import VerifierError from '../models/VerifierError.js';
+import domain from '../domain/index.js';
+import type { IssuerPublicKeyList, ParsedKeyObjectV2 } from '../models/Issuer.js';
 
 function getCaseInsensitiveKey (obj: IssuerPublicKeyList, value: string): ParsedKeyObjectV2 {
   let key = null;
@@ -36,7 +36,7 @@ export default function ensureValidIssuingKey (keyMap: IssuerPublicKeyList, txIs
   if (errorMessage) {
     throw new VerifierError(
       'checkAuthenticity',
-      getText('errors', errorMessage)
+      domain.i18n.getText('errors', errorMessage)
     );
   }
 }

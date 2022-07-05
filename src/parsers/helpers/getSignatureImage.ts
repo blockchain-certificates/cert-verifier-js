@@ -1,4 +1,4 @@
-import { SignatureImage } from '../../models';
+import SignatureImage from '../../models/SignatureImage.js';
 
 // v2 concern only
 export default function getSignatureImages (signatureRawObject): SignatureImage[] {

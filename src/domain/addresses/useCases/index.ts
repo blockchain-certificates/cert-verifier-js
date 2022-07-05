@@ -1,4 +1,4 @@
-import isMainnet from './isMainnet';
+import isMainnet from './isMainnet.js';
 
 export {
   isMainnet

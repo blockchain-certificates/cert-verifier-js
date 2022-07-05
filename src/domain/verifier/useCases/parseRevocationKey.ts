@@ -1,10 +1,4 @@
-/**
- * parseRevocationKey
- *
- * @param issuerProfileJson
- * @returns {*}
- */
-import type { Issuer } from '../../../models/Issuer';
+import type { Issuer } from '../../../models/Issuer.js';
 
 export default function parseRevocationKey (issuerProfileJson?: Issuer): string {
   if (!issuerProfileJson || !Object.prototype.hasOwnProperty.call(issuerProfileJson, 'revocationKeys')) {

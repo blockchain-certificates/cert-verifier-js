@@ -1,10 +1,10 @@
-import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api';
-import CERTIFICATE_VERSIONS from './certificateVersions';
-import { BLOCKCHAINS } from './blockchains';
-import { NETWORKS } from './networks';
-import CONFIG from './config';
-import preloadedContexts from './contexts/preloadedContexts';
-import { DEFAULT_OPTIONS } from './options';
+import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api.js';
+import CERTIFICATE_VERSIONS from './certificateVersions.js';
+import { BLOCKCHAINS } from './blockchains.js';
+import { NETWORKS } from './networks.js';
+import CONFIG from './config.js';
+import preloadedContexts from './contexts/preloadedContexts.js';
+import { DEFAULT_OPTIONS } from './options.js';
 
 export {
   TRANSACTION_APIS,

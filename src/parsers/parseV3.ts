@@ -1,7 +1,7 @@
-import domain from '../domain';
-import type { Issuer } from '../models/Issuer';
-import type { BlockcertsV3 } from '../models/BlockcertsV3';
-import type { ParsedCertificate } from './index';
+import domain from '../domain/index.js';
+import type { Issuer } from '../models/Issuer.js';
+import type { BlockcertsV3 } from '../models/BlockcertsV3.js';
+import type { ParsedCertificate } from './index.js';
 
 function getRecipientFullName (certificateJson): string {
   const { credentialSubject } = certificateJson;

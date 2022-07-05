@@ -1,8 +1,8 @@
-import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
-import domain from '../domain';
-import { intersect } from '../helpers/array';
-import type { RevokedAssertion } from '../models/RevokedAssertions';
+import VerifierError from '../models/VerifierError.js';
+import { SUB_STEPS } from '../constants/verificationSteps.js';
+import domain from '../domain/index.js';
+import { intersect } from '../helpers/array.js';
+import type { RevokedAssertion } from '../models/RevokedAssertions.js';
 
 export default function ensureNotRevoked (revokedAddresses?: RevokedAssertion[], keys?: string | string[]): void {
   if (!revokedAddresses || !keys) {

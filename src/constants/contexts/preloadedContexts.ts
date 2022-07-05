@@ -1,5 +1,5 @@
 import { preloadedContexts } from '@blockcerts/schemas';
-import CONTEXTS from './contexts-list';
+import CONTEXTS from './contexts-list.js';
 
 /** V2 **/
 // alpha

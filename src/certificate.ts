@@ -1,20 +1,20 @@
-import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
-import domain from './domain';
-import type { ParsedCertificate } from './parsers';
-import parseJSON from './parsers/index';
-import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
-import Verifier from './verifier';
-import { DEFAULT_OPTIONS } from './constants';
-import currentLocale from './constants/currentLocale';
-import type { Blockcerts } from './models/Blockcerts';
-import type { IBlockchainObject } from './constants/blockchains';
-import { deepCopy } from './helpers/object';
-import type { Issuer } from './models/Issuer';
-import type { SignatureImage } from './models';
-import type { BlockcertsV3Display } from './models/BlockcertsV3';
-import convertHashlink from './parsers/helpers/convertHashlink';
-import type { IVerificationMapItem } from './models/VerificationMap';
+import domain from './domain/index.js';
+import parseJSON from './parsers/index.js';
+import Verifier from './verifier.js';
+import { DEFAULT_OPTIONS } from './constants/options.js';
+import currentLocale from './constants/currentLocale.js';
+import convertHashlink from './parsers/helpers/convertHashlink.js';
+import { deepCopy } from './helpers/object.js';
+import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
+import type { SignatureImage } from './models/index.js';
+import type { ParsedCertificate } from './parsers/index.js';
+import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier.js';
+import type { Blockcerts } from './models/Blockcerts.js';
+import type { IBlockchainObject } from './constants/blockchains.js';
+import type { Issuer } from './models/Issuer.js';
+import type { BlockcertsV3Display } from './models/BlockcertsV3.js';
+import type { IVerificationMapItem } from './models/VerificationMap.js';
 
 export interface ExplorerURLs {
   main: string;

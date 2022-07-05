@@ -1,8 +1,8 @@
-import type { IDidDocument } from '../../models/DidDocument';
+import VerifierError from '../../models/VerifierError.js';
+import domain from '../../domain/index.js';
+import { baseError } from './index.js';
+import type { IDidDocument } from '../../models/DidDocument.js';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import { VerifierError } from '../../models';
-import domain from '../../domain';
-import { baseError } from './index';
 
 export default function retrieveVerificationMethodPublicKey (didDocument: IDidDocument, verificationMethod: string): IDidDocumentPublicKey {
   const verificationMethodId = verificationMethod.split('#')[1];

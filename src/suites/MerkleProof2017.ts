@@ -1,17 +1,17 @@
-import * as inspectors from '../inspectors';
-import domain from '../domain';
-import { removeEntry } from '../helpers/array';
-import { Suite } from '../models/Suite';
-import type { Blockcerts } from '../models/Blockcerts';
+import * as inspectors from '../inspectors/index.js';
+import domain from '../domain/index.js';
+import { removeEntry } from '../helpers/array.js';
+import { Suite } from '../models/Suite.js';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
-import type { IBlockchainObject } from '../constants/blockchains';
-import type { Receipt } from '../models/Receipt';
-import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
-import type { BlockcertsV2 } from '../models/BlockcertsV2';
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { SuiteAPI } from '../models/Suite';
-import type { MerkleProof2017 as TMerkleProof2017 } from '../models/MerkleProof2017';
-import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
+import type { Blockcerts } from '../models/Blockcerts.js';
+import type { IBlockchainObject } from '../constants/blockchains.js';
+import type { Receipt } from '../models/Receipt.js';
+import type { Issuer, IssuerPublicKeyList } from '../models/Issuer.js';
+import type { BlockcertsV2 } from '../models/BlockcertsV2.js';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep.js';
+import type { SuiteAPI } from '../models/Suite.js';
+import type { MerkleProof2017 as TMerkleProof2017 } from '../models/MerkleProof2017.js';
+import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink.js';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',

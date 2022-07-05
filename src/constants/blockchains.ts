@@ -1,4 +1,4 @@
-import { TRANSACTION_ID_PLACEHOLDER } from './api';
+import { TRANSACTION_ID_PLACEHOLDER } from './api.js';
 
 export enum SupportedChains {
   Bitcoin = 'bitcoin',

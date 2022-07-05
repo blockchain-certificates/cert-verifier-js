@@ -1,4 +1,4 @@
-import type { MerklePath } from './MerkleProof2019';
+import type { MerklePath } from './MerkleProof2019.js';
 
 export interface MerkleProof2017 {
   type: string[];

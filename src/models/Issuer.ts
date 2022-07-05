@@ -1,4 +1,4 @@
-import type { IDidDocument } from './DidDocument';
+import type { IDidDocument } from './DidDocument.js';
 
 export interface IssuerPublicKeyList {
   [key: string]: ParsedKeyObjectV2;

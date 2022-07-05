@@ -1,5 +1,5 @@
-import type { MerkleProof2017Anchor } from './MerkleProof2017';
-import type { MerklePath } from './MerkleProof2019';
+import type { MerkleProof2017Anchor } from './MerkleProof2017.js';
+import type { MerklePath } from './MerkleProof2019.js';
 
 export interface Receipt {
   path?: MerklePath[];

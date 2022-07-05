@@ -1,8 +1,9 @@
-import { dateToUnixTimestamp } from '../../../helpers/date';
-import { Key, VerifierError } from '../../../models';
-import { getText } from '../../i18n/useCases';
-import type { NullableNumber } from '../../../models/helpers';
-import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
+import { dateToUnixTimestamp } from '../../../helpers/date.js';
+import domain from '../../../domain/index.js';
+import Key from '../../../models/Key.js';
+import VerifierError from '../../../models/VerifierError.js';
+import type { NullableNumber } from '../../../models/helpers.js';
+import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer.js';
 
 function createKeyObject (rawKeyObject, finalPublicKey = null): Key {
   const created: NullableNumber = rawKeyObject.created ? dateToUnixTimestamp(rawKeyObject.created) : null;
@@ -38,7 +39,7 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     console.error(e);
     throw new VerifierError(
       'parseIssuerKeys',
-      getText('errors', 'parseIssuerKeys')
+      domain.i18n.getText('errors', 'parseIssuerKeys')
     );
   }
 }

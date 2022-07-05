@@ -1,8 +1,8 @@
 import sha256 from 'sha256';
-import VerifierError from '../models/verifierError';
-import { toByteArray } from '../helpers/data';
-import { getText } from '../domain/i18n/useCases';
-import type { Receipt } from '../models/Receipt';
+import VerifierError from '../models/VerifierError.js';
+import { toByteArray } from '../helpers/data.js';
+import domain from '../domain/index.js';
+import type { Receipt } from '../models/Receipt.js';
 
 export default function ensureValidReceipt (receipt: Receipt): void {
   let proofHash = receipt.targetHash;
@@ -33,14 +33,14 @@ export default function ensureValidReceipt (receipt: Receipt): void {
   } catch (e) {
     throw new VerifierError(
       'checkReceipt',
-      getText('errors', 'ensureValidReceipt')
+      domain.i18n.getText('errors', 'ensureValidReceipt')
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       'checkReceipt',
-      getText('errors', 'invalidMerkleReceipt')
+      domain.i18n.getText('errors', 'invalidMerkleReceipt')
     );
   }
 }

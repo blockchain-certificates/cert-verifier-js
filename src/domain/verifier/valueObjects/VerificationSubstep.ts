@@ -1,6 +1,6 @@
-import { getText } from '../../i18n/useCases';
-import { VERIFICATION_STATUSES } from '../../../constants/verificationStatuses';
-import type { VerificationSteps } from '../../../constants/verificationSteps';
+import domain from '../../../domain/index.js';
+import { VERIFICATION_STATUSES } from '../../../constants/verificationStatuses.js';
+import type { VerificationSteps } from '../../../constants/verificationSteps.js';
 
 export default class VerificationSubstep {
   public code: string;
@@ -11,8 +11,8 @@ export default class VerificationSubstep {
 
   constructor (parentStepKey: string | VerificationSteps, subStepKey: string) {
     this.code = subStepKey;
-    this.label = getText('subSteps', `${subStepKey}Label`);
-    this.labelPending = getText('subSteps', `${subStepKey}LabelPending`);
+    this.label = domain.i18n.getText('subSteps', `${subStepKey}Label`);
+    this.labelPending = domain.i18n.getText('subSteps', `${subStepKey}LabelPending`);
     this.parentStep = parentStepKey;
     this.status = VERIFICATION_STATUSES.DEFAULT;
   }

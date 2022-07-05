@@ -1,8 +1,8 @@
-import domain from '../domain';
-import getSignatureImages from './helpers/getSignatureImage';
-import type { BlockcertsV2 } from '../models/BlockcertsV2';
-import type { ParsedCertificate } from './index';
-import type { Issuer } from '../models/Issuer';
+import domain from '../domain/index.js';
+import getSignatureImages from './helpers/getSignatureImage.js';
+import type { BlockcertsV2 } from '../models/BlockcertsV2.js';
+import type { ParsedCertificate } from './index.js';
+import type { Issuer } from '../models/Issuer.js';
 
 export default async function parseV2 (certificateJson: BlockcertsV2): Promise<ParsedCertificate> {
   const { id, expires, badge } = certificateJson;

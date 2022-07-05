@@ -1,4 +1,4 @@
-import { getText } from '../../i18n/useCases';
+import { getText } from '../../i18n/useCases/index.js';
 
 export default function generateRevocationReason (reason: string): string {
   reason = reason.trim();

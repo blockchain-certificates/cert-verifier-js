@@ -1,8 +1,8 @@
-import type { IDidDocument } from '../../models/DidDocument';
-import { VerifierError } from '../../models';
-import { SUB_STEPS } from '../../constants/verificationSteps';
-import domain from '../../domain';
-import { baseError } from './index';
+import VerifierError from '../../models/VerifierError.js';
+import { SUB_STEPS } from '../../constants/verificationSteps.js';
+import domain from '../../domain/index.js';
+import { baseError } from './index.js';
+import type { IDidDocument } from '../../models/DidDocument.js';
 
 function getDocumentId (didDocument: IDidDocument): string {
   return didDocument.id;

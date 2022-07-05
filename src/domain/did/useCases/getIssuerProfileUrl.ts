@@ -1,4 +1,4 @@
-import type { IDidDocument, IServiceEndpoint } from '../../../models/DidDocument';
+import type { IDidDocument, IServiceEndpoint } from '../../../models/DidDocument.js';
 
 export default function getIssuerProfileUrl (didDocument: IDidDocument): string {
   if (!didDocument.service) {

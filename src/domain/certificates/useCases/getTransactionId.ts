@@ -1,7 +1,7 @@
-import { VerifierError } from '../../../models';
-import { getText } from '../../i18n/useCases';
-import type { Receipt } from '../../../models/Receipt';
-import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
+import VerifierError from '../../../models/VerifierError.js';
+import { getText } from '../../i18n/useCases/index.js';
+import type { Receipt } from '../../../models/Receipt.js';
+import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017.js';
 
 export default function getTransactionId (certificateReceipt: Receipt = {}): string {
   try {

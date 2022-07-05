@@ -1,9 +1,9 @@
-import VerifierError from '../models/verifierError';
-import { getText } from '../domain/i18n/useCases';
+import VerifierError from '../models/VerifierError.js';
+import domain from '../domain/index.js';
 
 export default function ensureHashesEqual (actual: string, expected: string): boolean {
   if (actual !== expected) {
-    throw new VerifierError('compareHashes', getText('errors', 'ensureHashesEqual'));
+    throw new VerifierError('compareHashes', domain.i18n.getText('errors', 'ensureHashesEqual'));
   }
 
   return true;

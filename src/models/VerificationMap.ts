@@ -1,6 +1,6 @@
-import type { VerificationSteps } from '../constants/verificationSteps';
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
+import type { VerificationSteps } from '../constants/verificationSteps.js';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep.js';
+import type { VERIFICATION_STATUSES } from '../constants/verificationStatuses.js';
 
 export interface IVerificationMapItemSuite {
   proofType: string;

@@ -1,5 +1,5 @@
-import type { IVerificationMapItem } from '../../../models/VerificationMap';
-import type VerificationSubstep from '../valueObjects/VerificationSubstep';
+import type { IVerificationMapItem } from '../../../models/VerificationMap.js';
+import type VerificationSubstep from '../valueObjects/VerificationSubstep.js';
 
 export default function findVerificationSubstep (
   code: string,

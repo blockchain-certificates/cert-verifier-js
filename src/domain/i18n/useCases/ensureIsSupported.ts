@@ -1,5 +1,5 @@
-import domain from '../../../domain';
-import { DEFAULT_OPTIONS } from '../../../constants';
+import domain from '../../../domain/index.js';
+import { DEFAULT_OPTIONS } from '../../../constants/options.js';
 
 export function setLocaleValidCase (locale: string): string {
   const localeParts = locale.split('-');

@@ -1,17 +1,17 @@
-import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
-import { Suite } from '../models/Suite';
-import type { Blockcerts } from '../models/Blockcerts';
-import type { Issuer } from '../models/Issuer';
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { SuiteAPI } from '../models/Suite';
-import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import { VerifierError } from '../models';
-import { preloadedContexts } from '../constants';
-import { deepCopy } from '../helpers/object';
+import domain from '../domain/index.js';
+import { Suite } from '../models/Suite.js';
+import VerifierError from '../models/VerifierError.js';
+import preloadedContexts from '../constants/contexts/preloadedContexts.js';
+import { deepCopy } from '../helpers/object.js';
+import type { Blockcerts } from '../models/Blockcerts.js';
+import type { Issuer } from '../models/Issuer.js';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep.js';
+import type { SuiteAPI } from '../models/Suite.js';
+import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3.js';
 
 const { purposes: { AssertionProofPurpose } } = jsigs;
 

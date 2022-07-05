@@ -1,11 +1,11 @@
-import VerifierError from '../models/verifierError';
-import { getText } from '../domain/i18n/useCases';
+import VerifierError from '../models/VerifierError.js';
+import domain from '../domain/index.js';
 
 export default function ensureMerkleRootEqual (merkleRoot: string, remoteHash: string): boolean {
   if (merkleRoot !== remoteHash) {
     throw new VerifierError(
       'checkMerkleRoot',
-      getText('errors', 'ensureMerkleRootEqual')
+      domain.i18n.getText('errors', 'ensureMerkleRootEqual')
     );
   }
 

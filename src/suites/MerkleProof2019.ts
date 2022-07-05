@@ -1,18 +1,18 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
-import * as inspectors from '../inspectors';
-import domain from '../domain';
-import { Suite } from '../models/Suite';
-import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
-import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
+import * as inspectors from '../inspectors/index.js';
+import domain from '../domain/index.js';
+import { Suite } from '../models/Suite.js';
+import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile.js';
+import { getVCProofVerificationMethod } from '../models/BlockcertsV3.js';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import type { IBlockchainObject } from '../constants/blockchains';
-import type { Receipt } from '../models/Receipt';
-import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
-import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { SuiteAPI } from '../models/Suite';
-import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
+import type { IBlockchainObject } from '../constants/blockchains.js';
+import type { Receipt } from '../models/Receipt.js';
+import type { Issuer, IssuerPublicKeyList } from '../models/Issuer.js';
+import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3.js';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep.js';
+import type { SuiteAPI } from '../models/Suite.js';
+import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink.js';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',

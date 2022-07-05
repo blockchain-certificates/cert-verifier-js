@@ -1,8 +1,9 @@
-import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
-import domain from '../../index';
-import { removeEntry } from '../../../helpers/array';
-import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
-import type { IVerificationMapItem } from '../../../models/VerificationMap';
+// TODO: fix circular dependency
+import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps.js';
+import domain from '../../index.js';
+import { removeEntry } from '../../../helpers/array.js';
+import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep.js';
+import type { IVerificationMapItem } from '../../../models/VerificationMap.js';
 
 export function getVerificationStepsForCurrentCase (hasDid: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);

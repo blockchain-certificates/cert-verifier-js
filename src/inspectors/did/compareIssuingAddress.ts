@@ -1,6 +1,6 @@
-import { VerifierError } from '../../models';
-import domain from '../../domain';
-import { baseError } from './index';
+import VerifierError from '../../models/VerifierError.js';
+import domain from '../../domain/index.js';
+import { baseError } from './index.js';
 
 export default function compareIssuingAddress (issuingAddress: string, derivedIssuingAddress: string): void {
   if (issuingAddress !== derivedIssuingAddress) {

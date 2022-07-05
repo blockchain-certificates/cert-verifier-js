@@ -1,12 +1,12 @@
 import jsonld from 'jsonld';
-import VerifierError from '../models/verifierError';
 import sha256 from 'sha256';
-import { preloadedContexts } from '../constants';
-import { toUTF8Data } from '../helpers/data';
-import { getText } from '../domain/i18n/useCases';
-import type { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts';
-import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts';
-import { isObject } from '../helpers/object';
+import VerifierError from '../models/VerifierError.js';
+import preloadedContexts from '../constants/contexts/preloadedContexts.js';
+import { toUTF8Data } from '../helpers/data.js';
+import domain from '../domain/index.js';
+import retrieveUnsignedBlockcerts from '../parsers/helpers/retrieveUnsignedBlockcerts.js';
+import { isObject } from '../helpers/object.js';
+import type { Blockcerts, UnsignedBlockcerts } from '../models/Blockcerts.js';
 
 export function getUnmappedFields (normalized: string): string[] | null {
   const normalizedArray = normalized.split('\n');
@@ -52,14 +52,14 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
     normalizedDocument = await jsonld.normalize(theDocument, normalizeArgs);
   } catch (e) {
     console.error(e);
-    throw new VerifierError('computeLocalHash', getText('errors', 'failedJsonLdNormalization'));
+    throw new VerifierError('computeLocalHash', domain.i18n.getText('errors', 'failedJsonLdNormalization'));
   }
 
   const unmappedFields: string[] = getUnmappedFields(normalizedDocument);
   if (unmappedFields) {
     throw new VerifierError(
       'computeLocalHash',
-      `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
+      `${domain.i18n.getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
     );
   } else {
     return sha256(toUTF8Data(normalizedDocument));

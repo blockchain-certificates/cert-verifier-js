@@ -1,12 +1,12 @@
-import parseV1 from './parseV1';
-import parseV2 from './parseV2';
-import parseV3 from './parseV3';
-import type { Issuer } from '../models/Issuer';
-import type { Blockcerts } from '../models/Blockcerts';
-import type { SignatureImage } from '../models';
-import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
-import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
-import type { BlockcertsV3Display } from '../models/BlockcertsV3';
+import parseV1 from './parseV1.js';
+import parseV2 from './parseV2.js';
+import parseV3 from './parseV3.js';
+import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion.js';
+import type { Issuer } from '../models/Issuer.js';
+import type { Blockcerts } from '../models/Blockcerts.js';
+import type SignatureImage from '../models/SignatureImage.js';
+import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion.js';
+import type { BlockcertsV3Display } from '../models/BlockcertsV3.js';
 
 export const versionParserMap = {
   1: parseV1,

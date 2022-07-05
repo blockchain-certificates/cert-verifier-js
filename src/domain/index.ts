@@ -1,9 +1,9 @@
-import addresses from './addresses';
-import certificates from './certificates';
-import chains from './chains';
-import did from './did';
-import i18n from './i18n';
-import verifier from './verifier';
+import addresses from './addresses/index.js';
+import certificates from './certificates/index.js';
+import chains from './chains/index.js';
+import did from './did/index.js';
+import i18n from './i18n/index.js';
+import verifier from './verifier/index.js';
 
 export default {
   addresses,

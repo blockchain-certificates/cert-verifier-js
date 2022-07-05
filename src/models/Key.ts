@@ -1,5 +1,5 @@
-import type { NullableNumber, NullableString } from './helpers';
-import type { ParsedKeyObjectV2 } from './Issuer';
+import type { NullableNumber, NullableString } from './helpers.js';
+import type { ParsedKeyObjectV2 } from './Issuer.js';
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Key implements ParsedKeyObjectV2 {

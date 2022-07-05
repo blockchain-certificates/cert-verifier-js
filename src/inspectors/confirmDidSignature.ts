@@ -1,10 +1,10 @@
-import type { MerkleProof2019 } from '../models/MerkleProof2019';
-import type { IDidDocument } from '../models/DidDocument';
-import type { IBlockchainObject } from '../constants/blockchains';
-import controlVerificationMethod from './did/controlVerificationMethod';
-import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey';
-import deriveIssuingAddressFromPublicKey from './did/deriveIssuingAddressFromPublicKey';
-import compareIssuingAddress from './did/compareIssuingAddress';
+import controlVerificationMethod from './did/controlVerificationMethod.js';
+import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey.js';
+import deriveIssuingAddressFromPublicKey from './did/deriveIssuingAddressFromPublicKey.js';
+import compareIssuingAddress from './did/compareIssuingAddress.js';
+import type { MerkleProof2019 } from '../models/MerkleProof2019.js';
+import type { IDidDocument } from '../models/DidDocument.js';
+import type { IBlockchainObject } from '../constants/blockchains.js';
 
 export interface IConfirmDidSignatureApi {
   didDocument: IDidDocument;

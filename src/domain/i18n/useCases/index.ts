@@ -1,7 +1,7 @@
-import detectLocale from './detectLocale';
-import ensureIsSupported from './ensureIsSupported';
-import getText from './getText';
-import getSupportedLanguages from './getSupportedLanguages';
+import detectLocale from './detectLocale.js';
+import ensureIsSupported from './ensureIsSupported.js';
+import getText from './getText.js';
+import getSupportedLanguages from './getSupportedLanguages.js';
 
 export {
   detectLocale,

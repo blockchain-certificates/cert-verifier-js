@@ -1,9 +1,8 @@
 import { request } from '@blockcerts/explorer-lookup';
-import { VerifierError } from '../../../models';
-import { getText } from '../../i18n/useCases';
-import type { Issuer } from '../../../models/Issuer';
-import domain from '../../../domain';
-import type { IDidDocument } from '../../../models/DidDocument';
+import domain from '../../../domain/index.js';
+import VerifierError from '../../../models/VerifierError.js';
+import type { Issuer } from '../../../models/Issuer.js';
+import type { IDidDocument } from '../../../models/DidDocument.js';
 
 // TODO: move these functions to url helper
 function isValidUrl (url: string): boolean {
@@ -67,9 +66,9 @@ function createIssuerProfileFromDidKey (didDocument: IDidDocument): Issuer {
 }
 
 export default async function getIssuerProfile (issuerAddress: Issuer | string): Promise<Issuer> {
-  const errorMessage = getText('errors', 'getIssuerProfile');
+  const errorMessage = domain.i18n.getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${domain.i18n.getText('errors', 'issuerProfileNotSet')}`);
   }
 
   if (typeof issuerAddress === 'object') {
@@ -99,7 +98,7 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
       throw new VerifierError('getIssuerProfile', `${errorMessage} - ${e as string}`);
     }
   } else if (!isValidUrl(issuerAddress)) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${domain.i18n.getText('errors', 'issuerProfileNotSet')}`);
   }
 
   issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch(() => {
@@ -107,7 +106,7 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
   }));
 
   if (!isValidProfile(issuerProfile) && !isValidV1Profile(issuerProfile)) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${domain.i18n.getText('errors', 'issuerProfileInvalid')}`);
   }
 
   return issuerProfile;

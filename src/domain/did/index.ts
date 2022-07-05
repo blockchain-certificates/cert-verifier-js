@@ -1,5 +1,5 @@
-import * as did from './useCases';
-import didResolver from './valueObjects/didResolver';
+import * as did from './useCases/index.js';
+import didResolver from './valueObjects/didResolver.js';
 
 export default {
   ...did,

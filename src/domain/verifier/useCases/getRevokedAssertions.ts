@@ -1,9 +1,9 @@
 import { request } from '@blockcerts/explorer-lookup';
-import { VerifierError } from '../../../models';
-import { SUB_STEPS } from '../../../constants/verificationSteps';
-import { getText } from '../../i18n/useCases';
-import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
-import { safelyAppendUrlParameter } from '../../../helpers/url';
+import domain from '../../../domain/index.js';
+import VerifierError from '../../../models/VerifierError.js';
+import { SUB_STEPS } from '../../../constants/verificationSteps.js';
+import { safelyAppendUrlParameter } from '../../../helpers/url.js';
+import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions.js';
 
 const ASSERTION_ID_NAME: string = 'assertionId';
 
@@ -12,7 +12,7 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
     return [];
   }
 
-  const errorMessage: string = getText('errors', 'getRevokedAssertions');
+  const errorMessage: string = domain.i18n.getText('errors', 'getRevokedAssertions');
 
   if (assertionId) {
     revocationListUrl = safelyAppendUrlParameter(revocationListUrl, ASSERTION_ID_NAME, encodeURIComponent(assertionId));

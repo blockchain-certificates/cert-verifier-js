@@ -1,5 +1,5 @@
-import type { Issuer } from './Issuer';
-import type { JsonLDContext } from './Blockcerts';
+import type { Issuer } from './Issuer.js';
+import type { JsonLDContext } from './Blockcerts.js';
 
 export interface VCProof {
   type: string;

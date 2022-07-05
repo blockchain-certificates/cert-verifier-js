@@ -1,5 +1,5 @@
-import { TRANSACTION_ID_PLACEHOLDER } from '../../../constants';
-import type { IBlockchainObject } from '../../../constants/blockchains';
+import { TRANSACTION_ID_PLACEHOLDER } from '../../../constants/index.js';
+import type { IBlockchainObject } from '../../../constants/blockchains.js';
 
 /**
  * getRawTransactionLink

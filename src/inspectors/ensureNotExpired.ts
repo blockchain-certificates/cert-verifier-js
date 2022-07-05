@@ -1,7 +1,7 @@
-import { dateToUnixTimestamp } from '../helpers/date';
-import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
-import { getText } from '../domain/i18n/useCases';
+import VerifierError from '../models/VerifierError.js';
+import { dateToUnixTimestamp } from '../helpers/date.js';
+import { SUB_STEPS } from '../constants/verificationSteps.js';
+import domain from '../domain/index.js';
 
 export default function ensureNotExpired (expires = null): void {
   if (!expires) {
@@ -12,7 +12,7 @@ export default function ensureNotExpired (expires = null): void {
   if (today.getTime() >= expiryDate) {
     throw new VerifierError(
       SUB_STEPS.checkExpiresDate,
-      getText('errors', 'ensureNotExpired')
+      domain.i18n.getText('errors', 'ensureNotExpired')
     );
   }
 }

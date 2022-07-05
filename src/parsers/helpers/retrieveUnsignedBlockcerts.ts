@@ -1,6 +1,6 @@
-import type { Blockcerts, UnsignedBlockcerts } from '../../models/Blockcerts';
-import type { BlockcertsV3 } from '../../models/BlockcertsV3';
-import { deepCopy } from '../../helpers/object';
+import type { Blockcerts, UnsignedBlockcerts } from '../../models/Blockcerts.js';
+import type { BlockcertsV3 } from '../../models/BlockcertsV3.js';
+import { deepCopy } from '../../helpers/object.js';
 
 function deleteMerkleProof2019From (certificate: BlockcertsV3): Blockcerts {
   const copy = deepCopy<BlockcertsV3>(certificate);

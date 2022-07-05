@@ -1,6 +1,6 @@
-import Key from './Key';
-import SignatureImage from './signatureImage';
-import VerifierError from './verifierError';
+import Key from './Key.js';
+import SignatureImage from './SignatureImage.js';
+import VerifierError from './VerifierError.js';
 
 export {
   Key,

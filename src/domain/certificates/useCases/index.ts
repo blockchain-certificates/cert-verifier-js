@@ -1,8 +1,8 @@
-import getChain from './getChain';
-import generateRevocationReason from './generateRevocationReason';
-import getTransactionId from './getTransactionId';
-import getTransactionLink from './getTransactionLink';
-import getVerificationMap from './getVerificationMap';
+import getChain from './getChain.js';
+import generateRevocationReason from './generateRevocationReason.js';
+import getTransactionId from './getTransactionId.js';
+import getTransactionLink from './getTransactionLink.js';
+import getVerificationMap from './getVerificationMap.js';
 
 export {
   getChain,

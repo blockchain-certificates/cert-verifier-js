@@ -1,6 +1,6 @@
 import i18n from '../data/i18n.json';
-import currentLocale from './currentLocale';
-import type { IVerificationMapItem } from '../models/VerificationMap';
+import currentLocale from './currentLocale.js';
+import type { IVerificationMapItem } from '../models/VerificationMap.js';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 

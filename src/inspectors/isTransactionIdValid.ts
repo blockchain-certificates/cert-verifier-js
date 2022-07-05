@@ -1,5 +1,5 @@
-import VerifierError from '../models/verifierError';
-import { getText } from '../domain/i18n/useCases';
+import VerifierError from '../models/VerifierError.js';
+import domain from '../domain/index.js';
 
 /**
  * isTransactionIdValid
@@ -13,7 +13,7 @@ export default function isTransactionIdValid (transactionId: string): string {
   } else {
     throw new VerifierError(
       'getTransactionId',
-      getText('errors', 'isTransactionIdValid')
+      domain.i18n.getText('errors', 'isTransactionIdValid')
     );
   }
 }

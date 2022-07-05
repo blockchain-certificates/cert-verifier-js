@@ -1,11 +1,11 @@
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { IBlockchainObject } from '../constants/blockchains';
-import type { Receipt } from './Receipt';
-import type { Blockcerts } from './Blockcerts';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
-import type { Issuer } from './Issuer';
-import type { VCProof } from './BlockcertsV3';
-import type { MerkleProof2017 } from './MerkleProof2017';
+import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep.js';
+import type { IBlockchainObject } from '../constants/blockchains.js';
+import type { Receipt } from './Receipt.js';
+import type { Blockcerts } from './Blockcerts.js';
+import type { Issuer } from './Issuer.js';
+import type { VCProof } from './BlockcertsV3.js';
+import type { MerkleProof2017 } from './MerkleProof2017.js';
 
 export interface SuiteAPI {
   actionMethod: (step: string, action) => Promise<any>;

@@ -1,4 +1,4 @@
-import isMockChain from './isMockChain';
+import isMockChain from './isMockChain.js';
 
 export {
   isMockChain

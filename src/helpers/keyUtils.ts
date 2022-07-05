@@ -72,10 +72,10 @@ export const getKid = (
   delete copy.alg;
   const digest = crypto
     .createHash('sha256')
-    .update(canonicalize(copy))
+    .update((canonicalize as any)(copy))
     .digest();
 
-  return base64url.encode(buffer.from(digest));
+  return (base64url as any).encode(buffer.from(digest));
 };
 
 /** convert compressed hex encoded private key to jwk */

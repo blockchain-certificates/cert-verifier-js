@@ -52,6 +52,20 @@ describe('deriveIssuingAddressFromPublicKey test suite', function () {
     });
   });
 
+  describe('given the argument chain was Ethgoerli', function () {
+    it('should return the address of Ethereum', function () {
+      const address = deriveIssuingAddressFromPublicKey(publicKey, BLOCKCHAINS.ethgoerli);
+      expect(address).toBe('0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60');
+    });
+  });
+
+  describe('given the argument chain was Ethsepolia', function () {
+    it('should return the address of Ethereum', function () {
+      const address = deriveIssuingAddressFromPublicKey(publicKey, BLOCKCHAINS.ethsepolia);
+      expect(address).toBe('0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60');
+    });
+  });
+
   describe('given the argument chain was Regtest (Unsupported)', function () {
     it('should throw', function () {
       expect(() => {

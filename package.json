@@ -101,7 +101,6 @@
     "body-parser": "^1.19.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
-    "concurrently": "^7.2.2",
     "dts-bundle-generator": "^6.0.0",
     "eslint": "^7.21.0",
     "eslint-config-semistandard": "^16.0.0",

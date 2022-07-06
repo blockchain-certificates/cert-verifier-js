@@ -41,7 +41,7 @@ await certificate.init();
 
 ### Running in Nodejs
 ```javascript
-const { Certificate } = require('@blockcerts/cert-verifier-js/lib');
+const { Certificate } = require('@blockcerts/cert-verifier-js/dist/verifier-node.js');
 var certificate = new Certificate(certificateDefinition);
 await certificate.init();
 ```

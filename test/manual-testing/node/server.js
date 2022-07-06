@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const certVerifierJs = require('../../../lib');
+const certVerifierJs = require('../../../dist/verifier-node');
 
 const server = express();
 server.use(bodyParser.json({ limit: '5mb' }));

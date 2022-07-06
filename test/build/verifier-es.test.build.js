@@ -1,14 +1,14 @@
 import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
-const verifier = require('../../dist/verifier-es');
+import { Certificate } from '../../dist/verifier-es';
 
 // @ts-expect-error we just mock the thing
 global.XMLHttpRequest = FakeXmlHttpRequest;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.TestnetV1Valid);
+    const certificate = new Certificate(FIXTURES.TestnetV1Valid);
     expect(async () => {
       await certificate.init();
     }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
@@ -18,7 +18,7 @@ describe('verifier build test suite', function () {
   });
 
   it('works as expected with a v2 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.MainnetV2Valid);
+    const certificate = new Certificate(FIXTURES.MainnetV2Valid);
     await certificate.init();
     const result = await certificate.verify();
     if (result.status === VERIFICATION_STATUSES.FAILURE) {
@@ -34,7 +34,7 @@ describe('verifier build test suite', function () {
   });
 
   it('works as expected with a v3 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3);
+    const certificate = new Certificate(FIXTURES.BlockcertsV3);
     await certificate.init();
     const result = await certificate.verify();
     if (result.status === VERIFICATION_STATUSES.FAILURE) {

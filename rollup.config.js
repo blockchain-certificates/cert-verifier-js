@@ -23,6 +23,7 @@ export default {
   plugins: [
     resolve({
       browser: true,
+      mainFields: ['module', 'import', 'main'],
       preferBuiltins: true,
       extensions: ['.js', '.json']
     }),

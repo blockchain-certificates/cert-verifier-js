@@ -1,45 +1,29 @@
 import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
-import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
-const verifier = require('../../lib');
-
-// @ts-expect-error we just mock the thing
-global.XMLHttpRequest = FakeXmlHttpRequest;
 
 describe('verifier build test suite', function () {
-  it('throws a deprecation error with a v1 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.TestnetV1Valid);
-    expect(async () => {
-      await certificate.init();
-    }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
-      'See the python cert-verifier for v1.1 verification ' +
-      'or the npm package cert-verifier-js-v1-legacy for v1.2 ' +
-      '(https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy)');
-  });
-
   it('works as expected with a v2 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.MainnetV2Valid);
-    await certificate.init();
-    const result = await certificate.verify();
-    expect(result.message).toEqual({
-      label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
-      description: 'This is a valid ${chain} certificate.',
-      linkText: 'View transaction link'
-    });
-    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    const verificationStatus = await fetch('http://localhost:4000/verification', {
+      body: JSON.stringify({
+        blockcerts: FIXTURES.MainnetV2Valid,
+        version: 'v2'
+      }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).then((res) => res.json());
+    expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
 
   it('works as expected with a v3 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3);
-    await certificate.init();
-    const result = await certificate.verify();
-    expect(result.message).toEqual({
-      label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
-      description: 'This is a valid ${chain} certificate.',
-      linkText: 'View transaction link'
-    });
-    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    const verificationStatus = await fetch('http://localhost:4000/verification', {
+      body: JSON.stringify({
+        blockcerts: FIXTURES.BlockcertsV3NoDid,
+        version: 'v3'
+      }),
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    }).then((res) => res.json());
+    expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    expect(verificationStatus.message).toBe('Computed hash does not match remote hash');
   });
 });

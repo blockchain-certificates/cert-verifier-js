@@ -115,7 +115,7 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   private generateDocumentLoader (): any {
-    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer] = this.issuer.didDocument;
+    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.issuer.didDocument;
     const customLoader = function (url): any {
       if (url in preloadedContexts) {
         return {

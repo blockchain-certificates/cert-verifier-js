@@ -191,7 +191,10 @@ export default class Verifier {
   }
 
   private prepareVerificationProcess (): void {
-    const verificationModel = domain.certificates.getVerificationMap(!!this.issuer.didDocument);
+    const verificationModel = domain.certificates.getVerificationMap(
+      !!this.issuer.didDocument,
+      this.hashlinkVerifier.hasHashlinksToVerify()
+    );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
 

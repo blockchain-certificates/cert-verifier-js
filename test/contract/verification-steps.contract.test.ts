@@ -2,6 +2,7 @@ import { Certificate } from '../../src';
 import FIXTURES from '../fixtures';
 import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
 import verificationsStepsNoDID from '../assertions/verification-steps-v3-no-did';
+import verificationsStepsHashlink from '../assertions/verification-steps-v3-hashlink';
 import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest';
 import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet';
 import sinon from 'sinon';
@@ -61,6 +62,15 @@ describe('Certificate API Contract test suite', function () {
       const instance = new Certificate(FIXTURES.BlockcertsV3NoDid);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsNoDID);
+    });
+
+    it('is available for a V3 certificate with hashlinks to verify', async function () {
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      }).resolves(JSON.stringify(fixtureIssuerProfile));
+      const instance = new Certificate(FIXTURES.BlockcertsV3Hashlink);
+      await instance.init();
+      expect(instance.verificationSteps).toEqual(verificationsStepsHashlink);
     });
   });
 });

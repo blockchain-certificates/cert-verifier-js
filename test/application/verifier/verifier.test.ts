@@ -104,7 +104,7 @@ describe('Verifier entity test suite', function () {
 
       describe('when the issuer profile URN is a DID', function () {
         it('should add the issuer identity verification to the verification steps', async function () {
-          const fixture = JSON.parse(JSON.stringify(verifierParamFixture));
+          const fixture = deepCopy<any>(verifierParamFixture);
           fixture.certificateJson = FIXTURES.BlockcertsV3;
           fixture.issuer = {
             ...issuerProfileAssertion,
@@ -113,7 +113,7 @@ describe('Verifier entity test suite', function () {
           const verifierInstance = new Verifier(fixture);
           const expectedStepIndex = verifierInstance.verificationSteps
             .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
-          expect(expectedStepIndex).toBe(2);
+          expect(expectedStepIndex).toBe(1);
         });
       });
     });
@@ -143,11 +143,10 @@ describe('Verifier entity test suite', function () {
   });
 
   describe('verificationProcess property', function () {
-    describe('when the process is for a mainnet v2 certs with no DID', function () {
+    describe('when the process is for a mainnet v2 certs with no DID and no hashlinks', function () {
       it('should be set accordingly', function () {
         verifierInstance = new Verifier(verifierParamFixture);
         const expectedOutput = [
-          SUB_STEPS.checkImagesIntegrity,
           SUB_STEPS.checkRevokedStatus,
           SUB_STEPS.checkExpiresDate
         ];

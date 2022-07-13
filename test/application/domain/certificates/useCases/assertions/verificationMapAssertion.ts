@@ -1,24 +1,17 @@
 import { VerificationSteps, SUB_STEPS } from '../../../../../../src/constants/verificationSteps';
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
+import type { IVerificationMapItem } from '../../../../../../src/models/VerificationMap';
 import { VERIFICATION_STATUSES } from '../../../../../../src';
 
 const defaultLanguageSet = i18n[currentLocale.locale];
 
-export default [
+const mainnetStepMapAssertion: IVerificationMapItem[] = [
   {
     code: VerificationSteps.formatValidation,
     label: defaultLanguageSet.steps.formatValidationLabel,
     labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
-    subSteps: [
-      {
-        code: SUB_STEPS.checkImagesIntegrity,
-        label: defaultLanguageSet.subSteps.checkImagesIntegrityLabel,
-        labelPending: defaultLanguageSet.subSteps.checkImagesIntegrityLabelPending,
-        parentStep: VerificationSteps.formatValidation,
-        status: VERIFICATION_STATUSES.DEFAULT
-      }
-    ]
+    subSteps: []
   },
   {
     code: VerificationSteps.proofVerification,
@@ -54,3 +47,5 @@ export default [
     ]
   }
 ];
+
+export default mainnetStepMapAssertion;

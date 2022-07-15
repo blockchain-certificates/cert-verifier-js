@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import fixture from '../fixtures/v3/proof-chain-example.json';
+import fixture from '../fixtures/v3/proof-chain-example-ed25519.json';
 import { BLOCKCHAINS, Certificate } from '../../src';
 import domain from '../../src/domain';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';

@@ -1,8 +1,7 @@
 import type { IDidDocument } from '../../../models/DidDocument';
-import { DidKeyDriver } from '@digitalbazaar/did-method-key';
+import * as didKey from '@transmute/did-key.js';
 
 export default async function resolveDidKeyDocument (didKeyUri: string): Promise<IDidDocument> {
-  const didKeyDriver = new DidKeyDriver();
-  const didDocument = await didKeyDriver.get({ did: didKeyUri });
+  const { didDocument } = await didKey.resolve(didKeyUri, { accept: 'application/did+json' });
   return didDocument;
 }

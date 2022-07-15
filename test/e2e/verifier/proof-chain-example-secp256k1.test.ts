@@ -1,10 +1,9 @@
 import { Certificate } from '../../../src';
-import fixture from '../../fixtures/v3/proof-chain-example.json';
+import fixture from '../../fixtures/v3/proof-chain-example-secp256k1.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
-import didKeyDocument from '../../fixtures/did/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 import domain from '../../../src/domain';
@@ -14,9 +13,6 @@ describe('proof chain example', function () {
 
   beforeEach(async function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: `${universalResolverUrl}/${fixture.issuer}`
-    }).resolves(JSON.stringify({ didDocument: didKeyDocument }));
     requestStub.withArgs({
       url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
     }).resolves(JSON.stringify({ didDocument }));

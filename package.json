@@ -11,6 +11,7 @@
   "node": "dist/verifier-node.js",
   "typings": "dist/index.d.ts",
   "scripts": {
+    "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
     "test": "jest --setupFilesAfterEnv=./test/setup.js",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",

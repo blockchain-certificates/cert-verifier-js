@@ -33,10 +33,13 @@ describe('proof chain example', function () {
     sinon.restore();
   });
 
+  it('creates the valid verification process', function () {
+    expect(instance.verificationSteps).toEqual(multipleProofsVerificationSteps);
+  });
+
   it('verifies as expected', async function () {
     const result = await instance.verify();
     expect(result.message).toEqual({
-      // eslint-disable-next-line no-template-curly-in-string
       description: 'All the signatures of this certificate have successfully verified.',
       label: 'Verified'
     });

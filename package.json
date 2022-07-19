@@ -11,7 +11,7 @@
   "node": "dist/verifier-node.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld",
+    "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld && rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
     "test": "jest --setupFilesAfterEnv=./test/setup.js",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
@@ -68,6 +68,7 @@
     "@transmute/did-key.js": "^0.3.0-unstable.8",
     "@trust/keyto": "^1.0.1",
     "@vaultie/lds-merkle-proof-2019": "0.0.8",
+    "base58-universal": "github:lemoustachiste/base58-universal#fix/hoisting-error-alphabet",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^5.2.0",
     "bs58": "^4.0.1",

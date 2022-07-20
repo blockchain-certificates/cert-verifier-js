@@ -163,7 +163,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
 
-        if (key.revoked) {
+        // TODO: revoked property should exist but we are currently using a forked implementation which does not expose it
+        if ((key as any).revoked) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
         }
 
@@ -178,7 +179,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
       SUB_STEPS.checkDocumentSignature,
       async (): Promise<void> => {
         const suite = new Secp256k1VerificationSuite({ key: this.verificationKey });
-        suite.date = new Date(Date.now()).toISOString();
+        // TODO: date property should exist but we are currently using a forked implementation which does not expose it
+        (suite as any).date = new Date(Date.now()).toISOString();
 
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,

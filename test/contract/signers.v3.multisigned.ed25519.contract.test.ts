@@ -10,7 +10,7 @@ import v3RevocationList from '../assertions/v3-revocation-list';
 
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
-    describe('given there is only one signature to the V3 document', function () {
+    describe('given there are multiple signatures to the V3 document', function () {
       let instance;
 
       beforeAll(async function () {

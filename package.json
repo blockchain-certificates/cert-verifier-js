@@ -66,6 +66,7 @@
     "@digitalbazaar/ed25519-signature-2020": "github:lemoustachiste/ed25519-signature-2020#convert-to-module",
     "@digitalbazaar/ed25519-verification-key-2020": "github:lemoustachiste/ed25519-verification-key-2020#convert-to-module",
     "@transmute/did-key.js": "^0.3.0-unstable.8",
+    "@transmute/ed25519-key-pair": "^0.7.0-unstable.63",
     "@trust/keyto": "^1.0.1",
     "@vaultie/lds-merkle-proof-2019": "0.0.8",
     "base58-universal": "github:lemoustachiste/base58-universal#fix/hoisting-error-alphabet",

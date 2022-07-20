@@ -3,15 +3,16 @@ import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
+import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
 import { Suite } from '../models/Suite';
+import { VerifierError } from '../models';
+import { preloadedContexts } from '../constants';
+import { deepCopy } from '../helpers/object';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import { VerifierError } from '../models';
-import { preloadedContexts } from '../constants';
-import { deepCopy } from '../helpers/object';
 
 const { purposes: { AssertionProofPurpose } } = jsigs;
 
@@ -31,6 +32,7 @@ export default class Ed25519Signature2020 extends Suite {
   public proof: VCProof;
   public type = 'Ed25519Signature2020';
   public verificationKey: Ed25519VerificationKey2020;
+  public publicKey: string;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -69,13 +71,7 @@ export default class Ed25519Signature2020 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    const { verificationMethod } = this.proof;
-    const didDocument = this.issuer.didDocument;
-
-    // TODO: handle case when not dealing with a didDocument
-    const publicKey = didDocument.verificationMethod.find(vm => vm.id === verificationMethod);
-    // TODO: this might not always be this property
-    return publicKey.publicKeyMultibase;
+    return this.publicKey;
   }
 
   getIssuerName (): string {
@@ -101,6 +97,11 @@ export default class Ed25519Signature2020 extends Suite {
 
   async _doAction (step: string, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
+  }
+
+  private async publicKeyJwkToString (publicKeyJwk: any): Promise<string> {
+    const publicKeyString = await Ed25519KeyPair.fingerprintFromPublicKey(publicKeyJwk);
+    return publicKeyString;
   }
 
   private validateProofType (): void {
@@ -150,6 +151,13 @@ export default class Ed25519Signature2020 extends Suite {
         if (!verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
             'The verification method of the document does not match the provided issuer.');
+        }
+
+        try {
+          this.publicKey = verificationMethod.publicKeyMultibase ||
+            await this.publicKeyJwkToString(verificationMethod);
+        } catch (e) {
+          console.error('ERROR retrieving Ed25519Signature2020 public key', e);
         }
 
         const key = await Ed25519VerificationKey2020.from({

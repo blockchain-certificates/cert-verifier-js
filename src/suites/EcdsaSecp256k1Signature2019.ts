@@ -33,6 +33,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   public proof: VCProof;
   public type = 'EcdsaSecp256k1Signature2019';
   public verificationKey: EcdsaSecp256k1VerificationKey2019;
+  public publicKey: string;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -71,13 +72,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    const { verificationMethod } = this.proof;
-    const didDocument = this.issuer.didDocument;
-
-    // TODO: handle case when not dealing with a didDocument
-    const publicKey = didDocument.verificationMethod.find(vm => vm.id === verificationMethod);
-    // TODO: this might not always be this property
-    return publicKey.publicKeyBase58;
+    return this.publicKey;
   }
 
   getIssuerName (): string {
@@ -158,6 +153,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
           const hexKey = publicKeyHexFromJwk(verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
           verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
         }
+        this.publicKey = verificationMethod.publicKeyBase58;
 
         const key = await EcdsaSecp256k1VerificationKey2019.from({
           ...verificationMethod

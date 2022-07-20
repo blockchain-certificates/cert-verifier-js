@@ -118,7 +118,6 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
 
   private generateDocumentLoader (): any {
     preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.issuer.didDocument;
-    console.log('Issuer did', JSON.stringify(this.issuer.didDocument, null, 2));
     const customLoader = function (url): any {
       if (url in preloadedContexts) {
         return {
@@ -164,8 +163,6 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
           ...verificationMethod
         });
 
-        console.log('secp verification key', key);
-
         if (!key) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
@@ -186,9 +183,6 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
       async (): Promise<void> => {
         const suite = new Secp256k1VerificationSuite({ key: this.verificationKey });
         suite.date = new Date(Date.now()).toISOString();
-
-        console.log(JSON.stringify(this.retrieveInitialDocument(), null, 2));
-        console.log(suite);
 
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,

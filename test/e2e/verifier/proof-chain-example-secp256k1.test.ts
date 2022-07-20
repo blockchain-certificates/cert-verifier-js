@@ -4,7 +4,7 @@ import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import domain from '../../../src/domain';
 
 describe('proof chain example', function () {
@@ -19,10 +19,10 @@ describe('proof chain example', function () {
       url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
     }).resolves(JSON.stringify(fixtureIssuerProfile));
     sinon.stub(domain.verifier, 'lookForTx').resolves({
-      remoteHash: '8303d22a9f391f0ac7deb0cd2e19cf2d582f6c93c8ddbb88bfae241041b5f951',
-      issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-      time: '2022-05-03T17:24:07.000Z',
-      revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+      remoteHash: '99d1c6fdb496eae6aa2e357833877ebe4187765780e43a4107fb7abd5968de78',
+      issuingAddress: '0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60',
+      time: '2022-07-15T16:03:48.000Z',
+      revokedAddresses: []
     });
     instance = new Certificate(fixture as any);
     await instance.init();

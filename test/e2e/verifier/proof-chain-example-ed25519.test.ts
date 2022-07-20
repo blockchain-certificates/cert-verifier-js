@@ -5,7 +5,7 @@ import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import domain from '../../../src/domain';
 
 describe('proof chain example', function () {

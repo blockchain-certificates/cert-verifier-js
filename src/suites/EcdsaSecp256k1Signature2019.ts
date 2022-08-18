@@ -1,18 +1,19 @@
 import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
-import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
-import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
-import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
+import { EcdsaSecp256k1VerificationKey2019 } from '@bloomprotocol/ecdsa-secp256k1-verification-key-2019';
+import { EcdsaSecp256k1Signature2019 as Secp256k1VerificationSuite } from '@bloomprotocol/ecdsa-secp256k1-signature-2019';
 import { Suite } from '../models/Suite';
 import { VerifierError } from '../models';
 import { preloadedContexts } from '../constants';
 import { deepCopy } from '../helpers/object';
+import { publicKeyBase58FromPublicKeyHex, publicKeyHexFromJwk } from '../helpers/keyUtils';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
+import type { ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
 
 const { purposes: { AssertionProofPurpose } } = jsigs;
 
@@ -21,7 +22,7 @@ enum SUB_STEPS {
   checkDocumentSignature = 'checkDocumentSignature'
 }
 
-export default class Ed25519Signature2020 extends Suite {
+export default class EcdsaSecp256k1Signature2019 extends Suite {
   public verificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
     SUB_STEPS.checkDocumentSignature
@@ -30,8 +31,8 @@ export default class Ed25519Signature2020 extends Suite {
   public documentToVerify: Blockcerts;
   public issuer: Issuer;
   public proof: VCProof;
-  public type = 'Ed25519Signature2020';
-  public verificationKey: Ed25519VerificationKey2020;
+  public type = 'EcdsaSecp256k1Signature2019';
+  public verificationKey: EcdsaSecp256k1VerificationKey2019;
   public publicKey: string;
 
   constructor (props: SuiteAPI) {
@@ -99,11 +100,6 @@ export default class Ed25519Signature2020 extends Suite {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
-  private async publicKeyJwkToString (publicKeyJwk: any): Promise<string> {
-    const publicKeyString = await Ed25519KeyPair.fingerprintFromPublicKey(publicKeyJwk);
-    return publicKeyString;
-  }
-
   private validateProofType (): void {
     const proofType = this.isProofChain() ? this.proof.chainedProofType : this.proof.type;
     if (proofType !== this.type) {
@@ -133,7 +129,7 @@ export default class Ed25519Signature2020 extends Suite {
   private retrieveInitialDocument (): BlockcertsV3 {
     const document: BlockcertsV3 = deepCopy<BlockcertsV3>(this.documentToVerify as BlockcertsV3);
     if (Array.isArray(document.proof)) {
-      // TODO: handle case when ed25519 proof is chained
+      // TODO: handle case when secp256k1 proof is chained
       const initialProof = document.proof.find(p => p.type === this.type);
       delete document.proof;
       document.proof = initialProof;
@@ -144,7 +140,7 @@ export default class Ed25519Signature2020 extends Suite {
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this._doAction(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
-      async (): Promise<Ed25519VerificationKey2020> => {
+      async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
         const verificationMethod = this.issuer.didDocument.verificationMethod
           .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
 
@@ -153,14 +149,13 @@ export default class Ed25519Signature2020 extends Suite {
             'The verification method of the document does not match the provided issuer.');
         }
 
-        try {
-          this.publicKey = verificationMethod.publicKeyMultibase ||
-            await this.publicKeyJwkToString(verificationMethod);
-        } catch (e) {
-          console.error('ERROR retrieving Ed25519Signature2020 public key', e);
+        if (verificationMethod.publicKeyJwk && !verificationMethod.publicKeyBase58) {
+          const hexKey = publicKeyHexFromJwk(verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
+          verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
         }
+        this.publicKey = verificationMethod.publicKeyBase58;
 
-        const key = await Ed25519VerificationKey2020.from({
+        const key = await EcdsaSecp256k1VerificationKey2019.from({
           ...verificationMethod
         });
 
@@ -168,7 +163,8 @@ export default class Ed25519Signature2020 extends Suite {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
 
-        if (key.revoked) {
+        // TODO: revoked property should exist but we are currently using a forked implementation which does not expose it
+        if ((key as any).revoked) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
         }
 
@@ -182,8 +178,9 @@ export default class Ed25519Signature2020 extends Suite {
     await this._doAction(
       SUB_STEPS.checkDocumentSignature,
       async (): Promise<void> => {
-        const suite = new Ed25519VerificationSuite({ key: this.verificationKey });
-        suite.date = new Date(Date.now()).toISOString();
+        const suite = new Secp256k1VerificationSuite({ key: this.verificationKey });
+        // TODO: date property should exist but we are currently using a forked implementation which does not expose it
+        (suite as any).date = new Date(Date.now()).toISOString();
 
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
@@ -195,7 +192,7 @@ export default class Ed25519Signature2020 extends Suite {
           console.error(JSON.stringify(verificationStatus, null, 2));
           throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
         } else {
-          console.log('Credential Ed25519 signature successfully verified');
+          console.log('Credential Secp256k1 signature successfully verified');
         }
       },
       this.type

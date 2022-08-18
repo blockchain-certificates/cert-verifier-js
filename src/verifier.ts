@@ -8,6 +8,7 @@ import { getText } from './domain/i18n/useCases';
 import MerkleProof2019 from './suites/MerkleProof2019';
 import MerkleProof2017 from './suites/MerkleProof2017';
 import Ed25519Signature2020 from './suites/Ed25519Signature2020';
+import EcdsaSecp256k1Signature2019 from './suites/EcdsaSecp256k1Signature2019';
 import { difference } from './helpers/array';
 import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
@@ -168,7 +169,8 @@ export default class Verifier {
     this.supportedVerificationSuites = {
       MerkleProof2017,
       MerkleProof2019,
-      Ed25519Signature2020
+      Ed25519Signature2020,
+      EcdsaSecp256k1Signature2019
     };
     this.proofMap = this.getProofMap(this.documentToVerify);
     const proofTypes: string[] = this.getProofTypes();

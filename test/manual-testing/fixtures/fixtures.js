@@ -68,30 +68,56 @@ const fixtureV2 = { '@context': ['https://w3id.org/openbadges/v2', 'https://w3id
 const fixtureV3 = {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
-      "https://w3id.org/blockcerts/v3.0-beta"
+      "https://w3id.org/security/suites/merkle-2019/v1",
+      "https://w3id.org/security/suites/chained-2021/v1",
+      "https://w3id.org/blockcerts/v3.1"
     ],
     "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
     "type": [
       "VerifiableCredential",
       "BlockcertsCredential"
     ],
-    "issuer": "did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1",
-    "issuanceDate": "2021-09-07T19:33:24Z",
+    "issuer": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
+    "issuanceDate": "2022-07-13T20:21:40.088Z",
     "credentialSubject": {
-      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21"
+      "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+      "name": "Julien Fraichot",
+      "email": "julien.fraichot@hyland.com",
+      "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC",
+      "claim": {
+        "name": "Master of Puppets",
+        "description": "Awarded to those who rock"
+      }
     },
     "metadata": "{\"classOf\":\"2021\"}",
     "display": {
       "contentMediaType": "text/html",
-      "content": "<b>hello world</b>"
+      "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
     },
-    "proof": {
-      "type": "MerkleProof2019",
-      "created": "2021-09-08T14:13:16.692648",
-      "proofValue": "z4zvrPUULnHmaio8LY3mX31UPxTJYyNApGJkozwq2aFVzn8kJbkbtB9c1nY44iU5k9mgw8sJAeRDtNsiB2XD8Zo1Cmvj8u1AXtF84M5nFuQ5daM77sD7kraNySmU5EvGHuoqgu74Bt1UZ8fA7h9Vbvgv65YguS48CqaoWicZJ8Z8sPcVSqVUouMc64USn4usGSgat3FX1d7jUFSokA1ijHXbRVsUTk5PumJMSfTPgfrTDoR9DR5UioRsPjS15QSbEkhpXazo34fSHPB9tCinhUQ5tnMRmfRSgF6Z6VK193fXpVin5C7gfPQx5zWz7PTSJSB553nEzzSz38qizHxtCErdVLynSu4G37zeFFLj1FJiby2CqqbbzaLA3SvALsL2kXfF5rQ81SEPBQfY1ZD",
-      "proofPurpose": "assertionMethod",
-      "verificationMethod": "did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q#key-1"
-    }
+    "proof": [
+      {
+        "type": "EcdsaSecp256k1Signature2019",
+        "created": "2022-07-13T20:21:40.114Z",
+        "verificationMethod": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8#zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
+        "proofPurpose": "assertionMethod",
+        "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..p2R_KhhRWiqw0P8HeIb4dgqx-K9fAgFZ8jPAM57fmpVH9XLwzPn1wK8HWH5I_NYkdhaqnDPLHiFv17cLLjcG2A"
+      },
+      {
+        "type": "ChainedProof2021",
+        "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1",
+        "chainedProofType": "MerkleProof2019",
+        "created": "2022-07-15T11:03:28.746594",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "z2LuLBVSfogU8YhUZmk1PJgb5VCu3JqxdDPn7tbkWi2EzAJcvi3i5vpXKJBVWASyJhGrMdPzLBzUeLDiW4AFRu9PkQ7BwxQ1qZrRkUZxmxemNXU9bgK1n1ykwcKyoGwzyUL8AhwAjYEYN4Gh9wqgkv7av5SKhABGairFbyvNVVK4QrqcrEAbXxcFT35CRFJ2Fg6gEa4zzqA2kqfkPdfkHHNuyoaYiCZ15k5ZKq7Qywqh2XSjLUTkTVs6bg1iNzFBz5qdnNmvyQEF9cguondcx25nRNKk6RUxWBcmsahg4NMiuXgHx6N5sUgrnVh3aBeKkbo99NK5z4zcumkYat5uVEhKssNX5GjgNWLAWJnMza2an6AvoxUSxKA6i82rKMjYRDcABhAfwZ7nCQFsg9T8SY",
+        "previousProof": {
+          "type": "EcdsaSecp256k1Signature2019",
+          "created": "2022-07-13T20:21:40.114Z",
+          "verificationMethod": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8#zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
+          "proofPurpose": "assertionMethod",
+          "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..p2R_KhhRWiqw0P8HeIb4dgqx-K9fAgFZ8jPAM57fmpVH9XLwzPn1wK8HWH5I_NYkdhaqnDPLHiFv17cLLjcG2A"
+        }
+      }
+    ]
   };
 
 module.exports = [

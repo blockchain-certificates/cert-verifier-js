@@ -60,6 +60,10 @@
         "description": "This is a valid ${chain} certificate.",
         "linkText": "View transaction link"
       },
+      "generic": {
+        "label": "Verified",
+        "description": "The ${SIGNATURE_TYPE} signature of this document has been successfully verified."
+      },
       "multisign": {
         "label": "Verified",
         "description": "All the signatures of this certificate have successfully verified."
@@ -156,6 +160,10 @@
         "label": "Vérifié",
         "description": "Ceci est un certificat ${chain} valide.",
         "linkText": "Voir la transaction"
+      },
+      "generic": {
+        "label": "Verified",
+        "description": "La signature ${SIGNATURE_TYPE} de ce certificat a été vérifiée avec succès."
       },
       "multisign": {
         "label": "Vérifié",
@@ -254,6 +262,10 @@
         "description": "Este es un certificado válido de ${chain}.",
         "linkText": "Ver enlace de transacción"
       },
+      "generic": {
+        "label": "Verified",
+        "description": "La firma ${SIGNATURE_TYPE} de este certificado ha verificado con éxito."
+      },
       "multisign": {
         "label": "Verificado",
         "description": "Todas las firmas digitales de este certificado han verificado con éxito."
@@ -350,6 +362,10 @@
         "label": "Ivverifikat",
         "description": "Dan huwa ċertifikat ${chain} huwa validu.",
         "linkText": "Ara l-link tat-transazzjoni"
+      },
+      "generic": {
+        "label": "Ivverifikat",
+        "description": "The ${SIGNATURE_TYPE} signature of this document has been successfully verified."
       },
       "multisign": {
         "label": "Ivverifikat",
@@ -448,6 +464,10 @@
         "description": "Questo è un certificato ${chain} valido.",
         "linkText": "Vedi la transazione"
       },
+      "generic": {
+        "label": "Verificato",
+        "description": "The ${SIGNATURE_TYPE} signature of this document has been successfully verified."
+      },
       "multisign": {
         "label": "Verificato",
         "description": "All the signatures of this certificate have successfully verified."
@@ -544,6 +564,10 @@
         "label": "認証されました",
         "description": "この証明書は有効な${chain}証明書です。",
         "linkText": "取引を確認する"
+      },
+      "generic": {
+        "label": "認証されました",
+        "description": "The ${SIGNATURE_TYPE} signature of this document has been successfully verified."
       },
       "multisign": {
         "label": "認証されました",

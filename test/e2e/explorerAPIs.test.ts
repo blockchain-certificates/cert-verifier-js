@@ -25,7 +25,7 @@ describe('explorerAPIs end to end test suite', function () {
 
         sinon.stub(RequestService, 'default').resolves('{}');
 
-        const instance = new Certificate(FIXTURES.EthereumMainV2Valid, { explorerAPIs: [explorerAPI] });
+        const instance = new Certificate(FIXTURES.BlockcertsV3, { explorerAPIs: [explorerAPI] });
         await instance.init();
         await instance.verify();
         expect(parsingFunctionStub.calledOnce).toBe(true);

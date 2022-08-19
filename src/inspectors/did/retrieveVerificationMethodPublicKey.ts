@@ -1,14 +1,21 @@
-import type { IDidDocument } from '../../models/DidDocument';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import { VerifierError } from '../../models';
 import domain from '../../domain';
 import { baseError } from './index';
+import type { IDidDocument } from '../../models/DidDocument';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
+import type { Issuer } from '../../models/Issuer';
 
-export default function retrieveVerificationMethodPublicKey (didDocument: IDidDocument, verificationMethod: string): IDidDocumentPublicKey {
-  const verificationMethodId = verificationMethod.split('#')[1];
-  const verificationMethodFromDocument = didDocument.verificationMethod;
+export default function retrieveVerificationMethodPublicKey (
+  issuerDocument: Issuer | IDidDocument,
+  proofVerificationMethod: string
+): IDidDocumentPublicKey {
+  const verificationMethodId = proofVerificationMethod.split('#')[1];
+  const verificationMethodFromDocument = issuerDocument.verificationMethod;
   const verificationMethodPublicKey = verificationMethodFromDocument
-    .filter(verificationMethod => verificationMethod.id === `#${verificationMethodId}`)[0];
+    .find(verificationMethod =>
+      verificationMethod.id === `#${verificationMethodId}` ||
+      verificationMethod.id === proofVerificationMethod // if the id is the combination of did + key id
+    );
 
   if (!verificationMethodPublicKey) {
     throw new VerifierError(

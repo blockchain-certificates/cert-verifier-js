@@ -2,6 +2,7 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 
 describe('given the certificate is an ethereum main with an invalid merkle root', function () {
   let certificate;
@@ -14,6 +15,24 @@ describe('given the certificate is an ethereum main with an invalid merkle root'
       time: '2018-05-08T18:30:34.000Z',
       revokedAddresses: []
     });
+
+    sinon.stub(ExplorerLookup, 'request').withArgs({
+      url: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json?raw=true'
+    }).resolves(JSON.stringify({
+      '@context': [
+        'https://w3id.org/openbadges/v2',
+        'https://w3id.org/blockcerts/3.0'
+      ],
+      type: 'Profile',
+      id: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json?raw=true',
+      publicKey: [
+        {
+          id: 'ecdsa-koblitz-pubkey:0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c',
+          created: '2018-01-01T21:10:10.615+00:00'
+        }
+      ]
+    }));
+
     certificate = new Certificate(FIXTURES.EthereumMainInvalidMerkleRoot);
     await certificate.init();
     result = await certificate.verify();

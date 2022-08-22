@@ -1,4 +1,5 @@
 import type { IDidDocument } from './DidDocument';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 export interface IssuerPublicKeyList {
   [key: string]: ParsedKeyObjectV2;
@@ -43,6 +44,7 @@ export interface Issuer {
   issuingEstimateUrl?: string;
   // blockcerts v3
   didDocument?: IDidDocument;
+  verificationMethod?: IDidDocumentPublicKey[];
 
   // blockcerts v2-alpha
   publicKeys?: string[] | KeyObjectV2[];

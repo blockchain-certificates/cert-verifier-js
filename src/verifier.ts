@@ -20,6 +20,7 @@ import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/V
 import type { Suite } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
+import type { ComposedText } from './domain/i18n/useCases/getComposedText';
 
 const log = debug('Verifier');
 
@@ -333,14 +334,20 @@ export default class Verifier {
     let message;
 
     if (this.proofVerifiers.length === 1) {
-      message = domain.chains.isMockChain(this.proofVerifiers[0].getChain())
-        ? domain.i18n.getText('success', 'mocknet')
-        : domain.i18n.getText('success', 'blockchain');
-      log(message);
+      if (this.proofVerifiers[0].type.includes('MerkleProof')) {
+        message = domain.chains.isMockChain(this.proofVerifiers[0].getChain())
+          ? domain.i18n.getComposedText('success', 'mocknet')
+          : domain.i18n.getComposedText('success', 'blockchain');
+        log(message);
+      } else {
+        message = domain.i18n.getComposedText('success', 'generic').description
+          // eslint-disable-next-line no-template-curly-in-string
+          .replace('${SIGNATURE_TYPE}', this.proofVerifiers[0].type);
+      }
     }
 
     if (this.proofVerifiers.length > 1) {
-      message = domain.i18n.getText('success', 'multisign');
+      message = domain.i18n.getComposedText('success', 'multisign');
     }
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }

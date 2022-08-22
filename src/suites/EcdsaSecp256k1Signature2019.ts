@@ -8,12 +8,14 @@ import { VerifierError } from '../models';
 import { preloadedContexts } from '../constants';
 import { deepCopy } from '../helpers/object';
 import { publicKeyBase58FromPublicKeyHex, publicKeyHexFromJwk } from '../helpers/keyUtils';
+import * as inspectors from '../inspectors';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
+import type { IDidDocument } from '../models/DidDocument';
 
 const { purposes: { AssertionProofPurpose } } = jsigs;
 
@@ -112,7 +114,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   private generateDocumentLoader (): any {
-    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.issuer.didDocument;
+    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.getTargetVerificationMethodContainer();
     const customLoader = function (url): any {
       if (url in preloadedContexts) {
         return {
@@ -137,17 +139,18 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     return document;
   }
 
+  private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
+    return this.issuer.didDocument ?? this.issuer;
+  }
+
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this._doAction(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
-        const verificationMethod = this.issuer.didDocument.verificationMethod
-          .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
-
-        if (!verificationMethod) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
-            'The verification method of the document does not match the provided issuer.');
-        }
+        const verificationMethod = await inspectors.retrieveVerificationMethodPublicKey(
+          this.getTargetVerificationMethodContainer(),
+          this.proof.verificationMethod
+        );
 
         if (verificationMethod.publicKeyJwk && !verificationMethod.publicKeyBase58) {
           const hexKey = publicKeyHexFromJwk(verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);

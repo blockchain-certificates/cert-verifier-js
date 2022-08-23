@@ -7,6 +7,9 @@ describe('Proof verification method is bound to issuer profile test suite', func
     await certificate.init();
     const result = await certificate.verify();
     expect(result.message)
-      .toBe('The EcdsaSecp256k1Signature2019 signature of this document has been successfully verified.');
+      .toEqual({
+        label: 'Verified',
+        description: 'The EcdsaSecp256k1Signature2019 signature of this document has been successfully verified.'
+      });
   });
 });

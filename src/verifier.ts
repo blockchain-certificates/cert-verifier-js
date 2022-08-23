@@ -340,9 +340,12 @@ export default class Verifier {
           : domain.i18n.getComposedText('success', 'blockchain');
         log(message);
       } else {
-        message = domain.i18n.getComposedText('success', 'generic').description
-          // eslint-disable-next-line no-template-curly-in-string
-          .replace('${SIGNATURE_TYPE}', this.proofVerifiers[0].type);
+        message = {
+          ...domain.i18n.getComposedText('success', 'generic'),
+          description: domain.i18n.getComposedText('success', 'generic').description
+            // eslint-disable-next-line no-template-curly-in-string
+            .replace('${SIGNATURE_TYPE}', this.proofVerifiers[0].type)
+        };
       }
     }
 

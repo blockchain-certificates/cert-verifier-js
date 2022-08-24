@@ -21,6 +21,8 @@ export default function deriveIssuingAddressFromPublicKey (verificationMethodPub
     case SupportedChains.Ethmain:
     case SupportedChains.Ethropst:
     case SupportedChains.Ethrinkeby:
+    case SupportedChains.Ethgoerli:
+    case SupportedChains.Ethsepolia:
       address = computeEthereumAddressFromPublicKey(publicKey, chain);
       break;
 

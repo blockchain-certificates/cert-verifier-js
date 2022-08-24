@@ -117,6 +117,32 @@ describe('domain certificates get chain use case test suite', function () {
           expect(result).toEqual(chainAssertion);
         });
       });
+
+      describe('and the network is goerli', function () {
+        it('should return ethereum goerli value', function () {
+          const fixtureSignature = {
+            anchors: [
+              'blink:eth:goerli:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
+            ]
+          };
+          const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
+          const chainAssertion = BLOCKCHAINS.ethgoerli;
+          expect(result).toEqual(chainAssertion);
+        });
+      });
+
+      describe('and the network is sepolia', function () {
+        it('should return ethereum sepolia value', function () {
+          const fixtureSignature = {
+            anchors: [
+              'blink:eth:sepolia:0xfaea9061b06ff532d96ad91bab89fdfab900ae7d4524161431dc88318216435a'
+            ]
+          };
+          const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
+          const chainAssertion = BLOCKCHAINS.ethsepolia;
+          expect(result).toEqual(chainAssertion);
+        });
+      });
     });
   });
 

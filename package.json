@@ -68,7 +68,7 @@
     "@transmute/did-key-secp256k1": "^0.3.0-unstable.8",
     "@transmute/ed25519-key-pair": "^0.7.0-unstable.63",
     "@trust/keyto": "^1.0.1",
-    "@vaultie/lds-merkle-proof-2019": "github:vaultie/lds-merkle-proof-2019#e4b7197d6759d1ef882e8a06f61ba07ccc20d819",
+    "@vaultie/lds-merkle-proof-2019": "^0.0.9",
     "base58-universal": "github:lemoustachiste/base58-universal#fix/hoisting-error-alphabet",
     "bigi": "^1.4.2",
     "bitcoinjs-lib": "^5.2.0",

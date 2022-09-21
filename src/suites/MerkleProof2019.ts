@@ -87,7 +87,10 @@ export default class MerkleProof2019 extends Suite {
   async verifyProof (): Promise<void> {
     await this.setIssuerFromProofVerificationMethod();
     this.suite = new LDMerkleProof2019({
-      document: this.documentToVerify
+      document: this.documentToVerify,
+      options: {
+        explorerAPIs: this.explorerAPIs
+      }
     });
     // await this.verifyProcess(this.proofVerificationProcess);
     await this.suite.verifyProof();

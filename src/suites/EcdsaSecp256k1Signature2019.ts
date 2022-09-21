@@ -39,8 +39,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
 
   constructor (props: SuiteAPI) {
     super(props);
-    if (props.actionMethod) {
-      this._doAction = props.actionMethod;
+    if (props.executeStep) {
+      this.executeStep = props.executeStep;
     }
     this.documentToVerify = props.document;
     this.issuer = props.issuer;
@@ -98,7 +98,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     return this.proof.created;
   }
 
-  async _doAction (step: string, action, verificationSuite: string): Promise<any> {
+  async executeStep (step: string, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
@@ -144,7 +144,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    this.verificationKey = await this._doAction(
+    this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
         const verificationMethod = await inspectors.retrieveVerificationMethodPublicKey(
@@ -178,7 +178,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   private async checkDocumentSignature (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkDocumentSignature,
       async (): Promise<void> => {
         const suite = new Secp256k1VerificationSuite({ key: this.verificationKey });

@@ -72,7 +72,7 @@ export default class MerkleProof2019 extends Suite {
 
   constructor (props: SuiteAPI) {
     super(props);
-    this._doAction = props.actionMethod;
+    this.executeStep = props.executeStep;
     this.documentToVerify = props.document as BlockcertsV3;
     this.explorerAPIs = props.explorerAPIs;
     this.proof = props.proof as VCProof;
@@ -89,7 +89,8 @@ export default class MerkleProof2019 extends Suite {
     this.suite = new LDMerkleProof2019({
       document: this.documentToVerify,
       options: {
-        explorerAPIs: this.explorerAPIs
+        explorerAPIs: this.explorerAPIs,
+        executeStepMethod: this.executeStep
       }
     });
     // await this.verifyProcess(this.proofVerificationProcess);
@@ -161,6 +162,10 @@ export default class MerkleProof2019 extends Suite {
     return transactionLinks.rawTransactionLink;
   }
 
+  async executeStep (step: string, action, verificationSuite: string): Promise<any> {
+    throw new Error('doAction method needs to be overwritten by injecting from CVJS');
+  }
+
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
     return this.issuer.didDocument ?? this.issuer;
   }
@@ -202,12 +207,8 @@ export default class MerkleProof2019 extends Suite {
     }
   }
 
-  async _doAction (step: SUB_STEPS, action, verificationSuite: string): Promise<any> {
-    throw new Error('doAction method needs to be overwritten by injecting from CVJS');
-  }
-
   private async getTransactionId (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.getTransactionId,
       () => inspectors.isTransactionIdValid(this.transactionId),
       this.type
@@ -215,7 +216,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async computeLocalHash (): Promise<void> {
-    this.localHash = await this._doAction(
+    this.localHash = await this.executeStep(
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify),
       this.type
@@ -223,7 +224,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async fetchRemoteHash (): Promise<void> {
-    this.txData = await this._doAction(
+    this.txData = await this.executeStep(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
@@ -235,7 +236,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async compareHashes (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.compareHashes,
       () => inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash),
       this.type
@@ -243,7 +244,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async checkMerkleRoot (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkMerkleRoot,
       () => inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash),
       this.type
@@ -251,7 +252,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async checkReceipt (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkReceipt,
       () => inspectors.ensureValidReceipt(this.receipt),
       this.type
@@ -259,7 +260,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async parseIssuerKeys (): Promise<void> {
-    this.issuerPublicKeyList = await this._doAction(
+    this.issuerPublicKeyList = await this.executeStep(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer),
       this.type
@@ -267,7 +268,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async checkAuthenticity (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkAuthenticity,
       () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time),
       this.type
@@ -276,7 +277,7 @@ export default class MerkleProof2019 extends Suite {
 
   // ##### DID CORRELATION #####
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    this.verificationMethodPublicKey = await this._doAction(
+    this.verificationMethodPublicKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       () => inspectors
         .retrieveVerificationMethodPublicKey(
@@ -288,7 +289,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    this.derivedIssuingAddress = await this._doAction(
+    this.derivedIssuingAddress = await this.executeStep(
       SUB_STEPS.deriveIssuingAddressFromPublicKey,
       () => inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain),
       this.type
@@ -296,7 +297,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async compareIssuingAddress (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.compareIssuingAddress,
       () => inspectors.compareIssuingAddress(this.getIssuerPublicKey(), this.derivedIssuingAddress),
       this.type

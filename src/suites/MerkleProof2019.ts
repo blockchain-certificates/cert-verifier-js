@@ -1,4 +1,5 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
+import { LDMerkleProof2019 } from 'jsonld-signatures-merkleproof2019';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
 import { Suite } from '../models/Suite';
@@ -13,6 +14,7 @@ import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
+import type { IDidDocument } from '../models/DidDocument';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -66,6 +68,7 @@ export default class MerkleProof2019 extends Suite {
   public hasDid: boolean;
   public proof: VCProof;
   public type = 'MerkleProof2019';
+  public suite: LDMerkleProof2019;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -83,7 +86,11 @@ export default class MerkleProof2019 extends Suite {
 
   async verifyProof (): Promise<void> {
     await this.setIssuerFromProofVerificationMethod();
-    await this.verifyProcess(this.proofVerificationProcess);
+    this.suite = new LDMerkleProof2019({
+      document: this.documentToVerify
+    });
+    // await this.verifyProcess(this.proofVerificationProcess);
+    await this.suite.verifyProof();
   }
 
   async verifyIdentity (): Promise<void> {
@@ -153,6 +160,10 @@ export default class MerkleProof2019 extends Suite {
   getRawTransactionLink (): string {
     const transactionLinks: ITransactionLink = domain.certificates.getTransactionLink(this.getTransactionIdString(), this.getChain());
     return transactionLinks.rawTransactionLink;
+  }
+
+  private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
+    return this.issuer.didDocument ?? this.issuer;
   }
 
   private isProofChain (): boolean {

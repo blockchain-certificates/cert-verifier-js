@@ -9,6 +9,13 @@ export default function retrieveVerificationMethodPublicKey (
   issuerDocument: Issuer | IDidDocument,
   proofVerificationMethod: string
 ): IDidDocumentPublicKey {
+  if (!issuerDocument.verificationMethod) {
+    // backwards compatibility with Blockcerts' issuer profile who don't include verification method
+    // is this ideal? probably not and we should likely require v3 profiles to include verificationMethod
+    console.warn('No verification method found in the issuer document. ' +
+      'This will likely become a requirement in the near future');
+    return;
+  }
   const verificationMethodId = proofVerificationMethod.split('#')[1];
   const verificationMethodFromDocument = issuerDocument.verificationMethod;
   const verificationMethodPublicKey = verificationMethodFromDocument

@@ -115,11 +115,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    if (!this.txData) {
-      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
-      return '';
-    }
-    return this.txData.issuingAddress;
+    return this.suite.getIssuerPublicKey();
   }
 
   getIssuerName (): string {

@@ -295,7 +295,7 @@ export default class MerkleProof2019 extends Suite {
   private async compareIssuingAddress (): Promise<void> {
     await this._doAction(
       SUB_STEPS.compareIssuingAddress,
-      () => inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress),
+      () => inspectors.compareIssuingAddress(this.getIssuerPublicKey(), this.derivedIssuingAddress),
       this.type
     );
   }

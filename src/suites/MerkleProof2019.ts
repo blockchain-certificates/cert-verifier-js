@@ -88,13 +88,14 @@ export default class MerkleProof2019 extends Suite {
     await this.setIssuerFromProofVerificationMethod();
     this.suite = new LDMerkleProof2019({
       document: this.documentToVerify,
+      proof: this.proof,
       options: {
         explorerAPIs: this.explorerAPIs,
         executeStepMethod: this.executeStep
       }
     });
-    // await this.verifyProcess(this.proofVerificationProcess);
-    await this.suite.verifyProof();
+    await this.verifyProcess(this.proofVerificationProcess);
+    // await this.suite.verifyProof();
   }
 
   async verifyIdentity (): Promise<void> {
@@ -119,7 +120,12 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    return this.suite.getIssuerPublicKey();
+    if (!this.txData) {
+      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
+      return '';
+    }
+    return this.txData.issuingAddress;
+    // return this.suite.getIssuerPublicKey();
   }
 
   getIssuerName (): string {
@@ -163,7 +169,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   async executeStep (step: string, action, verificationSuite: string): Promise<any> {
-    throw new Error('doAction method needs to be overwritten by injecting from CVJS');
+    throw new Error('executeStep method needs to be overwritten by injecting from Verifier');
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {

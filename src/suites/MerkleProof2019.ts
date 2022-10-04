@@ -38,15 +38,9 @@ export function parseReceipt (proof: VCProof): Receipt {
 
 export default class MerkleProof2019 extends Suite {
   public proofVerificationProcess = [
-    SUB_STEPS.getTransactionId,
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.fetchRemoteHash,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkMerkleRoot,
-    SUB_STEPS.checkReceipt,
     SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.checkAuthenticity
-  ];
+  ]; // find a way to expose verification steps without executing process from here
 
   public identityVerificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
@@ -82,10 +76,6 @@ export default class MerkleProof2019 extends Suite {
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.setHasDid();
-  }
-
-  async verifyProof (): Promise<void> {
-    await this.setIssuerFromProofVerificationMethod();
     this.suite = new LDMerkleProof2019({
       document: this.documentToVerify,
       proof: this.proof,
@@ -94,8 +84,12 @@ export default class MerkleProof2019 extends Suite {
         executeStepMethod: this.executeStep
       }
     });
+  }
+
+  async verifyProof (): Promise<void> {
+    await this.setIssuerFromProofVerificationMethod();
+    await this.suite.verifyProof();
     await this.verifyProcess(this.proofVerificationProcess);
-    // await this.suite.verifyProof();
   }
 
   async verifyIdentity (): Promise<void> {
@@ -105,7 +99,11 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getProofVerificationSteps (parentStepKey: string): VerificationSubstep[] {
-    return this.proofVerificationProcess.map(childStepKey =>
+    const proofVerificationProcess = [
+      ...this.suite.getProofVerificationProcess(),
+      ...this.proofVerificationProcess
+    ];
+    return proofVerificationProcess.map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
   }
@@ -120,12 +118,11 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getIssuerPublicKey (): string {
-    if (!this.txData) {
-      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
-      return '';
-    }
-    return this.txData.issuingAddress;
-    // return this.suite.getIssuerPublicKey();
+    return this.suite.getIssuerPublicKey();
+  }
+
+  getIssuanceTime (): string {
+    return this.suite.getIssuanceTime();
   }
 
   getIssuerName (): string {
@@ -213,58 +210,6 @@ export default class MerkleProof2019 extends Suite {
     }
   }
 
-  private async getTransactionId (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.getTransactionId,
-      () => inspectors.isTransactionIdValid(this.transactionId),
-      this.type
-    );
-  }
-
-  private async computeLocalHash (): Promise<void> {
-    this.localHash = await this.executeStep(
-      SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify),
-      this.type
-    );
-  }
-
-  private async fetchRemoteHash (): Promise<void> {
-    this.txData = await this.executeStep(
-      SUB_STEPS.fetchRemoteHash,
-      async () => await domain.verifier.lookForTx({
-        transactionId: this.transactionId,
-        chain: this.chain.code,
-        explorerAPIs: this.explorerAPIs
-      }),
-      this.type
-    );
-  }
-
-  private async compareHashes (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.compareHashes,
-      () => inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash),
-      this.type
-    );
-  }
-
-  private async checkMerkleRoot (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.checkMerkleRoot,
-      () => inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash),
-      this.type
-    );
-  }
-
-  private async checkReceipt (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.checkReceipt,
-      () => inspectors.ensureValidReceipt(this.receipt),
-      this.type
-    );
-  }
-
   private async parseIssuerKeys (): Promise<void> {
     this.issuerPublicKeyList = await this.executeStep(
       SUB_STEPS.parseIssuerKeys,
@@ -276,7 +221,7 @@ export default class MerkleProof2019 extends Suite {
   private async checkAuthenticity (): Promise<void> {
     await this.executeStep(
       SUB_STEPS.checkAuthenticity,
-      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time),
+      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.getIssuerPublicKey(), this.getIssuanceTime()),
       this.type
     );
   }

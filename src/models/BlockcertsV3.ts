@@ -4,7 +4,7 @@ import type { JsonLDContext } from './Blockcerts';
 export interface VCProof {
   type: string;
   created: string;
-  proofValue: string;
+  proofValue?: string;
   jws?: string;
   proofPurpose: string;
   verificationMethod: string;

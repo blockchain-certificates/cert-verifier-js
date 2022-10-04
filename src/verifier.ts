@@ -255,6 +255,7 @@ export default class Verifier {
       return res;
     } catch (err) {
       if (step) {
+        console.error(err);
         this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
         this._stepsStatuses.push({
           code: step,

@@ -64,6 +64,9 @@ export default class MerkleProof2017 extends Suite {
     this.adaptVerificationProcessToChain();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async init (): Promise<void> {}
+
   async verifyProof (): Promise<void> {
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {

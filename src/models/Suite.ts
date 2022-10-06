@@ -19,6 +19,9 @@ export abstract class Suite {
   abstract type: string;
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
   constructor (props: SuiteAPI) {}
+  // a hook that will be called when the Certificate is being initialized too. A chance to do async operations
+  // after instantiation
+  abstract init (): Promise<void>;
   // this function executes the proof verification logic, as added to the Proof Verification step
   abstract verifyProof (): Promise<void>;
   // this function executes the identity verification logic, as added to the Identity Verification step

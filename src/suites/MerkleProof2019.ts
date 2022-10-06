@@ -40,12 +40,6 @@ export default class MerkleProof2019 extends Suite {
   public proofVerificationProcess = [
     SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.checkAuthenticity
-  ]; // find a way to expose verification steps without executing process from here
-
-  public identityVerificationProcess = [
-    SUB_STEPS.retrieveVerificationMethodPublicKey,
-    SUB_STEPS.deriveIssuingAddressFromPublicKey,
-    SUB_STEPS.compareIssuingAddress
   ];
 
   public transactionId: string;
@@ -76,26 +70,19 @@ export default class MerkleProof2019 extends Suite {
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.setHasDid();
-    this.suite = new LDMerkleProof2019({
-      document: this.documentToVerify,
-      proof: this.proof,
-      options: {
-        explorerAPIs: this.explorerAPIs,
-        executeStepMethod: this.executeStep
-      }
-    });
+  }
+
+  async init (): Promise<void> {
+    await this.setVerificationSuite();
   }
 
   async verifyProof (): Promise<void> {
-    await this.setIssuerFromProofVerificationMethod();
     await this.suite.verifyProof();
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
   async verifyIdentity (): Promise<void> {
-    if (this.hasDid) {
-      await this.verifyProcess(this.identityVerificationProcess);
-    }
+    // already verified in verify proof by LDMerkleProof2019
   }
 
   getProofVerificationSteps (parentStepKey: string): VerificationSubstep[] {
@@ -112,7 +99,7 @@ export default class MerkleProof2019 extends Suite {
     if (!this.hasDid) {
       return [];
     }
-    return this.identityVerificationProcess.map(childStepKey =>
+    return this.suite.getIdentityVerificationProcess().map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
   }
@@ -169,6 +156,24 @@ export default class MerkleProof2019 extends Suite {
     throw new Error('executeStep method needs to be overwritten by injecting from Verifier');
   }
 
+  private async setVerificationSuite (): Promise<void> {
+    await this.setIssuerFromProofVerificationMethod();
+    this.verificationMethodPublicKey = inspectors
+      .retrieveVerificationMethodPublicKey(
+        this.getTargetVerificationMethodContainer(),
+        getVCProofVerificationMethod(this.proof)
+      );
+    this.suite = new LDMerkleProof2019({
+      document: this.documentToVerify,
+      proof: this.proof,
+      verificationMethod: this.verificationMethodPublicKey,
+      options: {
+        explorerAPIs: this.explorerAPIs,
+        executeStepMethod: this.executeStep
+      }
+    });
+  }
+
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
     return this.issuer.didDocument ?? this.issuer;
   }
@@ -222,35 +227,6 @@ export default class MerkleProof2019 extends Suite {
     await this.executeStep(
       SUB_STEPS.checkAuthenticity,
       () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.getIssuerPublicKey(), this.getIssuanceTime()),
-      this.type
-    );
-  }
-
-  // ##### DID CORRELATION #####
-  private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    this.verificationMethodPublicKey = await this.executeStep(
-      SUB_STEPS.retrieveVerificationMethodPublicKey,
-      () => inspectors
-        .retrieveVerificationMethodPublicKey(
-          this.issuer.didDocument,
-          getVCProofVerificationMethod(this.proof)
-        ),
-      this.type
-    );
-  }
-
-  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    this.derivedIssuingAddress = await this.executeStep(
-      SUB_STEPS.deriveIssuingAddressFromPublicKey,
-      () => inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain),
-      this.type
-    );
-  }
-
-  private async compareIssuingAddress (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.compareIssuingAddress,
-      () => inspectors.compareIssuingAddress(this.getIssuerPublicKey(), this.derivedIssuingAddress),
       this.type
     );
   }

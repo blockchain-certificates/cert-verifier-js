@@ -81,9 +81,6 @@ export default class Verifier {
     this.explorerAPIs = explorerAPIs;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
-
-    this.instantiateProofVerifiers();
-    this.prepareVerificationProcess();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {
@@ -103,6 +100,14 @@ export default class Verifier {
       transactionLink: proofVerifier.getTransactionLink?.(),
       rawTransactionLink: proofVerifier.getRawTransactionLink?.()
     }));
+  }
+
+  async init (): Promise<void> {
+    this.instantiateProofVerifiers();
+    for (const proofVerifierSuite of this.proofVerifiers) {
+      await proofVerifierSuite.init();
+    }
+    this.prepareVerificationProcess();
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
@@ -254,8 +259,8 @@ export default class Verifier {
       }
       return res;
     } catch (err) {
+      console.error(err);
       if (step) {
-        console.error(err);
         this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
         this._stepsStatuses.push({
           code: step,

@@ -48,6 +48,9 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     this.validateProofType();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async init (): Promise<void> {}
+
   async verifyProof (): Promise<void> {
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {

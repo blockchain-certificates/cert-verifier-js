@@ -77,12 +77,12 @@ export default class MerkleProof2019 extends Suite {
   }
 
   async verifyProof (): Promise<void> {
-    await this.suite.verifyProof();
+    await this.suite.verifyProof({ verifyIdentity: false });
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
   async verifyIdentity (): Promise<void> {
-    // already verified in verify proof by LDMerkleProof2019
+    await this.suite.verifyIdentity();
   }
 
   getProofVerificationSteps (parentStepKey: string): VerificationSubstep[] {

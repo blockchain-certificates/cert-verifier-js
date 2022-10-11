@@ -118,13 +118,6 @@ export default [
         proofType: 'MerkleProof2019',
         subSteps: [
           {
-            code: 'retrieveVerificationMethodPublicKey',
-            label: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabel,
-            labelPending: defaultLanguageSet.subSteps.retrieveVerificationMethodPublicKeyLabelPending,
-            parentStep: VerificationSteps.identityVerification,
-            status: VERIFICATION_STATUSES.DEFAULT
-          },
-          {
             code: 'deriveIssuingAddressFromPublicKey',
             label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
             labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,

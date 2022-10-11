@@ -6,24 +6,45 @@ import { Certificate } from '../../../src';
 import domain from '../../../src/domain';
 import v3IssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 describe('Certificate v3 test suite', function () {
   let certificate;
-  let getIssuerProfileStub;
 
   beforeEach(function () {
-    getIssuerProfileStub = sinon.stub(domain.verifier, 'getIssuerProfile').resolves({
-      ...v3IssuerProfile,
-      didDocument
-    });
+    const requestStub = sinon.stub(ExplorerLookup, 'request');
+    requestStub.withArgs({
+      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
+    }).resolves(JSON.stringify({ didDocument }));
+    requestStub.withArgs({
+      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+    }).resolves(JSON.stringify(fixtureIssuerProfile));
+    requestStub.withArgs({
+      url: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json'
+    }).resolves(JSON.stringify({
+      '@context': [
+        'https://w3id.org/openbadges/v2',
+        'https://w3id.org/blockcerts/3.0'
+      ],
+      type: 'Profile',
+      id: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json',
+      publicKey: [
+        {
+          id: 'ecdsa-koblitz-pubkey:0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c', // address may be different
+          created: '2018-01-01T21:10:10.615+00:00'
+        }
+      ]
+    }));
   });
 
   afterEach(function () {
     certificate = null;
-    getIssuerProfileStub.restore();
+    sinon.restore();
   });
 
   describe('given the certificate display html property contains hashlinks', function () {

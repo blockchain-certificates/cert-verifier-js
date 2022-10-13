@@ -8,7 +8,7 @@ import type { VCProof } from './BlockcertsV3';
 import type { MerkleProof2017 } from './MerkleProof2017';
 
 export interface SuiteAPI {
-  actionMethod: (step: string, action) => Promise<any>;
+  executeStep: (step: string, action: () => any, verificationSuite?: string) => Promise<any>;
   document: Blockcerts;
   explorerAPIs: ExplorerAPI[];
   proof: VCProof | MerkleProof2017;
@@ -19,6 +19,9 @@ export abstract class Suite {
   abstract type: string;
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor, @typescript-eslint/no-empty-function
   constructor (props: SuiteAPI) {}
+  // a hook that will be called when the Certificate is being initialized too. A chance to do async operations
+  // after instantiation
+  abstract init (): Promise<void>;
   // this function executes the proof verification logic, as added to the Proof Verification step
   abstract verifyProof (): Promise<void>;
   // this function executes the identity verification logic, as added to the Identity Verification step
@@ -42,7 +45,7 @@ export abstract class Suite {
   getTransactionLink? (): string;
   getRawTransactionLink? (): string;
 
-  // This method needs to become a reference to the `actionMethod` that's injected to the constructor.
-  // `actionMethod` is bound to the verifier context to ensure proper execution of the steps
-  abstract _doAction (step: string, action, verificationSuite: string): Promise<any>;
+  // This method needs to become a reference to the `executeStep` that's injected to the constructor.
+  // `executeStep` is bound to the verifier context to ensure proper execution of the steps
+  abstract executeStep (step: string, action, verificationSuite: string): Promise<any>;
 }

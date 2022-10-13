@@ -18,10 +18,12 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
     revocationListUrl = safelyAppendUrlParameter(revocationListUrl, ASSERTION_ID_NAME, encodeURIComponent(assertionId));
   }
 
-  const response: any = await request({ url: revocationListUrl }).catch(() => {
+  try {
+    const response: any = await request({ url: revocationListUrl });
+    const issuerRevocationJson: RevocationList = JSON.parse(response);
+    return issuerRevocationJson.revokedAssertions ?? [];
+  } catch (e) {
+    console.error(e);
     throw new VerifierError(SUB_STEPS.checkRevokedStatus, errorMessage);
-  });
-
-  const issuerRevocationJson: RevocationList = JSON.parse(response);
-  return issuerRevocationJson.revokedAssertions ?? [];
+  }
 }

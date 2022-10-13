@@ -17,10 +17,9 @@ import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
 import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
-import type { Suite } from './models/Suite';
+import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
-import type { ComposedText } from './domain/i18n/useCases/getComposedText';
 
 const log = debug('Verifier');
 
@@ -82,9 +81,6 @@ export default class Verifier {
     this.explorerAPIs = explorerAPIs;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
-
-    this.instantiateProofVerifiers();
-    this.prepareVerificationProcess();
   }
 
   getVerificationSteps (): IVerificationMapItem[] {
@@ -104,6 +100,14 @@ export default class Verifier {
       transactionLink: proofVerifier.getTransactionLink?.(),
       rawTransactionLink: proofVerifier.getRawTransactionLink?.()
     }));
+  }
+
+  async init (): Promise<void> {
+    this.instantiateProofVerifiers();
+    for (const proofVerifierSuite of this.proofVerifiers) {
+      await proofVerifierSuite.init();
+    }
+    this.prepareVerificationProcess();
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
@@ -183,13 +187,14 @@ export default class Verifier {
     }
 
     this.proofMap.forEach((proof, index) => {
-      this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]]({
-        actionMethod: this._doAction.bind(this),
+      const suiteOptions: SuiteAPI = {
+        executeStep: this.executeStep.bind(this),
         document: this.documentToVerify,
         proof,
         explorerAPIs: this.explorerAPIs,
         issuer: this.issuer
-      }));
+      };
+      this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));
     });
   }
 
@@ -234,7 +239,7 @@ export default class Verifier {
       .suites = this.getSuiteSubsteps(parentStep);
   }
 
-  private async _doAction (step: string, action: () => any, verificationSuite?: string): Promise<any> {
+  private async executeStep (step: string, action: () => any, verificationSuite?: string): Promise<any> {
     if (this._isFailing()) {
       return;
     }
@@ -254,6 +259,7 @@ export default class Verifier {
       }
       return res;
     } catch (err) {
+      console.error(err);
       if (step) {
         this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
         this._stepsStatuses.push({
@@ -270,7 +276,7 @@ export default class Verifier {
   }
 
   private async checkImagesIntegrity (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkImagesIntegrity,
       async () => {
         await this.hashlinkVerifier.verifyHashlinkTable()
@@ -287,28 +293,28 @@ export default class Verifier {
 
     if (!revocationListUrl) {
       console.warn('No revocation list url was set on the issuer.');
-      await this._doAction(SUB_STEPS.checkRevokedStatus, () => true);
+      await this.executeStep(SUB_STEPS.checkRevokedStatus, () => true);
       return;
     }
-    const revokedCertificatesIds = await this._doAction(
+    const revokedCertificatesIds = await this.executeStep(
       null,
       async () => await domain.verifier.getRevokedAssertions(revocationListUrl, this.id)
     );
 
-    await this._doAction(SUB_STEPS.checkRevokedStatus, () =>
+    await this.executeStep(SUB_STEPS.checkRevokedStatus, () =>
       inspectors.ensureNotRevoked(revokedCertificatesIds, this.id)
     );
   }
 
   private async checkExpiresDate (): Promise<void> {
-    await this._doAction(SUB_STEPS.checkExpiresDate, () =>
+    await this.executeStep(SUB_STEPS.checkExpiresDate, () =>
       inspectors.ensureNotExpired(this.expires)
     );
   }
 
   private async controlVerificationMethod (): Promise<void> {
     // only v3 support
-    await this._doAction(SUB_STEPS.controlVerificationMethod, () => {
+    await this.executeStep(SUB_STEPS.controlVerificationMethod, () => {
       inspectors.controlVerificationMethod(
         this.issuer.didDocument,
         getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)

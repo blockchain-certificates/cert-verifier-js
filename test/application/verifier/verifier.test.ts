@@ -34,8 +34,9 @@ describe('Verifier entity test suite', function () {
   });
 
   describe('constructor method', function () {
-    beforeEach(function () {
+    beforeEach(async function () {
       verifierInstance = new Verifier(verifierParamFixture);
+      await verifierInstance.init();
     });
 
     describe('given all parameters are passed', function () {
@@ -70,6 +71,7 @@ describe('Verifier entity test suite', function () {
 
             const lookForTxSpy: sinon.SinonStub = sinon.stub(domain.verifier, 'lookForTx');
             const instance = new Verifier(parametersWithExporerAPI);
+            await instance.init();
             await instance.verify();
             expect(lookForTxSpy.firstCall.args[0].explorerAPIs).toEqual(parametersWithExporerAPI.explorerAPIs);
             lookForTxSpy.restore();
@@ -81,6 +83,7 @@ describe('Verifier entity test suite', function () {
         describe('when starting a new verification process', function () {
           it('should reset the step status property', async function () {
             const instance = new Verifier(verifierParamFixture);
+            await instance.init();
             await instance.verify();
             // @ts-expect-error accessing private field
             expect((instance._stepsStatuses)).not.toEqual([]);
@@ -111,6 +114,7 @@ describe('Verifier entity test suite', function () {
             didDocument
           };
           const verifierInstance = new Verifier(fixture);
+          await verifierInstance.init();
           const expectedStepIndex = verifierInstance.verificationSteps
             .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
           expect(expectedStepIndex).toBe(1);
@@ -120,8 +124,9 @@ describe('Verifier entity test suite', function () {
   });
 
   describe('isFailing method', function () {
-    beforeEach(function () {
+    beforeEach(async function () {
       verifierInstance = new Verifier(verifierParamFixture);
+      await verifierInstance.init();
     });
 
     describe('when all checks are successful', function () {
@@ -144,8 +149,9 @@ describe('Verifier entity test suite', function () {
 
   describe('verificationProcess property', function () {
     describe('when the process is for a mainnet v2 certs with no DID and no hashlinks', function () {
-      it('should be set accordingly', function () {
+      it('should be set accordingly', async function () {
         verifierInstance = new Verifier(verifierParamFixture);
+        await verifierInstance.init();
         const expectedOutput = [
           SUB_STEPS.checkRevokedStatus,
           SUB_STEPS.checkExpiresDate

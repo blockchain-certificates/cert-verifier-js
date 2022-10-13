@@ -1,4 +1,4 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../../src';
+import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did--verification-method-not-referenced.json';
 import sinon from 'sinon';
 import domain from '../../../../src/domain';
@@ -26,10 +26,9 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
         }).resolves(JSON.stringify(fixtureIssuerProfile));
 
         const certificate = new Certificate(fixture);
-        await certificate.init();
-        const result = await certificate.verify();
-        expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
-        expect(result.message).toBe('Issuer identity mismatch - The identity document provided by the issuer does not reference the verification method');
+        await expect(async () => {
+          await certificate.init();
+        }).rejects.toThrow('Issuer identity mismatch - The identity document provided by the issuer does not reference the verification method');
         sinon.restore();
       });
     });

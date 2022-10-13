@@ -100,6 +100,7 @@ export default class Certificate {
       revocationKey: this.revocationKey,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
     });
+    await this.verifier.init();
     this.verificationSteps = this.verifier.getVerificationSteps();
   }
 

@@ -1,4 +1,5 @@
 import { Decoder } from '@vaultie/lds-merkle-proof-2019';
+import { LDMerkleProof2019 } from 'jsonld-signatures-merkleproof2019';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
 import { Suite } from '../models/Suite';
@@ -13,6 +14,7 @@ import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
+import type { IDidDocument } from '../models/DidDocument';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -36,20 +38,8 @@ export function parseReceipt (proof: VCProof): Receipt {
 
 export default class MerkleProof2019 extends Suite {
   public proofVerificationProcess = [
-    SUB_STEPS.getTransactionId,
-    SUB_STEPS.computeLocalHash,
-    SUB_STEPS.fetchRemoteHash,
-    SUB_STEPS.compareHashes,
-    SUB_STEPS.checkMerkleRoot,
-    SUB_STEPS.checkReceipt,
     SUB_STEPS.parseIssuerKeys,
     SUB_STEPS.checkAuthenticity
-  ];
-
-  public identityVerificationProcess = [
-    SUB_STEPS.retrieveVerificationMethodPublicKey,
-    SUB_STEPS.deriveIssuingAddressFromPublicKey,
-    SUB_STEPS.compareIssuingAddress
   ];
 
   public transactionId: string;
@@ -66,10 +56,11 @@ export default class MerkleProof2019 extends Suite {
   public hasDid: boolean;
   public proof: VCProof;
   public type = 'MerkleProof2019';
+  public suite: LDMerkleProof2019;
 
   constructor (props: SuiteAPI) {
     super(props);
-    this._doAction = props.actionMethod;
+    this.executeStep = props.executeStep;
     this.documentToVerify = props.document as BlockcertsV3;
     this.explorerAPIs = props.explorerAPIs;
     this.proof = props.proof as VCProof;
@@ -81,19 +72,25 @@ export default class MerkleProof2019 extends Suite {
     this.setHasDid();
   }
 
+  async init (): Promise<void> {
+    await this.setVerificationSuite();
+  }
+
   async verifyProof (): Promise<void> {
-    await this.setIssuerFromProofVerificationMethod();
+    await this.suite.verifyProof({ verifyIdentity: false });
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
   async verifyIdentity (): Promise<void> {
-    if (this.hasDid) {
-      await this.verifyProcess(this.identityVerificationProcess);
-    }
+    await this.suite.verifyIdentity();
   }
 
   getProofVerificationSteps (parentStepKey: string): VerificationSubstep[] {
-    return this.proofVerificationProcess.map(childStepKey =>
+    const proofVerificationProcess = [
+      ...this.suite.getProofVerificationProcess(),
+      ...this.proofVerificationProcess
+    ];
+    return proofVerificationProcess.map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
   }
@@ -102,17 +99,17 @@ export default class MerkleProof2019 extends Suite {
     if (!this.hasDid) {
       return [];
     }
-    return this.identityVerificationProcess.map(childStepKey =>
+    return this.suite.getIdentityVerificationProcess().map(childStepKey =>
       domain.verifier.convertToVerificationSubsteps(parentStepKey, childStepKey)
     );
   }
 
   getIssuerPublicKey (): string {
-    if (!this.txData) {
-      console.error('Trying to access issuing address when txData not available yet. Did you run the `verify` method yet?');
-      return '';
-    }
-    return this.txData.issuingAddress;
+    return this.suite.getIssuerPublicKey();
+  }
+
+  getIssuanceTime (): string {
+    return this.suite.getIssuanceTime();
   }
 
   getIssuerName (): string {
@@ -155,6 +152,32 @@ export default class MerkleProof2019 extends Suite {
     return transactionLinks.rawTransactionLink;
   }
 
+  async executeStep (step: string, action, verificationSuite: string): Promise<any> {
+    throw new Error('executeStep method needs to be overwritten by injecting from Verifier');
+  }
+
+  private async setVerificationSuite (): Promise<void> {
+    await this.setIssuerFromProofVerificationMethod();
+    this.verificationMethodPublicKey = inspectors
+      .retrieveVerificationMethodPublicKey(
+        this.getTargetVerificationMethodContainer(),
+        getVCProofVerificationMethod(this.proof)
+      );
+    this.suite = new LDMerkleProof2019({
+      document: this.documentToVerify,
+      proof: this.proof,
+      verificationMethod: this.verificationMethodPublicKey,
+      options: {
+        explorerAPIs: this.explorerAPIs,
+        executeStepMethod: this.executeStep
+      }
+    });
+  }
+
+  private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
+    return this.issuer.didDocument ?? this.issuer;
+  }
+
   private isProofChain (): boolean {
     return this.proof.type === 'ChainedProof2021';
   }
@@ -192,64 +215,8 @@ export default class MerkleProof2019 extends Suite {
     }
   }
 
-  async _doAction (step: SUB_STEPS, action, verificationSuite: string): Promise<any> {
-    throw new Error('doAction method needs to be overwritten by injecting from CVJS');
-  }
-
-  private async getTransactionId (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.getTransactionId,
-      () => inspectors.isTransactionIdValid(this.transactionId),
-      this.type
-    );
-  }
-
-  private async computeLocalHash (): Promise<void> {
-    this.localHash = await this._doAction(
-      SUB_STEPS.computeLocalHash,
-      async () => await inspectors.computeLocalHash(this.documentToVerify),
-      this.type
-    );
-  }
-
-  private async fetchRemoteHash (): Promise<void> {
-    this.txData = await this._doAction(
-      SUB_STEPS.fetchRemoteHash,
-      async () => await domain.verifier.lookForTx({
-        transactionId: this.transactionId,
-        chain: this.chain.code,
-        explorerAPIs: this.explorerAPIs
-      }),
-      this.type
-    );
-  }
-
-  private async compareHashes (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.compareHashes,
-      () => inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash),
-      this.type
-    );
-  }
-
-  private async checkMerkleRoot (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.checkMerkleRoot,
-      () => inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash),
-      this.type
-    );
-  }
-
-  private async checkReceipt (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.checkReceipt,
-      () => inspectors.ensureValidReceipt(this.receipt),
-      this.type
-    );
-  }
-
   private async parseIssuerKeys (): Promise<void> {
-    this.issuerPublicKeyList = await this._doAction(
+    this.issuerPublicKeyList = await this.executeStep(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer),
       this.type
@@ -257,38 +224,9 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private async checkAuthenticity (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkAuthenticity,
-      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time),
-      this.type
-    );
-  }
-
-  // ##### DID CORRELATION #####
-  private async retrieveVerificationMethodPublicKey (): Promise<void> {
-    this.verificationMethodPublicKey = await this._doAction(
-      SUB_STEPS.retrieveVerificationMethodPublicKey,
-      () => inspectors
-        .retrieveVerificationMethodPublicKey(
-          this.issuer.didDocument,
-          getVCProofVerificationMethod(this.proof)
-        ),
-      this.type
-    );
-  }
-
-  private async deriveIssuingAddressFromPublicKey (): Promise<void> {
-    this.derivedIssuingAddress = await this._doAction(
-      SUB_STEPS.deriveIssuingAddressFromPublicKey,
-      () => inspectors.deriveIssuingAddressFromPublicKey(this.verificationMethodPublicKey, this.chain),
-      this.type
-    );
-  }
-
-  private async compareIssuingAddress (): Promise<void> {
-    await this._doAction(
-      SUB_STEPS.compareIssuingAddress,
-      () => inspectors.compareIssuingAddress(this.txData.issuingAddress, this.derivedIssuingAddress),
+      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.getIssuerPublicKey(), this.getIssuanceTime()),
       this.type
     );
   }

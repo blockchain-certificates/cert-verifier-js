@@ -50,8 +50,8 @@ export default class MerkleProof2017 extends Suite {
 
   constructor (props: SuiteAPI) {
     super(props);
-    if (props.actionMethod) {
-      this._doAction = props.actionMethod;
+    if (props.executeStep) {
+      this.executeStep = props.executeStep;
     }
     this.documentToVerify = props.document;
     this.explorerAPIs = props.explorerAPIs;
@@ -63,6 +63,9 @@ export default class MerkleProof2017 extends Suite {
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.adaptVerificationProcessToChain();
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  async init (): Promise<void> {}
 
   async verifyProof (): Promise<void> {
     for (const verificationStep of this.verificationProcess) {
@@ -154,12 +157,12 @@ export default class MerkleProof2017 extends Suite {
     }
   }
 
-  async _doAction (step: SUB_STEPS, action, verificationSuite: string): Promise<any> {
+  async executeStep (step: SUB_STEPS, action, verificationSuite: string): Promise<any> {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
   private async getTransactionId (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.getTransactionId,
       () => inspectors.isTransactionIdValid(this.transactionId),
       this.type
@@ -167,7 +170,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async computeLocalHash (): Promise<void> {
-    this.localHash = await this._doAction(
+    this.localHash = await this.executeStep(
       SUB_STEPS.computeLocalHash,
       async () => await inspectors.computeLocalHash(this.documentToVerify),
       this.type
@@ -175,7 +178,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async fetchRemoteHash (): Promise<void> {
-    this.txData = await this._doAction(
+    this.txData = await this.executeStep(
       SUB_STEPS.fetchRemoteHash,
       async () => await domain.verifier.lookForTx({
         transactionId: this.transactionId,
@@ -187,7 +190,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async compareHashes (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.compareHashes,
       () => inspectors.ensureHashesEqual(this.localHash, this.receipt.targetHash),
       this.type
@@ -195,7 +198,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async checkMerkleRoot (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkMerkleRoot,
       () => inspectors.ensureMerkleRootEqual(this.receipt.merkleRoot, this.txData.remoteHash),
       this.type
@@ -203,7 +206,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async checkReceipt (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkReceipt,
       () => inspectors.ensureValidReceipt(this.receipt),
       this.type
@@ -211,7 +214,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async parseIssuerKeys (): Promise<void> {
-    this.issuerPublicKeyList = await this._doAction(
+    this.issuerPublicKeyList = await this.executeStep(
       SUB_STEPS.parseIssuerKeys,
       () => domain.verifier.parseIssuerKeys(this.issuer),
       this.type
@@ -219,7 +222,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private async checkAuthenticity (): Promise<void> {
-    await this._doAction(
+    await this.executeStep(
       SUB_STEPS.checkAuthenticity,
       () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.txData.issuingAddress, this.txData.time),
       this.type

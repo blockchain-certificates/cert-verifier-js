@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import fixture from '../fixtures/v3/proof-chain-example-secp256k1.json';
 import { BLOCKCHAINS, Certificate } from '../../src';
-import domain from '../../src/domain';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../assertions/v3.0-issuer-profile.json';
@@ -24,7 +23,7 @@ describe('Certificate API Contract test suite', function () {
         requestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
         }).resolves(JSON.stringify(v3RevocationList));
-        sinon.stub(domain.verifier, 'lookForTx').resolves({
+        sinon.stub(ExplorerLookup, 'lookForTx').resolves({
           remoteHash: '99d1c6fdb496eae6aa2e357833877ebe4187765780e43a4107fb7abd5968de78',
           issuingAddress: '0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60',
           time: '2022-07-15T16:03:48.000Z',

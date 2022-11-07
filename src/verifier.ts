@@ -368,6 +368,13 @@ export default class Verifier {
   private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {
     if (code != null) {
       const step: VerificationSubstep = this.findStepFromVerificationProcess(code, verificationSuite);
+      if (step === undefined) {
+        // TODO: this happens when the verification method references a public key in a hosted issuer profile
+        // TODO: as it is not considered a DID, CVJS does not add an identity verification check
+        // TODO: we should likely enforce identity verification when the verification method is set
+        console.warn('step with code', code, 'was not found for suite', verificationSuite, 'ignoring but you should not.');
+        return;
+      }
       const update: IVerificationStepCallbackAPI = {
         code,
         status,

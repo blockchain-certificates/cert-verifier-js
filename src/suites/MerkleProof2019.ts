@@ -5,6 +5,7 @@ import domain from '../domain';
 import { Suite } from '../models/Suite';
 import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
 import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
+import { removeEntry } from '../helpers/array';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { IBlockchainObject } from '../constants/blockchains';
@@ -70,6 +71,7 @@ export default class MerkleProof2019 extends Suite {
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.setHasDid();
+    this.adaptVerificationProcessToChain();
   }
 
   async init (): Promise<void> {
@@ -77,7 +79,10 @@ export default class MerkleProof2019 extends Suite {
   }
 
   async verifyProof (): Promise<void> {
-    await this.suite.verifyProof({ verifyIdentity: false });
+    await this.suite.verifyProof({
+      verifyIdentity: false,
+      isMocknet: domain.chains.isMockChain(this.chain)
+    });
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
@@ -105,6 +110,9 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getIssuerPublicKey (): string {
+    if (domain.chains.isMockChain(this.chain)) {
+      return 'This mock chain does not support issuing addresses';
+    }
     return this.suite.getIssuerPublicKey();
   }
 
@@ -172,6 +180,13 @@ export default class MerkleProof2019 extends Suite {
         executeStepMethod: this.executeStep
       }
     });
+  }
+
+  private adaptVerificationProcessToChain (): void {
+    if (domain.chains.isMockChain(this.chain)) {
+      removeEntry(this.proofVerificationProcess, SUB_STEPS.parseIssuerKeys);
+      removeEntry(this.proofVerificationProcess, SUB_STEPS.checkAuthenticity);
+    }
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {

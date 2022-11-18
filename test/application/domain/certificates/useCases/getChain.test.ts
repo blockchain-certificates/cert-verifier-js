@@ -144,6 +144,19 @@ describe('domain certificates get chain use case test suite', function () {
         });
       });
     });
+
+    describe('and the chain is mocknet', function () {
+      it('should return the correct mocknet value', function () {
+        const fixtureSignature = {
+          anchors: [
+            'blink:mocknet:mocknet:abcdefghijkl'
+          ]
+        };
+        const result = domain.certificates.getChain(fixtureAddress, fixtureSignature);
+        const chainAssertion = BLOCKCHAINS.mocknet;
+        expect(result).toEqual(chainAssertion);
+      });
+    });
   });
 
   describe('given it is called without a signature', function () {

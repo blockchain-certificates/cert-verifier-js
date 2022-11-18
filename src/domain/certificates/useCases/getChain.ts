@@ -9,6 +9,7 @@ import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 // merkleRoot2019: see https://w3c-dvcg.github.io/lds-merkle-proof-2019/#blockchain-keymap
 function getMerkleRoot2019Chain (anchor): IBlockchainObject {
   const supportedChainsMap = {
+    // TODO: refactor - list blink code in BLOCKCHAINS object
     btc: {
       chainName: BLOCKCHAINS.bitcoin.name
     },
@@ -17,6 +18,11 @@ function getMerkleRoot2019Chain (anchor): IBlockchainObject {
     }
   };
   const dataArray = anchor.split(':');
+
+  if (dataArray[1] === BLOCKCHAINS.mocknet.code) {
+    return getChainObject(BLOCKCHAINS.mocknet.signatureValue);
+  }
+
   const chainIndex: number = dataArray.findIndex(data => Object.keys(supportedChainsMap).includes(data));
   if (chainIndex > -1) {
     const chainCode = dataArray[chainIndex];

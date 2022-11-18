@@ -8,6 +8,7 @@ import BlockcertsV3CustomContext from './v3/testnet-v3-custom-context.json';
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
 import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
+import MocknetV3Valid from './v3/mocknet-v3-valid.json';
 import EthereumSepoliaV3 from './v3/ethereum-sepolia-v3.json';
 import EthereumMainV2Valid from './v2/ethereum-main-valid-2.0.json';
 import EthereumMainInvalidMerkleRoot from './v2/ethereum-merkle-root-unmatch-2.0.json';
@@ -52,6 +53,7 @@ export default {
   MainnetV2Valid,
   MainnetV2AlphaValid,
   MocknetV2Valid,
+  MocknetV3Valid,
   RegtestV2Valid,
   TestnetRevokedV2,
   TestnetTamperedHashes,

@@ -1,5 +1,5 @@
 import domain from '../../../../../src/domain/index';
-import { BLOCKCHAINS } from '../../../../../src/index';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 
 describe('domain certificates get chain use case test suite', function () {
   describe('given it is called with a signature with anchors', function () {

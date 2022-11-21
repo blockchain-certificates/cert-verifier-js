@@ -1,8 +1,8 @@
-import type { IBlockchainObject } from '../../../constants/blockchains';
-import { BLOCKCHAINS } from '../../../constants/blockchains';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
 import { capitalize } from '../../../helpers/string';
+import type { IBlockchainObject } from '@blockcerts/explorer-lookup';
 import type { Receipt } from '../../../models/Receipt';
 import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 

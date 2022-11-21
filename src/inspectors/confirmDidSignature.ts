@@ -1,6 +1,6 @@
 import type { MerkleProof2019 } from '../models/MerkleProof2019';
 import type { IDidDocument } from '../models/DidDocument';
-import type { IBlockchainObject } from '../constants/blockchains';
+import type { IBlockchainObject } from '@blockcerts/explorer-lookup';
 import controlVerificationMethod from './did/controlVerificationMethod';
 import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey';
 import deriveIssuingAddressFromPublicKey from './did/deriveIssuingAddressFromPublicKey';

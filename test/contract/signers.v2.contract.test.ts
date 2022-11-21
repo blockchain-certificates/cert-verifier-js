@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import FIXTURES from '../fixtures';
-import { BLOCKCHAINS, Certificate } from '../../src';
+import { Certificate } from '../../src';
 import domain from '../../src/domain';
 import v2IssuerProfile from '../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
@@ -56,7 +56,7 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the chain', function () {
-        expect(instance.signers[0].chain).toBe(BLOCKCHAINS.bitcoin);
+        expect(instance.signers[0].chain).toBe(ExplorerLookup.BLOCKCHAINS.bitcoin);
       });
 
       it('should expose the transactionId', function () {

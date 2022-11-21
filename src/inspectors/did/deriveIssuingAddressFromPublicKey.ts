@@ -1,6 +1,6 @@
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import type { IBlockchainObject } from '../../constants/blockchains';
-import { SupportedChains } from '../../constants/blockchains';
+import type { IBlockchainObject } from '@blockcerts/explorer-lookup';
+import { SupportedChains } from '../../constants/blockchains'; // TODO: this should be exposed by @blockcerts/explorer-lookup
 import type { ISecp256k1PublicKeyJwk } from '../../helpers/keyUtils';
 import { publicKeyUInt8ArrayFromJwk } from '../../helpers/keyUtils';
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../../helpers/issuingAddress';
@@ -8,6 +8,7 @@ import domain from '../../domain';
 import { baseError } from './index';
 import { VerifierError } from '../../models';
 
+// TODO: should this still be part of this package? Duplicate in jsonld-signatures-merkleproof2019
 export default function deriveIssuingAddressFromPublicKey (verificationMethodPublicKey: IDidDocumentPublicKey, chain: IBlockchainObject): string {
   const publicKey = publicKeyUInt8ArrayFromJwk(verificationMethodPublicKey.publicKeyJwk as ISecp256k1PublicKeyJwk);
   let address: string = '';

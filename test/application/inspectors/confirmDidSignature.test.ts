@@ -2,7 +2,7 @@ import confirmDidSignature from '../../../src/inspectors/confirmDidSignature';
 import didDocumentEth from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import blockcertsV3WithDid from '../../fixtures/v3/testnet-v3-did.json';
 import blockcertsV3WithDidEthRopsten from '../../fixtures/v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
-import { BLOCKCHAINS } from '../../../src';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 
 describe('confirmDidSignature inspector test suite', function () {
   describe('given the blockcerts was issued on a Bitcoin network', function () {

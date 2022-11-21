@@ -18,8 +18,6 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
     revocationListUrl = safelyAppendUrlParameter(revocationListUrl, ASSERTION_ID_NAME, encodeURIComponent(assertionId));
   }
 
-  console.log('lookup revocation', revocationListUrl);
-
   try {
     const response: any = await request({ url: revocationListUrl });
     const issuerRevocationJson: RevocationList = JSON.parse(response);

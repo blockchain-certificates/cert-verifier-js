@@ -1,7 +1,7 @@
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { IBlockchainObject } from '@blockcerts/explorer-lookup';
-import { SupportedChains } from '../../constants/blockchains'; // TODO: this should be exposed by @blockcerts/explorer-lookup
 import type { ISecp256k1PublicKeyJwk } from '../../helpers/keyUtils';
+import { SupportedChains } from '@blockcerts/explorer-lookup';
 import { publicKeyUInt8ArrayFromJwk } from '../../helpers/keyUtils';
 import { computeBitcoinAddressFromPublicKey, computeEthereumAddressFromPublicKey } from '../../helpers/issuingAddress';
 import domain from '../../domain';

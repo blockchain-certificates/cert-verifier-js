@@ -1,13 +1,12 @@
-import { Decoder } from '@vaultie/lds-merkle-proof-2019';
 import { LDMerkleProof2019 } from 'jsonld-signatures-merkleproof2019';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
 import { Suite } from '../models/Suite';
 import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
 import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
-import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
+import { removeEntry } from '../helpers/array';
+import type { ExplorerAPI, TransactionData, IBlockchainObject } from '@blockcerts/explorer-lookup';
 import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
-import type { IBlockchainObject } from '../constants/blockchains';
 import type { Receipt } from '../models/Receipt';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
@@ -32,8 +31,7 @@ enum SUB_STEPS {
 }
 
 export function parseReceipt (proof: VCProof): Receipt {
-  const base58Decoder = new Decoder(proof.proofValue);
-  return base58Decoder.decode();
+  return LDMerkleProof2019.decodeMerkleProof2019(proof);
 }
 
 export default class MerkleProof2019 extends Suite {
@@ -67,17 +65,20 @@ export default class MerkleProof2019 extends Suite {
     this.issuer = props.issuer;
     this.validateProofType();
     this.receipt = parseReceipt(this.proof);
-    this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.setHasDid();
   }
 
   async init (): Promise<void> {
     await this.setVerificationSuite();
+    this.chain = this.suite.getChain();
+    this.adaptVerificationProcessToChain();
   }
 
   async verifyProof (): Promise<void> {
-    await this.suite.verifyProof({ verifyIdentity: false });
+    await this.suite.verifyProof({
+      verifyIdentity: false
+    });
     await this.verifyProcess(this.proofVerificationProcess);
   }
 
@@ -130,7 +131,7 @@ export default class MerkleProof2019 extends Suite {
   }
 
   getChain (): IBlockchainObject {
-    return this.chain;
+    return this.suite.getChain();
   }
 
   getReceipt (): Receipt {
@@ -172,6 +173,13 @@ export default class MerkleProof2019 extends Suite {
         executeStepMethod: this.executeStep
       }
     });
+  }
+
+  private adaptVerificationProcessToChain (): void {
+    if (domain.chains.isMockChain(this.chain)) { // TODO: maybe refactor? Is it opportunistic to read this from suite?
+      removeEntry(this.proofVerificationProcess, SUB_STEPS.parseIssuerKeys);
+      removeEntry(this.proofVerificationProcess, SUB_STEPS.checkAuthenticity);
+    }
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {

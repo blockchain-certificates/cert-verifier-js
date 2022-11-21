@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
-import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
-import { BLOCKCHAINS, VERIFICATION_STATUSES } from '../../../src';
+import { VERIFICATION_STATUSES } from '../../../src';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
@@ -11,6 +11,7 @@ import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.j
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
 import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
+import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
 
 describe('Verifier entity test suite', function () {

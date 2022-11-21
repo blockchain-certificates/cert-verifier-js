@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import FIXTURES from '../fixtures';
-import { BLOCKCHAINS, Certificate } from '../../src';
+import { Certificate } from '../../src';
 import domain from '../../src/domain';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -65,7 +65,7 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the chain', function () {
-        expect(instance.signers[0].chain).toBe(BLOCKCHAINS.testnet);
+        expect(instance.signers[0].chain).toBe(ExplorerLookup.BLOCKCHAINS.testnet);
       });
 
       it('should expose the transactionId', function () {

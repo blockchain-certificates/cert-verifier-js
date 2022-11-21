@@ -1,6 +1,6 @@
 import { TRANSACTION_APIS, TRANSACTION_ID_PLACEHOLDER } from './api';
 import CERTIFICATE_VERSIONS from './certificateVersions';
-import { BLOCKCHAINS } from './blockchains';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import { NETWORKS } from './networks';
 import CONFIG from './config';
 import preloadedContexts from './contexts/preloadedContexts';

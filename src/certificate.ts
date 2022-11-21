@@ -1,4 +1,3 @@
-import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
 import type { ParsedCertificate } from './parsers';
@@ -7,13 +6,13 @@ import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './ve
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
-import type { Blockcerts } from './models/Blockcerts';
-import type { IBlockchainObject } from './constants/blockchains';
 import { deepCopy } from './helpers/object';
+import convertHashlink from './parsers/helpers/convertHashlink';
+import type { ExplorerAPI, IBlockchainObject } from '@blockcerts/explorer-lookup';
+import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { SignatureImage } from './models';
 import type { BlockcertsV3Display } from './models/BlockcertsV3';
-import convertHashlink from './parsers/helpers/convertHashlink';
 import type { IVerificationMapItem } from './models/VerificationMap';
 
 export interface ExplorerURLs {

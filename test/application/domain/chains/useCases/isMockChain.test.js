@@ -1,5 +1,5 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS } from '../../../../../src';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 
 describe('domain chains isMockChain use case test suite', function () {
   describe('given it is called with a chain parameter', function () {

@@ -1,5 +1,5 @@
 import domain from '../../../../../src/domain';
-import { BLOCKCHAINS } from '../../../../../src';
+import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import type { ITransactionLink } from '../../../../../src/domain/certificates/useCases/getTransactionLink';
 
 describe('domain certificates get transaction link use case test suite', function () {

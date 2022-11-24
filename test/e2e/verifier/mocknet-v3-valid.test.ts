@@ -23,8 +23,7 @@ describe('given the certificate is a valid mocknet (v3.0)', function () {
       type: 'RevocationList',
       issuer: 'https://issuer.dev.hylandcredentials.com/61e6c3fc-5779-4a6d-b05f-fdd10fdac5f0/issuer_profile.json',
       revokedAssertions: []
-    }
-    ));
+    }));
 
     const certificate = new Certificate(FIXTURES.MocknetV3Valid);
     await certificate.init();

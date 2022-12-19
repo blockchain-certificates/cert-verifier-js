@@ -109,7 +109,7 @@
     "codecov": "^3.0.4",
     "crypto": "^1.0.1",
     "dts-bundle-generator": "^6.0.0",
-    "eslint": "^7.21.0",
+    "eslint": "^8.30.0",
     "eslint-config-semistandard": "^16.0.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-config-standard-with-typescript": "^21.0.1",

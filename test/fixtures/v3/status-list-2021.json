@@ -1,0 +1,37 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/blockcerts/v3"
+  ],
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+  "issuanceDate": "2022-08-18T14:04:24Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "name": "Julien Fraichot",
+    "email": "julien.fraichot@hyland.com",
+    "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC"
+  },
+  "credentialStatus": {
+    "id": "https://raw.githubusercontent.com/blockchain-certificates/rl-blockcerts-poc/master/src/data/revocationList.json#23546",
+    "type": "StatusList2021Entry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "23546",
+    "statusListCredential": "https://raw.githubusercontent.com/blockchain-certificates/rl-blockcerts-poc/master/src/data/revocationList.json"
+  },
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Hello world</div>"
+  },
+  "proof": {
+    "type": "MerkleProof2019",
+    "created": "2023-03-21T14:26:04.383361",
+    "proofValue": "zMcm4LfQFUZkWZyLBpZeFHT2U6D66s3URUkcN2KDviC7jHn9ej6m1X75XqfHHQqqkRDZVyUeAkW9cExmTbwks8WwGUX5RWZHwQ4uCiuRDwMM6QzQZHPDRhvwBuFE2qZYNAB3zpLpWXngay1WAhq5re8hb296h1toAwtqXUzumJ67oWzDC9RcWP9efgwQemeuUGjxCbt2MUBEAL3vMqdMt6YsMHwk2U7ws8TDShjBimzMwGRvDhNeVXTi8rJ9KLHLuiWCVsppR3xToDj89rBvfpF3Ks9eRaZRFhWFZjBJnPGNUmrVjzu",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+  }
+}

@@ -16,7 +16,7 @@ describe('given the certificate is a revoked testnet', function () {
         'mkAvTwCYUyVk3rncFVCTJt1HUDsApVezhP'
       ]
     });
-    certificate = new Certificate(FIXTURES.TestnetRevokedV2);
+    certificate = new Certificate(FIXTURES.TestnetRevokedIssuingAddressV2);
     await certificate.init();
     result = await certificate.verify();
   });

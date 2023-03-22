@@ -86,6 +86,7 @@
     "secp256k1": "^4.0.2",
     "serialize-error": "github:blockchain-certificates/serialize-error",
     "sha256": "^0.2.0",
+    "vc-revocation-list": "^3.0.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

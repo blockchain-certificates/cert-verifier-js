@@ -3,7 +3,7 @@
     "https://www.w3.org/2018/credentials/v1",
     "https://w3id.org/blockcerts/v3"
   ],
-  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-b456093df",
   "type": [
     "VerifiableCredential",
     "BlockcertsCredential"
@@ -17,10 +17,10 @@
     "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC"
   },
   "credentialStatus": {
-    "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#23546",
+    "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#23547",
     "type": "StatusList2021Entry",
     "statusPurpose": "revocation",
-    "statusListIndex": "23546",
+    "statusListIndex": "23547",
     "statusListCredential": "https://www.blockcerts.org/samples/3.0/status-list-2021.json"
   },
   "display": {
@@ -29,8 +29,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2023-03-21T17:30:13.718580",
-    "proofValue": "z4zvrPUULnHmaio2X97Lo2iF9fzp1EbofwGRgjFesbBrdRef4JKfVeb8hgYtLQtqTzKLaXSn52Pw6niKAutuazfvXim3McXaMtfubY5cTAMEQXrHvS3RA99sApeA85sLq1b274V9mhRNwWV3vTKJTXPT3QR6kB98AxWudFhweG5WSQ52jP3BJAAmQ4dXR8Yvw3jxPFUUoM9EdiYKf6NzmNvzK3icnbxzA2T2EagDLmHEGRq77ocERWDgtQKm5uTWqGhecegrxKPAN3vHP8nGyPzziX74e9gCS3w3MMGeQnuYJyUQq4HbUKm1dFf8uf49npYeSKDVcHFD4sPspph51toCFTSr9Xjmeo76ySivpGtW4PxqsRk5YrnLS3u8WKrsy4zmqkrynBvXNH87B6y",
+    "created": "2023-03-21T17:30:13.716394",
+    "proofValue": "z4zvrPUULqodatUNSb1yQooCTEPT2EtDLH6jutG1AQsKGfPsKvcKzkJzRDx2ZZZvgh4TYJNQVQU3Gd64PYSA2yhy4S53Lrf3YRX5wmQyiKqBzx84oJgzR6mwEme8oTqwTuHS18En5eY24HYJzhNaS5dM1xas3aJq7NwViGrpR9iJ337CV4h3PFP85i2kgWiiTMM2gkSYdCB25qzMG7P7FYQGjkv2ByFGx22wxLWtnAJ9kjFpu17Xzt4z34n6rxZ2SyCutLG9Qeir7oBuQVSW7VNKn2Th3DHjhSiDLuGSYf4UGEuCXhDcZ5iZrLzxLHP63jQXW9r1RWJD7Ac7A1A44HX9fVZyqAybuWmFr8aKzg57znjJeZTN92Fzg2yNgRRwdneJoxeqLuZiBdU1T3P",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
   }

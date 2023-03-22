@@ -29,6 +29,8 @@ import TestnetTamperedHashes from './v2/testnet-tampered-hashes-2.0.json';
 import TestnetV1Valid from './v1/testnet-valid-1.2.json';
 import TestnetV2Valid from './v2/testnet-valid-2.0.json';
 import TestnetV2ValidV1Issuer from './v2/testnet-valid-v1-issuer-2.0.json';
+import StatusList2021 from './v3/status-list-2021.json';
+import StatusList2021Revoked from './v3/status-list-2021-revoked.json';
 
 export default {
   BlockcertsV3,
@@ -57,6 +59,8 @@ export default {
   MocknetV2Valid,
   MocknetV3Valid,
   RegtestV2Valid,
+  StatusList2021,
+  StatusList2021Revoked,
   TestnetRevokedIssuingAddressV2,
   TestnetTamperedHashes,
   TestnetV1Valid,

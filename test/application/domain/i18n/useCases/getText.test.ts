@@ -4,14 +4,14 @@ import domain from '../../../../../src/domain';
 describe('domain i18n getText use case test suite', function () {
   describe('given it is invoked without the group', function () {
     it('should return an empty string', function () {
-      const res = domain.i18n.getText();
+      const res = (domain.i18n as any).getText();
       expect(res).toBe('');
     });
   });
 
   describe('given it is invoked without the item', function () {
     it('should return an error', function () {
-      const res = domain.i18n.getText('group');
+      const res = (domain.i18n as any).getText('group');
       expect(res).toBe('');
     });
   });

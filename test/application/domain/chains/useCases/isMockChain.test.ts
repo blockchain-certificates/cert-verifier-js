@@ -6,7 +6,7 @@ describe('domain chains isMockChain use case test suite', function () {
     describe('given the chain does not exist', function () {
       it('should return null', function () {
         const assertionInvalidChain = 'invalid-chain';
-        const result = domain.chains.isMockChain(assertionInvalidChain);
+        const result = domain.chains.isMockChain(assertionInvalidChain as any);
         expect(result).toBe(false);
       });
     });
@@ -14,7 +14,7 @@ describe('domain chains isMockChain use case test suite', function () {
     describe('given the chain parameter is passed as a string and is a valid test chain', function () {
       it('should return true', function () {
         const assertionTestChain = BLOCKCHAINS.mocknet.code;
-        const result = domain.chains.isMockChain(assertionTestChain);
+        const result = domain.chains.isMockChain(assertionTestChain as any);
         expect(result).toBe(true);
       });
     });
@@ -63,7 +63,8 @@ describe('domain chains isMockChain use case test suite', function () {
 
   describe('given it is not called with a chain parameter', function () {
     it('should return null', function () {
-      const result = domain.chains.isMockChain();
+      let undefinedChain;
+      const result = domain.chains.isMockChain(undefinedChain);
       expect(result).toBe(false);
     });
   });

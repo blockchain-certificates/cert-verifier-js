@@ -30,6 +30,7 @@ export interface VerifiableCredential {
     statusListIndex?: string;
     statusListCredential?: string;
   };
+  issuer: string | Issuer;
   credentialSubject?: any;
   expirationDate?: string;
   evidence?: Array<{

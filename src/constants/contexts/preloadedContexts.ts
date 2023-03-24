@@ -18,4 +18,7 @@ preloadedContexts['https://w3id.org/blockcerts/v3.0-beta'] = CONTEXTS.BLOCKCERTS
 
 preloadedContexts['https://w3id.org/security/suites/ed25519-2020/v1'] = CONTEXTS.ED25519;
 
+/** STATUS LIST **/
+preloadedContexts['https://w3id.org/vc/status-list/2021/v1'] = CONTEXTS.STATUS_LIST_2021;
+
 export default preloadedContexts;

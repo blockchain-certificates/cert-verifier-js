@@ -1,26 +1,26 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
-    "https://w3id.org/vc-revocation-list-2020/v1",
+    "https://w3id.org/vc/status-list/2021/v1",
     "https://w3id.org/security/suites/ed25519-2020/v1"
   ],
   "id": "",
-  "issuer": "did:key:z6MkuN3gLUTDJvJb1GdjADuPUFTNtGCU1fU2bUr5CXNWCHst",
-  "issuanceDate": "2022-01-20T15:56:36.290Z",
+  "issuer": "did:key:z6MkvmPwfKvALHbGPjTh1J8oMum6YTQaeGWsarAbik7P82J4",
+  "issuanceDate": "2023-03-22T15:01:32.117Z",
   "type": [
     "VerifiableCredential",
-    "RevocationList2021Credential"
+    "StatusList2021Credential"
   ],
   "credentialSubject": {
     "id": "#list",
-    "type": "RevocationList2021",
+    "type": "StatusList2021",
     "encodedList": "H4sIAAAAAAAAA-3OMQEAAAgDoJ32T2yL6QEJSAAAgJK5DgAAAAAAAAAAAAAAAAB_LUkhKJ4AQAAA"
   },
   "proof": {
     "type": "Ed25519Signature2020",
-    "created": "2023-03-21T15:11:57.544Z",
-    "verificationMethod": "did:key:z6MkuN3gLUTDJvJb1GdjADuPUFTNtGCU1fU2bUr5CXNWCHst#z6MkuN3gLUTDJvJb1GdjADuPUFTNtGCU1fU2bUr5CXNWCHst",
+    "created": "2023-03-22T15:01:44.256Z",
+    "verificationMethod": "did:key:z6MkvmPwfKvALHbGPjTh1J8oMum6YTQaeGWsarAbik7P82J4#z6MkvmPwfKvALHbGPjTh1J8oMum6YTQaeGWsarAbik7P82J4",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z2RGyCgeYheQBGEu9Ukbx4sm3ezzjL9PQ4UFTfF15SZiPJZXbxjbNCCkjJxP4ykR1gYzXA1CrK1C3uZ4PXKvp4fCq"
+    "proofValue": "zwbQ5E1MazeFGsceFJ4yY6RMnTURQ7wkX7HbXAfwAgxM2EB2jgm8gUvwvYTyxCMLQQXMEWVNTZBuyYxHBZFCntVD"
   }
 }

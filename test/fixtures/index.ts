@@ -20,7 +20,6 @@ import MainnetInvalidMerkleReceipt from './v2/mainnet-invalid-merkle-receipt-2.0
 import MainnetMerkleRootUmmatch from './v2/mainnet-merkle-root-unmatch-2.0.json';
 import MainnetV2Revoked from './v2/mainnet-revoked-2.0.json';
 import MainnetV2Valid from './v2/mainnet-valid-2.0.json';
-import MainnetV2AlphaValid from './v2/mainnet-valid-2.0-alpha.json';
 import MocknetV2Valid from './v2/mocknet-valid-2.0.json';
 import RegtestV2Valid from './v2/regtest-valid-2.0.json';
 import TestnetRevokedV2 from './v2/testnet-revoked-key-2.0.json';
@@ -51,7 +50,6 @@ export default {
   MainnetMerkleRootUmmatch,
   MainnetV2Revoked,
   MainnetV2Valid,
-  MainnetV2AlphaValid,
   MocknetV2Valid,
   MocknetV3Valid,
   RegtestV2Valid,

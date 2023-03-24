@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
 import type { CertificateOptions } from '../../../src/certificate';

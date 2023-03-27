@@ -17,7 +17,7 @@ describe('Certificate test suite', function () {
     let certificate;
 
     beforeEach(function () {
-      lookForTxStub = sinon.stub(domain.verifier, 'lookForTx');
+      lookForTxStub = sinon.stub(ExplorerLookup, 'lookForTx');
       requestStub = sinon.stub(ExplorerLookup, 'request');
 
       requestStub.withArgs({

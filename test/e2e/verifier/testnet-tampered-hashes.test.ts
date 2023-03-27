@@ -2,6 +2,8 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
 import domain from '../../../src/domain';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import issuerBlockcertsV2a from '../../fixtures/issuer-blockcerts-v2a.json';
 
 describe('given the certificate is a testnet with tampered hashes', function () {
   let certificate;
@@ -16,6 +18,9 @@ describe('given the certificate is a testnet with tampered hashes', function () 
         'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj'
       ]
     });
+    sinon.stub(ExplorerLookup, 'request').withArgs({
+      url: 'https://www.blockcerts.org/samples/2.0-alpha/issuerTestnet.json'
+    }).resolves(JSON.stringify(issuerBlockcertsV2a));
     certificate = new Certificate(FIXTURES.TestnetTamperedHashes);
     await certificate.init();
     result = await certificate.verify();

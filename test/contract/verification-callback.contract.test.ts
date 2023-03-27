@@ -2,7 +2,6 @@ import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResol
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
 import sinon from 'sinon';
-import domain from '../../src/domain';
 import { Certificate, VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
@@ -11,7 +10,7 @@ import type { IVerificationStepCallbackAPI } from '../../src/verifier';
 describe('when the certificate verified', function () {
   beforeEach(function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
-    const lookForTxStub = sinon.stub(domain.verifier, 'lookForTx');
+    const lookForTxStub = sinon.stub(ExplorerLookup, 'lookForTx');
     requestStub.withArgs({
       url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
     }).resolves(JSON.stringify({ didDocument }));

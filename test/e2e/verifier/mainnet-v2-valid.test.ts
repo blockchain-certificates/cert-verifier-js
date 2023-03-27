@@ -2,6 +2,8 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
 import domain from '../../../src/domain';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import fixtureIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
 
 describe('given the certificate is a valid mainnet (v2.0)', function () {
   it('should verify successfully', async function () {
@@ -13,6 +15,9 @@ describe('given the certificate is a valid mainnet (v2.0)', function () {
         '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
       ]
     });
+    sinon.stub(ExplorerLookup, 'request').withArgs({
+      url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+    }).resolves(JSON.stringify(fixtureIssuerProfile));
     const certificate = new Certificate(FIXTURES.MainnetV2Valid);
     await certificate.init();
     const result = await certificate.verify();

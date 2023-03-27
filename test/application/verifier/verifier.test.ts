@@ -7,12 +7,16 @@ import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
 import FIXTURES from '../../fixtures';
-import issuerProfileAssertion from '../../assertions/v3.0-alpha-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
 import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
+import fixtureMainnetIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
+import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import v3RevocationList from '../../assertions/v3-revocation-list';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -30,8 +34,25 @@ describe('Verifier entity test suite', function () {
     }
   };
 
+  beforeEach(function () {
+    const requestStub = sinon.stub(ExplorerLookup, 'request');
+    requestStub.withArgs({
+      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
+    }).resolves(JSON.stringify({ didDocument }));
+    requestStub.withArgs({
+      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+    }).resolves(JSON.stringify(fixtureBlockcertsIssuerProfile));
+    requestStub.withArgs({
+      url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
+    }).resolves(JSON.stringify(v3RevocationList));
+    requestStub.withArgs({
+      url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+    }).resolves(JSON.stringify(fixtureMainnetIssuerProfile));
+  });
+
   afterEach(function () {
     verifierInstance = null;
+    sinon.restore();
   });
 
   describe('constructor method', function () {
@@ -83,6 +104,14 @@ describe('Verifier entity test suite', function () {
       describe('verify method', function () {
         describe('when starting a new verification process', function () {
           it('should reset the step status property', async function () {
+            sinon.stub(domain.verifier, 'lookForTx').resolves({
+              remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+              issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+              time: '2018-02-08T00:23:34.000Z',
+              revokedAddresses: [
+                '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+              ]
+            });
             const instance = new Verifier(verifierParamFixture);
             await instance.init();
             await instance.verify();
@@ -111,7 +140,7 @@ describe('Verifier entity test suite', function () {
           const fixture = deepCopy<any>(verifierParamFixture);
           fixture.certificateJson = FIXTURES.BlockcertsV3;
           fixture.issuer = {
-            ...issuerProfileAssertion,
+            ...fixtureBlockcertsIssuerProfile,
             didDocument
           };
           const verifierInstance = new Verifier(fixture);

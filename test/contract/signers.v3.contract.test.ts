@@ -24,7 +24,7 @@ describe('Certificate API Contract test suite', function () {
         requestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
         }).resolves(JSON.stringify(v3RevocationList));
-        sinon.stub(domain.verifier, 'lookForTx').resolves({
+        sinon.stub(ExplorerLookup, 'lookForTx').resolves({
           remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           time: '2022-04-05T18:45:30.000Z',

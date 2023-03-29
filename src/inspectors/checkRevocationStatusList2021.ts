@@ -28,7 +28,6 @@ async function getRevocationCredential (statusListUrl: string): Promise<Verifiab
 
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
   const issuerProfile = await domain.verifier.getIssuerProfile(revocationCredential.issuer);
-  console.log(issuerProfile);
   const verifier = new Verifier({
     certificateJson: revocationCredential as any,
     expires: '',
@@ -40,8 +39,6 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
   });
   await verifier.init();
   const revocationCredentialVerification = await verifier.verify();
-
-  console.log(revocationCredentialVerification);
 
   if (revocationCredentialVerification.status !== VERIFICATION_STATUSES.SUCCESS) {
     console.error(revocationCredentialVerification.message);
@@ -55,10 +52,8 @@ export default async function checkRevocationStatusList2021 (credentialStatus: V
   const revocationCredential: VerifiableCredential = await getRevocationCredential(credentialStatus.statusListCredential);
 
   if (!revocationCredential) {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `No status list could be found at the specified URL for 'statusListCredential': ${credentialStatus.statusListCredential}`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `No status list could be found at the specified URL for 'statusListCredential': ${credentialStatus.statusListCredential}.`);
   }
-
-  console.log('got a revocation credential');
 
   await verifyRevocationCredential(revocationCredential);
 
@@ -67,6 +62,6 @@ export default async function checkRevocationStatusList2021 (credentialStatus: V
 
   if (decodedList.isRevoked(credentialIndex)) {
     // TODO: i18n
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'Certificate has been revoked');
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'Certificate has been revoked.');
   }
 }

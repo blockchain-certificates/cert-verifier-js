@@ -5,12 +5,14 @@ import { checkRevocationStatusList2021 } from '../../../src/inspectors';
 import FIXTURES from '../../fixtures';
 
 describe('checkRevocationStatusList2021 inspector test suite', function () {
+  afterEach(function () {
+    sinon.restore();
+  });
+
   describe('when the revocation list has been tampered with', function () {
     it('should throw', async function () {
       const temperedList = JSON.parse(JSON.stringify(BlockcertsStatusList2021));
-      console.log(BlockcertsStatusList2021);
       temperedList.credentialSubject.encodedList = 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA';
-      console.log(temperedList);
       const requestStub = sinon.stub(ExplorerLookup, 'request');
       requestStub.withArgs({
         url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
@@ -19,7 +21,47 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
       await expect(async () => {
         await checkRevocationStatusList2021(FIXTURES.StatusList2021Revoked.credentialStatus);
       }).rejects.toThrow('The authenticity of the revocation list could not be verified.');
-      sinon.restore();
+    });
+  });
+
+  describe('when no revocation list could be retrieved', function () {
+    it('should throw', async function () {
+      const temperedList = JSON.parse(JSON.stringify(BlockcertsStatusList2021));
+      temperedList.credentialSubject.encodedList = 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA';
+      const requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+      }).resolves(undefined);
+
+      await expect(async () => {
+        await checkRevocationStatusList2021(FIXTURES.StatusList2021Revoked.credentialStatus);
+      }).rejects.toThrow('No status list could be found at the specified URL for \'statusListCredential\': https://www.blockcerts.org/samples/3.0/status-list-2021.json.');
+    });
+  });
+
+  describe('when the certificate has been revoked', function () {
+    it('should throw', async function () {
+      const requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+      }).resolves(JSON.stringify(BlockcertsStatusList2021));
+
+      await expect(async () => {
+        await checkRevocationStatusList2021(FIXTURES.StatusList2021Revoked.credentialStatus);
+      }).rejects.toThrow('Certificate has been revoked.');
+    });
+  });
+
+  describe('when the certificate has not been revoked', function () {
+    it('should verify', async function () {
+      const requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+      }).resolves(JSON.stringify(BlockcertsStatusList2021));
+
+      await expect(async () => {
+        await checkRevocationStatusList2021(FIXTURES.StatusList2021.credentialStatus);
+      }).resolves;
     });
   });
 });

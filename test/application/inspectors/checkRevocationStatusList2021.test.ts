@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
+import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
 import { checkRevocationStatusList2021 } from '../../../src/inspectors';
 import FIXTURES from '../../fixtures';
 
@@ -52,7 +53,23 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
     });
   });
 
-  describe('when the certificate has not been revoked', function () {
+  describe('when the certificate has been suspended', function () {
+    it('should throw', async function () {
+      const requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+      }).resolves(JSON.stringify(BlockcertsStatusList2021));
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+      }).resolves(JSON.stringify(BlockcertsStatusList2021Suspension));
+
+      await expect(async () => {
+        await checkRevocationStatusList2021(FIXTURES.StatusList2021Suspended.credentialStatus);
+      }).rejects.toThrow('Certificate has been suspended.');
+    });
+  });
+
+  describe('when the certificate has not been revoked nor suspended', function () {
     it('should verify', async function () {
       const requestStub = sinon.stub(ExplorerLookup, 'request');
       requestStub.withArgs({

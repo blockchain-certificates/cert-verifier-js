@@ -24,12 +24,7 @@ export interface VerifiableCredential {
   '@context': JsonLDContext;
   id: string;
   type: string[];
-  credentialStatus?: {
-    id: string;
-    type: string;
-    statusListIndex?: string;
-    statusListCredential?: string;
-  };
+  credentialStatus?: VCCredentialStatus | VCCredentialStatus[];
   issuer: string | Issuer;
   credentialSubject?: any;
   expirationDate?: string;
@@ -88,7 +83,7 @@ export interface BlockcertsV3 extends VerifiableCredential {
       criteria?: string;
     };
   };
-  credentialStatus?: VCCredentialStatus;
+  credentialStatus?: VCCredentialStatus | VCCredentialStatus[];
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;

@@ -1,0 +1,25 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/vc/status-list/2021/v1"
+  ],
+  "id": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json",
+  "issuer": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
+  "issuanceDate": "2023-03-29T14:12:51.455Z",
+  "type": [
+    "VerifiableCredential",
+    "StatusList2021Credential"
+  ],
+  "credentialSubject": {
+    "id": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#list",
+    "type": "StatusList2021",
+    "encodedList": "H4sIAAAAAAAAA-3OMQ0AAAgDsB3410wyExy0CpoA8NlcBwAAAAAAAAAAAAAAAAAAqAVv_dWYAEAAAA"
+  },
+  "proof": {
+    "type": "EcdsaSecp256k1Signature2019",
+    "created": "2023-03-29T14:31:42.085Z",
+    "verificationMethod": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M#zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..cFRFtENneEjbDsFJWh4ftN5tvCFa5FaEshLF-jAYzt8-up8OD1DZ0i6avBFTFUQxQM-2dZINhZ3Bew7bH4hJSA"
+  }
+}

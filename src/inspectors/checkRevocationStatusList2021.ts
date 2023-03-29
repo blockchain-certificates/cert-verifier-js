@@ -46,22 +46,28 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
   }
 }
 
-export default async function checkRevocationStatusList2021 (credentialStatus: VCCredentialStatus): Promise<void> {
-  // TODO: handle credentialStatus as an array
-  const credentialIndex = parseInt(credentialStatus.statusListIndex, 10);
-  const revocationCredential: VerifiableCredential = await getRevocationCredential(credentialStatus.statusListCredential);
-
-  if (!revocationCredential) {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `No status list could be found at the specified URL for 'statusListCredential': ${credentialStatus.statusListCredential}.`);
+export default async function checkRevocationStatusList2021 (credentialStatus: VCCredentialStatus | VCCredentialStatus[]): Promise<void> {
+  if (!Array.isArray(credentialStatus)) {
+    credentialStatus = [credentialStatus];
   }
 
-  await verifyRevocationCredential(revocationCredential);
+  for (const status of credentialStatus) {
+    const credentialIndex = parseInt(status.statusListIndex, 10);
+    const revocationCredential: VerifiableCredential = await getRevocationCredential(status.statusListCredential);
 
-  const { encodedList } = revocationCredential.credentialSubject;
-  const decodedList: RevocationList = await decodeList({ encodedList });
+    if (!revocationCredential) {
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `No status list could be found at the specified URL for 'statusListCredential': ${status.statusListCredential}.`);
+    }
 
-  if (decodedList.isRevoked(credentialIndex)) {
-    // TODO: i18n
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'Certificate has been revoked.');
+    await verifyRevocationCredential(revocationCredential);
+
+    const { encodedList } = revocationCredential.credentialSubject;
+    const decodedList: RevocationList = await decodeList({ encodedList });
+
+    if (decodedList.isRevoked(credentialIndex)) {
+      // TODO: i18n
+      const statusText = status.statusPurpose === 'revocation' ? 'revoked' : 'suspended'; // TODO use enum
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `Certificate has been ${statusText}.`);
+    }
   }
 }

@@ -31,6 +31,7 @@ import TestnetV2Valid from './v2/testnet-valid-2.0.json';
 import TestnetV2ValidV1Issuer from './v2/testnet-valid-v1-issuer-2.0.json';
 import StatusList2021 from './v3/cert-rl-status-list-2021.json';
 import StatusList2021Revoked from './v3/cert-rl-status-list-2021-revoked.json';
+import StatusList2021Suspended from './v3/cert-rl-status-list-2021-suspended.json';
 
 export default {
   BlockcertsV3,
@@ -61,6 +62,7 @@ export default {
   RegtestV2Valid,
   StatusList2021,
   StatusList2021Revoked,
+  StatusList2021Suspended,
   TestnetRevokedIssuingAddressV2,
   TestnetTamperedHashes,
   TestnetV1Valid,

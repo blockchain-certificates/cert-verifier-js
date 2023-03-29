@@ -1,0 +1,36 @@
+{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/blockcerts/v3"
+  ],
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-b456093df",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+  "issuanceDate": "2022-08-18T14:04:24Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "name": "Julien Fraichot",
+    "email": "julien.fraichot@hyland.com",
+    "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC"
+  },
+  "credentialStatus": [{
+    "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#23547",
+    "type": "StatusList2021Entry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "23548",
+    "statusListCredential": "https://www.blockcerts.org/samples/3.0/status-list-2021.json"
+  }, {
+    "id": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#12354",
+    "type": "StatusList2021Entry",
+    "statusPurpose": "suspension",
+    "statusListIndex": "12354",
+    "statusListCredential": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json"
+  }],
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Hello world</div>"
+  }
+}

@@ -4,11 +4,9 @@ import BlockcertsV3Hashlink from './v3/testnet-v3-hashlink.json';
 import BlockcertsV3NoHashlink from './v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
 import BlockcertsV3VerificationMethodIssuerProfile from './v3/testnet-v3-verification-method-issuer-profile.json';
 import BlockcertsV3Tampered from './v3/testnet-v3--tampered.json';
-import BlockcertsV3Png from './v3/testnet-v3.png.json';
 import BlockcertsV3CustomContext from './v3/testnet-v3-custom-context.json';
 import BlockcertsV3Beta from './v3/blockcerts-3.0-beta.json';
 import BlockcertsV3Alpha from './v3/blockcerts-3.0-alpha.json';
-import BlockcertsV3AlphaCustomContext from './v3/blockcerts-3.0-alpha-learningmachine.json';
 import MocknetV3Valid from './v3/mocknet-v3-valid.json';
 import EthereumSepoliaV3 from './v3/ethereum-sepolia-v3.json';
 import EthereumMainV2Valid from './v2/ethereum-main-valid-2.0.json';
@@ -21,7 +19,6 @@ import MainnetInvalidMerkleReceipt from './v2/mainnet-invalid-merkle-receipt-2.0
 import MainnetMerkleRootUmmatch from './v2/mainnet-merkle-root-unmatch-2.0.json';
 import MainnetV2Revoked from './v2/mainnet-revoked-2.0.json';
 import MainnetV2Valid from './v2/mainnet-valid-2.0.json';
-import MainnetV2AlphaValid from './v2/mainnet-valid-2.0-alpha.json';
 import MocknetV2Valid from './v2/mocknet-valid-2.0.json';
 import RegtestV2Valid from './v2/regtest-valid-2.0.json';
 import TestnetRevokedIssuingAddressV2 from './v2/testnet-revoked-key-2.0.json';
@@ -39,10 +36,8 @@ export default {
   BlockcertsV3NoDid,
   BlockcertsV3Hashlink,
   BlockcertsV3NoHashlink,
-  BlockcertsV3Png,
   BlockcertsV3Beta,
   BlockcertsV3Alpha,
-  BlockcertsV3AlphaCustomContext,
   BlockcertsV3CustomContext,
   BlockcertsV3Tampered,
   EthereumMainV2Valid,
@@ -56,7 +51,6 @@ export default {
   MainnetMerkleRootUmmatch,
   MainnetV2Revoked,
   MainnetV2Valid,
-  MainnetV2AlphaValid,
   MocknetV2Valid,
   MocknetV3Valid,
   RegtestV2Valid,

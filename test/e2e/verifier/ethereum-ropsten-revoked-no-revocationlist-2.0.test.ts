@@ -1,8 +1,8 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
-import domain from '../../../src/domain';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import domain from '../../../src/domain';
+import EthereumRopstenRevokedNoRevocationList from '../../fixtures/v2/ethereum-ropsten-revoked-no-revocationlist-2.0.json';
 
 describe('given the certificate is a revoked certificate', function () {
   describe('and the revocationList is not provided in the certificate', function () {
@@ -42,7 +42,7 @@ describe('given the certificate is a revoked certificate', function () {
           revocationReason: 'Testing revocation'
         }]
       }));
-      certificate = new Certificate(FIXTURES.EthereumRopstenRevokedNoRevocationList);
+      certificate = new Certificate(EthereumRopstenRevokedNoRevocationList);
       await certificate.init();
       result = await certificate.verify();
     });

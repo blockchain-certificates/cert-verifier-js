@@ -1,9 +1,9 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
-import domain from '../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import domain from '../../../src/domain';
 import issuerBlockcertsV2a from '../../fixtures/issuer-blockcerts-v2a.json';
+import TestnetRevokedIssuingAddressV2 from '../../fixtures/v2/testnet-revoked-key-2.0.json';
 
 describe('given the certificate is a revoked testnet', function () {
   let certificate;
@@ -21,7 +21,7 @@ describe('given the certificate is a revoked testnet', function () {
     sinon.stub(ExplorerLookup, 'request').withArgs({
       url: 'https://www.blockcerts.org/samples/2.0-alpha/issuerTestnet.json'
     }).resolves(JSON.stringify(issuerBlockcertsV2a));
-    certificate = new Certificate(FIXTURES.TestnetRevokedIssuingAddressV2);
+    certificate = new Certificate(TestnetRevokedIssuingAddressV2);
     await certificate.init();
     result = await certificate.verify();
   });

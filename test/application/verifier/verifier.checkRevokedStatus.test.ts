@@ -1,20 +1,23 @@
-import Verifier from '../../../src/verifier';
-import FIXTURES from '../../fixtures';
-import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import sinon from 'sinon';
+import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
+import Verifier from '../../../src/verifier';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import v3RevocationList from '../../assertions/v3-revocation-list';
+import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 import fixtureMainnetIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
 import fixtureMainnetRevocationList from '../../fixtures/revocation-list-mainnet-example.json';
+import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-revoked.json';
+import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
+import MainnetV2Revoked from '../../fixtures/v2/mainnet-revoked-2.0.json';
+import BlockcertsV3VerificationMethodIssuerProfile from '../../fixtures/v3/testnet-v3-verification-method-issuer-profile.json';
 
 describe('Verifier checkRevokedStatus method test suite', function () {
   let requestStub;
 
-  beforeEach(function () {
+  beforeAll(function () {
     requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({
       url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
@@ -31,16 +34,19 @@ describe('Verifier checkRevokedStatus method test suite', function () {
     requestStub.withArgs({
       url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39'
     }).resolves(JSON.stringify(fixtureMainnetRevocationList));
+    requestStub.withArgs({
+      url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+    }).resolves(JSON.stringify(BlockcertsStatusList2021));
   });
 
-  afterEach(function () {
+  afterAll(function () {
     sinon.restore();
   });
 
   describe('given the revocation of the certificate is handled by the legacy (Blockcerts) approach', function () {
     describe('and the certificate is revoked', function () {
       it('should record the verification step failure', async function () {
-        const fixture = FIXTURES.MainnetV2Revoked;
+        const fixture = MainnetV2Revoked;
         const verifier = new Verifier({
           certificateJson: fixture,
           expires: '',
@@ -62,7 +68,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
 
     describe('and the certificate is not revoked', function () {
       it('should record the verification step success', async function () {
-        const fixture = FIXTURES.BlockcertsV3VerificationMethodIssuerProfile;
+        const fixture = BlockcertsV3VerificationMethodIssuerProfile;
         const verifier = new Verifier({
           certificateJson: fixture,
           expires: '',
@@ -83,15 +89,9 @@ describe('Verifier checkRevokedStatus method test suite', function () {
   });
 
   describe('given the revocation of the certificate is a W3C StatusList2021', function () {
-    beforeEach(function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
-      }).resolves(JSON.stringify(BlockcertsStatusList2021));
-    });
-
     describe('and the certificate is not revoked', function () {
       it('should record the verification step success', async function () {
-        const fixture = FIXTURES.StatusList2021;
+        const fixture = StatusList2021;
         const verifier = new Verifier({
           certificateJson: fixture,
           expires: '',
@@ -112,7 +112,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
 
     describe('and the certificate is revoked', function () {
       it('should record the verification step success', async function () {
-        const fixture = FIXTURES.StatusList2021Revoked;
+        const fixture = StatusList2021Revoked;
         const verifier = new Verifier({
           certificateJson: fixture,
           expires: '',

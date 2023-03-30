@@ -1,8 +1,8 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
-import FIXTURES from '../../fixtures';
-import domain from '../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import domain from '../../../src/domain';
+import EthereumMainInvalidMerkleRoot from '../../fixtures/v2/ethereum-merkle-root-unmatch-2.0.json';
 
 describe('given the certificate is an ethereum main with an invalid merkle root', function () {
   let certificate;
@@ -33,7 +33,7 @@ describe('given the certificate is an ethereum main with an invalid merkle root'
       ]
     }));
 
-    certificate = new Certificate(FIXTURES.EthereumMainInvalidMerkleRoot);
+    certificate = new Certificate(EthereumMainInvalidMerkleRoot);
     await certificate.init();
     result = await certificate.verify();
   });

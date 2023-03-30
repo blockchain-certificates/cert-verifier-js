@@ -1,9 +1,9 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
-import sinon from 'sinon';
 import domain from '../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import sinon from 'sinon';
 import issuerBlockcertsV2a from '../../fixtures/issuer-blockcerts-v2a.json';
+import MainnetMerkleRootUmmatch from '../../fixtures/v2/mainnet-merkle-root-unmatch-2.0.json';
 
 describe('given the certificate is a mainnet with a not matching merkle root', function () {
   let certificate;
@@ -21,7 +21,7 @@ describe('given the certificate is a mainnet with a not matching merkle root', f
     sinon.stub(ExplorerLookup, 'request').withArgs({
       url: 'https://www.blockcerts.org/samples/2.0/issuer-testnet.json'
     }).resolves(JSON.stringify(issuerBlockcertsV2a));
-    certificate = new Certificate(FIXTURES.MainnetMerkleRootUmmatch);
+    certificate = new Certificate(MainnetMerkleRootUmmatch);
     await certificate.init();
     result = await certificate.verify();
   });

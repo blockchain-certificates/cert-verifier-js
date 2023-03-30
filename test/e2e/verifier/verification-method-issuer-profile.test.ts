@@ -1,7 +1,7 @@
-import { Certificate } from '../../../src';
-import fixture from '../../fixtures/v3/testnet-v3-verification-method-issuer-profile.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate } from '../../../src';
+import fixture from '../../fixtures/v3/testnet-v3-verification-method-issuer-profile.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('Proof verification method is bound to issuer profile test suite', function () {

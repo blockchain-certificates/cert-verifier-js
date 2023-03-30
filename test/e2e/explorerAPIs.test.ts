@@ -1,11 +1,11 @@
 import sinon from 'sinon';
-import Certificate from '../../src/certificate';
-import FIXTURES from '../fixtures';
 import * as RequestService from '@blockcerts/explorer-lookup/lib/cjs/services/request.js';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
-import fixtureIssuerProfile from '../fixtures/issuer-blockcerts.json';
+import Certificate from '../../src/certificate';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
+import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
+import fixtureIssuerProfile from '../fixtures/issuer-blockcerts.json';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
 describe('explorerAPIs end to end test suite', function () {
@@ -46,7 +46,7 @@ describe('explorerAPIs end to end test suite', function () {
         localRequestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
         }).resolves(JSON.stringify(fixtureIssuerProfile));
-        const instance = new Certificate(FIXTURES.BlockcertsV3, { explorerAPIs: [explorerAPI] });
+        const instance = new Certificate(BlockcertsV3, { explorerAPIs: [explorerAPI] });
         await instance.init();
         await instance.verify();
         expect(parsingFunctionStub.calledOnce).toBe(true);

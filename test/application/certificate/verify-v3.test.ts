@@ -1,6 +1,8 @@
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
-import FIXTURES from '../../fixtures';
+import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
+import BlockcertsV3Tampered from '../../fixtures/v3/testnet-v3--tampered.json';
+import BlockcertsV3CustomContext from '../../fixtures/v3/testnet-v3-custom-context.json';
 import domain from '../../../src/domain';
 import { getText } from '../../../src/domain/i18n/useCases';
 import { SUB_STEPS } from '../../../src/constants/verificationSteps';
@@ -45,7 +47,7 @@ describe('Certificate test suite', function () {
             time: '2022-04-05T18:45:30.000Z',
             revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3);
+          certificate = new Certificate(BlockcertsV3);
           await certificate.init();
         });
 
@@ -84,7 +86,7 @@ describe('Certificate test suite', function () {
             time: '2022-04-05T18:45:30.000Z',
             revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3Tampered);
+          certificate = new Certificate(BlockcertsV3Tampered);
           await certificate.init();
         });
 
@@ -113,7 +115,7 @@ describe('Certificate test suite', function () {
             time: '2022-03-24T21:50:16.000Z',
             revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
           });
-          certificate = new Certificate(FIXTURES.BlockcertsV3CustomContext);
+          certificate = new Certificate(BlockcertsV3CustomContext);
           await certificate.init();
         });
 

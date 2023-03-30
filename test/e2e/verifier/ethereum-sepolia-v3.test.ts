@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
+import EthereumSepoliaV3 from '../../fixtures/v3/ethereum-sepolia-v3.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('given the certificate is a valid Sepolia anchored v3 certs', function () {
@@ -16,7 +16,7 @@ describe('given the certificate is a valid Sepolia anchored v3 certs', function 
     requestStub.withArgs({
       url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
     }).resolves(JSON.stringify(fixtureIssuerProfile));
-    const certificate = new Certificate(FIXTURES.EthereumSepoliaV3);
+    const certificate = new Certificate(EthereumSepoliaV3);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

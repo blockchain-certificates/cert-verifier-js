@@ -1,8 +1,8 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
-import domain from '../../../src/domain';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import domain from '../../../src/domain';
+import EthereumTampered from '../../fixtures/v2/ethereum-tampered-2.0.json';
 
 describe('given the certificate is a tampered ethereum', function () {
   let certificate;
@@ -31,7 +31,7 @@ describe('given the certificate is a tampered ethereum', function () {
         }
       ]
     }));
-    certificate = new Certificate(FIXTURES.EthereumTampered);
+    certificate = new Certificate(EthereumTampered);
     await certificate.init();
     result = await certificate.verify();
   });

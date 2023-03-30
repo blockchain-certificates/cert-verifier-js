@@ -1,10 +1,10 @@
 import { Certificate } from '../../../src';
-import fixture from '../../fixtures/v3/proof-chain-example-ed25519.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import fixture from '../../fixtures/v3/proof-chain-example-ed25519.json';
 import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 
 describe('proof chain example', function () {

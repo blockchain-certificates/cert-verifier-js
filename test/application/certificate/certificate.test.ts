@@ -1,9 +1,9 @@
-import FIXTURES from '../../fixtures';
 import { Certificate } from '../../../src';
 import type { CertificateOptions } from '../../../src/certificate';
 import type { TransactionData } from '../../../src/models/TransactionData';
 import domain from '../../../src/domain';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -12,8 +12,8 @@ describe('Certificate entity test suite', function () {
         let certificate: Certificate;
 
         it('should coerce certificateJson to an object', function () {
-          certificate = new Certificate(JSON.stringify(FIXTURES.MainnetV2Valid));
-          expect(certificate.certificateJson).toEqual(FIXTURES.MainnetV2Valid);
+          certificate = new Certificate(JSON.stringify(MainnetV2Valid));
+          expect(certificate.certificateJson).toEqual(MainnetV2Valid);
         });
       });
 
@@ -40,13 +40,13 @@ describe('Certificate entity test suite', function () {
       describe('given no options is passed', function () {
         it('should set the default options', function () {
           const assertionDefaultOptions: CertificateOptions = { locale: 'en-US' };
-          const instance = new Certificate(FIXTURES.MainnetV2Valid);
+          const instance = new Certificate(MainnetV2Valid);
           expect(instance.options).toEqual(assertionDefaultOptions);
         });
 
         it('should set the locale to the default value', function () {
           const assertionDefaultOptions: CertificateOptions = { locale: 'en-US' };
-          const instance = new Certificate(FIXTURES.MainnetV2Valid);
+          const instance = new Certificate(MainnetV2Valid);
           expect(instance.locale).toEqual(assertionDefaultOptions.locale);
         });
       });
@@ -55,14 +55,14 @@ describe('Certificate entity test suite', function () {
         describe('locale option', function () {
           it('should override the default options', function () {
             const fixtureOptions: CertificateOptions = { locale: 'fr-FR' };
-            const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+            const instance = new Certificate(MainnetV2Valid, fixtureOptions);
             expect(instance.options).toEqual(fixtureOptions);
           });
 
           describe('when it is not set', function () {
             it('should set the locale on the certificate object to en-US', function () {
               const fixtureOptions: CertificateOptions = {};
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureOptions);
               expect(instance.locale).toBe('en-US');
             });
           });
@@ -70,7 +70,7 @@ describe('Certificate entity test suite', function () {
           describe('when the locale is supported', function () {
             it('should set the locale on the certificate object', function () {
               const fixtureOptions: CertificateOptions = { locale: 'es' };
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureOptions);
               expect(instance.locale).toBe(fixtureOptions.locale);
             });
           });
@@ -78,7 +78,7 @@ describe('Certificate entity test suite', function () {
           describe('when the locale is not supported', function () {
             it('should set the locale to the default one', function () {
               const fixtureUnsupportedLocaleOptions: CertificateOptions = { locale: 'az-az' };
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureUnsupportedLocaleOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureUnsupportedLocaleOptions);
               expect(instance.locale).toBe('en-US');
             });
           });
@@ -95,7 +95,7 @@ describe('Certificate entity test suite', function () {
 
             it('should set the locale on the certificate object', function () {
               const fixtureOptions: CertificateOptions = { locale: 'auto' };
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureOptions);
               expect(instance.locale).toBe('it-IT');
             });
           });
@@ -105,7 +105,7 @@ describe('Certificate entity test suite', function () {
           describe('when it is not set', function () {
             it('should set the certificate explorerAPIs property to an empty array', function () {
               const fixtureOptions: CertificateOptions = {};
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureOptions);
               expect(instance.explorerAPIs).toEqual([]);
             });
           });
@@ -124,7 +124,7 @@ describe('Certificate entity test suite', function () {
                   })
                 }]
               };
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, fixtureOptions);
+              const instance = new Certificate(MainnetV2Valid, fixtureOptions);
               expect(instance.explorerAPIs).toEqual(fixtureOptions.explorerAPIs);
             });
           });
@@ -133,7 +133,7 @@ describe('Certificate entity test suite', function () {
         describe('didResolverUrl option', function () {
           describe('when it is not set', function () {
             it('the system should use the default value', function () {
-              const instance = new Certificate(FIXTURES.MainnetV2Valid);
+              const instance = new Certificate(MainnetV2Valid);
               expect(domain.did.didResolver.url).toBe(universalResolverUrl);
             });
           });
@@ -141,7 +141,7 @@ describe('Certificate entity test suite', function () {
           describe('when it is set', function () {
             it('the system should use the custom value', function () {
               const customDidResolverUrl = 'https://resolver.blockcerts.org';
-              const instance = new Certificate(FIXTURES.MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
+              const instance = new Certificate(MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
               expect(domain.did.didResolver.url).toBe(customDidResolverUrl);
             });
           });

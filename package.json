@@ -143,7 +143,7 @@
     "rollup-plugin-typescript": "^1.0.1",
     "semantic-release": "^19.0.3",
     "semistandard": "^16.0.0",
-    "sinon": "^13.0.1",
+    "sinon": "^15.0.3",
     "snazzy": "^9.0.0",
     "ts-jest": "^26.5.5",
     "tslib": "^2.4.0",

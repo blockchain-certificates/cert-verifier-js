@@ -40,7 +40,7 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
     proof = [proof];
   }
 
-  const verificationFailures = [];
+  let verificationFailures = [];
 
   for (const p of proof) {
     const suiteInstantiationOptions: SuiteAPI = {
@@ -62,7 +62,9 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
     await verificationSuite.verifyProof();
     verificationSuite = null;
 
-    if (verificationFailures.length > 0) {
+    const hasError = verificationFailures.length > 0;
+    verificationFailures = [];
+    if (hasError) {
       throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');
     }
   }

@@ -1,13 +1,14 @@
 import { request } from '@blockcerts/explorer-lookup';
-import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { RevocationList } from 'vc-revocation-list';
 import { decodeList } from 'vc-revocation-list';
-import Verifier from '../verifier';
 import { VerifierError } from '../models';
 import { SUB_STEPS } from '../constants/verificationSteps';
-import type { VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
 import domain from '../domain';
-import { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
+import Ed25519Signature2020 from '../suites/Ed25519Signature2020';
+import EcdsaSecp256k1Signature2019 from '../suites/EcdsaSecp256k1Signature2019';
+import type { VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
+import type { SuiteAPI } from '../models/Suite';
+import { Suite } from '../models/Suite';
 
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({
@@ -26,23 +27,43 @@ async function getRevocationCredential (statusListUrl: string): Promise<Verifiab
   return statusList;
 }
 
+const VerificationSuitesMap = {
+  Ed25519Signature2020,
+  EcdsaSecp256k1Signature2019
+};
+
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
   const issuerProfile = await domain.verifier.getIssuerProfile(revocationCredential.issuer);
-  const verifier = new Verifier({
-    certificateJson: revocationCredential as any,
-    expires: '',
-    hashlinkVerifier: new HashlinkVerifier(),
-    id: revocationCredential.id,
-    issuer: issuerProfile,
-    revocationKey: '',
-    explorerAPIs: null
-  });
-  await verifier.init();
-  const revocationCredentialVerification = await verifier.verify();
+  let { proof } = revocationCredential;
 
-  if (revocationCredentialVerification.status !== VERIFICATION_STATUSES.SUCCESS) {
-    console.error(revocationCredentialVerification.message);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');
+  if (!Array.isArray(proof)) {
+    proof = [proof];
+  }
+
+  const verificationFailures = [];
+
+  for (const p of proof) {
+    const suiteInstantiationOptions: SuiteAPI = {
+      issuer: issuerProfile,
+      document: revocationCredential as any,
+      proof: p,
+      executeStep: async (step, action): Promise<any> => {
+        try {
+          const res: any = await action();
+          return res;
+        } catch (e) {
+          console.log('step', step, 'failed with error:');
+          console.error(e);
+          verificationFailures.push(step);
+        }
+      }
+    };
+    const verificationSuite = new VerificationSuitesMap[p.type](suiteInstantiationOptions);
+    await verificationSuite.verifyProof();
+
+    if (verificationFailures.length > 0) {
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');
+    }
   }
 }
 

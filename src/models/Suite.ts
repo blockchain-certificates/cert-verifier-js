@@ -9,7 +9,7 @@ import type { MerkleProof2017 } from './MerkleProof2017';
 export interface SuiteAPI {
   executeStep: (step: string, action: () => any, verificationSuite?: string) => Promise<any>;
   document: Blockcerts;
-  explorerAPIs: ExplorerAPI[];
+  explorerAPIs?: ExplorerAPI[];
   proof: VCProof | MerkleProof2017;
   issuer: Issuer;
 }

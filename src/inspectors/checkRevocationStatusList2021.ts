@@ -58,8 +58,9 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
         }
       }
     };
-    const verificationSuite = new VerificationSuitesMap[p.type](suiteInstantiationOptions);
+    let verificationSuite = new VerificationSuitesMap[p.type](suiteInstantiationOptions);
     await verificationSuite.verifyProof();
+    verificationSuite = null;
 
     if (verificationFailures.length > 0) {
       throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');

@@ -13,6 +13,7 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'test/build/mocks/FakeXmlHttpRequest.iife.js',
       'dist/verifier-iife.js',
       'test/build/verifier-iife.test.karma.build.js'
     ],

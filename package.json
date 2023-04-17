@@ -28,6 +28,7 @@
     "build:esm": "rollup -c",
     "build:iife": "rollup -c rollup.iife.config.js",
     "build:node": "rollup -c rollup.node.config.js",
+    "transpile:mocks:iife": "rollup -c test/build/scripts/rollup.mocks.config.js",
     "clean:lib:ts": "rimraf lib/\"**\"/*.ts",
     "lint": "npm run lint:js && npm run lint:ts",
     "lint:js": "semistandard --verbose",

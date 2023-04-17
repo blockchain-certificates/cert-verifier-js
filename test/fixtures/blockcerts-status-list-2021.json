@@ -5,7 +5,7 @@
   ],
   "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json",
   "issuer": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
-  "issuanceDate": "2023-03-29T11:59:45.580Z",
+  "issuanceDate": "2023-04-17T14:22:24.869Z",
   "type": [
     "VerifiableCredential",
     "StatusList2021Credential"
@@ -13,13 +13,13 @@
   "credentialSubject": {
     "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#list",
     "type": "StatusList2021",
-    "encodedList": "H4sIAAAAAAAAA-3OMQEAAAgDoJ32T2yL6QEJSAAAgJK5DgAAAAAAAAAAAAAAAAB_LUkhKJ4AQAAA"
+    "encodedList": "H4sIAAAAAAAAA-3OMQEAAAgDoEWwf1pbTA9IQAIAAJTMdQAAAAAAAAAAAAAAAAD4awEYNa3BAEAAAA"
   },
   "proof": {
     "type": "EcdsaSecp256k1Signature2019",
-    "created": "2023-03-29T12:34:27.699Z",
+    "created": "2023-04-17T14:22:32.889Z",
     "verificationMethod": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M#zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
     "proofPurpose": "assertionMethod",
-    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..7MIDko1Pms0vp4P-nJg5hRCXzZdvsQFBsz3p-JEDHrcWHtuPpVrYivSXe3yRnSHW7ddhXRJJ_vIdD48erOB5_w"
+    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..cLxsAL4uzfD32lTVdrn1pKQ5VyJRk3qqjafuyd8cSpdluzUott01G3iobo5if3DzBkTClSrRuysSb-TsJP7BTQ"
   }
 }

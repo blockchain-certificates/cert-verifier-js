@@ -62,7 +62,6 @@
     "@bloomprotocol/ecdsa-secp256k1-signature-2019": "^0.1.3",
     "@bloomprotocol/ecdsa-secp256k1-verification-key-2019": "^0.1.3",
     "@decentralized-identity/did-common-typescript": "^0.1.19",
-    "@digitalbazaar/bitstring": "github:blockchain-certificates/bitstring#1.2.1-cjs",
     "@digitalbazaar/ed25519-signature-2020": "github:lemoustachiste/ed25519-signature-2020#convert-to-module",
     "@digitalbazaar/ed25519-verification-key-2020": "github:lemoustachiste/ed25519-verification-key-2020#convert-to-module",
     "@digitalbazaar/vc-revocation-list": "github:blockchain-certificates/vc-revocation-list#fix/memory-leak",

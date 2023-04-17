@@ -18,6 +18,8 @@ export class FakeXmlHttpRequest {
 
   onload () {}
 
+  setRequestHeader () {}
+
   getMockResponseText () {
     switch (this.url) {
       case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json':

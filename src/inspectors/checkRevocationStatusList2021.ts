@@ -1,6 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
-import type { RevocationList } from 'vc-revocation-list';
-import { decodeList } from 'vc-revocation-list';
+import type { RevocationList } from '@digitalbazaar/vc-revocation-list';
+import { decodeList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
 import { SUB_STEPS } from '../constants/verificationSteps';
 import domain from '../domain';
@@ -8,7 +8,6 @@ import Ed25519Signature2020 from '../suites/Ed25519Signature2020';
 import EcdsaSecp256k1Signature2019 from '../suites/EcdsaSecp256k1Signature2019';
 import type { VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
 import type { SuiteAPI } from '../models/Suite';
-import { Suite } from '../models/Suite';
 
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({

@@ -65,6 +65,7 @@
     "@digitalbazaar/bitstring": "github:blockchain-certificates/bitstring#1.2.1-cjs",
     "@digitalbazaar/ed25519-signature-2020": "github:lemoustachiste/ed25519-signature-2020#convert-to-module",
     "@digitalbazaar/ed25519-verification-key-2020": "github:lemoustachiste/ed25519-verification-key-2020#convert-to-module",
+    "@digitalbazaar/vc-revocation-list": "github:blockchain-certificates/vc-revocation-list#fix/memory-leak",
     "@transmute/did-key-ed25519": "^0.3.0-unstable.8",
     "@transmute/did-key-secp256k1": "^0.3.0-unstable.8",
     "@transmute/ed25519-key-pair": "^0.7.0-unstable.63",
@@ -87,7 +88,6 @@
     "secp256k1": "^4.0.2",
     "serialize-error": "github:blockchain-certificates/serialize-error",
     "sha256": "^0.2.0",
-    "vc-revocation-list": "^3.0.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

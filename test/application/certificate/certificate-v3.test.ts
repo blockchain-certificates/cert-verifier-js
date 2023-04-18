@@ -1,14 +1,14 @@
-import { Certificate } from '../../../src';
-import FIXTURES from '../../fixtures';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate } from '../../../src';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
 import notAnIssuerProfile from '../../fixtures/v3/testnet-v3--no-did.json';
 
 describe('Certificate entity test suite', function () {
-  const fixture = FIXTURES.BlockcertsV3;
+  const fixture = BlockcertsV3;
   let requestStub;
 
   beforeEach(function () {

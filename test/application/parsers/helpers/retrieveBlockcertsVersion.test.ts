@@ -1,14 +1,17 @@
-import Fixtures from '../../../fixtures';
 import type { BlockcertsVersion } from '../../../../src/parsers/helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from '../../../../src/parsers/helpers/retrieveBlockcertsVersion';
 import Versions from '../../../../src/constants/certificateVersions';
+import TestnetV1Valid from '../../../fixtures/v1/testnet-valid-1.2.json';
+import MainnetV2Valid from '../../../fixtures/v2/mainnet-valid-2.0.json';
+import BlockcertsV3Beta from '../../../fixtures/v3/blockcerts-3.0-beta.json';
+import BlockcertsV3 from '../../../fixtures/v3/testnet-v3-did.json';
 
 describe('retrieveBlockcertsVersion test suite', function () {
   let output: BlockcertsVersion;
 
   describe('when provided with the contexts of a v1 certificate', function () {
     beforeEach(function () {
-      output = retrieveBlockcertsVersion(Fixtures.TestnetV1Valid['@context']);
+      output = retrieveBlockcertsVersion(TestnetV1Valid['@context']);
     });
 
     it('should return versionNumber 1', function () {
@@ -22,7 +25,7 @@ describe('retrieveBlockcertsVersion test suite', function () {
 
   describe('when provided with the contexts of a v2 certificate', function () {
     beforeEach(function () {
-      output = retrieveBlockcertsVersion(Fixtures.MainnetV2Valid['@context']);
+      output = retrieveBlockcertsVersion(MainnetV2Valid['@context']);
     });
 
     it('should return versionNumber 2', function () {
@@ -36,7 +39,7 @@ describe('retrieveBlockcertsVersion test suite', function () {
 
   describe('when provided with the contexts of a v3 beta certificate', function () {
     beforeEach(function () {
-      output = retrieveBlockcertsVersion(Fixtures.BlockcertsV3Beta['@context']);
+      output = retrieveBlockcertsVersion(BlockcertsV3Beta['@context']);
     });
 
     it('should return versionNumber 3', function () {
@@ -50,7 +53,7 @@ describe('retrieveBlockcertsVersion test suite', function () {
 
   describe('when provided with the contexts of a v3 certificate', function () {
     beforeEach(function () {
-      output = retrieveBlockcertsVersion(Fixtures.BlockcertsV3['@context']);
+      output = retrieveBlockcertsVersion(BlockcertsV3['@context']);
     });
 
     it('should return versionNumber 3', function () {

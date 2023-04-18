@@ -68,49 +68,54 @@ const fixtureV2 = { '@context': ['https://w3id.org/openbadges/v2', 'https://w3id
 const fixtureV3 = {
   '@context': [
     'https://www.w3.org/2018/credentials/v1',
-    'https://www.blockcerts.org/schema/3.0-alpha/context.json',
     {
-      metadataJson: {
-        '@id': 'https://schemas.learningmachine.com/2017/blockcerts/metadata',
-        '@type': 'https://schemas.learningmachine.com/2017/types/text/json'
-      },
-      displayHtml: {
-        '@id': 'https://schemas.learningmachine.com/2017/blockcerts/displayHtml',
-        '@type': 'https://schemas.learningmachine.com/2017/types/text/html'
-      },
-      nonce: {
-        '@id': 'https://schemas.learningmachine.com/2017/blockcerts/nonce',
-        '@type': 'https://schema.org/Text'
-      },
-      universalIdentifier: {
-        '@id': 'https://schemas.learningmachine.com/2017/blockcerts/identifier',
-        '@type': 'https://schema.org/Text'
+      Blockcerts: {
+        '@id': 'bc:Blockcerts',
+        '@type': '@id'
       }
-    }
+    },
+    'https://w3id.org/blockcerts/v3'
   ],
-  id: 'urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c',
-  metadataJson: '{"schema":{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"displayOrder":{"type":"array","items":{"type":"string"}},"certificate":{"order":[],"type":"object","properties":{"issuingInstitution":{"title":"Issuing Institution","type":"string","default":"Learning Machine Technologies, Inc."}}},"recipient":{}}},"certificate":{"issuingInstitution":"Learning Machine Technologies, Inc."},"recipient":{},"displayOrder":["certificate.issuingInstitution"]}',
-  displayHtml: '<b>hello world</b>',
-  nonce: '814ce340-12f3-414b-af91-a0f9489e5dbc',
-  universalIdentifier: 'ab569127-34bb-5784-bced-00b7e0e82ac9',
+  id: 'urn:uuid:13172c8c-efa5-49e1-9f69-a67ba6bd9937',
   type: [
     'VerifiableCredential',
     'BlockcertsCredential'
   ],
-  issuer: 'https://raw.githubusercontent.com/blockchain-certificates/cert-issuer/master/examples/issuer/profile.json',
-  issuanceDate: '2010-01-01T19:33:24Z',
+  issuer: {
+    id: 'did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ',
+    name: 'Hyland Innovation Team',
+    url: 'https://www.hyland.com',
+    description: '',
+    image: '',
+    email: 'julien.fraichot@hyland.com'
+  },
+  issuanceDate: '2022-02-02T15:00:00Z',
   credentialSubject: {
-    name: 'John Doe',
-    id: 'did:key:z6Mkq3L1jEDDZ5R7eT523FMLxC4k6MCpzqD7ff1CrkWpoJwM'
+    name: 'Julien Fraichot',
+    claim: {
+      type: 'Blockcerts',
+      id: 'urn:uuid:41015b98-fc99-447c-b211-ef6782147fb3',
+      name: 'V3 issuance',
+      description: 'A v3 working example for test purposes',
+      criteria: 'it has been issued'
+    }
+  },
+  metadata: '{"classOf":"2022"}',
+  display: {
+    contentMediaType: 'text/html',
+    content: '<div>Hello World</div>'
   },
   proof: {
     type: 'MerkleProof2019',
-    created: '2021-05-06T16:19:52.200750',
-    proofValue: 'z4zvrPUULqodatUGkAdvDASFwHq3Qk8tKAphMrmQGrWKJfoHs9ikMvYr49j6Ky9ooRpjFvVWEMokiANwSdTic4FbXiaZxhrxhmNetEoJhNmy8EJGj7eesoZhGsXdQXdqt98DpYtuMV9WA8SEwPZVhQsj5VruCowd3vKYojdnBb82dARfUKGq5K8RtarBjZ1fS4SxNBb5w59TtKEj8HWNNx6hfPVJwq1ovDYfW3HeuBu5Mae4P5z92URF5HAMJdEHmh8DC7BvUTaCeWUJseF36cbVnHE7pB2Zx4mW8kVeBKwnxURsB6hUhJRbxEfAcnEQqFQHmRwKGXtZBrjV3oC1dr43iU3cTbXb7ytPyVUBPLwgk7b1QjrchuwRtqpCYWTaLn7gutVtBEqgScUTDKJ',
+    created: '2022-04-05T13:43:10.870521',
+    proofValue: 'z4zvrPUULnHmaio37FZuwYZDyU39wMYujJCMeypmxMWhh2XoCSMSVoeVRBKeEKUVnqccnmgggyPYLx2xubmvDCP2HWMCcTCLrcpBHJMEzUiwQrixSFStZbxQq9yPVNoYysMcxinfxZTpmH1j5mmGsC2fUP1LEMruXA1fKgupM3Ea97PzUGjgDgSfZqJNKjmFMJYL5tC1R7XoRqYvpKg3NhMrFY9YtyuERDW9do92EPeSw17j5xUZLpj6uGieJVrf5ps4AScoB4tXXTm4eFi4ZkQbbbvkRmPK9bZsyKKxGQ2Bq5cfwPbvPHiaGLSHEBrAYh75so7LwoiKi1VCw7NdsybWmMUf1E547PZhbqTB5hXJD5VBYN6hpoGzc18L6boKN1oveFaHAoFrQsEjmBJ',
     proofPurpose: 'assertionMethod',
-    verificationMethod: 'did:example:23adb1f712ebc6f1c276eba4dfa#key-1'
+    verificationMethod: 'did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1'
   }
 };
+
+// @ts-expect-error we just mock the thing
+window.XMLHttpRequest = mockXHR.FakeXmlHttpRequest;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {

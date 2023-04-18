@@ -1,14 +1,14 @@
 import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { TextEncoder, TextDecoder } from 'util';
-import FIXTURES from '../../fixtures';
 import hashlinkAssertion from '../../assertions/hashlink';
 import { Certificate } from '../../../src';
-import domain from '../../../src/domain';
-import v3IssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
+import BlockcertsV3Hashlink from '../../fixtures/v3/testnet-v3-hashlink.json';
+import BlockcertsV3NoHashlink from '../../fixtures/v3/blockcerts-3.0-beta-did-ethereum-ropsten.json';
+import BlockcertsV3Alpha from '../../fixtures/v3/blockcerts-3.0-alpha.json';
 
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
@@ -49,7 +49,7 @@ describe('Certificate v3 test suite', function () {
 
   describe('given the certificate display html property contains hashlinks', function () {
     it('should return the display property with the updated urls', async function () {
-      const fixture = FIXTURES.BlockcertsV3Hashlink;
+      const fixture = BlockcertsV3Hashlink;
       certificate = new Certificate(fixture);
       await certificate.init();
       expect(certificate.display).toEqual(hashlinkAssertion);
@@ -58,7 +58,7 @@ describe('Certificate v3 test suite', function () {
 
   describe('given the certificate display html property does not contain hashlinks', function () {
     it('should return the display property as is', async function () {
-      const fixture = FIXTURES.BlockcertsV3NoHashlink;
+      const fixture = BlockcertsV3NoHashlink;
       certificate = new Certificate(fixture);
       await certificate.init();
       expect(certificate.display).toEqual(fixture.display);
@@ -67,7 +67,7 @@ describe('Certificate v3 test suite', function () {
 
   describe('given the certificate display property is not html content', function () {
     it('should return the display property as is', async function () {
-      const fixture = FIXTURES.BlockcertsV3NoHashlink;
+      const fixture = BlockcertsV3NoHashlink;
       certificate = new Certificate(fixture);
       await certificate.init();
       expect(certificate.display).toEqual(fixture.display);
@@ -76,7 +76,7 @@ describe('Certificate v3 test suite', function () {
 
   describe('given there is no certificate display property', function () {
     it('should return the display as undefined', async function () {
-      const fixture = FIXTURES.BlockcertsV3Alpha;
+      const fixture = BlockcertsV3Alpha;
       certificate = new Certificate(fixture);
       await certificate.init();
       expect(certificate.display).toBeUndefined();

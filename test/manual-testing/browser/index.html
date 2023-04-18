@@ -27,9 +27,16 @@
           const uiElement = document.getElementById(version);
           setText(uiElement, startedStatus);
           console.log(`starting ${version} test`);
-          const certificate = new Verifier.Certificate(fixture);
-          await certificate.init();
-          const res = await certificate.verify();
+          let res = {};
+          try {
+            const certificate = new Verifier.Certificate(fixture);
+            await certificate.init();
+            res = await certificate.verify();
+          } catch (e) {
+            console.error('VERIFICATION ERROR', e);
+            res.status = 'failed';
+            res.message = e;
+          }
           console.log(`end ${version} test:`);
           console.log(res);
           setStatus(uiElement, res);

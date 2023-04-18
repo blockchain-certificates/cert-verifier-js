@@ -1,7 +1,6 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did.json';
 import sinon from 'sinon';
-import domain from '../../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import didDocument from '../../../fixtures/did/modified-key-did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-profile.json';
@@ -11,7 +10,7 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
     describe('and DID public key does not match the issuing address', function () {
       it('should fail the verification process', async function () {
-        sinon.stub(domain.verifier, 'lookForTx').resolves({
+        sinon.stub(ExplorerLookup, 'lookForTx').resolves({
           remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           time: '2022-04-05T18:45:30.000Z',

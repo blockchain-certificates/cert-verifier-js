@@ -1,9 +1,9 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import secp256k1IssuerProfile from '../../assertions/hyland-issuer-profile-secp256k1.json';
 import merkleProofMocknetIssuerProfile from '../../assertions/hyland-issuer-profile-mocknet-merkleproof2019.json';
+import MocknetV3Valid from '../../fixtures/v3/mocknet-v3-valid.json';
 
 describe('given the certificate is a valid mocknet (v3.0)', function () {
   it('should verify successfully', async function () {
@@ -25,7 +25,7 @@ describe('given the certificate is a valid mocknet (v3.0)', function () {
       revokedAssertions: []
     }));
 
-    const certificate = new Certificate(FIXTURES.MocknetV3Valid);
+    const certificate = new Certificate(MocknetV3Valid);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

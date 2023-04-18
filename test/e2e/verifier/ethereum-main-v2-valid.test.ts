@@ -1,8 +1,8 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
-import domain from '../../../src/domain';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
+import domain from '../../../src/domain';
+import EthereumMainV2Valid from '../../fixtures/v2/ethereum-main-valid-2.0.json';
 
 describe('given the certificate is a valid ethereum main', function () {
   it('should verify successfully', async function () {
@@ -28,7 +28,7 @@ describe('given the certificate is a valid ethereum main', function () {
         }
       ]
     }));
-    const certificate = new Certificate(FIXTURES.EthereumMainV2Valid);
+    const certificate = new Certificate(EthereumMainV2Valid);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

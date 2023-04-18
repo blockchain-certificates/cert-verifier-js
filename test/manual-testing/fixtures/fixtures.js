@@ -68,57 +68,41 @@ const fixtureV2 = { '@context': ['https://w3id.org/openbadges/v2', 'https://w3id
 const fixtureV3 = {
     "@context": [
       "https://www.w3.org/2018/credentials/v1",
-      "https://w3id.org/security/suites/merkle-2019/v1",
-      "https://w3id.org/security/suites/chained-2021/v1",
-      "https://w3id.org/blockcerts/v3.1"
+      "https://w3id.org/blockcerts/v3"
     ],
-    "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+    "id": "urn:uuid:bbba8553-8ec1-445f-82c9-b456093df",
     "type": [
       "VerifiableCredential",
       "BlockcertsCredential"
     ],
-    "issuer": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
-    "issuanceDate": "2022-07-13T20:21:40.088Z",
+    "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+    "issuanceDate": "2022-08-18T14:04:24Z",
     "credentialSubject": {
       "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
       "name": "Julien Fraichot",
       "email": "julien.fraichot@hyland.com",
-      "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC",
-      "claim": {
-        "name": "Master of Puppets",
-        "description": "Awarded to those who rock"
-      }
+      "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC"
     },
-    "metadata": "{\"classOf\":\"2021\"}",
+    "credentialStatus": {
+      "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#23547",
+      "type": "StatusList2021Entry",
+      "statusPurpose": "revocation",
+      "statusListIndex": "23547",
+      "statusListCredential": "https://www.blockcerts.org/samples/3.0/status-list-2021.json"
+    },
     "display": {
       "contentMediaType": "text/html",
-      "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
+      "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Hello world</div>"
     },
-    "proof": [
-      {
-        "type": "EcdsaSecp256k1Signature2019",
-        "created": "2022-07-13T20:21:40.114Z",
-        "verificationMethod": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8#zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
-        "proofPurpose": "assertionMethod",
-        "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..p2R_KhhRWiqw0P8HeIb4dgqx-K9fAgFZ8jPAM57fmpVH9XLwzPn1wK8HWH5I_NYkdhaqnDPLHiFv17cLLjcG2A"
-      },
-      {
-        "type": "ChainedProof2021",
-        "verificationMethod": "did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1",
-        "chainedProofType": "MerkleProof2019",
-        "created": "2022-07-15T11:03:28.746594",
-        "proofPurpose": "assertionMethod",
-        "proofValue": "z2LuLBVSfogU8YhUZmk1PJgb5VCu3JqxdDPn7tbkWi2EzAJcvi3i5vpXKJBVWASyJhGrMdPzLBzUeLDiW4AFRu9PkQ7BwxQ1qZrRkUZxmxemNXU9bgK1n1ykwcKyoGwzyUL8AhwAjYEYN4Gh9wqgkv7av5SKhABGairFbyvNVVK4QrqcrEAbXxcFT35CRFJ2Fg6gEa4zzqA2kqfkPdfkHHNuyoaYiCZ15k5ZKq7Qywqh2XSjLUTkTVs6bg1iNzFBz5qdnNmvyQEF9cguondcx25nRNKk6RUxWBcmsahg4NMiuXgHx6N5sUgrnVh3aBeKkbo99NK5z4zcumkYat5uVEhKssNX5GjgNWLAWJnMza2an6AvoxUSxKA6i82rKMjYRDcABhAfwZ7nCQFsg9T8SY",
-        "previousProof": {
-          "type": "EcdsaSecp256k1Signature2019",
-          "created": "2022-07-13T20:21:40.114Z",
-          "verificationMethod": "did:key:zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8#zQ3shQHqLdkCacGpenXzbXZLqBbDeKfxgbxJgDSi1hoajzzg8",
-          "proofPurpose": "assertionMethod",
-          "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..p2R_KhhRWiqw0P8HeIb4dgqx-K9fAgFZ8jPAM57fmpVH9XLwzPn1wK8HWH5I_NYkdhaqnDPLHiFv17cLLjcG2A"
-        }
-      }
-    ]
-  };
+    "proof": {
+      "type": "MerkleProof2019",
+      "created": "2023-03-21T17:30:13.716394",
+      "proofValue": "z4zvrPUULqodatUNSb1yQooCTEPT2EtDLH6jutG1AQsKGfPsKvcKzkJzRDx2ZZZvgh4TYJNQVQU3Gd64PYSA2yhy4S53Lrf3YRX5wmQyiKqBzx84oJgzR6mwEme8oTqwTuHS18En5eY24HYJzhNaS5dM1xas3aJq7NwViGrpR9iJ337CV4h3PFP85i2kgWiiTMM2gkSYdCB25qzMG7P7FYQGjkv2ByFGx22wxLWtnAJ9kjFpu17Xzt4z34n6rxZ2SyCutLG9Qeir7oBuQVSW7VNKn2Th3DHjhSiDLuGSYf4UGEuCXhDcZ5iZrLzxLHP63jQXW9r1RWJD7Ac7A1A44HX9fVZyqAybuWmFr8aKzg57znjJeZTN92Fzg2yNgRRwdneJoxeqLuZiBdU1T3P",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+    }
+  }
+;
 
 module.exports = [
   fixtureV2,

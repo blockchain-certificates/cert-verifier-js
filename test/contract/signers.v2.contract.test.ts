@@ -1,13 +1,13 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import FIXTURES from '../fixtures';
 import { Certificate } from '../../src';
 import domain from '../../src/domain';
+import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
 import v2IssuerProfile from '../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
-    describe('given there is only one signature to the V3 document', function () {
+    describe('given there is only one signature to the blockcerts document', function () {
       let instance;
 
       beforeAll(async function () {
@@ -21,7 +21,7 @@ describe('Certificate API Contract test suite', function () {
           time: '2018-02-08T00:23:34.000Z',
           revokedAddresses: []
         });
-        instance = new Certificate(FIXTURES.MainnetV2Valid);
+        instance = new Certificate(MainnetV2Valid);
         await instance.init();
         await instance.verify();
       });

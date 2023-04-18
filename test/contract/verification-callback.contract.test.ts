@@ -1,17 +1,16 @@
+import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../src';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
+import type { IVerificationStepCallbackAPI } from '../../src/verifier';
+import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
-import sinon from 'sinon';
-import domain from '../../src/domain';
-import { Certificate, VERIFICATION_STATUSES } from '../../src';
-import FIXTURES from '../fixtures';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import type { IVerificationStepCallbackAPI } from '../../src/verifier';
 
 describe('when the certificate verified', function () {
   beforeEach(function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
-    const lookForTxStub = sinon.stub(domain.verifier, 'lookForTx');
+    const lookForTxStub = sinon.stub(ExplorerLookup, 'lookForTx');
     requestStub.withArgs({
       url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
     }).resolves(JSON.stringify({ didDocument }));
@@ -35,7 +34,7 @@ describe('when the certificate verified', function () {
     function verificationCallback ({ code, status }: IVerificationStepCallbackAPI): void {
       calledSteps[code] = status;
     }
-    const instance = new Certificate(FIXTURES.BlockcertsV3);
+    const instance = new Certificate(BlockcertsV3);
     await instance.init();
     await instance.verify(verificationCallback);
     const expectedOutput = instance.verificationSteps.reduce((acc, curr) => {

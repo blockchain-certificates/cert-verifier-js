@@ -5,6 +5,7 @@ import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4H
 import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../../assertions/v3-revocation-list';
 
+// after editing run npm run transpile:mocks:iife
 export class FakeXmlHttpRequest {
   open (method, url) {
     this.url = url;
@@ -17,6 +18,8 @@ export class FakeXmlHttpRequest {
   }
 
   onload () {}
+
+  setRequestHeader () {}
 
   getMockResponseText () {
     switch (this.url) {

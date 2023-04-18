@@ -1,12 +1,13 @@
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
-import FIXTURES from '../../fixtures';
 import domain from '../../../src/domain';
 import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
 import { getText } from '../../../src/domain/i18n/useCases';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import v2RevocationList from '../../assertions/v2-revocation-list';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
+import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
+import MainnetV2Revoked from '../../fixtures/v2/mainnet-revoked-2.0.json';
 
 describe('Certificate test suite', function () {
   describe('verify method', function () {
@@ -42,7 +43,7 @@ describe('Certificate test suite', function () {
               '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
             ]
           });
-          certificate = new Certificate(FIXTURES.MainnetV2Valid);
+          certificate = new Certificate(MainnetV2Valid);
           await certificate.init();
         });
 
@@ -79,7 +80,7 @@ describe('Certificate test suite', function () {
             time: '2020-09-02T16:39:43.000Z',
             revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo']
           });
-          certificate = new Certificate(FIXTURES.MainnetV2Revoked);
+          certificate = new Certificate(MainnetV2Revoked);
           await certificate.init();
         });
 

@@ -1,7 +1,9 @@
-import Certificate from '../../src/certificate';
-import FIXTURES from '../fixtures';
 import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import Certificate from '../../src/certificate';
 import domain from '../../src/domain';
+import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
+import fixtureIssuerProfile from '../fixtures/issuer-profile-mainnet-example.json';
 
 describe('End-to-end i18n test suite', function () {
   describe('given the language is set to spanish', function () {
@@ -17,7 +19,10 @@ describe('End-to-end i18n test suite', function () {
           '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
         ]
       });
-      certificate = new Certificate(FIXTURES.MainnetV2Valid, { locale: 'es' });
+      sinon.stub(ExplorerLookup, 'request').withArgs({
+        url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+      }).resolves(JSON.stringify(fixtureIssuerProfile));
+      certificate = new Certificate(MainnetV2Valid, { locale: 'es' });
       await certificate.init();
       verificationResult = await certificate.verify();
     });

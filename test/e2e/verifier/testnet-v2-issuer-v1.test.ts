@@ -1,7 +1,9 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import FIXTURES from '../../fixtures';
 import sinon from 'sinon';
+import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import domain from '../../../src/domain';
+import issuerBlockcertsV1 from '../../fixtures/issuer-blockcerts-v1.json';
+import TestnetV2ValidV1Issuer from '../../fixtures/v2/testnet-valid-v1-issuer-2.0.json';
 
 describe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', function () {
   it('should verify successfully', async function () {
@@ -13,7 +15,10 @@ describe('given the certificate is a valid testnet (v2.0) issued by v1 issuer', 
         'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj'
       ]
     });
-    const certificate = new Certificate(FIXTURES.TestnetV2ValidV1Issuer);
+    sinon.stub(ExplorerLookup, 'request').withArgs({
+      url: 'https://www.blockcerts.org/mockissuer/issuer/issuerTestnet_v1.json'
+    }).resolves(JSON.stringify(issuerBlockcertsV1));
+    const certificate = new Certificate(TestnetV2ValidV1Issuer);
     await certificate.init();
     const result = await certificate.verify();
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);

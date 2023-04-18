@@ -1,12 +1,11 @@
 import { Certificate } from '../../../src';
-import fixture from '../../fixtures/v3/proof-chain-example-ed25519.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import fixture from '../../fixtures/v3/proof-chain-example-ed25519.json';
 import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
-import domain from '../../../src/domain';
 
 describe('proof chain example', function () {
   let instance;
@@ -19,7 +18,7 @@ describe('proof chain example', function () {
     requestStub.withArgs({
       url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
     }).resolves(JSON.stringify(fixtureIssuerProfile));
-    sinon.stub(domain.verifier, 'lookForTx').resolves({
+    sinon.stub(ExplorerLookup, 'lookForTx').resolves({
       remoteHash: '8303d22a9f391f0ac7deb0cd2e19cf2d582f6c93c8ddbb88bfae241041b5f951',
       issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
       time: '2022-05-03T17:24:07.000Z',

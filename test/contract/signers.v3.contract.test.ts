@@ -1,9 +1,8 @@
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import FIXTURES from '../fixtures';
 import { Certificate } from '../../src';
-import domain from '../../src/domain';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
+import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../assertions/v3-revocation-list';
@@ -24,13 +23,13 @@ describe('Certificate API Contract test suite', function () {
         requestStub.withArgs({
           url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
         }).resolves(JSON.stringify(v3RevocationList));
-        sinon.stub(domain.verifier, 'lookForTx').resolves({
+        sinon.stub(ExplorerLookup, 'lookForTx').resolves({
           remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
           issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
           time: '2022-04-05T18:45:30.000Z',
           revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
         });
-        instance = new Certificate(FIXTURES.BlockcertsV3);
+        instance = new Certificate(BlockcertsV3);
         await instance.init();
         await instance.verify();
       });

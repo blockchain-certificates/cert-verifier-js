@@ -1,23 +1,18 @@
-import FIXTURES from '../../../fixtures';
-import parseJSON from '../../../../src/parsers/index';
-import assertionIssuerProfile from '../../../assertions/v3.0-alpha-issuer-profile.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import parseJSON from '../../../src/parsers';
+import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
+import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
-const fixture = FIXTURES.BlockcertsV3Beta;
+const fixture = BlockcertsV3;
+const assertionIssuerProfile = {
+  ...v3IssuerProfile,
+  didDocument
+};
 
-describe('Parser test suite', function () {
-  beforeEach(function () {
-    const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: 'https://raw.githubusercontent.com/blockchain-certificates/cert-issuer/master/examples/issuer/profile.json'
-    }).resolves(JSON.stringify(assertionIssuerProfile));
-  });
-
-  afterEach(function () {
-    sinon.restore();
-  });
-
+describe('Parser v3 test suite', function () {
   describe('given it is called with a invalid format v3 certificate data', function () {
     it('should set whether or not the certificate format is valid', async function () {
       const fixtureCopy = JSON.parse(JSON.stringify(fixture));
@@ -29,13 +24,21 @@ describe('Parser test suite', function () {
 
   describe('given it is called with valid v3 certificate data', function () {
     let parsedCertificate;
+    let requestStub;
 
     beforeEach(async function () {
+      requestStub = sinon.stub(ExplorerLookup, 'request');
+      requestStub.withArgs({ url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ` })
+        .resolves(JSON.stringify({ didDocument }));
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      }).resolves(JSON.stringify(v3IssuerProfile));
       parsedCertificate = await parseJSON(fixture);
     });
 
     afterEach(function () {
       parsedCertificate = null;
+      requestStub.restore();
     });
 
     it('should set the id of the certificate object', function () {
@@ -55,13 +58,16 @@ describe('Parser test suite', function () {
     });
 
     it('should set the recipientFullName of the certificate object', function () {
-      // not defined in current sample
-      // const fullNameAssertion = fixture.credentialSubject.name;
-      expect(parsedCertificate.recipientFullName).toEqual('');
+      const fullNameAssertion = fixture.credentialSubject.name;
+      expect(parsedCertificate.recipientFullName).toEqual(fullNameAssertion);
     });
 
     it('should set recordLink of the certificate object', function () {
       expect(parsedCertificate.recordLink).toBe(fixture.id);
+    });
+
+    it('should return the display property', function () {
+      expect(parsedCertificate.display).toEqual(fixture.display);
     });
 
     describe('when the expirationDate is set', function () {

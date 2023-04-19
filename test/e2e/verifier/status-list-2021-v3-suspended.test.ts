@@ -22,6 +22,13 @@ describe('Status List 2021 v3 suspended example', function () {
       url: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
     }).resolves(JSON.stringify(BlockcertsStatusList2021Suspension));
 
+    sinon.stub(ExplorerLookup, 'lookForTx').resolves({
+      remoteHash: '1c10497bdbc9e1812ada342c1e2a1c4d60c2f263f195116a804a98e6e8288b6c',
+      issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+      time: '2023-03-30T13:13:13.000Z',
+      revokedAddresses: []
+    });
+
     const instance = new Certificate(StatusList2021Suspended as any);
     await instance.init();
     result = await instance.verify();

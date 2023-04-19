@@ -1,6 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/vc/status-list/2021/v1",
     "https://w3id.org/blockcerts/v3"
   ],
   "id": "urn:uuid:bbba8553-8ec1-445f-82c9-b456093df",
@@ -29,8 +30,8 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2023-03-21T17:30:13.716394",
-    "proofValue": "z4zvrPUULqodatUNSb1yQooCTEPT2EtDLH6jutG1AQsKGfPsKvcKzkJzRDx2ZZZvgh4TYJNQVQU3Gd64PYSA2yhy4S53Lrf3YRX5wmQyiKqBzx84oJgzR6mwEme8oTqwTuHS18En5eY24HYJzhNaS5dM1xas3aJq7NwViGrpR9iJ337CV4h3PFP85i2kgWiiTMM2gkSYdCB25qzMG7P7FYQGjkv2ByFGx22wxLWtnAJ9kjFpu17Xzt4z34n6rxZ2SyCutLG9Qeir7oBuQVSW7VNKn2Th3DHjhSiDLuGSYf4UGEuCXhDcZ5iZrLzxLHP63jQXW9r1RWJD7Ac7A1A44HX9fVZyqAybuWmFr8aKzg57znjJeZTN92Fzg2yNgRRwdneJoxeqLuZiBdU1T3P",
+    "created": "2023-03-30T15:08:26.132830",
+    "proofValue": "zmz7LKNSJbePX9eQ191HVp4x3netEQrxVwojCQsjUKyAu9Wz2S1pjAFnHGz49EMjJtaSg52wQJUXNpa9aVgXZdZGN1ozFxrH6PqAfLFSfiFUCxkgdKV5cbyxtKFaBYvab936KpDDFKnHGsrrsiGecgHboNd9p2HtzSXxxUEjQ7geS8pfZ6wKRVaZ5cKCbpDT2R4mDbu8bbvPd7iphgutXiVL6JDRqb4WAwg75PFLAvAQkw7Sek8ASZsnSbHSBDbXm3eHsxatBEBBPhWJEAwPdNLpbWLJWE1jtqMcq114cw4RDGS1QXXLz8dRBU91xRpeTjtf6oqnrQ6d7z5c8uTCWVCX4XKtaUSqR8oJMJjqiF664mux5L66w82rD7h4FhbeZHx9NW8VPU1wNvYp1bgKGtgkteJ6QNu7yZ3xunyLpCBu1NEspKCNA7RhnZ3gSTHcstgdXuyFRNRBh2V1p44DChF1JRuE95evwV9xN9zhRQ7oJLRZHr",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
   }

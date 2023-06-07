@@ -190,15 +190,26 @@ export default class MerkleProof2019 extends Suite {
     return this.proof.type === 'ChainedProof2021';
   }
 
+  private isMultipleProof (): boolean {
+    return Array.isArray(this.documentToVerify.proof);
+  }
+
+  private getProofIndex (): number {
+    if (!this.isMultipleProof()) {
+      return -1;
+    }
+    return (this.documentToVerify.proof as VCProof[]).findIndex(proof => proof.proofValue === this.proof.proofValue);
+  }
+
   private async setIssuerFromProofVerificationMethod (): Promise<void> {
-    if (this.isProofChain()) {
+    if (this.getProofIndex() > 0) {
       const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
       this.issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
     }
   }
 
   private setHasDid (): void {
-    if (this.isProofChain()) {
+    if (this.getProofIndex() > 0) {
       const issuerProfileUrl = this.proof.verificationMethod.split('#')[0];
       this.hasDid = isDidUri(issuerProfileUrl);
       return;

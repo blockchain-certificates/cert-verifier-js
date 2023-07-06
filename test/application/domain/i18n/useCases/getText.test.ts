@@ -4,6 +4,7 @@ import domain from '../../../../../src/domain';
 describe('domain i18n getText use case test suite', function () {
   describe('given it is invoked without the group', function () {
     it('should return an empty string', function () {
+      // @ts-expect-error test case
       const res = domain.i18n.getText();
       expect(res).toBe('');
     });
@@ -11,6 +12,7 @@ describe('domain i18n getText use case test suite', function () {
 
   describe('given it is invoked without the item', function () {
     it('should return an error', function () {
+      // @ts-expect-error test case
       const res = domain.i18n.getText('group');
       expect(res).toBe('');
     });

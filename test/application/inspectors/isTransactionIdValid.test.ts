@@ -16,6 +16,7 @@ describe('Inspectors test suite', function () {
       it('throw an error', function () {
         const transactionIdFixture = 1;
         expect(() => {
+          // @ts-expect-error test case
           isTransactionIdValid(transactionIdFixture);
         }).toThrow(errorMessage);
       });

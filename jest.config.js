@@ -4,8 +4,7 @@ module.exports = {
     '<rootDir>/node_modules'
   ],
   transform: {
-    '^.+\\.(ts)$': 'ts-jest',
-    '^.+\\.(js)$': 'babel-jest'
+    '^.+\\.((j|t)s)$': 'ts-jest'
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@digitalbazaar|@blockcerts|base58-universal|base64url-universal|crypto-ld|ky-universal|node-fetch)/)'

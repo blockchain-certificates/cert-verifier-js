@@ -1,6 +1,6 @@
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture';
+import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture.json';
 import sinon from 'sinon';
 
 describe('Verifier domain getRevokedAssertions use case test suite', function () {
@@ -17,6 +17,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
 
   describe('given it is called without an revocationListUrl parameter', function () {
     it('should throw an error', async function () {
+      // @ts-expect-error test case
       await getRevokedAssertions().catch(e => {
         expect(e.message).toBe(errorMessageAssertion);
       });

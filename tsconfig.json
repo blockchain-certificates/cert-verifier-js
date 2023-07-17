@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "checkJs": true,
+    "checkJs": false,
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": false,
     "target": "ESNext",
@@ -11,7 +11,7 @@
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "baseUrl": "src",
-    "module": "commonjs",
+    "module": "ESNext",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "sourceMap": true,

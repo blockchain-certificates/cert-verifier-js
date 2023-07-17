@@ -9,7 +9,7 @@ global.XMLHttpRequest = FakeXmlHttpRequest;
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
     const certificate = new Certificate(FIXTURES.TestnetV1Valid);
-    expect(async () => {
+    await expect(async () => {
       await certificate.init();
     }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
       'See the python cert-verifier for v1.1 verification ' +

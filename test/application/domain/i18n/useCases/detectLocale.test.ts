@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import domain from '../../../../../src/domain';
 
 describe('domain i18n detectLocale use case test suite', function () {

@@ -2,9 +2,11 @@ import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import { Certificate } from '../../dist/verifier-es';
+import crypto from 'crypto';
 
 // @ts-expect-error we just mock the thing
 global.XMLHttpRequest = FakeXmlHttpRequest;
+global.crypto.subtle = crypto.webcrypto.subtle;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
@@ -19,6 +21,7 @@ describe('verifier build test suite', function () {
 
   it('works as expected with a v2 certificate', async function () {
     const certificate = new Certificate(FIXTURES.MainnetV2Valid);
+    console.log(global.crypto);
     await certificate.init();
     const result = await certificate.verify();
     if (result.status === VERIFICATION_STATUSES.FAILURE) {

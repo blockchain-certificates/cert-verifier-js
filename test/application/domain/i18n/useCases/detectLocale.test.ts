@@ -1,5 +1,7 @@
 import domain from '../../../../../src/domain';
 
+global.navigator = {} as any;
+
 describe('domain i18n detectLocale use case test suite', function () {
   describe('given it detected the navigator locale', function () {
     beforeEach(function () {

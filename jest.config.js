@@ -9,5 +9,9 @@ module.exports = {
   },
   transformIgnorePatterns: [
     'node_modules/(?!(@digitalbazaar|@blockcerts|base58-universal|base64url-universal|crypto-ld|ky-universal|node-fetch)/)'
-  ]
+  ],
+  globals: {
+    TextEncoder: require('util').TextEncoder,
+    TextDecoder: require('util').TextDecoder
+  }
 };

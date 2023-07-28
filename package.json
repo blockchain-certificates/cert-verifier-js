@@ -13,7 +13,7 @@
   "scripts": {
     "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld && rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal && rm -rf node_modules/ky-universal/node_modules/node-fetch",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
-    "test": "jest --setupFilesAfterEnv=./test/setup.ts",
+    "test": "vitest run",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
     "test:build:node": "jest --testRegex \"/*(verifier-node.test.build.js)\" --silent",
     "test:build:cjs": "jest --testRegex \"/*(verifier.test.build.js)\" --silent",
@@ -23,7 +23,7 @@
     "test:manual:node:server": "node test/manual-testing/node/server.js",
     "test:manual:node:server:watch": "nodemon test/manual-testing/node/server.js",
     "test:manual:node:verify": "node test/manual-testing/node/request.js",
-    "test:watch": "jest --watch",
+    "test:watch": "vitest",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
     "build": "npm run build:esm && npm run build:iife && npm run build:node && npm run dts:bundle && npm run test:build",
@@ -141,6 +141,7 @@
     "snazzy": "^9.0.0",
     "ts-jest": "^29.1.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "vitest": "^0.33.0"
   }
 }

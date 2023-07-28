@@ -118,6 +118,7 @@
     "husky": "^8.0.1",
     "jasmine-core": "^4.4.0",
     "jest": "^29.6.1",
+    "jest-environment-jsdom": "^29.6.2",
     "karma": "^6.0.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-firefox-launcher": "^2.1.0",

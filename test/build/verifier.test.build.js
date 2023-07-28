@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import crypto from 'crypto';

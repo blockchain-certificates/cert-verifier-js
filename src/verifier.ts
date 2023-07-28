@@ -244,7 +244,6 @@ export default class Verifier {
     let label: string;
     if (step) {
       label = domain.i18n.getText('subSteps', `${step}LabelPending`);
-      log(label);
       this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING, verificationSuite);
     }
 
@@ -331,7 +330,6 @@ export default class Verifier {
 
   private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
     const { message } = errorStep;
-    log(`failure:${message}`);
     return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
   }
 
@@ -347,7 +345,6 @@ export default class Verifier {
         message = domain.chains.isMockChain(this.proofVerifiers[0].getChain())
           ? domain.i18n.getComposedText('success', 'mocknet')
           : domain.i18n.getComposedText('success', 'blockchain');
-        log(message);
       } else {
         message = {
           ...domain.i18n.getComposedText('success', 'generic'),

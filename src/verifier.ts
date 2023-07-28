@@ -1,4 +1,3 @@
-import debug from 'debug';
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import domain from './domain';
 import * as inspectors from './inspectors';
@@ -20,8 +19,6 @@ import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/V
 import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
-
-const log = debug('Verifier');
 
 export interface IVerificationStepCallbackAPI {
   code: string;

@@ -1,6 +1,6 @@
-import resolve from 'rollup-plugin-node-resolve';
+import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import json from 'rollup-plugin-json';
+import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
@@ -13,14 +13,15 @@ export default {
     {
       file: 'dist/verifier-iife.js',
       format: 'iife',
-      name: 'Verifier'
+      name: 'Verifier',
+      generatedCode: 'es2015',
+      interop: 'auto'
     }
   ],
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true,
-      extensions: ['.js', '.json']
+      preferBuiltins: true
     }),
     typescript(),
     commonjs(),

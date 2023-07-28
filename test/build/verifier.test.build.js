@@ -1,4 +1,3 @@
-import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import crypto from 'crypto';
@@ -23,7 +22,7 @@ describe('verifier build test suite', function () {
     const certificate = new verifier.Certificate(FIXTURES.MainnetV2Valid);
     await certificate.init();
     const result = await certificate.verify();
-    if (result.status === VERIFICATION_STATUSES.FAILURE) {
+    if (result.status === 'failure') {
       console.log(result.message);
     }
     expect(result.message).toEqual({
@@ -32,14 +31,14 @@ describe('verifier build test suite', function () {
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });
-    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    expect(result.status).toBe('success');
   });
 
   it('works as expected with a v3 certificate', async function () {
     const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3);
     await certificate.init();
     const result = await certificate.verify();
-    if (result.status === VERIFICATION_STATUSES.FAILURE) {
+    if (result.status === 'failure') {
       console.log(result.message);
     }
     expect(result.message).toEqual({
@@ -48,6 +47,6 @@ describe('verifier build test suite', function () {
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });
-    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    expect(result.status).toBe('success');
   });
 });

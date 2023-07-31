@@ -11,7 +11,7 @@
   "node": "dist/verifier-node.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld && rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal && rm -rf node_modules/ky-universal/node_modules/node-fetch",
+    "postinstall": "rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal && rm -rf node_modules/ky-universal/node_modules/node-fetch",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
     "test": "jest --setupFilesAfterEnv=./test/setup.ts",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
@@ -79,7 +79,7 @@
     "ecurve": "^1.0.4",
     "elliptic": "^6.5.4",
     "js-sha3": "^0.8.0",
-    "jsonld": "^5.2.0",
+    "jsonld": "^8.2.0",
     "jsonld-signatures": "^9.3.1",
     "jsonld-signatures-merkleproof2019": "^2.2.2",
     "lodash.clonedeep": "^4.5.0",

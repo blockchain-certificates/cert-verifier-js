@@ -10,12 +10,12 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/verifier.js',
+      dir: 'dist/verifier',
       format: 'cjs',
       name: 'Verifier'
     },
     {
-      file: 'dist/verifier-es.js',
+      dir: 'dist/verifier-es',
       format: 'es',
       name: 'Verifier'
     }

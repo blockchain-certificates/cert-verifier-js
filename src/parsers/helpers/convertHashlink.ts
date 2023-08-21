@@ -19,10 +19,14 @@ async function decodeHashlinks (hashlinks: string[], hl: HashlinkVerifier): Prom
   }, []);
 }
 
-export default async function convertHashlink (display: string, hl: HashlinkVerifier): Promise<string> {
+export function getHashlinksFrom (display: string): string[] {
   const hashlinkTest = /hl:{1}[a-zA-Z0-9]+:{1}[a-zA-Z0-9]+/gm;
   const hashlinksMatch = [...display.matchAll(hashlinkTest)];
-  const hashlinks = hashlinksMatch.map(match => match[0]).filter(value => !!value);
+  return hashlinksMatch.map(match => match[0]).filter(value => !!value);
+}
+
+export default async function convertHashlink (display: string, hl: HashlinkVerifier): Promise<string> {
+  const hashlinks = getHashlinksFrom(display);
 
   if (hashlinks.length) {
     const urls: string[] = await decodeHashlinks(hashlinks, hl);

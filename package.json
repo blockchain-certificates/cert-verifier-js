@@ -13,7 +13,7 @@
   "scripts": {
     "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld && rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal && rm -rf node_modules/ky-universal/node_modules/node-fetch",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
-    "test": "jest --setupFilesAfterEnv=./test/setup.ts",
+    "test": "jest --setupFilesAfterEnv=./test/setup.ts --maxWorkers=1",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
     "test:build:node": "jest --testRegex \"/*(verifier-node.test.build.js)\" --silent",
     "test:build:cjs": "jest --testRegex \"/*(verifier.test.build.js)\" --silent",

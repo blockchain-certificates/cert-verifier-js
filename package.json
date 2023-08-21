@@ -26,7 +26,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",
-    "build": "npm run build:esm && npm run build:iife && npm run build:node && npm run dts:bundle && npm run test:build",
+    "build": "rimraf dist && npm run build:esm && npm run build:iife && npm run build:node && npm run dts:bundle && npm run test:build",
     "build:esm": "rollup -c",
     "build:iife": "rollup -c rollup.iife.config.mjs",
     "build:node": "rollup -c rollup.node.config.mjs",

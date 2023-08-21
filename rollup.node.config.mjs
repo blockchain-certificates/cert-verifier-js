@@ -7,7 +7,7 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/verifier-node.js',
+      dir: 'dist/verifier-node',
       format: 'cjs',
       name: 'Verifier'
     }

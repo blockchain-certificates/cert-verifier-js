@@ -15,7 +15,8 @@ export default {
       format: 'iife',
       name: 'Verifier',
       generatedCode: 'es2015',
-      interop: 'auto'
+      interop: 'auto',
+      inlineDynamicImports: true
     }
   ],
   plugins: [

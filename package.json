@@ -6,9 +6,9 @@
     "type": "git",
     "url": "https://github.com/blockchain-certificates/cert-verifier-js.git"
   },
-  "main": "dist/verifier.js",
-  "module": "dist/verifier-es.js",
-  "node": "dist/verifier-node.js",
+  "main": "dist/verifier/index.js",
+  "module": "dist/verifier-es/index.js",
+  "node": "dist/verifier-node/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "postinstall": "rm -rf node_modules/jsonld-checker/node_modules/jsonld && rm -rf node_modules/@bloomprotocol/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal && rm -rf node_modules/ky-universal/node_modules/node-fetch",

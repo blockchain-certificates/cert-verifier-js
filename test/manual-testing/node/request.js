@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+const http = require('node:http');
 const fixtures = require('../fixtures/fixtures');
 
 function prettyFormat (jsonObject) {
@@ -12,17 +12,27 @@ async function verify (blockcerts, version) {
 
   console.log('Now starting verification of', version, blockcerts.id);
 
-  const verificationStatus = await fetch('http://localhost:4000/verification', {
-    body: JSON.stringify({
-      blockcerts,
-      version
-    }),
+  const req = http.request('http://localhost:4000/verification', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
-  }).then((res) => res.json());
+  }, function (res) {
+    res.setEncoding('utf-8');
+    res.on('data', (data) => {
+      console.log(prettyFormat(JSON.parse(data)));
+      console.log(version, 'verification end');
+    });
+  });
 
-  console.log(prettyFormat(verificationStatus));
-  console.log(version, 'verification end');
+  req.write(JSON.stringify({
+    blockcerts,
+    version
+  }));
+
+  req.on('error', (e) => {
+    console.error(e);
+  });
+
+  req.end();
 }
 
 function verifyCerts () {

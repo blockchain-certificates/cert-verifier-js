@@ -4,17 +4,18 @@ import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'dist/verifier.js',
+      dir: 'dist/verifier',
       format: 'cjs',
       name: 'Verifier'
     },
     {
-      file: 'dist/verifier-es.js',
+      dir: 'dist/verifier-es',
       format: 'es',
       name: 'Verifier'
     }
@@ -30,6 +31,13 @@ export default {
     commonjs(),
     json(),
     globals(),
-    builtins()
+    builtins(),
+    visualizer({
+      filename: 'bundle-esm-stats.html',
+      title: 'Cert-Verifier-JS bundle stats',
+      template: 'sunburst',
+      open: true,
+      gzipSize: true
+    })
   ]
 };

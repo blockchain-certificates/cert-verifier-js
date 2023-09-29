@@ -1,8 +1,8 @@
 import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
-import { EcdsaSecp256k1VerificationKey2019 } from '@bloomprotocol/ecdsa-secp256k1-verification-key-2019';
-import { EcdsaSecp256k1Signature2019 as Secp256k1VerificationSuite } from '@bloomprotocol/ecdsa-secp256k1-signature-2019';
+import { EcdsaSecp256k1VerificationKey2019 } from '@blockcerts/ecdsa-secp256k1-verification-key-2019';
+import { EcdsaSecp256k1Signature2019 as Secp256k1VerificationSuite } from '@blockcerts/ecdsa-secp256k1-signature-2019';
 import { Suite } from '../models/Suite';
 import { VerifierError } from '../models';
 import { preloadedContexts } from '../constants';

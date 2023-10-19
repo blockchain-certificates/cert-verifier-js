@@ -79,6 +79,7 @@
     "elliptic": "^6.5.4",
     "js-sha3": "^0.8.0",
     "jsonld": "^8.3.1",
+    "jsonld-checker": "npm:@blockcerts/jsonld-checker@^0.1.9",
     "jsonld-signatures": "^11.2.1",
     "jsonld-signatures-merkleproof2019": "^2.5.2",
     "lodash.clonedeep": "^4.5.0",

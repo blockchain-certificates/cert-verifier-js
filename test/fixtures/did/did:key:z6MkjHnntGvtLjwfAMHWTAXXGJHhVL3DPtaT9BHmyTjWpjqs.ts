@@ -14,16 +14,6 @@ export default {
         crv: 'Ed25519',
         x: 'R91kQ2HOJBqr1uyCU9-ma8IySvB6upk132JBPpGBqeI'
       }
-    },
-    {
-      id: 'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6LSryEyvxgv9paaRHFeJ3vbHvPhtETwh339P52eDT21xdb1',
-      type: 'JsonWebKey2020',
-      controller: 'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs',
-      publicKeyJwk: {
-        kty: 'OKP',
-        crv: 'X25519',
-        x: '4z5-dNji0nLIffzBX25JSJHYmNAFSDjXP9xyFLT4tHw'
-      }
     }
   ],
   assertionMethod: [
@@ -37,8 +27,5 @@ export default {
   ],
   capabilityDelegation: [
     'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs'
-  ],
-  keyAgreement: [
-    'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6LSryEyvxgv9paaRHFeJ3vbHvPhtETwh339P52eDT21xdb1'
   ]
 };

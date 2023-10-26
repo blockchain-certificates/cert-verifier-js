@@ -62,6 +62,7 @@
     "@blockcerts/explorer-lookup": "^1.5.1",
     "@blockcerts/hashlink-verifier": "^1.6.0",
     "@blockcerts/schemas": "^3.4.1",
+    "@did-core/did-ld-json": "npm:@blockcerts/did-ld-json@^0.1.2",
     "@digitalbazaar/ed25519-signature-2020": "github:lemoustachiste/ed25519-signature-2020#convert-to-module",
     "@digitalbazaar/ed25519-verification-key-2020": "github:lemoustachiste/ed25519-verification-key-2020#convert-to-module",
     "@digitalbazaar/vc-revocation-list": "github:blockchain-certificates/vc-revocation-list#fix/memory-leak",

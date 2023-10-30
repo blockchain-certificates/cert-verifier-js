@@ -52,6 +52,10 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
           toISOString (): string {
             return '2022-06-10T18:29:41.468Z';
           }
+
+          static now (): number {
+            return 1654885781468;
+          }
         }
         global.Date = MockDate as any;
 

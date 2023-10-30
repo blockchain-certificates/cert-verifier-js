@@ -6,7 +6,7 @@
     "noImplicitAny": false,
     "target": "ESNext",
     "lib": ["ESNext", "dom"],
-    "importsNotUsedAsValues": "error",
+    "importsNotUsedAsValues": "remove",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",

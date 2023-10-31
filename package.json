@@ -22,7 +22,7 @@
     "test:manual:browser": "rollup -c test/manual-testing/browser/rollup.config.mjs",
     "test:manual:node:server": "node test/manual-testing/node/server.js",
     "test:manual:node:server:watch": "nodemon test/manual-testing/node/server.js",
-    "test:manual:node:verify": "node test/manual-testing/node/request.js",
+    "test:manual:node:verify": "node test/manual-testing/node/request.mjs",
     "test:watch": "jest --watch",
     "test:coverage": "jest --maxWorkers=4 --silent --noStackTrace --coverage",
     "test:coverage:report": "codecov",

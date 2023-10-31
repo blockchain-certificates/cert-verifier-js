@@ -1,5 +1,5 @@
-const fetch = require('node-fetch');
-const fixtures = require('../fixtures/fixtures');
+import fetch from 'node-fetch';
+import fixtures from '../fixtures/fixtures.mjs';
 
 function prettyFormat (jsonObject) {
   return JSON.stringify(jsonObject, null, 2);

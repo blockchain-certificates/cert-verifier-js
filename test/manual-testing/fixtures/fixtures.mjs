@@ -104,7 +104,7 @@ const fixtureV3 = {
   }
 ;
 
-module.exports = [
+export default [
   fixtureV2,
   fixtureV3
-]
+];

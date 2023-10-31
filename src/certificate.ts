@@ -1,4 +1,3 @@
-import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import domain from './domain';
 import type { ParsedCertificate } from './parsers';
 import parseJSON from './parsers/index';
@@ -7,12 +6,13 @@ import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
 import currentLocale from './constants/currentLocale';
 import { deepCopy } from './helpers/object';
-import convertHashlink from './parsers/helpers/convertHashlink';
+import convertHashlink, { getHashlinksFrom } from './parsers/helpers/convertHashlink';
+import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { ExplorerAPI, IBlockchainObject } from '@blockcerts/explorer-lookup';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { SignatureImage } from './models';
-import type { BlockcertsV3Display } from './models/BlockcertsV3';
+import type { BlockcertsV3, BlockcertsV3Display } from './models/BlockcertsV3';
 import type { IVerificationMapItem } from './models/VerificationMap';
 
 export interface ExplorerURLs {
@@ -67,6 +67,7 @@ export default class Certificate {
   public signers: Signers[] = [];
   public subtitle?: string; // v1
   public hashlinkVerifier: HashlinkVerifier;
+  public hasHashlinks: boolean = false;
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
 
@@ -84,12 +85,20 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
-    this.hashlinkVerifier = new HashlinkVerifier();
   }
 
   async init (): Promise<void> {
     // Parse certificate
+    if ((this.certificateJson as BlockcertsV3).display?.content) {
+      const hashlinks = getHashlinksFrom((this.certificateJson as BlockcertsV3).display.content);
+      if (hashlinks.length) {
+        await import('@blockcerts/hashlink-verifier').then((hashlinkLib) => {
+          this.hashlinkVerifier = new hashlinkLib.HashlinkVerifier();
+        });
+      }
+    }
     await this.parseJson(this.certificateJson);
+
     this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       expires: this.expires,

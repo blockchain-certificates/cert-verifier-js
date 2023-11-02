@@ -4,10 +4,8 @@ import { decodeList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
 import { SUB_STEPS } from '../constants/verificationSteps';
 import domain from '../domain';
-import Ed25519Signature2020 from '../suites/Ed25519Signature2020';
-import EcdsaSecp256k1Signature2019 from '../suites/EcdsaSecp256k1Signature2019';
 import type { VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
-import type { SuiteAPI } from '../models/Suite';
+import type { SuiteAPI, Suite } from '../models/Suite';
 
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({
@@ -26,10 +24,17 @@ async function getRevocationCredential (statusListUrl: string): Promise<Verifiab
   return statusList;
 }
 
-const VerificationSuitesMap = {
-  Ed25519Signature2020,
-  EcdsaSecp256k1Signature2019
-};
+async function getVerificationSuiteForProof (type: string): Promise<Suite> {
+  if (type === 'Ed25519Signature2020') {
+    const { default: suite } = await import('../suites/Ed25519Signature2020');
+    return suite as unknown as Suite;
+  }
+
+  if (type === 'EcdsaSecp256k1Signature2019') {
+    const { default: suite } = await import('../suites/EcdsaSecp256k1Signature2019');
+    return suite as unknown as Suite;
+  }
+}
 
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
   const issuerProfile = await domain.verifier.getIssuerProfile(revocationCredential.issuer);
@@ -57,9 +62,10 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
         }
       }
     };
-    let verificationSuite = new VerificationSuitesMap[p.type](suiteInstantiationOptions);
-    await verificationSuite.verifyProof();
-    verificationSuite = null;
+    const VerificationSuite = await getVerificationSuiteForProof(p.type);
+    // @ts-expect-error not sure why typescript is complaining
+    const suite = new VerificationSuite(suiteInstantiationOptions);
+    await suite.verifyProof();
 
     const hasError = verificationFailures.length > 0;
     verificationFailures = [];

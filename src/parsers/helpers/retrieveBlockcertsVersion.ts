@@ -26,6 +26,16 @@ export function retrieveBlockcertsVersion (context: JsonLDContext | string): Blo
   }
 
   const blockcertsContext: string = filterBlockcertsContext(filterStringContexts(context));
+  if (!blockcertsContext) {
+    // TODO: with that we are introducing verification support for certs that are not exactly Blockcerts documents
+    // TODO: i.e.: revocation list in Revocation Status List 2021, essentially allowing verification of documents
+    // TODO: signed with supported verification suites. We need to improve what's being returned here and verify the
+    // TODO: vc compliance as well as return proper content
+    return {
+      version: Versions.V3_0,
+      versionNumber: 3
+    };
+  }
   const blockcertsContextArray: string[] = blockcertsContext.split('/').filter(str => str !== '');
 
   const availableVersions: string[] = Object.keys(versionParserMap);

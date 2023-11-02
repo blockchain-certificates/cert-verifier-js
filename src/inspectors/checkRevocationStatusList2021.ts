@@ -3,9 +3,9 @@ import type { RevocationList } from '@digitalbazaar/vc-revocation-list';
 import { decodeList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
 import { SUB_STEPS } from '../constants/verificationSteps';
-import domain from '../domain';
-import type { VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
-import type { SuiteAPI, Suite } from '../models/Suite';
+import Certificate from '../certificate';
+import type { BlockcertsV3, VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
+import { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
 
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({
@@ -24,54 +24,13 @@ async function getRevocationCredential (statusListUrl: string): Promise<Verifiab
   return statusList;
 }
 
-async function getVerificationSuiteForProof (type: string): Promise<Suite> {
-  if (type === 'Ed25519Signature2020') {
-    const { default: suite } = await import('../suites/Ed25519Signature2020');
-    return suite as unknown as Suite;
-  }
-
-  if (type === 'EcdsaSecp256k1Signature2019') {
-    const { default: suite } = await import('../suites/EcdsaSecp256k1Signature2019');
-    return suite as unknown as Suite;
-  }
-}
-
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
-  const issuerProfile = await domain.verifier.getIssuerProfile(revocationCredential.issuer);
-  let { proof } = revocationCredential;
+  const certificate = new Certificate(revocationCredential as BlockcertsV3);
+  await certificate.init();
+  const result = await certificate.verify();
 
-  if (!Array.isArray(proof)) {
-    proof = [proof];
-  }
-
-  let verificationFailures = [];
-
-  for (const p of proof) {
-    const suiteInstantiationOptions: SuiteAPI = {
-      issuer: issuerProfile,
-      document: revocationCredential as any,
-      proof: p,
-      executeStep: async (step, action): Promise<any> => {
-        try {
-          const res: any = await action();
-          return res;
-        } catch (e) {
-          console.log('step', step, 'failed with error:');
-          console.error(e);
-          verificationFailures.push(step);
-        }
-      }
-    };
-    const VerificationSuite = await getVerificationSuiteForProof(p.type);
-    // @ts-expect-error not sure why typescript is complaining
-    const suite = new VerificationSuite(suiteInstantiationOptions);
-    await suite.verifyProof();
-
-    const hasError = verificationFailures.length > 0;
-    verificationFailures = [];
-    if (hasError) {
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');
-    }
+  if (result.status === VERIFICATION_STATUSES.FAILURE) {
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, 'The authenticity of the revocation list could not be verified.');
   }
 }
 

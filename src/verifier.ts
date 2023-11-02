@@ -110,19 +110,20 @@ export default class Verifier {
 
   async init (): Promise<void> {
     await this.instantiateProofVerifiers();
-    for (const proofVerifierSuite of this.proofVerifiers) {
-      await proofVerifierSuite.init();
-    }
     this.prepareVerificationProcess();
+  }
+
+  async verifyProof (): Promise<void> {
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      await this.proofVerifiers[i].verifyProof();
+    }
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
-    for (let i = 0; i < this.proofVerifiers.length; i++) {
-      await this.proofVerifiers[i].verifyProof();
-    }
+    await this.verifyProof();
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
@@ -200,6 +201,10 @@ export default class Verifier {
 
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));
     });
+
+    for (const proofVerifierSuite of this.proofVerifiers) {
+      await proofVerifierSuite.init();
+    }
   }
 
   private async loadRequiredVerificationSuites (documentProofTypes: SupportedVerificationSuites[]): Promise<void> {

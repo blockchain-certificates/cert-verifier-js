@@ -78,7 +78,7 @@
     "core-js": "^3.23.5",
     "ecurve": "^1.0.4",
     "elliptic": "^6.5.4",
-    "js-sha3": "^0.8.0",
+    "js-sha3": "^0.9.2",
     "jsonld": "^8.3.1",
     "jsonld-checker": "npm:@blockcerts/jsonld-checker@^0.1.9",
     "jsonld-signatures": "^11.2.1",

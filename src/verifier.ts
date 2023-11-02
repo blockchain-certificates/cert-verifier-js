@@ -1,13 +1,9 @@
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import domain from './domain';
-import * as inspectors from './inspectors';
+import ensureNotExpired from './inspectors/ensureNotExpired';
 import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
-import MerkleProof2019 from './suites/MerkleProof2019';
-import MerkleProof2017 from './suites/MerkleProof2017';
-import Ed25519Signature2020 from './suites/Ed25519Signature2020';
-import EcdsaSecp256k1Signature2019 from './suites/EcdsaSecp256k1Signature2019';
 import { difference } from './helpers/array';
 import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
@@ -43,6 +39,13 @@ interface StepVerificationStatus {
   message?: string;
 }
 
+export enum SupportedVerificationSuites {
+  MerkleProof2017 = 'MerkleProof2017',
+  MerkleProof2019 = 'MerkleProof2019',
+  Ed25519Signature2020 = 'Ed25519Signature2020',
+  EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019'
+}
+
 export default class Verifier {
   public expires: string;
   public id: string;
@@ -54,7 +57,13 @@ export default class Verifier {
   private _stepsStatuses: StepVerificationStatus[] = [];
   private readonly hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
-  public supportedVerificationSuites: any;
+  public supportedVerificationSuites: { [key in SupportedVerificationSuites]: Suite } = {
+    [SupportedVerificationSuites.MerkleProof2017]: null,
+    [SupportedVerificationSuites.MerkleProof2019]: null,
+    [SupportedVerificationSuites.Ed25519Signature2020]: null,
+    [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null
+  }; // defined here to later check if the proof type of the document is supported for verification
+
   public proofVerifiers: Suite[] = [];
   public verificationProcess: SUB_STEPS[];
   public proofMap: TVerifierProofMap;
@@ -100,7 +109,7 @@ export default class Verifier {
   }
 
   async init (): Promise<void> {
-    this.instantiateProofVerifiers();
+    await this.instantiateProofVerifiers();
     for (const proofVerifierSuite of this.proofVerifiers) {
       await proofVerifierSuite.init();
     }
@@ -167,13 +176,7 @@ export default class Verifier {
     return proofMap;
   }
 
-  private instantiateProofVerifiers (): void {
-    this.supportedVerificationSuites = {
-      MerkleProof2017,
-      MerkleProof2019,
-      Ed25519Signature2020,
-      EcdsaSecp256k1Signature2019
-    };
+  private async instantiateProofVerifiers (): Promise<void> {
     this.proofMap = this.getProofMap(this.documentToVerify);
     const proofTypes: string[] = this.getProofTypes();
 
@@ -183,6 +186,9 @@ export default class Verifier {
       throw new Error(`No support for proof verification of type: ${unsupportedVerificationSuites.join(', ')}`);
     }
 
+    // we have checked and now know the types of proof are supported, mutation is ok
+    await this.loadRequiredVerificationSuites(proofTypes as SupportedVerificationSuites[]);
+
     this.proofMap.forEach((proof, index) => {
       const suiteOptions: SuiteAPI = {
         executeStep: this.executeStep.bind(this),
@@ -191,8 +197,31 @@ export default class Verifier {
         explorerAPIs: this.explorerAPIs,
         issuer: this.issuer
       };
+
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));
     });
+  }
+
+  private async loadRequiredVerificationSuites (documentProofTypes: SupportedVerificationSuites[]): Promise<void> {
+    if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2017)) {
+      const { default: MerkleProof2017VerificationSuite } = await import('./suites/MerkleProof2017');
+      this.supportedVerificationSuites.MerkleProof2017 = MerkleProof2017VerificationSuite as unknown as Suite;
+    }
+
+    if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2019)) {
+      const { default: MerkleProof2019VerificationSuite } = await import('./suites/MerkleProof2019');
+      this.supportedVerificationSuites.MerkleProof2019 = MerkleProof2019VerificationSuite as unknown as Suite;
+    }
+
+    if (documentProofTypes.includes(SupportedVerificationSuites.Ed25519Signature2020)) {
+      const { default: Ed25519Signature2020VerificationSuite } = await import('./suites/Ed25519Signature2020');
+      this.supportedVerificationSuites.Ed25519Signature2020 = Ed25519Signature2020VerificationSuite as unknown as Suite;
+    }
+
+    if (documentProofTypes.includes(SupportedVerificationSuites.EcdsaSecp256k1Signature2019)) {
+      const { default: EcdsaSecp256k1Signature2019VerificationSuite } = await import('./suites/EcdsaSecp256k1Signature2019');
+      this.supportedVerificationSuites.EcdsaSecp256k1Signature2019 = EcdsaSecp256k1Signature2019VerificationSuite as unknown as Suite;
+    }
   }
 
   private prepareVerificationProcess (): void {
@@ -286,8 +315,9 @@ export default class Verifier {
 
   private async checkRevokedStatus (): Promise<void> {
     if ((this.documentToVerify as BlockcertsV3).credentialStatus) {
+      const { default: checkRevocationStatusList2021 } = await import('./inspectors/checkRevocationStatusList2021');
       await this.executeStep(SUB_STEPS.checkRevokedStatus, async () => {
-        await inspectors.checkRevocationStatusList2021((this.documentToVerify as BlockcertsV3).credentialStatus);
+        await checkRevocationStatusList2021((this.documentToVerify as BlockcertsV3).credentialStatus);
       });
       return;
     }
@@ -303,21 +333,29 @@ export default class Verifier {
       async () => await domain.verifier.getRevokedAssertions(revocationListUrl, this.id)
     );
 
+    const { default: ensureNotRevoked } = await import('./inspectors/ensureNotRevoked');
+
     await this.executeStep(SUB_STEPS.checkRevokedStatus, () =>
-      inspectors.ensureNotRevoked(revokedCertificatesIds, this.id)
+      ensureNotRevoked(revokedCertificatesIds, this.id)
     );
   }
 
   private async checkExpiresDate (): Promise<void> {
     await this.executeStep(SUB_STEPS.checkExpiresDate, () =>
-      inspectors.ensureNotExpired(this.expires)
+      ensureNotExpired(this.expires)
     );
   }
 
   private async controlVerificationMethod (): Promise<void> {
     // only v3 support
+    if (!this.issuer.didDocument) {
+      return;
+    }
+
+    const { default: controlVerificationMethod } = await import('./inspectors/did/controlVerificationMethod');
+
     await this.executeStep(SUB_STEPS.controlVerificationMethod, () => {
-      inspectors.controlVerificationMethod(
+      controlVerificationMethod(
         this.issuer.didDocument,
         getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
       );

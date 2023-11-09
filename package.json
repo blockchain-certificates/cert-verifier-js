@@ -135,7 +135,7 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "github:blockchain-certificates/rollup-plugin-node-globals",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-polyfill-node": "^0.10.2",
+    "rollup-plugin-polyfill-node": "^0.12.0",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-terser": "^7.0.0",
     "rollup-plugin-visualizer": "^5.9.2",

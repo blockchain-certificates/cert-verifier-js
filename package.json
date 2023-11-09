@@ -107,7 +107,7 @@
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
     "crypto": "^1.0.1",
-    "dts-bundle-generator": "^6.0.0",
+    "dts-bundle-generator": "^8.1.2",
     "eslint": "^7.21.0",
     "eslint-config-semistandard": "^17.0.0",
     "eslint-config-standard": "^17.1.0",

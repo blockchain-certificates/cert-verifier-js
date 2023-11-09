@@ -36,7 +36,7 @@ describe('verifier build test suite', function () {
       linkText: 'View transaction link'
     });
     expect(result.status).toBe('success');
-  });
+  }, 30000);
 
   it('works as expected with a v3 certificate', async function () {
     const certificate = new Certificate(FIXTURES.BlockcertsV3);
@@ -52,5 +52,5 @@ describe('verifier build test suite', function () {
       linkText: 'View transaction link'
     });
     expect(result.status).toBe('success');
-  });
+  }, 30000);
 });

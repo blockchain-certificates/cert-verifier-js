@@ -157,7 +157,7 @@ export default class Ed25519Signature2020 extends Suite {
         }
 
         try {
-          this.publicKey = verificationMethod.publicKeyMultibase ||
+          this.publicKey = verificationMethod.publicKeyMultibase ??
             await this.publicKeyJwkToString(verificationMethod);
         } catch (e) {
           console.error('ERROR retrieving Ed25519Signature2020 public key', e);

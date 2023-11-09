@@ -5,15 +5,11 @@ export type Blockcerts = BlockcertsV2 | BlockcertsV3;
 export type UnsignedBlockcerts = UnsignedBlockcertsV2 | UnsignedBlockcertsV3;
 
 // defining input document properties below:
-export interface AnyProperties {
-  [prop: string]: any;
-}
+export type AnyProperties = Record<string, any>;
 
-interface CustomJsonLDContextDefinition {
-  [key: string]: {
-    '@id'?: string;
-    '@type'?: string;
-  } | string;
-}
+type CustomJsonLDContextDefinition = Record<string, {
+  '@id'?: string;
+  '@type'?: string;
+} | string>;
 
 export type JsonLDContext = Array<string | CustomJsonLDContextDefinition>;

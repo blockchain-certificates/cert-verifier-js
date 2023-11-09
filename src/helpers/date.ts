@@ -19,7 +19,7 @@ function dateFromRegex (s: string): Date {
   let day;
   let tz;
   const rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
-  const p = rx.exec(s) || [];
+  const p = rx.exec(s) ?? [];
   if (p[1]) {
     day = p[1].split(/\D/).map(function (itm) {
       return parseInt(itm, 10) || 0;

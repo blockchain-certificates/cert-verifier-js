@@ -7,7 +7,7 @@ import type { Issuer } from '../models/Issuer';
 export default async function parseV2 (certificateJson: BlockcertsV2): Promise<ParsedCertificate> {
   const { id, expires, badge } = certificateJson;
   const { image: certificateImage, name, description, subtitle, issuer: issuerProfileUrl } = badge;
-  const recipientProfile = certificateJson.recipientProfile || certificateJson.recipient.recipientProfile;
+  const recipientProfile = certificateJson.recipientProfile ?? certificateJson.recipient.recipientProfile;
 
   const issuedOn = certificateJson.issuedOn;
   const metadataJson = certificateJson.metadataJson;

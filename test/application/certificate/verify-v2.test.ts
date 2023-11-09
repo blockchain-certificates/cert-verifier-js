@@ -98,6 +98,7 @@ describe('Certificate test suite', function () {
             updates.push(update);
           });
 
+          // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
           const comparisonStep = updates.find(update => update.code === SUB_STEPS.checkRevokedStatus && update.status === VERIFICATION_STATUSES.FAILURE);
           expect(comparisonStep).toEqual(assertionStep);
         });

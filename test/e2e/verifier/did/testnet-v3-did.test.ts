@@ -1,4 +1,4 @@
-import { Certificate, VERIFICATION_STATUSES } from '../../../../src';
+import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did.json';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';

@@ -12,7 +12,7 @@ enum SupportedSuite {
   SECP256K1 = 'secp256k1'
 }
 
-const supportedSuiteMap: { [key: string]: SupportedSuite } = {
+const supportedSuiteMap: Record<string, SupportedSuite> = {
   'did:key:z6Mk': SupportedSuite.ED25519,
   'did:key:zQ3s': SupportedSuite.SECP256K1
 };

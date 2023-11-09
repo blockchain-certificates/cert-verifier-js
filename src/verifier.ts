@@ -275,9 +275,7 @@ export default class Verifier {
       return;
     }
 
-    let label: string;
     if (step) {
-      label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING, verificationSuite);
     }
 
@@ -340,14 +338,12 @@ export default class Verifier {
 
     const { default: ensureNotRevoked } = await import('./inspectors/ensureNotRevoked');
 
-    await this.executeStep(SUB_STEPS.checkRevokedStatus, () =>
-      ensureNotRevoked(revokedCertificatesIds, this.id)
+    await this.executeStep(SUB_STEPS.checkRevokedStatus, () => { ensureNotRevoked(revokedCertificatesIds, this.id); }
     );
   }
 
   private async checkExpiresDate (): Promise<void> {
-    await this.executeStep(SUB_STEPS.checkExpiresDate, () =>
-      ensureNotExpired(this.expires)
+    await this.executeStep(SUB_STEPS.checkExpiresDate, () => { ensureNotExpired(this.expires); }
     );
   }
 

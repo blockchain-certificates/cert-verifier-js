@@ -22,14 +22,14 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     const keyMap: IssuerPublicKeyList = {};
     if ('@context' in issuerProfileJson) {
       // backcompat for v2 alpha
-      const responseKeys = issuerProfileJson.publicKey || issuerProfileJson.publicKeys;
+      const responseKeys = issuerProfileJson.publicKey ?? issuerProfileJson.publicKeys;
       for (let i = 0; i < responseKeys.length; i++) {
         const key = createKeyObject(responseKeys[i]);
         keyMap[key.publicKey] = key;
       }
     } else {
       // This is a v2 certificate with a v1 issuer
-      const issuerKeys = issuerProfileJson.issuerKeys || [];
+      const issuerKeys = issuerProfileJson.issuerKeys ?? [];
       const key = createKeyObject({}, issuerKeys[0].key);
       keyMap[key.publicKey] = key;
     }

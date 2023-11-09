@@ -30,7 +30,7 @@ describe('when the certificate verified', function () {
   });
 
   it('should have called the verification callback with the steps information', async function () {
-    const calledSteps: { [step: string]: VERIFICATION_STATUSES } = {};
+    const calledSteps: Record<string, VERIFICATION_STATUSES> = {};
     function verificationCallback ({ code, status }: IVerificationStepCallbackAPI): void {
       calledSteps[code] = status;
     }

@@ -137,7 +137,7 @@ export default class Certificate {
 
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
-    this.explorerAPIs = this.options.explorerAPIs || [];
+    this.explorerAPIs = this.options.explorerAPIs ?? [];
 
     if (options.didResolverUrl) {
       domain.did.didResolver.url = options.didResolverUrl;

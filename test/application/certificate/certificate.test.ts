@@ -135,7 +135,7 @@ describe('Certificate entity test suite', function () {
         describe('didResolverUrl option', function () {
           describe('when it is not set', function () {
             it('the system should use the default value', function () {
-              const instance = new Certificate(MainnetV2Valid);
+              new Certificate(MainnetV2Valid);
               expect(domain.did.didResolver.url).toBe(universalResolverUrl);
             });
           });
@@ -143,7 +143,7 @@ describe('Certificate entity test suite', function () {
           describe('when it is set', function () {
             it('the system should use the custom value', function () {
               const customDidResolverUrl = 'https://resolver.blockcerts.org';
-              const instance = new Certificate(MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
+              new Certificate(MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
               expect(domain.did.didResolver.url).toBe(customDidResolverUrl);
             });
           });

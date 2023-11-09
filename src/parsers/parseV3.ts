@@ -10,7 +10,7 @@ function getRecipientFullName (certificateJson): string {
 
 export default async function parseV3 (certificateJson: BlockcertsV3): Promise<ParsedCertificate> {
   const { issuer: issuerProfileUrl, metadataJson, metadata, issuanceDate, id, expirationDate, display } = certificateJson;
-  const certificateMetadata = metadata || metadataJson;
+  const certificateMetadata = metadata ?? metadataJson;
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
   return {
     display,

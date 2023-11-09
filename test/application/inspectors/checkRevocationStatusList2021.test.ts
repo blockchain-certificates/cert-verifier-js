@@ -42,6 +42,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
 
   describe('when the certificate has not been revoked nor suspended', function () {
     it('should verify', async function () {
+      // eslint-disable-next-line   @typescript-eslint/await-thenable
       await expect(async () => {
         await checkRevocationStatusList2021(StatusList2021.credentialStatus);
       }).resolves;

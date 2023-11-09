@@ -150,7 +150,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
-        const verificationMethod = await inspectors.retrieveVerificationMethodPublicKey(
+        const verificationMethod = inspectors.retrieveVerificationMethodPublicKey(
           this.getTargetVerificationMethodContainer(),
           this.proof.verificationMethod
         );
@@ -161,7 +161,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         }
         this.publicKey = verificationMethod.publicKeyBase58;
 
-        const key = await EcdsaSecp256k1VerificationKey2019.from({
+        const key = EcdsaSecp256k1VerificationKey2019.from({
           ...verificationMethod
         });
 

@@ -9,7 +9,7 @@ export default function ensureValidReceipt (receipt: Receipt): void {
   const merkleRoot = receipt.merkleRoot;
 
   try {
-    const proof = receipt.proof || receipt.path;
+    const proof = receipt.proof ?? receipt.path;
     const isProof = !!proof;
     if (isProof) {
       // eslint-disable-next-line @typescript-eslint/no-for-in-array

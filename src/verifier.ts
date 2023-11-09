@@ -110,19 +110,20 @@ export default class Verifier {
 
   async init (): Promise<void> {
     await this.instantiateProofVerifiers();
-    for (const proofVerifierSuite of this.proofVerifiers) {
-      await proofVerifierSuite.init();
-    }
     this.prepareVerificationProcess();
+  }
+
+  async verifyProof (): Promise<void> {
+    for (let i = 0; i < this.proofVerifiers.length; i++) {
+      await this.proofVerifiers[i].verifyProof();
+    }
   }
 
   async verify (stepCallback: IVerificationStepCallbackFn = () => {}): Promise<IFinalVerificationStatus> {
     this._stepCallback = stepCallback;
     this._stepsStatuses = [];
 
-    for (let i = 0; i < this.proofVerifiers.length; i++) {
-      await this.proofVerifiers[i].verifyProof();
-    }
+    await this.verifyProof();
 
     for (const verificationStep of this.verificationProcess) {
       if (!this[verificationStep]) {
@@ -200,6 +201,10 @@ export default class Verifier {
 
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));
     });
+
+    for (const proofVerifierSuite of this.proofVerifiers) {
+      await proofVerifierSuite.init();
+    }
   }
 
   private async loadRequiredVerificationSuites (documentProofTypes: SupportedVerificationSuites[]): Promise<void> {
@@ -270,9 +275,7 @@ export default class Verifier {
       return;
     }
 
-    let label: string;
     if (step) {
-      label = domain.i18n.getText('subSteps', `${step}LabelPending`);
       this._updateStatusCallback(step, VERIFICATION_STATUSES.STARTING, verificationSuite);
     }
 
@@ -335,14 +338,12 @@ export default class Verifier {
 
     const { default: ensureNotRevoked } = await import('./inspectors/ensureNotRevoked');
 
-    await this.executeStep(SUB_STEPS.checkRevokedStatus, () =>
-      ensureNotRevoked(revokedCertificatesIds, this.id)
+    await this.executeStep(SUB_STEPS.checkRevokedStatus, () => { ensureNotRevoked(revokedCertificatesIds, this.id); }
     );
   }
 
   private async checkExpiresDate (): Promise<void> {
-    await this.executeStep(SUB_STEPS.checkExpiresDate, () =>
-      ensureNotExpired(this.expires)
+    await this.executeStep(SUB_STEPS.checkExpiresDate, () => { ensureNotExpired(this.expires); }
     );
   }
 

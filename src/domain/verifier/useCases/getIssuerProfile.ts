@@ -85,7 +85,7 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
       if (isDidKey(issuerAddress)) {
         issuerProfile = createIssuerProfileFromDidKey(didDocument);
       } else {
-        const issuerProfileUrl = await domain.did.getIssuerProfileUrl(didDocument);
+        const issuerProfileUrl = domain.did.getIssuerProfileUrl(didDocument);
         if (issuerProfileUrl) {
           issuerProfile = await getIssuerProfile(issuerProfileUrl);
         }

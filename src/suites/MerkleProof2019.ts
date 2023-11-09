@@ -245,7 +245,7 @@ export default class MerkleProof2019 extends Suite {
   private async checkAuthenticity (): Promise<void> {
     await this.executeStep(
       SUB_STEPS.checkAuthenticity,
-      () => inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.getIssuerPublicKey(), this.getIssuanceTime()),
+      () => { inspectors.ensureValidIssuingKey(this.issuerPublicKeyList, this.getIssuerPublicKey(), this.getIssuanceTime()); },
       this.type
     );
   }

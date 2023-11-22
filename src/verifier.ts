@@ -43,7 +43,8 @@ export enum SupportedVerificationSuites {
   MerkleProof2017 = 'MerkleProof2017',
   MerkleProof2019 = 'MerkleProof2019',
   Ed25519Signature2020 = 'Ed25519Signature2020',
-  EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019'
+  EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019',
+  ChainpointSHA256v2 = 'ChainpointSHA256v2'
 }
 
 export default class Verifier {
@@ -61,7 +62,8 @@ export default class Verifier {
     [SupportedVerificationSuites.MerkleProof2017]: null,
     [SupportedVerificationSuites.MerkleProof2019]: null,
     [SupportedVerificationSuites.Ed25519Signature2020]: null,
-    [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null
+    [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null,
+    [SupportedVerificationSuites.ChainpointSHA256v2]: null
   }; // defined here to later check if the proof type of the document is supported for verification
 
   public proofVerifiers: Suite[] = [];
@@ -173,6 +175,8 @@ export default class Verifier {
       }
     } else if ('signature' in document) {
       proofMap.set(0, document.signature);
+    } else if ('receipt' in document) {
+      proofMap.set(0, (document as any).receipt);
     }
     return proofMap;
   }
@@ -208,9 +212,11 @@ export default class Verifier {
   }
 
   private async loadRequiredVerificationSuites (documentProofTypes: SupportedVerificationSuites[]): Promise<void> {
-    if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2017)) {
+    if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2017) ||
+        documentProofTypes.includes(SupportedVerificationSuites.ChainpointSHA256v2)) {
       const { default: MerkleProof2017VerificationSuite } = await import('./suites/MerkleProof2017');
       this.supportedVerificationSuites.MerkleProof2017 = MerkleProof2017VerificationSuite as unknown as Suite;
+      this.supportedVerificationSuites.ChainpointSHA256v2 = MerkleProof2017VerificationSuite as unknown as Suite;
     }
 
     if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2019)) {

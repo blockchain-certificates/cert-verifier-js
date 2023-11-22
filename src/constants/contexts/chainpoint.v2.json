@@ -1,0 +1,34 @@
+{
+    "@context": {
+        "id": "@id",
+        "type": "@type",
+
+        "cp": "https://w3id.org/chainpoint#",
+
+        "ChainpointSHA224v2": "cp:ChainpointSHA224v2",
+        "ChainpointSHA256v2": "cp:ChainpointSHA256v2",
+        "ChainpointSHA384v2": "cp:ChainpointSHA384v2",
+        "ChainpointSHA512v2": "cp:ChainpointSHA512v2",
+        "ChainpointSHA3-224v2": "cp:ChainpointSHA3-224v2",
+        "ChainpointSHA3-256v2": "cp:ChainpointSHA3-256v2",
+        "ChainpointSHA3-384v2": "cp:ChainpointSHA3-384v2",
+        "ChainpointSHA3-512v2": "cp:ChainpointSHA3-512v2",
+
+        "BTCOpReturn": "cp:BTCOpReturn",
+        "ETHData": "cp:ETHData",
+
+        "targetHash": "cp:targetHash",
+        "merkleRoot": "cp:merkleRoot",
+        "proof": {
+            "@id": "cp:proof",
+            "@container": "@list"
+        },
+        "anchors": {
+            "@id": "cp:anchors",
+            "@container": "@list"
+        }, 
+        "sourceId": "cp:sourceId",
+        "right": "cp:right",
+        "left": "cp:left"
+    }
+}

@@ -21,6 +21,8 @@ export default function retrieveUnsignedBlockcerts (certificateJson: Blockcerts)
     return deleteMerkleProof2019From(certificateCopy);
   } else if ('signature' in certificateCopy) {
     delete certificateCopy.signature;
+  } else if ('receipt' in certificateCopy) {
+    delete (certificateCopy as any).receipt;
   }
   return certificateCopy;
 }

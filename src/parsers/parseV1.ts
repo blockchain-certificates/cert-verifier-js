@@ -28,7 +28,6 @@ export default async function parseV1 (certificateJson): Promise<BlockcertsV1> {
   let { image: certificateImage, description, issuer: issuerInfo, subtitle } = fullCertificateObject;
 
   const publicKey = recipient.publicKey;
-  // const chain: IBlockchainObject = domain.certificates.getChain(publicKey);
   const expires = assertion.expires;
   const id = assertion.uid;
   const issuedOn = assertion.issuedOn;
@@ -49,7 +48,6 @@ export default async function parseV1 (certificateJson): Promise<BlockcertsV1> {
 
   return {
     certificateImage,
-    // chain,
     description,
     expires,
     id,

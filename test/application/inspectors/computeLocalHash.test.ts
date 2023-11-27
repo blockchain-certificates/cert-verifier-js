@@ -10,7 +10,7 @@ describe('computeLocalHash test suite', function () {
   describe('given it receives a document', function () {
     it('should return the SHA-256 hashed version', async function () {
       const output = await computeLocalHash(fixture);
-      expect(output).toBe('8e0d1c50214c497d25988f4066f38d199f7b4329ed87ab52b726729076fff149');
+      expect(output).toBe('c9ead76a54426b4ce4899bb921e48f5b55ea7592e5cee4460c86ebf4698ac3a6');
     });
   });
 

@@ -6,7 +6,8 @@ import type { Receipt } from '../../../models/Receipt';
 import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 
 function defaultChainAssumption (address = ''): IBlockchainObject {
-  return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+  // return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
+  return BLOCKCHAINS.bitcoin;
 }
 
 function getChainObject (chainCodeSignatureValue): IBlockchainObject {

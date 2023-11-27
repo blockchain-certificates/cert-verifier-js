@@ -5,7 +5,7 @@ import { CERTIFICATE_VERSIONS } from '../../constants';
 export default function getSignatureImages (signatureRawObject, version?: CERTIFICATE_VERSIONS): SignatureImage[] {
   const signatureImageObjects = [];
   if (version === CERTIFICATE_VERSIONS.V1_1 || version === CERTIFICATE_VERSIONS.V1_2) {
-    if (signatureRawObject.constructor === Array) {
+    if (Array.isArray(signatureRawObject)) {
       // eslint-disable-next-line @typescript-eslint/no-for-in-array
       for (const index in signatureRawObject) {
         const signatureLine = signatureRawObject[index];
@@ -18,13 +18,14 @@ export default function getSignatureImages (signatureRawObject, version?: CERTIF
       const signatureObject = new SignatureImage(signatureRawObject, null, null);
       signatureImageObjects.push(signatureObject);
     }
+  } else {
+    for (const index in signatureRawObject) {
+      const signatureLine = signatureRawObject[index];
+      const signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
+      signatureImageObjects.push(signatureObject);
+    }
   }
 
-  for (const index in signatureRawObject) {
-    const signatureLine = signatureRawObject[index];
-    const signatureObject = new SignatureImage(signatureLine.image, signatureLine.jobTitle, signatureLine.name);
-    signatureImageObjects.push(signatureObject);
-  }
 
   return signatureImageObjects;
 }

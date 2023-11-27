@@ -141,7 +141,7 @@ export default class MerkleProof2017 extends Suite {
   }
 
   private validateProofType (): void {
-    const validTypes = [this.proof.type, 'ChainpointSHA256v2'];
+    const validTypes = [this.type, 'ChainpointSHA256v2'];
     const proofType = Array.isArray(this.proof.type) ? this.proof.type[0] : this.proof.type;
     if (!validTypes.includes(proofType)) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${this.proof.type[0]}`);

@@ -20,6 +20,10 @@
         "@id": "bc:issuer",
         "@type": "@id"
       },
+      "recipient": {
+        "@id": "bc:recipient",
+        "@type": "@id"
+      },
       "blockchaincertificate": {
         "@id": "bc:blockchaincertificate",
         "@type": "@id"
@@ -135,6 +139,7 @@
       "uid": {
         "@id": "obi:uid"
       },
+      "revocationList": "obi:revocationList",
       "TypeValidation": "obi:TypeValidation",
       "FrameValidation": "obi:FrameValidation",
       "validatesType": "obi:validatesType",

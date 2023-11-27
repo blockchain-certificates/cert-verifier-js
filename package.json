@@ -11,7 +11,6 @@
   "node": "dist/verifier-node/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "rm -rf node_modules/@blockcerts/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
     "test": "jest --setupFilesAfterEnv=./test/setup.ts",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",

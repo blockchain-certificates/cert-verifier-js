@@ -39,7 +39,6 @@ export default function getChain (address: string, proof: Receipt): IBlockchainO
     }
   }
 
-  // Legacy path: we didn't support anything other than testnet and mainnet, so we check the address prefix
-  // otherwise try to determine the chain from a bitcoin address
-  return defaultChainAssumption(address);
+  // v1 does not have a chain notion in the receipt
+  return defaultChainAssumption();
 }

@@ -7,6 +7,6 @@ export interface Receipt {
   targetHash?: string;
   anchors?: string[] | MerkleProof2017Anchor[];
   // below is merkle proof 2017
-  type?: string[];
+  type?: string;
   proof?: MerklePath[];
 }

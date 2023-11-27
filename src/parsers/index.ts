@@ -1,23 +1,25 @@
 import parseV1 from './parseV1';
-import parseV2 from './parseV2';
-import parseV3 from './parseV3';
 import type { Issuer } from '../models/Issuer';
 import type { Blockcerts } from '../models/Blockcerts';
 import type { SignatureImage } from '../models';
 import type { BlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from './helpers/retrieveBlockcertsVersion';
-import type { BlockcertsV3Display } from '../models/BlockcertsV3';
+
+function notSupported (): void {
+  throw new Error('The verification of a Blockcerts v2 or v3 is not supported by this library which is only a legacy support for Blockcerts v1. ' +
+    'Please use @blockcerts/cert-verifier-js for modern versions.');
+}
 
 export const versionParserMap = {
   1: parseV1,
-  2: parseV2,
-  3: parseV3
+  2: notSupported,
+  3: notSupported
 };
 
 export interface ParsedCertificate {
   certificateImage?: string;
   description?: string;
-  display?: BlockcertsV3Display;
+  display?: string;
   expires?: string;
   id: string;
   isFormatValid?: boolean;

@@ -2,8 +2,8 @@ import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import Certificate from '../../src/certificate';
 import domain from '../../src/domain';
-import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
-import fixtureIssuerProfile from '../fixtures/issuer-profile-mainnet-example.json';
+import BlockcertsV1 from '../fixtures/v1/mainnet-valid-1.2.json';
+import fixtureIssuerProfile from '../fixtures/v1/got-issuer_live.json';
 
 describe('End-to-end i18n test suite', function () {
   describe('given the language is set to spanish', function () {
@@ -12,17 +12,15 @@ describe('End-to-end i18n test suite', function () {
 
     beforeEach(async function () {
       sinon.stub(domain.verifier, 'lookForTx').resolves({
-        remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-        issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-        time: '2018-02-08T00:23:34.000Z',
-        revokedAddresses: [
-          '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-        ]
+        remoteHash: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+        issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
+        time: '2016-10-03T19:52:55.000Z',
+        revokedAddresses: []
       });
       sinon.stub(ExplorerLookup, 'request').withArgs({
-        url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
+        url: 'http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json'
       }).resolves(JSON.stringify(fixtureIssuerProfile));
-      certificate = new Certificate(MainnetV2Valid, { locale: 'es' });
+      certificate = new Certificate(BlockcertsV1, { locale: 'es' });
       await certificate.init();
       verificationResult = await certificate.verify();
     });

@@ -1,28 +1,44 @@
+import v1Fixture from '../fixtures/v1/mainnet-valid-1.2.json';
+import v2Fixture from '../fixtures/v2/ethereum-main-valid-2.0.json';
+import v3Fixture from '../fixtures/v3/proof-chain-example-secp256k1.json';
 import { VERIFICATION_STATUSES } from '../../src';
-import FIXTURES from '../fixtures';
 
 describe('verifier build test suite', function () {
-  it('works as expected with a v2 certificate', async function () {
-    const verificationStatus = await fetch('http://localhost:4000/verification', {
-      body: JSON.stringify({
-        blockcerts: FIXTURES.MainnetV2Valid,
-        version: 'v2'
-      }),
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    }).then((res) => res.json());
-    expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-  });
+  describe('verifier build test suite', function () {
+    it('verifies v1 certificate', async function () {
+      const verificationStatus = await fetch('http://localhost:4000/verification', {
+        body: JSON.stringify({
+          blockcerts: v1Fixture,
+          version: 'v1'
+        }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      }).then(async (res) => await res.json());
+      expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    });
 
-  it('works as expected with a v3 certificate', async function () {
-    const verificationStatus = await fetch('http://localhost:4000/verification', {
-      body: JSON.stringify({
-        blockcerts: FIXTURES.BlockcertsV3,
-        version: 'v3'
-      }),
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    }).then((res) => res.json());
-    expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+    it('does not support v2 verification', async function () {
+      const verificationStatus = await fetch('http://localhost:4000/verification', {
+        body: JSON.stringify({
+          blockcerts: v2Fixture,
+          version: 'v2'
+        }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      }).then(async (res) => await res.json());
+      expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+
+    it('does not support v3 verification', async function () {
+      const verificationStatus = await fetch('http://localhost:4000/verification', {
+        body: JSON.stringify({
+          blockcerts: v3Fixture,
+          version: 'v3'
+        }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      }).then(async (res) => await res.json());
+      expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
   });
 });

@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
-import FIXTURES from '../fixtures';
+import v1Fixture from '../fixtures/v1/mainnet-valid-1.2.json';
+import v2Fixture from '../fixtures/v2/ethereum-main-valid-2.0.json';
+import v3Fixture from '../fixtures/v3/proof-chain-example-secp256k1.json';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import crypto from 'crypto';
 const verifier = require('../../dist/verifier');
@@ -12,45 +14,30 @@ global.XMLHttpRequest = FakeXmlHttpRequest;
 global.crypto.subtle = crypto.webcrypto.subtle;
 
 describe('verifier build test suite', function () {
-  it('throws a deprecation error with a v1 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.TestnetV1Valid);
-    expect(async () => {
-      await certificate.init();
-    }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
-      'See the python cert-verifier for v1.1 verification ' +
-      'or the npm package cert-verifier-js-v1-legacy for v1.2 ' +
-      '(https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy)');
+  it('verifies v1 certificate', async function () {
+    const certificate = new verifier.Certificate(v1Fixture);
+    await certificate.init();
+    const result = await certificate.verify();
+    expect(result.message).toEqual({
+      label: 'Verified',
+      // eslint-disable-next-line no-template-curly-in-string
+      description: 'This is a valid ${chain} certificate.',
+      linkText: 'View transaction link'
+    });
+    expect(result.status).toBe('success');
   });
 
-  it('works as expected with a v2 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.MainnetV2Valid);
-    await certificate.init();
-    const result = await certificate.verify();
-    if (result.status === 'failure') {
-      console.log(result.message);
-    }
-    expect(result.message).toEqual({
-      label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
-      description: 'This is a valid ${chain} certificate.',
-      linkText: 'View transaction link'
-    });
-    expect(result.status).toBe('success');
-  }, 30000);
+  it('does not support v2 verification', async function () {
+    expect(async () => {
+      const certificate = new verifier.Certificate(v2Fixture);
+      await certificate.init();
+    }).rejects.toThrow('not supported');
+  });
 
-  it('works as expected with a v3 certificate', async function () {
-    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3);
-    await certificate.init();
-    const result = await certificate.verify();
-    if (result.status === 'failure') {
-      console.log(result.message);
-    }
-    expect(result.message).toEqual({
-      label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
-      description: 'This is a valid ${chain} certificate.',
-      linkText: 'View transaction link'
-    });
-    expect(result.status).toBe('success');
-  }, 30000);
+  it('does not support v3 verification', async function () {
+    expect(async () => {
+      const certificate = new verifier.Certificate(v3Fixture);
+      await certificate.init();
+    }).rejects.toThrow('not supported');
+  });
 });

@@ -2,15 +2,11 @@ import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import domain from './domain';
 import ensureNotExpired from './inspectors/ensureNotExpired';
 import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
-import { VerifierError } from './models';
-import { getText } from './domain/i18n/useCases';
 import { difference } from './helpers/array';
-import { getVCProofVerificationMethod } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
-import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
-import type { BlockcertsV3, VCProof } from './models/BlockcertsV3';
+import type { VCProof } from './models/BlockcertsV3';
 import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/VerificationMap';
 import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
@@ -41,9 +37,6 @@ interface StepVerificationStatus {
 
 export enum SupportedVerificationSuites {
   MerkleProof2017 = 'MerkleProof2017',
-  MerkleProof2019 = 'MerkleProof2019',
-  Ed25519Signature2020 = 'Ed25519Signature2020',
-  EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019',
   ChainpointSHA256v2 = 'ChainpointSHA256v2'
 }
 
@@ -56,13 +49,9 @@ export default class Verifier {
   public explorerAPIs: ExplorerAPI[];
   public txData: TransactionData;
   private _stepsStatuses: StepVerificationStatus[] = [];
-  private readonly hashlinkVerifier: HashlinkVerifier;
   public verificationSteps: IVerificationMapItem[];
   public supportedVerificationSuites: { [key in SupportedVerificationSuites]: Suite } = {
     [SupportedVerificationSuites.MerkleProof2017]: null,
-    [SupportedVerificationSuites.MerkleProof2019]: null,
-    [SupportedVerificationSuites.Ed25519Signature2020]: null,
-    [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null,
     [SupportedVerificationSuites.ChainpointSHA256v2]: null
   }; // defined here to later check if the proof type of the document is supported for verification
 
@@ -71,12 +60,11 @@ export default class Verifier {
   public proofMap: TVerifierProofMap;
 
   constructor (
-    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
+    { certificateJson, expires, id, issuer, revocationKey, explorerAPIs }: {
       certificateJson: Blockcerts;
       expires: string;
       id: string;
       issuer: Issuer;
-      hashlinkVerifier: HashlinkVerifier;
       revocationKey: string;
       explorerAPIs?: ExplorerAPI[];
     }
@@ -84,7 +72,6 @@ export default class Verifier {
     this.expires = expires;
     this.id = id;
     this.issuer = issuer;
-    this.hashlinkVerifier = hashlinkVerifier;
     this.revocationKey = revocationKey;
     this.explorerAPIs = explorerAPIs;
 
@@ -135,10 +122,6 @@ export default class Verifier {
       await this[verificationStep]();
     }
 
-    for (let i = 0; i < this.proofVerifiers.length; i++) {
-      await this.proofVerifiers[i].verifyIdentity();
-    }
-
     // Send final callback update for global verification status
     const erroredStep = this._stepsStatuses.find(step => step.status === VERIFICATION_STATUSES.FAILURE);
     return erroredStep ? this._failed(erroredStep) : this._succeed();
@@ -176,7 +159,7 @@ export default class Verifier {
     } else if ('signature' in document) {
       proofMap.set(0, document.signature);
     } else if ('receipt' in document) {
-      proofMap.set(0, (document as any).receipt);
+      proofMap.set(0, document.receipt);
     }
     return proofMap;
   }
@@ -218,33 +201,14 @@ export default class Verifier {
       this.supportedVerificationSuites.MerkleProof2017 = MerkleProof2017VerificationSuite as unknown as Suite;
       this.supportedVerificationSuites.ChainpointSHA256v2 = MerkleProof2017VerificationSuite as unknown as Suite;
     }
-
-    if (documentProofTypes.includes(SupportedVerificationSuites.MerkleProof2019)) {
-      const { default: MerkleProof2019VerificationSuite } = await import('./suites/MerkleProof2019');
-      this.supportedVerificationSuites.MerkleProof2019 = MerkleProof2019VerificationSuite as unknown as Suite;
-    }
-
-    if (documentProofTypes.includes(SupportedVerificationSuites.Ed25519Signature2020)) {
-      const { default: Ed25519Signature2020VerificationSuite } = await import('./suites/Ed25519Signature2020');
-      this.supportedVerificationSuites.Ed25519Signature2020 = Ed25519Signature2020VerificationSuite as unknown as Suite;
-    }
-
-    if (documentProofTypes.includes(SupportedVerificationSuites.EcdsaSecp256k1Signature2019)) {
-      const { default: EcdsaSecp256k1Signature2019VerificationSuite } = await import('./suites/EcdsaSecp256k1Signature2019');
-      this.supportedVerificationSuites.EcdsaSecp256k1Signature2019 = EcdsaSecp256k1Signature2019VerificationSuite as unknown as Suite;
-    }
   }
 
   private prepareVerificationProcess (): void {
-    const verificationModel = domain.certificates.getVerificationMap(
-      !!this.issuer.didDocument,
-      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false
-    );
+    const verificationModel = domain.certificates.getVerificationMap();
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
 
     this.registerSignatureVerificationSteps();
-    this.registerIdentityVerificationSteps();
 
     this.verificationSteps = this.verificationSteps.filter(parentStep =>
       parentStep.subSteps?.length > 0 || parentStep.suites?.some(suite => suite.subSteps.length > 0)
@@ -260,20 +224,12 @@ export default class Verifier {
 
   private getSuiteSubsteps (parentStep: VerificationSteps): IVerificationMapItemSuite[] {
     const targetMethodMap = {
-      [VerificationSteps.proofVerification]: 'getProofVerificationSteps',
-      [VerificationSteps.identityVerification]: 'getIdentityVerificationSteps'
+      [VerificationSteps.proofVerification]: 'getProofVerificationSteps'
     };
     return this.proofVerifiers.map(proofVerifier => ({
       proofType: proofVerifier.type,
       subSteps: proofVerifier[targetMethodMap[parentStep]](parentStep)
     }));
-  }
-
-  private registerIdentityVerificationSteps (): void {
-    const parentStep = VerificationSteps.identityVerification;
-    this.verificationSteps
-      .find(step => step.code === parentStep)
-      .suites = this.getSuiteSubsteps(parentStep);
   }
 
   private async executeStep (step: string, action: () => any, verificationSuite?: string): Promise<any> {
@@ -309,27 +265,7 @@ export default class Verifier {
     // defined by this.verify interface
   }
 
-  private async checkImagesIntegrity (): Promise<void> {
-    await this.executeStep(
-      SUB_STEPS.checkImagesIntegrity,
-      async () => {
-        await this.hashlinkVerifier.verifyHashlinkTable()
-          .catch((error) => {
-            console.error('hashlink verification error', error);
-            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
-          });
-      }
-    );
-  }
-
   private async checkRevokedStatus (): Promise<void> {
-    if ((this.documentToVerify as BlockcertsV3).credentialStatus) {
-      const { default: checkRevocationStatusList2021 } = await import('./inspectors/checkRevocationStatusList2021');
-      await this.executeStep(SUB_STEPS.checkRevokedStatus, async () => {
-        await checkRevocationStatusList2021((this.documentToVerify as BlockcertsV3).credentialStatus);
-      });
-      return;
-    }
     const revocationListUrl = this.getRevocationListUrl();
 
     if (!revocationListUrl) {
@@ -351,22 +287,6 @@ export default class Verifier {
   private async checkExpiresDate (): Promise<void> {
     await this.executeStep(SUB_STEPS.checkExpiresDate, () => { ensureNotExpired(this.expires); }
     );
-  }
-
-  private async controlVerificationMethod (): Promise<void> {
-    // only v3 support
-    if (!this.issuer.didDocument) {
-      return;
-    }
-
-    const { default: controlVerificationMethod } = await import('./inspectors/did/controlVerificationMethod');
-
-    await this.executeStep(SUB_STEPS.controlVerificationMethod, () => {
-      controlVerificationMethod(
-        this.issuer.didDocument,
-        getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
-      );
-    });
   }
 
   private findStepFromVerificationProcess (code: string, verificationSuite: string): VerificationSubstep {

@@ -1,9 +1,4 @@
-import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
-import v2RevocationList from '../../assertions/v2-revocation-list';
-import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
-import v3RevocationList from '../../assertions/v3-revocation-list';
+import v1IssuerProfile from '../../fixtures/v1/got-issuer_live.json';
 
 // after editing run npm run transpile:mocks:iife
 export class FakeXmlHttpRequest {
@@ -23,64 +18,143 @@ export class FakeXmlHttpRequest {
 
   getMockResponseText () {
     switch (this.url) {
-      case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json':
-        return JSON.stringify(v2IssuerProfile);
+      case 'http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json':
+      case 'https://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json':
+        return JSON.stringify(v1IssuerProfile);
 
-      case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39':
-        return JSON.stringify(v2RevocationList);
-
-      case `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`:
-        return JSON.stringify({ didDocument });
-
-      case 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json':
-        return JSON.stringify(fixtureIssuerProfile);
-
-      case 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json':
-        return JSON.stringify(v3RevocationList);
-
-      case 'https://blockstream.info/api/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd':
+      case 'https://blockstream.info/api/tx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d':
+      case 'https://blockstream.info/testnet/api/tx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d':
         return JSON.stringify({
           vout: [
             {
               // hash
-              scriptpubkey: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8'
+              scriptpubkey: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728'
             }
           ],
           vin: [
             {
               prevout: {
                 // issuing adress
-                scriptpubkey_address: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+                scriptpubkey_address: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619'
               }
             }
           ],
           status: {
             confirmed: true,
-            block_time: new Date('2018-02-08T00:23:34.000Z').getTime() / 1000
+            block_time: 1475524375
           }
         });
 
-      case 'https://blockstream.info/testnet/api/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e':
+      case 'https://api.blockcypher.com/v1/btc/main/txs/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d?limit=500':
+      case 'https://api.blockcypher.com/v1/btc/test3/txs/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d?limit=500':
         return JSON.stringify({
-          vout: [
+          block_hash: '000000000000000000b678d75eef4234cb04cea4f6324830e7d11ca99aa2f326',
+          block_height: 432702,
+          block_index: 2491,
+          hash: '8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d',
+          addresses: [
+            '16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki',
+            '18AaFyeWmsasbSh2GsjGTtrNHqiJgsN6nB',
+            '1AAGG6jirbu9XwikFpkHokbbiYpjVtFe1G',
+            '1K4P4LKXWZZ5bS2i34zLaJkHxbFBreDoTa',
+            '1PrmJ6pGbfe4ucNCVbe4tbXRRHMsDDSxvY',
+            '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619'
+          ],
+          total: 46961,
+          fees: 17633,
+          size: 404,
+          vsize: 404,
+          preference: 'low',
+          confirmed: '2016-10-03T19:52:55Z',
+          received: '2016-10-03T19:52:55Z',
+          ver: 1,
+          double_spend: false,
+          vin_sz: 1,
+          vout_sz: 7,
+          data_protocol: 'unknown',
+          confirmations: 384337,
+          confidence: 1,
+          inputs: [
             {
-              // hash
-              scriptpubkey: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6'
+              prev_hash: '33f1dec9e866861b88d81f5e9d9ffc20549dc5a9f2003f2f66c94b23239137ce',
+              output_index: 0,
+              script: '473044022032d2d9c2a67d90eb5ea32d9a5e935b46080d4c62a1d53265555c78775e8f6f2102205c3469593995b9b76f8d24aa4285a50b72ca71661ca021cd219883f1a8f14abe012103704cf7aa5e4152639617d0b3f8bcd302e231bbda13b468cba1b12aa7be14f3b3',
+              output_value: 64594,
+              sequence: 4294967295,
+              addresses: [
+                '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619'
+              ],
+              script_type: 'pay-to-pubkey-hash',
+              age: 432700
             }
           ],
-          vin: [
+          outputs: [
             {
-              prevout: {
-                // issuing adress
-                scriptpubkey_address: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am'
-              }
+              value: 2750,
+              script: '76a91464799d48941b0fbfdb4a7ee6340840fb2eb5c2c388ac',
+              spent_by: 'c2216d6e4ce6d32e16b0504f5268213231f982050abdc81c9496e729d07e445e',
+              addresses: [
+                '1AAGG6jirbu9XwikFpkHokbbiYpjVtFe1G'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 2750,
+              script: '76a914c615ecb52f6e877df0621f4b36bdb25410ec22c388ac',
+              spent_by: 'c2216d6e4ce6d32e16b0504f5268213231f982050abdc81c9496e729d07e445e',
+              addresses: [
+                '1K4P4LKXWZZ5bS2i34zLaJkHxbFBreDoTa'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 2750,
+              script: '76a9144e9862ff1c4041b7d083fe30cf5f68f7bedb321b88ac',
+              spent_by: 'c2216d6e4ce6d32e16b0504f5268213231f982050abdc81c9496e729d07e445e',
+              addresses: [
+                '18AaFyeWmsasbSh2GsjGTtrNHqiJgsN6nB'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 2750,
+              script: '76a914413df7bf4a41f2e8a1366fcf7352885e6c88964b88ac',
+              spent_by: 'c2216d6e4ce6d32e16b0504f5268213231f982050abdc81c9496e729d07e445e',
+              addresses: [
+                '16wyA4kLFiaQSEE9xZEFTEMXTzWsGf4Zki'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 2750,
+              script: '76a914fabc1ff527531581b4a4c58f13bd088e274122bc88ac',
+              spent_by: 'c2216d6e4ce6d32e16b0504f5268213231f982050abdc81c9496e729d07e445e',
+              addresses: [
+                '1PrmJ6pGbfe4ucNCVbe4tbXRRHMsDDSxvY'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 33211,
+              script: '76a914fcbe34aa288a91eab1f0fe93353997ec6aa3594088ac',
+              spent_by: '562ecb35036a8e076a500a43c84bffbf185747d40dfd55f66694d6f7f9314cfd',
+              addresses: [
+                '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619'
+              ],
+              script_type: 'pay-to-pubkey-hash'
+            },
+            {
+              value: 0,
+              script: '6a2068f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+              addresses: null,
+              script_type: 'null-data',
+              data_hex: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728'
             }
-          ],
-          status: {
-            confirmed: true,
-            block_time: new Date('2022-04-05T18:45:30.000Z').getTime() / 1000
-          }
+          ]
         });
+
+      default:
+        console.warn('No fake response was set for url', this.url);
     }
   }
 }

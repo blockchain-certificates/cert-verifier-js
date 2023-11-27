@@ -1,53 +1,37 @@
 import sinon from 'sinon';
-import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import { VERIFICATION_STATUSES } from '../../../src';
 import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
-import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
+import { SUB_STEPS } from '../../../src/constants/verificationSteps';
+import verificationStepsV1Mainnet from '../../assertions/verification-steps-v1-mainnet';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
-import fixtureMainnetIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
-import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
-import v3RevocationList from '../../assertions/v3-revocation-list';
-import fixtureV2MainnetValid from '../../fixtures/v2/mainnet-valid-2.0.json';
-import fixtureBlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
+import fixtureV1 from '../../fixtures/v1/mainnet-valid-1.2.json';
+import fixtureV1IssuerProfile from '../../fixtures/v1/got-issuer_live.json';
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
   const verifierParamFixture = {
-    certificateJson: fixtureV2MainnetValid,
+    certificateJson: fixtureV1,
     chain: BLOCKCHAINS.bitcoin,
     expires: '',
-    id: fixtureV2MainnetValid.id,
-    issuer: fixtureV2MainnetValid.badge.issuer,
+    id: fixtureV1.document.assertion.id,
+    issuer: fixtureV1.document.certificate.issuer,
     revocationKey: null,
     explorerAPIs: undefined,
-    hashlinkVerifier: new HashlinkVerifier(),
     proof: {
-      type: 'MerkleProof2017'
+      type: 'ChainpointSHA256v2'
     }
   };
 
   beforeEach(function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({
-      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-    }).resolves(JSON.stringify({ didDocument }));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureBlockcertsIssuerProfile));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
-    }).resolves(JSON.stringify(v3RevocationList));
-    requestStub.withArgs({
-      url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
-    }).resolves(JSON.stringify(fixtureMainnetIssuerProfile));
+      url: 'http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json'
+    }).resolves(JSON.stringify(fixtureV1IssuerProfile));
   });
 
   afterEach(function () {
@@ -105,12 +89,10 @@ describe('Verifier entity test suite', function () {
         describe('when starting a new verification process', function () {
           it('should reset the step status property', async function () {
             sinon.stub(domain.verifier, 'lookForTx').resolves({
-              remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-              issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-              time: '2018-02-08T00:23:34.000Z',
-              revokedAddresses: [
-                '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-              ]
+              remoteHash: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+              issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
+              time: '2016-10-03T19:52:55.000Z',
+              revokedAddresses: []
             });
             const instance = new Verifier(verifierParamFixture);
             await instance.init();
@@ -126,29 +108,13 @@ describe('Verifier entity test suite', function () {
       });
 
       it('should set the documentToVerify to the verifier object', function () {
-        const documentAssertion = JSON.parse(JSON.stringify(fixtureV2MainnetValid));
+        const documentAssertion = JSON.parse(JSON.stringify(fixtureV1));
         expect(verifierInstance.documentToVerify).toEqual(documentAssertion);
       });
 
       it('should set the verificationSteps property', function () {
-        const expectedSteps = deepCopy<IVerificationMapItem[]>(verificationStepsV2Mainnet);
+        const expectedSteps = deepCopy<IVerificationMapItem[]>(verificationStepsV1Mainnet);
         expect(verifierInstance.verificationSteps).toEqual(expectedSteps);
-      });
-
-      describe('when the issuer profile URN is a DID', function () {
-        it('should add the issuer identity verification to the verification steps', async function () {
-          const fixture = deepCopy<any>(verifierParamFixture);
-          fixture.certificateJson = fixtureBlockcertsV3;
-          fixture.issuer = {
-            ...fixtureBlockcertsIssuerProfile,
-            didDocument
-          };
-          const verifierInstance = new Verifier(fixture);
-          await verifierInstance.init();
-          const expectedStepIndex = verifierInstance.verificationSteps
-            .findIndex(parentStep => parentStep.code === VerificationSteps.identityVerification);
-          expect(expectedStepIndex).toBe(1);
-        });
       });
     });
   });
@@ -178,7 +144,7 @@ describe('Verifier entity test suite', function () {
   });
 
   describe('verificationProcess property', function () {
-    describe('when the process is for a mainnet v2 certs with no DID and no hashlinks', function () {
+    describe('when the process is for a mainnet v1', function () {
       it('should be set accordingly', async function () {
         verifierInstance = new Verifier(verifierParamFixture);
         await verifierInstance.init();

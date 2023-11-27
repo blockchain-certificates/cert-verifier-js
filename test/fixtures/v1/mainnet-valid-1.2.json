@@ -7,7 +7,7 @@
         "right": "7fef060cb17614fdfddd8c558e102fbb96433f5281e96c80f805459773e51163"
       }
     ],
-    "type": "ChainpointSHA256v2",
+      "type": "ChainpointSHA256v2",
     "anchors": [
       {
         "sourceId": "8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d",

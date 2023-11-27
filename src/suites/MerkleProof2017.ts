@@ -57,7 +57,7 @@ export default class MerkleProof2017 extends Suite {
     this.issuer = props.issuer;
     this.proof = props.proof as TMerkleProof2017;
     this.validateProofType();
-    this.receipt = (this.documentToVerify as BlockcertsV2).signature ?? (this.documentToVerify as any).receipt;
+    this.receipt = (this.documentToVerify as BlockcertsV2).signature ?? this.documentToVerify.receipt;
     this.chain = domain.certificates.getChain('', this.receipt);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
     this.adaptVerificationProcessToChain();
@@ -114,7 +114,11 @@ export default class MerkleProof2017 extends Suite {
   }
 
   getSigningDate (): string {
-    return (this.documentToVerify as BlockcertsV2).issuedOn;
+    return this.txData.time.toString();
+  }
+
+  getProofType (): string {
+    return Array.isArray(this.proof.type) ? this.proof.type[0] : this.proof.type;
   }
 
   getChain (): IBlockchainObject {
@@ -142,7 +146,7 @@ export default class MerkleProof2017 extends Suite {
 
   private validateProofType (): void {
     const validTypes = [this.type, 'ChainpointSHA256v2'];
-    const proofType = Array.isArray(this.proof.type) ? this.proof.type[0] : this.proof.type;
+    const proofType = this.getProofType();
     if (!validTypes.includes(proofType)) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${this.proof.type[0]}`);
     }

@@ -1,4 +1,4 @@
-import blockcertsV1Fixture from '../../fixtures/v1/testnet-valid-1.2.json';
+import blockcertsV1Fixture from '../../fixtures/v1/mainnet-valid-1.2.json';
 import computeLocalHash, { getUnmappedFields } from '../../../src/inspectors/computeLocalHash';
 
 describe('computeLocalHash test suite', function () {

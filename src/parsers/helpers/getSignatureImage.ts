@@ -26,6 +26,5 @@ export default function getSignatureImages (signatureRawObject, version?: CERTIF
     }
   }
 
-
   return signatureImageObjects;
 }

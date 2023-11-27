@@ -2,8 +2,8 @@ import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate } from '../../src';
 import domain from '../../src/domain';
-import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
-import v2IssuerProfile from '../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
+import fixtureV1 from '../fixtures/v1/mainnet-valid-1.2.json';
+import v1IssuerProfile from '../fixtures/v1/got-issuer_live.json';
 
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
@@ -13,15 +13,15 @@ describe('Certificate API Contract test suite', function () {
       beforeAll(async function () {
         const requestStub = sinon.stub(ExplorerLookup, 'request');
         requestStub.withArgs({
-          url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
-        }).resolves(JSON.stringify(v2IssuerProfile));
+          url: 'http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json'
+        }).resolves(JSON.stringify(v1IssuerProfile));
         sinon.stub(domain.verifier, 'lookForTx').resolves({
-          remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-          issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-          time: '2018-02-08T00:23:34.000Z',
+          remoteHash: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+          issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
+          time: '2016-10-03T19:52:55.000Z',
           revokedAddresses: []
         });
-        instance = new Certificate(MainnetV2Valid);
+        instance = new Certificate(fixtureV1);
         await instance.init();
         await instance.verify();
       });
@@ -32,7 +32,7 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the signingDate', function () {
-        expect(instance.signers[0].signingDate).toBe('2018-02-07T23:52:16.636+00:00');
+        expect(instance.signers[0].signingDate).toBe('2016-10-03T19:52:55.000Z');
       });
 
       it('should expose the signatureSuiteType', function () {
@@ -40,19 +40,19 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the issuerPublicKey', function () {
-        expect(instance.signers[0].issuerPublicKey).toBe('1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo');
+        expect(instance.signers[0].issuerPublicKey).toBe('1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619');
       });
 
       it('should expose the issuerName', function () {
-        expect(instance.signers[0].issuerName).toBe('Hyland Credentials');
+        expect(instance.signers[0].issuerName).toBe('Game of thrones issuer on mainnet');
       });
 
       it('should expose the issuerProfileDomain', function () {
-        expect(instance.signers[0].issuerProfileDomain).toBe('blockcerts.learningmachine.com');
+        expect(instance.signers[0].issuerProfileDomain).toBe('www.blockcerts.org');
       });
 
       it('should expose the issuerProfileUrl', function () {
-        expect(instance.signers[0].issuerProfileUrl).toBe('https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json');
+        expect(instance.signers[0].issuerProfileUrl).toBe('http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json');
       });
 
       it('should expose the chain', function () {
@@ -60,15 +60,15 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the transactionId', function () {
-        expect(instance.signers[0].transactionId).toBe('2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+        expect(instance.signers[0].transactionId).toBe('8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d');
       });
 
       it('should expose the transactionLink', function () {
-        expect(instance.signers[0].transactionLink).toBe('https://blockchain.info/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+        expect(instance.signers[0].transactionLink).toBe('https://blockchain.info/tx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d');
       });
 
       it('should expose the rawTransactionLink', function () {
-        expect(instance.signers[0].rawTransactionLink).toBe('https://blockchain.info/rawtx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd');
+        expect(instance.signers[0].rawTransactionLink).toBe('https://blockchain.info/rawtx/8623beadbc7877a9e20fb7f83eda6c1a1fc350171f0714ff6c6c4054018eb54d');
       });
     });
   });

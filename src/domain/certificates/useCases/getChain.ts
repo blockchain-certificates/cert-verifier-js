@@ -1,11 +1,10 @@
 import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
-import addresses from '../../addresses';
 import { getText } from '../../i18n/useCases';
 import type { IBlockchainObject } from '@blockcerts/explorer-lookup';
 import type { Receipt } from '../../../models/Receipt';
 import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
 
-function defaultChainAssumption (address = ''): IBlockchainObject {
+function defaultChainAssumption (): IBlockchainObject {
   // return addresses.isMainnet(address) ? BLOCKCHAINS.bitcoin : BLOCKCHAINS.testnet;
   return BLOCKCHAINS.bitcoin;
 }

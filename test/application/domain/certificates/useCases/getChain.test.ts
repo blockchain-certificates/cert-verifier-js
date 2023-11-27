@@ -42,7 +42,7 @@ describe('domain certificates get chain use case test suite', function () {
         };
 
         const result = domain.certificates.getChain(addressFixture, signatureFixture);
-        const chainAssertion = BLOCKCHAINS.testnet;
+        const chainAssertion = BLOCKCHAINS.bitcoin;
         expect(result).toEqual(chainAssertion);
       });
     });

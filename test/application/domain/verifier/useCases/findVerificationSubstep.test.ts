@@ -1,4 +1,4 @@
-import verificationMapFixture from '../../../../assertions/verification-steps-v3-multiple-proofs';
+import verificationMapFixture from '../../../../assertions/verification-steps-v1-mainnet';
 import domain from '../../../../../src/domain';
 import { VerificationSteps } from '../../../../../src/constants/verificationSteps';
 import i18n from '../../../../../src/data/i18n.json';
@@ -14,7 +14,7 @@ describe('Domain verifier test suite', function () {
       it('should retrieve the step object', function () {
         const fixtureCode = 'getTransactionId';
         const fixtureMap: IVerificationMapItem[] = verificationMapFixture;
-        const output = domain.verifier.findVerificationSubstep(fixtureCode, fixtureMap, 'MerkleProof2019');
+        const output = domain.verifier.findVerificationSubstep(fixtureCode, fixtureMap, 'MerkleProof2017');
         expect(output).toEqual({
           code: 'getTransactionId',
           label: defaultLanguageSet.subSteps.getTransactionIdLabel,

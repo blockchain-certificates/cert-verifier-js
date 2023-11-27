@@ -1,4 +1,4 @@
-import fixture from '../../fixtures/v1/testnet-valid-1.2.json';
+import fixture from '../../fixtures/v1/mainnet-valid-1.2.json';
 import { Certificate } from '../../../src';
 import mainnetMapAssertion from '../../assertions/verification-steps-v1-mainnet';
 import sinon from 'sinon';

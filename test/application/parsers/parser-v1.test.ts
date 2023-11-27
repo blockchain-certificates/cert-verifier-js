@@ -1,11 +1,9 @@
-import FIXTURES from '../../fixtures';
-import { BLOCKCHAINS, CERTIFICATE_VERSIONS } from '../../../src/constants';
+import { CERTIFICATE_VERSIONS } from '../../../src/constants';
 import parseJSON from '../../../src/parsers';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import issuerProfileV1JsonFixture from '../../fixtures/v1/got-issuer_live.json';
-
-const fixture = FIXTURES.TestnetV1Valid;
+import fixture from '../../fixtures/v1/mainnet-valid-1.2.json';
 
 describe('Parser test suite', function () {
   let stubRequest;

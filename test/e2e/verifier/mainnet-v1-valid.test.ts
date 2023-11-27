@@ -4,7 +4,7 @@ import domain from '../../../src/domain';
 import { type TransactionData } from '../../../src/models/TransactionData';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import fixtureIssuerProfile from '../../fixtures/v1/got-issuer_live.json';
-import fixtureBlockcertsV1 from '../../fixtures/v1/testnet-valid-1.2.json';
+import fixtureBlockcertsV1 from '../../fixtures/v1/mainnet-valid-1.2.json';
 
 describe('given the certificate is a valid testnet (v1.2)', function () {
   beforeEach(function () {

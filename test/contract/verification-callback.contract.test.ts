@@ -1,27 +1,23 @@
 import sinon from 'sinon';
+import * as domainVerifier from '../../src/domain/verifier/useCases';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate, VERIFICATION_STATUSES } from '../../src';
-import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import type { IVerificationStepCallbackAPI } from '../../src/verifier';
-import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
-import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
+import BlockcertsV1 from '../fixtures/v1/mainnet-valid-1.2.json';
+import fixtureIssuerProfile from '../fixtures/v1/got-issuer_live.json';
 
 describe('when the certificate verified', function () {
   beforeEach(function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
-    const lookForTxStub = sinon.stub(ExplorerLookup, 'lookForTx');
+    const lookForTxStub = sinon.stub(domainVerifier, 'lookForTx');
     requestStub.withArgs({
-      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-    }).resolves(JSON.stringify({ didDocument }));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      url: 'http://www.blockcerts.org/mockissuer/issuer/got-issuer_live.json'
     }).resolves(JSON.stringify(fixtureIssuerProfile));
     lookForTxStub.resolves({
-      remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
-      issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-      time: '2022-04-05T18:45:30.000Z',
-      revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+      remoteHash: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
+      issuingAddress: '1Q3P94rdNyftFBEKiN1fxmt2HnQgSCB619',
+      time: '2016-10-03T19:52:55.000Z',
+      revokedAddresses: []
     });
   });
 
@@ -34,7 +30,7 @@ describe('when the certificate verified', function () {
     function verificationCallback ({ code, status }: IVerificationStepCallbackAPI): void {
       calledSteps[code] = status;
     }
-    const instance = new Certificate(BlockcertsV3);
+    const instance = new Certificate(BlockcertsV1);
     await instance.init();
     await instance.verify(verificationCallback);
     const expectedOutput = instance.verificationSteps.reduce((acc, curr) => {

@@ -11,6 +11,10 @@ export default {
       format: 'iife',
       name: 'mockXHR',
       generatedCode: 'es2015'
+    },
+    {
+      file: 'test/build/mocks/FakeXmlHttpRequest.cjs',
+      format: 'cjs'
     }
   ],
   plugins: [

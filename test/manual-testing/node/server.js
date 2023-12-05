@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const certVerifierJs = require('../../../dist/verifier-node');
+const { FakeXmlHttpRequest } = require('../../build/mocks/FakeXmlHttpRequest.cjs');
 
 const server = express();
 server.use(bodyParser.json({ limit: '5mb' }));
@@ -8,6 +9,10 @@ server.use(bodyParser.json({ limit: '5mb' }));
 const port = 4000;
 
 server.post('/verification', async (req, res) => {
+  if (req.body.useMockInternet) {
+    console.warn('Bypassing any internet requests');
+    global.XMLHttpRequest = FakeXmlHttpRequest;
+  }
   if (req.body.blockcerts) {
     const blockcertsData = req.body.blockcerts;
     const certificate = new certVerifierJs.Certificate(blockcertsData);

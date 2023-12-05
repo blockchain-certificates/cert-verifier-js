@@ -6,7 +6,8 @@ describe('verifier build test suite', function () {
     const verificationStatus = await fetch('http://localhost:4000/verification', {
       body: JSON.stringify({
         blockcerts: FIXTURES.MainnetV2Valid,
-        version: 'v2'
+        version: 'v2',
+        useMockInternet: true
       }),
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
@@ -18,7 +19,8 @@ describe('verifier build test suite', function () {
     const verificationStatus = await fetch('http://localhost:4000/verification', {
       body: JSON.stringify({
         blockcerts: FIXTURES.BlockcertsV3,
-        version: 'v3'
+        version: 'v3',
+        useMockInternet: true
       }),
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }

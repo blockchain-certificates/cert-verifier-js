@@ -1,7 +1,9 @@
 import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
+// @ts-expect-error: not a typescript package
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
+// @ts-expect-error: not a typescript package
 import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
 import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
 import { Suite } from '../models/Suite';

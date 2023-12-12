@@ -11,7 +11,6 @@
   "node": "dist/verifier-node/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "postinstall": "rm -rf node_modules/@blockcerts/ecdsa-secp256k1-verification-key-2019/node_modules/base58-universal",
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
     "test": "jest --setupFilesAfterEnv=./test/setup.ts",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
@@ -58,19 +57,18 @@
   },
   "dependencies": {
     "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.6",
-    "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.5",
+    "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.6",
     "@blockcerts/explorer-lookup": "^1.5.1",
     "@blockcerts/hashlink-verifier": "^1.6.0",
     "@blockcerts/schemas": "^3.4.1",
     "@did-core/did-ld-json": "npm:@blockcerts/did-ld-json@^0.1.2",
-    "@digitalbazaar/ed25519-signature-2020": "github:lemoustachiste/ed25519-signature-2020#convert-to-module",
-    "@digitalbazaar/ed25519-verification-key-2020": "github:lemoustachiste/ed25519-verification-key-2020#convert-to-module",
+    "@digitalbazaar/ed25519-signature-2020": "^5.2.0",
+    "@digitalbazaar/ed25519-verification-key-2020": "^4.1.0",
     "@digitalbazaar/vc-revocation-list": "github:blockchain-certificates/vc-revocation-list#fix/memory-leak",
     "@transmute/did-key-ed25519": "^0.3.0-unstable.10",
     "@transmute/did-key-secp256k1": "^0.3.0-unstable.10",
     "@transmute/ed25519-key-pair": "^0.7.0-unstable.63",
     "@trust/keyto": "^1.0.1",
-    "base58-universal": "github:lemoustachiste/base58-universal#fix/hoisting-error-alphabet",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "core-js": "^3.23.5",
@@ -81,7 +79,6 @@
     "lodash.clonedeep": "^4.5.0",
     "readable-stream": "npm:vite-compatible-readable-stream@^3.6.1",
     "secp256k1": "^5.0.0",
-    "sha.js": "github:blockchain-certificates/sha.js#fix/jest-exports-esm",
     "sha256": "^0.2.0"
   },
   "devDependencies": {

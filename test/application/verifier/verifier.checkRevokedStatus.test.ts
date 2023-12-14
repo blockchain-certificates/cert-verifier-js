@@ -126,7 +126,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
         await (verifier as any).checkRevokedStatus(); // private method
         expect((verifier as any)._stepsStatuses).toEqual([{
           code: 'checkRevokedStatus',
-          message: 'Certificate has been revoked.',
+          message: 'This certificate has been revoked by the issuer.',
           status: 'failure'
         }]);
       });

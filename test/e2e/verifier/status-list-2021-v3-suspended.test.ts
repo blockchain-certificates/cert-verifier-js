@@ -43,6 +43,6 @@ describe('Status List 2021 v3 suspended example', function () {
   });
 
   it('should present the correct failure message', function () {
-    expect(result.message).toBe('Certificate has been suspended.');
+    expect(result.message).toBe('This certificate has been suspended by the issuer.');
   });
 });

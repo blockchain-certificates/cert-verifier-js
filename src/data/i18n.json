@@ -573,11 +573,11 @@
     },
     "revocation": {
       "preReason": "理由：",
-      "reason": "This certificate has been ${CREDENTIAL_STATUS} by the issuer.",
-      "revocationListAuthenticityFailure": "The authenticity of the revocation list could not be verified.",
-      "noRevocationStatusList2021Found": "No status list could be found at the specified URL for 'statusListCredential':",
-      "revoked": "revoked",
-      "suspended": "suspended"
+      "reason": "この証明書は発行者により${CREDENTIAL_STATUS}。",
+      "revocationListAuthenticityFailure": "取消登録リストの真正性を確認できませんでした。",
+      "noRevocationStatusList2021Found": "「statusListCredential」のURLでステータスリストが見つかりませんでした：",
+      "revoked": "取消されました",
+      "suspended": "停止されました"
     },
     "success": {
       "mocknet": {

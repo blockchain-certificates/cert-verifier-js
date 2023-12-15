@@ -48,7 +48,11 @@
     },
     "revocation": {
       "preReason": "Reason given:",
-      "reason": "This certificate has been revoked by the issuer."
+      "reason": "This certificate has been ${CREDENTIAL_STATUS} by the issuer.",
+      "revocationListAuthenticityFailure": "The authenticity of the revocation list could not be verified.",
+      "noRevocationStatusList2021Found": "No status list could be found at the specified URL for 'statusListCredential':",
+      "revoked": "revoked",
+      "suspended": "suspended"
     },
     "success": {
       "mocknet": {
@@ -149,7 +153,11 @@
     },
     "revocation": {
       "preReason": "Raison :",
-      "reason": "Ce certificat a été révoqué par l'émetteur."
+      "reason": "Ce certificat a été ${CREDENTIAL_STATUS} par l'émetteur.",
+      "revocationListAuthenticityFailure": "L'authenticité de la liste de revocation n'a pas pu être validée.",
+      "noRevocationStatusList2021Found": "Aucune liste de revocation n'a pu être trouvée à l'URL spécifiée par 'statusListCredential':",
+      "revoked": "révoqué",
+      "suspended": "suspendu"
     },
     "success": {
       "mocknet": {
@@ -250,7 +258,11 @@
     },
     "revocation": {
       "preReason": "Razón dada:",
-      "reason": "Este certificado ha sido revocado por el emisor"
+      "reason": "Este certificado ha sido ${CREDENTIAL_STATUS} por el emisor.",
+      "revocationListAuthenticityFailure": "La authenticidad de la lista de revocación no se pudo confirmar.",
+      "noRevocationStatusList2021Found": "No lista de revocación encontrada en la URL dada por 'statusListCredential':",
+      "revoked": "revocado",
+      "suspended": "suspendido"
     },
     "success": {
       "mocknet": {
@@ -351,7 +363,11 @@
     },
     "revocation": {
       "preReason": "Raġuni mogħtija:",
-      "reason": "Dan iċ-ċertifikat ġie revokat mill-emittent."
+      "reason": "Dan iċ-ċertifikat ġie ${CREDENTIAL_STATUS} mill-emittent.",
+      "revocationListAuthenticityFailure": "The authenticity of the revocation list could not be verified.",
+      "noRevocationStatusList2021Found": "No status list could be found at the specified URL for 'statusListCredential':",
+      "revoked": "revokat",
+      "suspended": "suspended"
     },
     "success": {
       "mocknet": {
@@ -452,7 +468,11 @@
     },
     "revocation": {
       "preReason": "Motivo indicato:",
-      "reason": "Questo certificato è stato revocato dall'emittente."
+      "reason": "Questo certificato è stato ${CREDENTIAL_STATUS} dall'emittente.",
+      "revocationListAuthenticityFailure": "The authenticity of the revocation list could not be verified.",
+      "noRevocationStatusList2021Found": "No status list could be found at the specified URL for 'statusListCredential':",
+      "revoked": "revocato",
+      "suspended": "sospeso"
     },
     "success": {
       "mocknet": {
@@ -553,7 +573,11 @@
     },
     "revocation": {
       "preReason": "理由：",
-      "reason": "この証明書は発行者によって取り消されました。"
+      "reason": "この証明書は発行者により${CREDENTIAL_STATUS}。",
+      "revocationListAuthenticityFailure": "取消登録リストの真正性を確認できませんでした。",
+      "noRevocationStatusList2021Found": "「statusListCredential」のURLでステータスリストが見つかりませんでした：",
+      "revoked": "取消されました",
+      "suspended": "停止されました"
     },
     "success": {
       "mocknet": {

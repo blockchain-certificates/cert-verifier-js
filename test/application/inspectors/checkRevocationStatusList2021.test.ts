@@ -28,7 +28,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
     it('should throw', async function () {
       await expect(async () => {
         await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
-      }).rejects.toThrow('Certificate has been revoked.');
+      }).rejects.toThrow('This certificate has been revoked by the issuer.');
     });
   });
 
@@ -36,7 +36,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
     it('should throw', async function () {
       await expect(async () => {
         await checkRevocationStatusList2021(StatusList2021Suspended.credentialStatus);
-      }).rejects.toThrow('Certificate has been suspended.');
+      }).rejects.toThrow('This certificate has been suspended by the issuer.');
     });
   });
 

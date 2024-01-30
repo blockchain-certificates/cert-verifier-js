@@ -68,8 +68,6 @@ export interface VCCredentialStatus {
 }
 
 export interface BlockcertsV3 extends VerifiableCredential {
-  issuer: string | Issuer;
-  issuanceDate: string;
   credentialSubject: {
     id?: string;
     publicKey?: string;
@@ -83,7 +81,6 @@ export interface BlockcertsV3 extends VerifiableCredential {
       criteria?: string;
     };
   };
-  credentialStatus?: VCCredentialStatus | VCCredentialStatus[];
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;

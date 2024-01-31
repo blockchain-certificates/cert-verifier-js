@@ -74,7 +74,7 @@ export default class Verifier {
     { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom }: {
       certificateJson: Blockcerts;
       expires: string;
-      validFrom: string;
+      validFrom?: string;
       id: string;
       issuer: Issuer;
       hashlinkVerifier: HashlinkVerifier;
@@ -236,7 +236,8 @@ export default class Verifier {
   private prepareVerificationProcess (): void {
     const verificationModel = domain.certificates.getVerificationMap(
       !!this.issuer.didDocument,
-      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false
+      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
+      !!this.validFrom
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;

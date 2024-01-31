@@ -5,6 +5,7 @@ import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResol
 import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
 import verificationsStepsNoDID from '../assertions/verification-steps-v3-no-did';
 import verificationsStepsHashlink from '../assertions/verification-steps-v3-hashlink';
+import verificationStepsValidFrom from '../assertions/verification-steps-v3-validFrom-mocknet';
 import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest';
 import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet';
 import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -16,6 +17,7 @@ import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
 import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import BlockcertsV3NoDid from '../fixtures/v3/testnet-v3--no-did.json';
 import BlockcertsV3Hashlink from '../fixtures/v3/testnet-v3-hashlink.json';
+import BlockcertsV3ValidFrom from '../fixtures/v3/mocknet-vc-v2-validFrom-valid.json';
 
 describe('Certificate API Contract test suite', function () {
   describe('verificationSteps property', function () {
@@ -75,6 +77,15 @@ describe('Certificate API Contract test suite', function () {
       const instance = new Certificate(BlockcertsV3Hashlink);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsHashlink);
+    });
+
+    it('is available for a V3 certificate with validFrom property set', async function () {
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
+      }).resolves(JSON.stringify(fixtureIssuerProfile));
+      const instance = new Certificate(BlockcertsV3ValidFrom);
+      await instance.init();
+      expect(instance.verificationSteps).toEqual(verificationStepsValidFrom);
     });
   });
 });

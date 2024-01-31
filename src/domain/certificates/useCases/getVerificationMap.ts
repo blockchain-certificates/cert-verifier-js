@@ -1,4 +1,4 @@
-import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
+import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../../../constants/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
@@ -17,20 +17,6 @@ export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlink
 
   return verificationSteps;
 }
-
-const verificationMap = {
-  [VerificationSteps.formatValidation]: [
-    SUB_STEPS.checkImagesIntegrity
-  ],
-  [VerificationSteps.proofVerification]: [],
-  [VerificationSteps.identityVerification]: [
-    SUB_STEPS.controlVerificationMethod
-  ],
-  [VerificationSteps.statusCheck]: [
-    SUB_STEPS.checkRevokedStatus,
-    SUB_STEPS.checkExpiresDate
-  ]
-};
 
 function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substepsList: SUB_STEPS[]): VerificationSubstep[] {
   const childSteps: SUB_STEPS[] = verificationMap[parentStepKey];

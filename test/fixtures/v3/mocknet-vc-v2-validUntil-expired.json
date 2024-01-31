@@ -1,1 +1,36 @@
-{"@context": ["https://www.w3.org/ns/credentials/v2", "https://w3id.org/blockcerts/v3"], "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c", "type": ["VerifiableCredential", "BlockcertsCredential"], "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json", "validFrom": "2022-07-13T20:21:40.088Z", "validUntil": "2024-01-05T00:00:00.000Z", "credentialSubject": {"id": "did:example:ebfeb1f712ebc6f1c276e12ec21", "name": "Julien Fraichot", "email": "julien.fraichot@hyland.com", "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC", "claim": {"name": "Master of Puppets", "description": "Awarded to those who rock"}}, "metadata": "{\"classOf\":\"2021\"}", "display": {"contentMediaType": "text/html", "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"}, "proof": {"type": "MerkleProof2019", "created": "2024-01-30T16:07:01.438179", "proofValue": "z3hSV9ktEtnCfHQbFgTm6PznefHQCnWZvJyUvtCNu7Sw1y5UaVevPpejsCLZebzMCDx8L9ky5gNqThpa6b8ynkjeYC6ecVkcohKPL7m6DfaeYKBaofKyUad2YeXasdu7c2WvSykiRaaM28BEmAtUMUQq3KYX9S2qmMW3tRmPNyJhUUKiiJnojb7fcJx3NZ81iwodou7ExTntZFZyqBSwrzTXmrJwt3KnEFQvY4S2p5B4SbPfxxkLK5ipYsFjghuK64xXDgH1uDwac3xcjVo18EGiNPewwfHVeQktTvsi7jeaBKQWin858Wkb88Ueu6r85oq8heWdCbMUsABYBNJvDSZqq4RDVFQQZdxk1x657HAAZyMj9zgWdG7vPe1g1rL3SNd7k5iqTLdmpsA", "proofPurpose": "assertionMethod", "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"}}
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/blockcerts/v3"
+  ],
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+  "validFrom": "2022-07-13T20:21:40.088Z",
+  "validUntil": "2024-01-05T00:00:00.000Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "name": "Julien Fraichot",
+    "email": "julien.fraichot@hyland.com",
+    "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC",
+    "claim": {
+      "name": "Master of Puppets",
+      "description": "Awarded to those who rock"
+    }
+  },
+  "metadata": "{\"classOf\":\"2021\"}",
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
+  },
+  "proof": {
+    "type": "MerkleProof2019",
+    "created": "2024-01-30T16:07:01.438179",
+    "proofValue": "z3hSV9ktEtnCfHQbFgTm6PznefHQCnWZvJyUvtCNu7Sw1y5UaVevPpejsCLZebzMCDx8L9ky5gNqThpa6b8ynkjeYC6ecVkcohKPL7m6DfaeYKBaofKyUad2YeXasdu7c2WvSykiRaaM28BEmAtUMUQq3KYX9S2qmMW3tRmPNyJhUUKiiJnojb7fcJx3NZ81iwodou7ExTntZFZyqBSwrzTXmrJwt3KnEFQvY4S2p5B4SbPfxxkLK5ipYsFjghuK64xXDgH1uDwac3xcjVo18EGiNPewwfHVeQktTvsi7jeaBKQWin858Wkb88Ueu6r85oq8heWdCbMUsABYBNJvDSZqq4RDVFQQZdxk1x657HAAZyMj9zgWdG7vPe1g1rL3SNd7k5iqTLdmpsA",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+  }
+}

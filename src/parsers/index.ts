@@ -23,6 +23,7 @@ export interface ParsedCertificate {
   isFormatValid?: boolean;
   error?: string;
   issuedOn?: string;
+  validFrom?: string;
   issuer: Issuer;
   metadataJson?: string;
   name?: string;

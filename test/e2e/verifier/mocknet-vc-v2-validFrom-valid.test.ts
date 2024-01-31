@@ -5,7 +5,7 @@ import MocknetVCV2ValidFromValid from '../../fixtures/v3/mocknet-vc-v2-validFrom
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('given the certificate is a valid mocknet (v3.0)', function () {
-  // this test will expire in 2029
+  // this test will expire in 2039
   it('should verify successfully', async function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({

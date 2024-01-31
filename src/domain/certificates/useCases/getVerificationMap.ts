@@ -1,10 +1,10 @@
-import getParentVerificationSteps, { VerificationSteps, SUB_STEPS } from '../../../constants/verificationSteps'; // TODO: circular dependency
+import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../../../constants/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
 import type { IVerificationMapItem } from '../../../models/VerificationMap';
 
-export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean, hasValidFrom: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (!hasDid) {
@@ -15,22 +15,12 @@ export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlink
     removeEntry(verificationSteps, SUB_STEPS.checkImagesIntegrity);
   }
 
+  if (!hasValidFrom) {
+    removeEntry(verificationSteps, SUB_STEPS.ensureValidityPeriodStarted);
+  }
+
   return verificationSteps;
 }
-
-const verificationMap = {
-  [VerificationSteps.formatValidation]: [
-    SUB_STEPS.checkImagesIntegrity
-  ],
-  [VerificationSteps.proofVerification]: [],
-  [VerificationSteps.identityVerification]: [
-    SUB_STEPS.controlVerificationMethod
-  ],
-  [VerificationSteps.statusCheck]: [
-    SUB_STEPS.checkRevokedStatus,
-    SUB_STEPS.checkExpiresDate
-  ]
-};
 
 function filterSubStepsForParentStep (parentStepKey: VerificationSteps, substepsList: SUB_STEPS[]): VerificationSubstep[] {
   const childSteps: SUB_STEPS[] = verificationMap[parentStepKey];
@@ -51,11 +41,11 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
 }
 
 // TODO: move this method to domain.verifier
-export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false): {
+export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false, hasValidFrom: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];
 } {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid, hasHashlinks);
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid, hasHashlinks, hasValidFrom);
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

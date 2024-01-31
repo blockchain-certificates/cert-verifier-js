@@ -15,6 +15,7 @@ import type { IVerificationMapItem, IVerificationMapItemSuite } from './models/V
 import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
+import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarted';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -48,6 +49,7 @@ export enum SupportedVerificationSuites {
 
 export default class Verifier {
   public expires: string;
+  public validFrom: string;
   public id: string;
   public issuer: Issuer;
   public revocationKey: string;
@@ -69,9 +71,10 @@ export default class Verifier {
   public proofMap: TVerifierProofMap;
 
   constructor (
-    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs }: {
+    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom }: {
       certificateJson: Blockcerts;
       expires: string;
+      validFrom?: string;
       id: string;
       issuer: Issuer;
       hashlinkVerifier: HashlinkVerifier;
@@ -80,6 +83,7 @@ export default class Verifier {
     }
   ) {
     this.expires = expires;
+    this.validFrom = validFrom;
     this.id = id;
     this.issuer = issuer;
     this.hashlinkVerifier = hashlinkVerifier;
@@ -232,7 +236,8 @@ export default class Verifier {
   private prepareVerificationProcess (): void {
     const verificationModel = domain.certificates.getVerificationMap(
       !!this.issuer.didDocument,
-      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false
+      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
+      !!this.validFrom
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -344,6 +349,13 @@ export default class Verifier {
 
   private async checkExpiresDate (): Promise<void> {
     await this.executeStep(SUB_STEPS.checkExpiresDate, () => { ensureNotExpired(this.expires); }
+    );
+  }
+
+  private async ensureValidityPeriodStarted (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.ensureValidityPeriodStarted,
+      () => { ensureValidityPeriodStarted(this.validFrom); }
     );
   }
 

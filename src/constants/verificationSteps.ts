@@ -18,11 +18,27 @@ export enum SUB_STEPS {
   checkImagesIntegrity = 'checkImagesIntegrity',
   checkRevokedStatus = 'checkRevokedStatus',
   checkExpiresDate = 'checkExpiresDate',
-  controlVerificationMethod = 'controlVerificationMethod'
+  controlVerificationMethod = 'controlVerificationMethod',
+  ensureValidityPeriodStarted = 'ensureValidityPeriodStarted'
 }
 
 export type TVerificationStepsList = {
   [key in VerificationSteps]?: IVerificationMapItem;
+};
+
+export const verificationMap = {
+  [VerificationSteps.formatValidation]: [
+    SUB_STEPS.checkImagesIntegrity
+  ],
+  [VerificationSteps.proofVerification]: [],
+  [VerificationSteps.identityVerification]: [
+    SUB_STEPS.controlVerificationMethod
+  ],
+  [VerificationSteps.statusCheck]: [
+    SUB_STEPS.checkRevokedStatus,
+    SUB_STEPS.ensureValidityPeriodStarted,
+    SUB_STEPS.checkExpiresDate
+  ]
 };
 
 export default function getParentVerificationSteps (): TVerificationStepsList {

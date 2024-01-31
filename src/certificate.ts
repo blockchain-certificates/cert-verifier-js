@@ -49,6 +49,7 @@ export default class Certificate {
   public description?: string; // v1
   public display?: BlockcertsV3Display;
   public expires: string;
+  public validFrom: string;
   public explorerAPIs: ExplorerAPI[] = [];
   public id: string;
   public isFormatValid: boolean;
@@ -102,6 +103,7 @@ export default class Certificate {
     this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       expires: this.expires,
+      validFrom: this.validFrom,
       id: this.id,
       issuer: this.issuer,
       hashlinkVerifier: this.hashlinkVerifier,
@@ -151,6 +153,7 @@ export default class Certificate {
     description,
     display,
     expires,
+    validFrom,
     id,
     isFormatValid,
     issuedOn,
@@ -169,6 +172,7 @@ export default class Certificate {
     this.certificateImage = certificateImage;
     this.description = description;
     this.expires = expires;
+    this.validFrom = validFrom;
     this.id = id;
     this.issuedOn = issuedOn;
     this.issuer = issuer;

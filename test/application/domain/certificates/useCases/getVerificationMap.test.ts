@@ -41,7 +41,6 @@ describe('domain certificates get verification map use case test suite', functio
           .getVerificationMap(false, true).verificationMap;
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(verificationMapAssertion));
 
-        // add because did
         expectedOutput.find(step => step.code === VerificationSteps.formatValidation).subSteps = [
           {
             code: SUB_STEPS.checkImagesIntegrity,
@@ -53,6 +52,26 @@ describe('domain certificates get verification map use case test suite', functio
         ];
 
         expect(result).toEqual(expectedOutput);
+      });
+    });
+
+    describe('and the certificate has a validFrom property', function () {
+      it('should add the ensureValidityPeriodStarted step', function () {
+        const result: IVerificationMapItem[] = domain.certificates
+          .getVerificationMap(false, false, true).verificationMap;
+        const resultEnsureValidityPeriodStartedStep = result
+          .find(step => step.code === VerificationSteps.statusCheck).subSteps
+          .find(subStep => subStep.code === SUB_STEPS.ensureValidityPeriodStarted);
+
+        const expectedStep = {
+          code: SUB_STEPS.ensureValidityPeriodStarted,
+          label: defaultLanguageSet.subSteps.ensureValidityPeriodStartedLabel,
+          labelPending: defaultLanguageSet.subSteps.ensureValidityPeriodStartedLabelPending,
+          parentStep: VerificationSteps.statusCheck,
+          status: VERIFICATION_STATUSES.DEFAULT
+        };
+
+        expect(resultEnsureValidityPeriodStartedStep).toEqual(expectedStep);
       });
     });
   });

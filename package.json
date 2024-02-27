@@ -80,7 +80,7 @@
     "sha256": "^0.2.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.2.0",
+    "@commitlint/cli": "^19.0.1",
     "@commitlint/config-conventional": "^18.1.0",
     "@decentralized-identity/did-common-typescript": "^0.1.19",
     "@rollup/plugin-commonjs": "^25.0.7",

@@ -10,6 +10,7 @@ export interface VCProof {
   verificationMethod: string;
   chainedProofType?: string;
   previousProof?: VCProof;
+  cryptosuite?: string; // DataIntegrityProof spec
 }
 
 export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): string {

@@ -54,6 +54,7 @@ export default class MerkleProof2019 extends Suite {
   public hasDid: boolean;
   public proof: VCProof;
   public type = 'MerkleProof2019';
+  public cryptosuite = 'merkle-proof-2019';
   public suite: LDMerkleProof2019;
 
   constructor (props: SuiteAPI) {
@@ -219,6 +220,9 @@ export default class MerkleProof2019 extends Suite {
 
   private validateProofType (): void {
     const proofType = this.isProofChain() ? this.proof.chainedProofType : this.proof.type;
+    if (proofType === 'DataIntegrityProof' && this.proof.cryptosuite === this.cryptosuite) {
+      return;
+    }
     if (proofType !== this.type) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${proofType}`);
     }

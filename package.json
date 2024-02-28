@@ -81,7 +81,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^18.2.0",
-    "@commitlint/config-conventional": "^18.1.0",
+    "@commitlint/config-conventional": "^19.0.3",
     "@decentralized-identity/did-common-typescript": "^0.1.19",
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.1",

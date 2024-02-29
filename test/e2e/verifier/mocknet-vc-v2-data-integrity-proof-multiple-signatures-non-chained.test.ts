@@ -1,10 +1,10 @@
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
-import MocknetVCV2DataIntegrityProofMultipleSignatures from '../../fixtures/v3/mocknet-vc-v2-data-integrity-proof-multiple-signatures.json';
+import MocknetVCV2DataIntegrityProofMultipleSignaturesNonChained from '../../fixtures/v3/mocknet-vc-v2-data-integrity-proof-multiple-signatures-non-chained.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
-describe('given the certificate is signed with multiple chained DataIntegrityProof Merkle Proof 2019', function () {
+describe('given the certificate is signed with multiple non chained DataIntegrityProof Merkle Proof 2019', function () {
   beforeAll(function () {
     const requestStub = sinon.stub(ExplorerLookup, 'request');
     requestStub.withArgs({
@@ -15,7 +15,7 @@ describe('given the certificate is signed with multiple chained DataIntegrityPro
   let certificate;
   let result;
   beforeEach(async function () {
-    certificate = new Certificate(MocknetVCV2DataIntegrityProofMultipleSignatures as any); // TODO: fix typescript and jest error with previous proof being string in BlockcertsV3 Model
+    certificate = new Certificate(MocknetVCV2DataIntegrityProofMultipleSignaturesNonChained);
     await certificate.init();
     result = await certificate.verify();
   });

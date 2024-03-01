@@ -146,6 +146,14 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
+  private convertCryptosuiteToType (cryptosuite: string): string {
+    // transform kebab-case to camelCase and capitalize first char to fall back to legacy name
+    // NOTE: this might be a bit naive but works in the case of MerkleProof2019 which at this time
+    // is the only implementation
+    cryptosuite = cryptosuite.replace(/-./g, x => x[1].toUpperCase());
+    return cryptosuite.charAt(0).toUpperCase() + cryptosuite.slice(1);
+  }
+
   private getRevocationListUrl (): string {
     return this.issuer.revocationList;
   }
@@ -156,6 +164,9 @@ export default class Verifier {
       let { type } = proof;
       if (type === 'ChainedProof2021') {
         type = proof.chainedProofType;
+      }
+      if (type === 'DataIntegrityProof') {
+        type = this.convertCryptosuiteToType(proof.cryptosuite);
       }
       if (Array.isArray(type)) {
         // Blockcerts v2/MerkleProof2017

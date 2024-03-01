@@ -1,0 +1,51 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/data-integrity/v2",
+    "https://w3id.org/blockcerts/v3.1"
+  ],
+  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+  "type": [
+    "VerifiableCredential",
+    "BlockcertsCredential"
+  ],
+  "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+  "validFrom": "2022-07-13T20:21:40.088Z",
+  "validUntil": "2039-07-13T00:00:00.000Z",
+  "credentialSubject": {
+    "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+    "name": "Julien Fraichot",
+    "email": "julien.fraichot@hyland.com",
+    "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC",
+    "claim": {
+      "name": "Master of Puppets",
+      "description": "Awarded to those who rock"
+    }
+  },
+  "metadata": "{\"classOf\":\"2021\"}",
+  "display": {
+    "contentMediaType": "text/html",
+    "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
+  },
+  "proof": [
+    {
+      "id": "urn:uuid:a68a8c11-556b-42dc-b840-55677639db7d",
+      "type": "DataIntegrityProof",
+      "cryptosuite": "merkle-proof-2019",
+      "proofPurpose": "assertionMethod",
+      "created": "2024-02-15T15:22:35.361231",
+      "proofValue": "zEuZQLZTYrdsDv2FbpkZtthsgpG54RGrfTSvyUNDGi1ecmJdY9KMtFSxbbs6pEspqa38GgXJD9ReRosEBrXsXKu4Nk7xMGnm6wfzuCUiwwBCXKrfs8e8r6a1gbyXbzifiJprkeVD9UtaVtdb5QXKHPRikuQR8F9epBejTF7MfQukr1T5U7mZ8nSuKXDJ5epzg6mCANdCFt8ZrYZiLUZGrWpd33BfeuyaJxSGYcfMgjzJGvLnoZpAXHi1MWpNFhxxuTn6BtUbivTJqQhgzUDoXaErWeMEe1z8wRR5TgzNaoULxGp",
+      "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+    },
+    {
+      "id": "urn:uuid:d1bf1ef0-efb2-4959-973d-b2abf84f3376",
+      "type": "DataIntegrityProof",
+      "cryptosuite": "merkle-proof-2019",
+      "proofPurpose": "assertionMethod",
+      "created": "2024-02-15T15:23:14.293905",
+      "proofValue": "zEuZQLZTYrdsDv2cqZws1GG2poQZff31axabb5RkhpPoZCWin6UtdjSimFRtNr5nKyaY6Yxz26dtn1fenP2h7TMu6TYZhmVj2kTVFZMkPQLcWwfnzSHKv3iGTS19xkxhLakkax9mcMgsoFsWDGvLCPZi9TxyB6z8oSMFCwxE36V5AkfQWswbsNAoaNrgT1yekMMLh9PTDAtKM9FSCDs2kYADLDukoKKRf5Aq34TLshWR3jvrPZr1ccPcff4BbNVe2yMSRzJkFnEVQu3MEuw3zZsLbusXUMo5Q5ZoQYraa6eNPqA",
+      "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1",
+      "previousProof": "urn:uuid:a68a8c11-556b-42dc-b840-55677639db7d"
+    }
+  ]
+}

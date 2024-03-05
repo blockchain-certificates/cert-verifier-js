@@ -16,7 +16,6 @@ import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
 import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarted';
-import checkCredentialSchemaConformity from './inspectors/checkCredentialSchemaConformity';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -373,7 +372,7 @@ export default class Verifier {
   }
 
   private async checkCredentialSchemaConformity (): Promise<void> {
-    console.log('call checkCredentialSchemaConformity');
+    const { default: checkCredentialSchemaConformity } = await import('./inspectors/checkCredentialSchemaConformity');
     await this.executeStep(
       SUB_STEPS.checkCredentialSchemaConformity,
       async () => {

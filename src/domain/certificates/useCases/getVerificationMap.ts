@@ -1,4 +1,4 @@
-import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../../../constants/verificationSteps'; // TODO: circular dependency
+import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../../verifier/entities/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';

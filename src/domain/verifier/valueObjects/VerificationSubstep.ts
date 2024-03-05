@@ -1,6 +1,6 @@
 import { getText } from '../../i18n/useCases';
 import { VERIFICATION_STATUSES } from '../../../constants/verificationStatuses';
-import type { VerificationSteps } from '../../../constants/verificationSteps';
+import type { VerificationSteps } from '../entities/verificationSteps';
 
 export default class VerificationSubstep {
   public code: string;

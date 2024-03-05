@@ -1,5 +1,5 @@
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
+import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import domain from '../domain';
 import { intersect } from '../helpers/array';
 import type { RevokedAssertion } from '../models/RevokedAssertions';

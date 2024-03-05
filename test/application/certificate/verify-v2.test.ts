@@ -1,7 +1,7 @@
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import domain from '../../../src/domain';
-import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../../src/domain/verifier/entities/verificationSteps';
 import { getText } from '../../../src/domain/i18n/useCases';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import v2RevocationList from '../../assertions/v2-revocation-list';

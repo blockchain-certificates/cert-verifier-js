@@ -1,4 +1,4 @@
-import type { VerificationSteps } from '../constants/verificationSteps';
+import type { VerificationSteps } from '../domain/verifier/entities/verificationSteps';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
 

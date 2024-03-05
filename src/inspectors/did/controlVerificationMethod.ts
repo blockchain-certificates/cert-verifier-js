@@ -1,6 +1,6 @@
 import type { IDidDocument } from '../../models/DidDocument';
 import { VerifierError } from '../../models';
-import { SUB_STEPS } from '../../constants/verificationSteps';
+import { SUB_STEPS } from '../../domain/verifier/entities/verificationSteps';
 import domain from '../../domain';
 import { baseError } from './index';
 

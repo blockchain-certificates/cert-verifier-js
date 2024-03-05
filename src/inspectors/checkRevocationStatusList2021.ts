@@ -1,7 +1,7 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { decodeList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
-import { SUB_STEPS } from '../constants/verificationSteps';
+import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import Certificate from '../certificate';
 import { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
 import domain from '../domain';

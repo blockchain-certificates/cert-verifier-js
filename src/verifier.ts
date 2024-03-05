@@ -1,7 +1,7 @@
 import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 import domain from './domain';
 import ensureNotExpired from './inspectors/ensureNotExpired';
-import { SUB_STEPS, VerificationSteps } from './constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from './domain/verifier/entities/verificationSteps';
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import { difference } from './helpers/array';

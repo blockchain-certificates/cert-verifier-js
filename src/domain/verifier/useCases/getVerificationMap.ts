@@ -4,7 +4,7 @@ import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../valueObjects/VerificationSubstep';
 import type { IVerificationMapItem } from '../../../models/VerificationMap';
 
-export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean, hasValidFrom: boolean): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean, hasValidFrom: boolean, hasCredentialSchema: boolean): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (!hasDid) {
@@ -17,6 +17,10 @@ export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlink
 
   if (!hasValidFrom) {
     removeEntry(verificationSteps, SUB_STEPS.ensureValidityPeriodStarted);
+  }
+
+  if (!hasCredentialSchema) {
+    removeEntry(verificationSteps, SUB_STEPS.checkCredentialSchemaConformity);
   }
 
   return verificationSteps;
@@ -40,11 +44,11 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false, hasValidFrom: boolean = false): {
+export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false, hasValidFrom: boolean = false, hasCredentialSchema: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];
 } {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid, hasHashlinks, hasValidFrom);
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid, hasHashlinks, hasValidFrom, hasCredentialSchema);
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

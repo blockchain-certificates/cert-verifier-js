@@ -370,6 +370,13 @@ export default class Verifier {
     );
   }
 
+  private async checkCredentialSchemaConformity (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.checkCredentialSchemaConformity,
+      () => { }
+    );
+  }
+
   private async controlVerificationMethod (): Promise<void> {
     // only v3 support
     if (!this.issuer.didDocument) {

@@ -5,7 +5,7 @@ import BlockcertsV3Tampered from '../../fixtures/v3/testnet-v3--tampered.json';
 import BlockcertsV3CustomContext from '../../fixtures/v3/testnet-v3-custom-context.json';
 import domain from '../../../src/domain';
 import { getText } from '../../../src/domain/i18n/useCases';
-import { SUB_STEPS } from '../../../src/constants/verificationSteps';
+import { SUB_STEPS } from '../../../src/domain/verifier/entities/verificationSteps';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';

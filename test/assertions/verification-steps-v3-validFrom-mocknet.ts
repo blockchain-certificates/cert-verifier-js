@@ -1,4 +1,4 @@
-import { SUB_STEPS, VerificationSteps } from '../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../src/domain/verifier/entities/verificationSteps';
 import i18n from '../../src/data/i18n.json';
 import currentLocale from '../../src/constants/currentLocale';
 import { VERIFICATION_STATUSES } from '../../src';

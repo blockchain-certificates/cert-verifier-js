@@ -1,6 +1,6 @@
 import verificationMapFixture from '../../../../assertions/verification-steps-v3-multiple-proofs';
 import domain from '../../../../../src/domain';
-import { VerificationSteps } from '../../../../../src/constants/verificationSteps';
+import { VerificationSteps } from '../../../../../src/domain/verifier/entities/verificationSteps';
 import i18n from '../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../src/constants/currentLocale';
 import { VERIFICATION_STATUSES } from '../../../../../src';

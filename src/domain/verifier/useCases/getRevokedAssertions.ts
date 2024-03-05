@@ -1,6 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
-import { SUB_STEPS } from '../../../constants/verificationSteps';
+import { SUB_STEPS } from '../entities/verificationSteps';
 import { getText } from '../../i18n/useCases';
 import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
 import { safelyAppendUrlParameter } from '../../../helpers/url';

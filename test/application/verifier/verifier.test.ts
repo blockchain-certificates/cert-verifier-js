@@ -6,7 +6,7 @@ import Verifier from '../../../src/verifier';
 import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import { SUB_STEPS, VerificationSteps } from '../../../src/constants/verificationSteps';
+import { SUB_STEPS, VerificationSteps } from '../../../src/domain/verifier/entities/verificationSteps';
 import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { IVerificationMapItem } from '../../../src/models/VerificationMap';

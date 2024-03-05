@@ -1,6 +1,6 @@
 import { dateToUnixTimestamp } from '../helpers/date';
 import VerifierError from '../models/verifierError';
-import { SUB_STEPS } from '../constants/verificationSteps';
+import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 
 export default function ensureValidityPeriodStarted (validFrom = null): void {

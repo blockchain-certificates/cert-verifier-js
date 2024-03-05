@@ -1,4 +1,4 @@
-import { VerificationSteps, SUB_STEPS } from '../../../../../../src/constants/verificationSteps';
+import { VerificationSteps, SUB_STEPS } from '../../../../../../src/domain/verifier/entities/verificationSteps';
 import i18n from '../../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../../src/constants/currentLocale';
 import type { IVerificationMapItem } from '../../../../../../src/models/VerificationMap';

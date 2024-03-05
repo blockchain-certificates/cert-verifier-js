@@ -7,6 +7,20 @@ const defaultLanguageSet = i18n[currentLocale.locale];
 
 export default [
   {
+    code: VerificationSteps.formatValidation,
+    label: defaultLanguageSet.steps.formatValidationLabel,
+    labelPending: defaultLanguageSet.steps.formatValidationLabelPending,
+    subSteps: [
+      {
+        code: 'checkCredentialSchemaConformity',
+        label: defaultLanguageSet.subSteps.checkCredentialSchemaConformityLabel,
+        labelPending: defaultLanguageSet.subSteps.checkCredentialSchemaConformityLabelPending,
+        parentStep: VerificationSteps.formatValidation,
+        status: VERIFICATION_STATUSES.DEFAULT
+      }
+    ]
+  },
+  {
     code: VerificationSteps.proofVerification,
     label: defaultLanguageSet.steps.signatureVerificationLabel,
     labelPending: defaultLanguageSet.steps.signatureVerificationLabelPending,

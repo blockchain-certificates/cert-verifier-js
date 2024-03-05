@@ -1,5 +1,5 @@
 import domain from '../../../../../src/domain';
-import verificationMapAssertion from './assertions/verificationMapAssertion';
+import verificationMapAssertion from '../../certificates/useCases/assertions/verificationMapAssertion';
 import { SUB_STEPS, VerificationSteps } from '../../../../../src/domain/verifier/entities/verificationSteps';
 import i18n from '../../../../../src/data/i18n.json';
 import currentLocale from '../../../../../src/constants/currentLocale';
@@ -11,13 +11,13 @@ const defaultLanguageSet = i18n[currentLocale.locale];
 describe('domain certificates get verification map use case test suite', function () {
   describe('given it is called', function () {
     it('should return a verification map', function () {
-      const result: IVerificationMapItem[] = domain.certificates.getVerificationMap().verificationMap;
+      const result: IVerificationMapItem[] = domain.verifier.getVerificationMap().verificationMap;
       expect(result).toEqual(verificationMapAssertion);
     });
 
     describe('and the blockcerts issuer shared their DID', function () {
       it('should add the identityVerification step', function () {
-        const result: IVerificationMapItem[] = domain.certificates.getVerificationMap(true).verificationMap;
+        const result: IVerificationMapItem[] = domain.verifier.getVerificationMap(true).verificationMap;
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(verificationMapAssertion));
 
         // add because did
@@ -37,7 +37,7 @@ describe('domain certificates get verification map use case test suite', functio
 
     describe('and the certificate has hashlinks', function () {
       it('should add the checkImageIntegrity step', function () {
-        const result: IVerificationMapItem[] = domain.certificates
+        const result: IVerificationMapItem[] = domain.verifier
           .getVerificationMap(false, true).verificationMap;
         const expectedOutput: IVerificationMapItem[] = JSON.parse(JSON.stringify(verificationMapAssertion));
 
@@ -57,7 +57,7 @@ describe('domain certificates get verification map use case test suite', functio
 
     describe('and the certificate has a validFrom property', function () {
       it('should add the ensureValidityPeriodStarted step', function () {
-        const result: IVerificationMapItem[] = domain.certificates
+        const result: IVerificationMapItem[] = domain.verifier
           .getVerificationMap(false, false, true).verificationMap;
         const resultEnsureValidityPeriodStartedStep = result
           .find(step => step.code === VerificationSteps.statusCheck).subSteps

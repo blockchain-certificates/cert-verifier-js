@@ -1,7 +1,7 @@
-import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../../verifier/entities/verificationSteps'; // TODO: circular dependency
+import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../entities/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import { removeEntry } from '../../../helpers/array';
-import type VerificationSubstep from '../../verifier/valueObjects/VerificationSubstep';
+import type VerificationSubstep from '../valueObjects/VerificationSubstep';
 import type { IVerificationMapItem } from '../../../models/VerificationMap';
 
 export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean, hasValidFrom: boolean): SUB_STEPS[] {
@@ -40,7 +40,6 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-// TODO: move this method to domain.verifier
 export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false, hasValidFrom: boolean = false): {
   verificationMap: IVerificationMapItem[];
   verificationProcess: SUB_STEPS[];

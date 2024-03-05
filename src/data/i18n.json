@@ -79,6 +79,7 @@
     },
     "errors": {
       "certificateNotValid": "This is not a valid certificate",
+      "checkCredentialSchemaConformity": "This certificate does not conform with the provided credential schema",
       "couldNotConfirmTx": "Could not confirm the transaction",
       "ensureHashesEqual": "Computed hash does not match remote hash",
       "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
@@ -189,6 +190,7 @@
     },
     "errors": {
       "certificateNotValid": "Certificat invalide",
+      "checkCredentialSchemaConformity": "Ce certificat n'est pas conforme avec le schema de certificat fourni",
       "couldNotConfirmTx": "Impossible de confirmer la transaction",
       "ensureHashesEqual": "Calcul du hash local différent du hash distant",
       "ensureMerkleRootEqual": "Le Merkle root ne correspond pas au hash distant",
@@ -299,6 +301,7 @@
     },
     "errors": {
       "certificateNotValid": "Este no es un certificado válido",
+      "checkCredentialSchemaConformity": "Este certificado no cumple con el esquema de certificado especificado",
       "couldNotConfirmTx": "No se ha podido confirmar la transacción",
       "ensureHashesEqual": "La cadena binaria calculada no corresponde con la cadena binaria remota",
       "ensureMerkleRootEqual": "La raíz Merkle no corresponde con la cadena binaria remota",
@@ -409,6 +412,7 @@
     },
     "errors": {
       "certificateNotValid": "Dan mhux ċertifikat validu",
+      "checkCredentialSchemaConformity": "This certificate does not conform with the provided credential schema",
       "couldNotConfirmTx": "Ma setgħetx tiġi kkonfermata t-tranżazzjoni",
       "ensureHashesEqual": "Il-hash ikkalkulat ma jikkorrispondix mar-remote hash",
       "ensureMerkleRootEqual": "Merkle root ma taqbilx mar-remote hash",
@@ -519,6 +523,7 @@
     },
     "errors": {
       "certificateNotValid": "Questo non è un certificato valido",
+      "checkCredentialSchemaConformity": "This certificate does not conform with the provided credential schema",
       "couldNotConfirmTx": "Impossibile confermare la transazione",
       "ensureHashesEqual": "L'hash calcolato non corrisponde all'hash remoto",
       "ensureMerkleRootEqual": "La radice di Merkle non corrisponde all'hash remoto.",
@@ -629,6 +634,7 @@
     },
     "errors": {
       "certificateNotValid": "この証明書は無効です",
+      "checkCredentialSchemaConformity": "This certificate does not conform with the provided credential schema",
       "couldNotConfirmTx": "取引を確認できませんでした",
       "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
       "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",

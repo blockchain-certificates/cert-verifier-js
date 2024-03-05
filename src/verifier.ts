@@ -16,6 +16,7 @@ import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
 import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarted';
+import checkCredentialSchemaConformity from './inspectors/checkCredentialSchemaConformity';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -248,7 +249,8 @@ export default class Verifier {
     const verificationModel = domain.verifier.getVerificationMap(
       !!this.issuer.didDocument,
       this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
-      !!this.validFrom
+      !!this.validFrom,
+      !!(this.documentToVerify as BlockcertsV3).credentialSchema
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -371,9 +373,15 @@ export default class Verifier {
   }
 
   private async checkCredentialSchemaConformity (): Promise<void> {
+    console.log('call checkCredentialSchemaConformity');
     await this.executeStep(
       SUB_STEPS.checkCredentialSchemaConformity,
-      () => { }
+      async () => {
+        await checkCredentialSchemaConformity(
+          (this.documentToVerify as BlockcertsV3).credentialSubject,
+          (this.documentToVerify as BlockcertsV3).credentialSchema
+        );
+      }
     );
   }
 

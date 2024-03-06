@@ -26,6 +26,7 @@ export interface VerifiableCredential {
   id: string;
   type: string[];
   credentialStatus?: VCCredentialStatus | VCCredentialStatus[];
+  credentialSchema?: VCCredentialSchema | VCCredentialSchema[];
   issuer: string | Issuer;
   credentialSubject?: any;
   expirationDate?: string;
@@ -66,6 +67,11 @@ export interface VCCredentialStatus {
   statusPurpose: string;
   statusListIndex: string;
   statusListCredential: string;
+}
+
+export interface VCCredentialSchema {
+  type: string;
+  id: string;
 }
 
 export interface BlockcertsV3 extends VerifiableCredential {

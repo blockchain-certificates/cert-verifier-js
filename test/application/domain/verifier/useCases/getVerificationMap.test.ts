@@ -74,5 +74,25 @@ describe('domain certificates get verification map use case test suite', functio
         expect(resultEnsureValidityPeriodStartedStep).toEqual(expectedStep);
       });
     });
+
+    describe('and the certificate has a credentialSchema property', function () {
+      it('should add the checkCredentialSchemaConformity step', function () {
+        const result: IVerificationMapItem[] = domain.verifier
+          .getVerificationMap(false, false, false, true).verificationMap;
+        const resultEnsureValidityPeriodStartedStep = result
+          .find(step => step.code === VerificationSteps.formatValidation).subSteps
+          .find(subStep => subStep.code === SUB_STEPS.checkCredentialSchemaConformity);
+
+        const expectedStep = {
+          code: SUB_STEPS.checkCredentialSchemaConformity,
+          label: defaultLanguageSet.subSteps.checkCredentialSchemaConformityLabel,
+          labelPending: defaultLanguageSet.subSteps.checkCredentialSchemaConformityLabelPending,
+          parentStep: VerificationSteps.formatValidation,
+          status: VERIFICATION_STATUSES.DEFAULT
+        };
+
+        expect(resultEnsureValidityPeriodStartedStep).toEqual(expectedStep);
+      });
+    });
   });
 });

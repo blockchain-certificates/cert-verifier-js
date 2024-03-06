@@ -248,7 +248,8 @@ export default class Verifier {
     const verificationModel = domain.verifier.getVerificationMap(
       !!this.issuer.didDocument,
       this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
-      !!this.validFrom
+      !!this.validFrom,
+      !!(this.documentToVerify as BlockcertsV3).credentialSchema
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -367,6 +368,19 @@ export default class Verifier {
     await this.executeStep(
       SUB_STEPS.ensureValidityPeriodStarted,
       () => { ensureValidityPeriodStarted(this.validFrom); }
+    );
+  }
+
+  private async checkCredentialSchemaConformity (): Promise<void> {
+    const { default: checkCredentialSchemaConformity } = await import('./inspectors/checkCredentialSchemaConformity');
+    await this.executeStep(
+      SUB_STEPS.checkCredentialSchemaConformity,
+      async () => {
+        await checkCredentialSchemaConformity(
+          (this.documentToVerify as BlockcertsV3).credentialSubject,
+          (this.documentToVerify as BlockcertsV3).credentialSchema
+        );
+      }
     );
   }
 

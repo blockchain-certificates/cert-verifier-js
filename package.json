@@ -60,7 +60,7 @@
     "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.6",
     "@blockcerts/explorer-lookup": "^1.5.1",
     "@blockcerts/hashlink-verifier": "^1.6.0",
-    "@blockcerts/schemas": "^3.5.1",
+    "@blockcerts/schemas": "^3.6.3",
     "@did-core/did-ld-json": "npm:@blockcerts/did-ld-json@^0.1.2",
     "@digitalbazaar/ed25519-signature-2020": "^5.2.0",
     "@digitalbazaar/ed25519-verification-key-2020": "^4.1.0",

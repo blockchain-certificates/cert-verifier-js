@@ -40,6 +40,7 @@ describe('Status List 2021 v3 suspended example', function () {
 
   it('should fail verification', function () {
     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    
   });
 
   it('should present the correct failure message', function () {

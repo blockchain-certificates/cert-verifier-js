@@ -102,7 +102,8 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
     throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
   }
 
-  issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch(() => {
+  issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch((error) => {
+    console.error(error);
     throw new VerifierError('getIssuerProfile', errorMessage);
   }));
 

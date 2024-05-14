@@ -63,11 +63,23 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
     });
   });
 
-  describe('when no revocation list could be retrieved', function () {
+  describe('when no revocation list could be retrieved at the URL', function () {
     it('should throw', async function () {
       requestStub.withArgs({
         url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
       }).resolves(undefined);
+
+      await expect(async () => {
+        await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
+      }).rejects.toThrow('No status list could be found at the specified URL for \'statusListCredential\': https://www.blockcerts.org/samples/3.0/status-list-2021.json.');
+    });
+  });
+
+  describe('when the revocation list URL yields a 404 rejection', function () {
+    it('should throw', async function () {
+      requestStub.withArgs({
+        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+      }).rejects('Error fetching url:https://www.blockcerts.org/samples/3.0/status-list-2021.json; status code:404');
 
       await expect(async () => {
         await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);

@@ -12,6 +12,9 @@ import type { RevocationList } from '@digitalbazaar/vc-revocation-list';
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({
     url: statusListUrl
+  }).catch(e => {
+    console.error(e);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`);
   });
 
   if (statusList) {
@@ -19,7 +22,7 @@ async function getRevocationCredential (statusListUrl: string): Promise<Verifiab
       return JSON.parse(statusList);
     } catch (e) {
       console.error(e);
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}`);
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`);
     }
   }
 

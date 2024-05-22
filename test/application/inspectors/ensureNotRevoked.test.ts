@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { ensureNotRevoked } from '../../../src/inspectors';
 import revokedAssertionsFixture from '../../application/domain/verifier/useCases/fixtures/revokedAssertionsFixture.json';
 

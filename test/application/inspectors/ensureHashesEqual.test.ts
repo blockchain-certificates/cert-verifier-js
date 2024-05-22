@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import ensureHashesEqual from '../../../src/inspectors/ensureHashesEqual';
 
 describe('Inspectors test suite', function () {

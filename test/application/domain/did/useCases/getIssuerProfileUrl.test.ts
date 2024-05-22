@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { getIssuerProfileUrl } from '../../../../../src/domain/did/useCases';
 import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 

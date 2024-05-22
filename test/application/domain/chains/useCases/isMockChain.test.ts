@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain';
 import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 

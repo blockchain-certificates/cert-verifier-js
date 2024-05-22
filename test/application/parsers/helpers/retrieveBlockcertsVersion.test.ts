@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import type { BlockcertsVersion } from '../../../../src/parsers/helpers/retrieveBlockcertsVersion';
 import { retrieveBlockcertsVersion } from '../../../../src/parsers/helpers/retrieveBlockcertsVersion';
 import Versions from '../../../../src/constants/certificateVersions';

@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import sinon from 'sinon';
 import domain from '../../../../../src/domain';
 import assertionIonDidDocument from '../../../../assertions/ion-did-document-btc-addresses.json';

@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture.json';

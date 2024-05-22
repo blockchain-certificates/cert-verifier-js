@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import sinon from 'sinon';

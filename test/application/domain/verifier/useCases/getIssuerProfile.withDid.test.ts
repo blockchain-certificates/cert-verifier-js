@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import sinon from 'sinon';
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import fixtureBlockcertsV3Did from '../../../../fixtures/v3/testnet-v3-did.json';

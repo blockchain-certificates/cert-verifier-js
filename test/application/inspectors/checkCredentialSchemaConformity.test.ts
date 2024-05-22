@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll } from 'vitest';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { type VCCredentialSchema } from '../../../src/models/BlockcertsV3';

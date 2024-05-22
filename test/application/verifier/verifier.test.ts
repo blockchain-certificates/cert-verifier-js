@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import sinon from 'sinon';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import { VERIFICATION_STATUSES } from '../../../src';

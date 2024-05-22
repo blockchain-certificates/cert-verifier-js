@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain';
 import { CREDENTIAL_STATUS_OPTIONS } from '../../../../../src/domain/certificates/useCases/generateRevocationReason';
 

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { ensureNotExpired } from '../../../src/inspectors';
 
 describe('Inspectors test suite', function () {

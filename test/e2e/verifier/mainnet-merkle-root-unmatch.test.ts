@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import domain from '../../../src/domain';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';

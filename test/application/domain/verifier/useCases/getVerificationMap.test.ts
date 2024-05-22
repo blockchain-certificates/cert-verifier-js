@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain';
 import verificationMapAssertion from '../../certificates/useCases/assertions/verificationMapAssertion';
 import { SUB_STEPS, VerificationSteps } from '../../../../../src/domain/verifier/entities/verificationSteps';

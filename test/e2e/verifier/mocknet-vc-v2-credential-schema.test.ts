@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';

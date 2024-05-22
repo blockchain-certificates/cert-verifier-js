@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import parseJSON from '../../../src/parsers/index';
 import TestnetV1Valid from '../../fixtures/v1/testnet-valid-1.2.json';
 

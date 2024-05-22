@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did--verification-method-not-referenced.json';
 import sinon from 'sinon';

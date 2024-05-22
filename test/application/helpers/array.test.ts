@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { intersect } from '../../../src/helpers/array';
 
 describe('Array Helper', function () {

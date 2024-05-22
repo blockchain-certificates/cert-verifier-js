@@ -1,3 +1,4 @@
+import { describe, it, expect, afterAll, beforeAll } from 'vitest';
 import sinon from 'sinon';
 import fixture from '../fixtures/v3/proof-chain-example-ed25519.json';
 import { Certificate } from '../../src';

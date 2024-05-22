@@ -12,7 +12,7 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "dts:bundle": "dts-bundle-generator -o ./dist/index.d.ts --project tsconfig.json --no-banner src/index.ts",
-    "test": "jest --setupFilesAfterEnv=./test/setup.ts",
+    "test": "vitest",
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
     "test:build:node": "jest --testRegex \"/*(verifier-node.test.build.js)\" --silent",
     "test:build:cjs": "jest --testRegex \"/*(verifier.test.build.js)\" --silent",
@@ -56,8 +56,8 @@
     ]
   },
   "dependencies": {
-    "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.6",
-    "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.6",
+    "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.7",
+    "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.7",
     "@blockcerts/explorer-lookup": "^1.5.1",
     "@blockcerts/hashlink-verifier": "^1.6.0",
     "@blockcerts/schemas": "^3.6.3",
@@ -88,7 +88,6 @@
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
-    "@types/jest": "^29.5.3",
     "@types/node": "^20.4.5",
     "@types/sinon": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
@@ -110,8 +109,6 @@
     "express": "^4.17.1",
     "husky": "^8.0.1",
     "jasmine-core": "^5.1.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.6.2",
     "karma": "^6.4.2",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.2",
@@ -131,9 +128,9 @@
     "semistandard": "^16.0.0",
     "sinon": "^17.0.1",
     "snazzy": "^9.0.0",
-    "ts-jest": "^29.1.2",
     "tslib": "^2.4.0",
     "typescript": "^5.3.3",
+    "vitest": "^1.6.0",
     "xmlhttprequest": "^1.8.0"
   }
 }

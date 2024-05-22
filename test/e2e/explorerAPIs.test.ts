@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import sinon from 'sinon';
 import * as RequestService from '@blockcerts/explorer-lookup/lib/cjs/services/request.js';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';

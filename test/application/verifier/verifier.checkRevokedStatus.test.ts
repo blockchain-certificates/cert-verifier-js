@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import sinon from 'sinon';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
@@ -111,7 +112,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
     });
 
     describe('and the certificate is revoked', function () {
-      it('should record the verification step success', async function () {
+      it('should record the verification step failure', async function () {
         const fixture = StatusList2021Revoked;
         const verifier = new Verifier({
           certificateJson: fixture,

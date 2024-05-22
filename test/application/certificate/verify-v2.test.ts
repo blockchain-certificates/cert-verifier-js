@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import domain from '../../../src/domain';

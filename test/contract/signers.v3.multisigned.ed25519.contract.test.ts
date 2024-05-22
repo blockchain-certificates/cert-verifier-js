@@ -93,7 +93,7 @@ describe('Certificate API Contract test suite', function () {
         });
 
         it('should expose the chain', function () {
-          expect(instance.signers[1].chain).toBe(ExplorerLookup.BLOCKCHAINS.testnet);
+          expect(instance.signers[1].chain).toEqual(ExplorerLookup.BLOCKCHAINS.testnet);
         });
 
         it('should expose the transactionId', function () {

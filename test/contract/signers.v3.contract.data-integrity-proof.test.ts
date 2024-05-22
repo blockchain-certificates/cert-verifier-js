@@ -50,7 +50,7 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the chain', function () {
-        expect(instance.signers[0].chain).toBe(ExplorerLookup.BLOCKCHAINS.mocknet);
+        expect(instance.signers[0].chain).toEqual(ExplorerLookup.BLOCKCHAINS.mocknet);
       });
     });
   });

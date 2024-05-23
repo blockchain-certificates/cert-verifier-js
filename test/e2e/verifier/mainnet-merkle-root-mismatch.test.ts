@@ -1,9 +1,9 @@
-import { describe, it, expect, afterAll, beforeAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import MainnetInvalidMerkleReceipt from '../../fixtures/v2/mainnet-invalid-merkle-receipt-2.0.json';
 import issuerBlockcertsV2a from '../../fixtures/issuer-blockcerts-v2a.json';
+import MainnetMerkleRootUmmatch from '../../fixtures/v2/mainnet-merkle-root-unmatch-2.0.json';
 
-describe('given the certificate is a mainnet with an invalid merkle receipt', function () {
+describe('given the certificate is a mainnet with a not matching merkle root', function () {
   let certificate;
   let result;
 
@@ -19,17 +19,16 @@ describe('given the certificate is a mainnet with an invalid merkle receipt', fu
           }
         },
         lookForTx: () => ({
-          remoteHash: 'f029b45bb1a7b1f0b970f6de35344b73cccd16177b4c037acbc2541c7fc27078',
+          remoteHash: '7570ad1a939b1d733668125df3e71ebbd593358e7d851eff3fdebd487462daab',
           issuingAddress: 'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj',
-          time: '2017-06-29T22:10:29.000Z',
+          time: '2017-05-03T17:06:19.000Z',
           revokedAddresses: [
             'msBCHdwaQ7N2ypBYupkp6uNxtr9Pg76imj'
           ]
         })
       };
     });
-
-    certificate = new Certificate(MainnetInvalidMerkleReceipt);
+    certificate = new Certificate(MainnetMerkleRootUmmatch);
     await certificate.init();
     result = await certificate.verify();
   });
@@ -43,6 +42,6 @@ describe('given the certificate is a mainnet with an invalid merkle receipt', fu
   });
 
   it('should expose the error message', function () {
-    expect(result.message).toBe('Invalid Merkle Receipt. Proof hash did not match Merkle root');
+    expect(result.message).toBe('Merkle root does not match remote hash.');
   });
 });

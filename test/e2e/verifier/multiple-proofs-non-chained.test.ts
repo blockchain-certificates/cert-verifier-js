@@ -1,32 +1,41 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Certificate } from '../../../src';
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import fixture from '../../fixtures/v3/example-non-chained-proofs.json';
-import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
+import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('proof chain example', function () {
-  let instance;
+  let certificate;
+  let result;
 
-  beforeEach(async function () {
-    const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureIssuerProfile));
-    instance = new Certificate(fixture as any);
-    await instance.init();
+  beforeAll(async function () {
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+            return JSON.stringify(fixtureBlockcertsIssuerProfile);
+          }
+        }
+      };
+    });
+    certificate = new Certificate(fixture);
+    await certificate.init();
+    result = await certificate.verify();
   });
 
-  afterEach(function () {
-    sinon.restore();
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
-  it('verifies as expected', async function () {
-    const result = await instance.verify();
+  it('verifies successfully', function () {
+    expect(result.status).toBe('success');
+  });
+
+  it('returns the expected validation message', function () {
     expect(result.message).toEqual({
       description: 'All the signatures of this certificate have successfully verified.',
       label: 'Verified'
     });
-    expect(result.status).toBe('success');
   });
 });

@@ -1,5 +1,4 @@
-import { describe, it, expect, afterAll, beforeAll } from 'vitest';
-import sinon from 'sinon';
+import { describe, it, expect, afterAll, beforeAll, vi } from 'vitest';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate } from '../../src';
 import BlockcertsV3DataIntegrityProof from '../fixtures/v3/mocknet-vc-v2-data-integrity-proof.json';
@@ -11,18 +10,25 @@ describe('Certificate API Contract test suite', function () {
       let instance;
 
       beforeAll(async function () {
-        const requestStub = sinon.stub(ExplorerLookup, 'request');
-        requestStub.withArgs({
-          url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-        }).resolves(JSON.stringify(fixtureBlockcertsIssuerProfile));
+        vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+          const explorerLookup = await importOriginal();
+          return {
+            ...explorerLookup,
+            // replace some exports
+            request: async function ({ url }) {
+              if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+                return JSON.stringify(fixtureBlockcertsIssuerProfile);
+              }
+            }
+          };
+        });
         instance = new Certificate(BlockcertsV3DataIntegrityProof);
         await instance.init();
         await instance.verify();
       });
 
       afterAll(function () {
-        instance = null;
-        sinon.restore();
+        vi.restoreAllMocks();
       });
 
       it('should expose the signingDate', function () {

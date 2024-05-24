@@ -1,6 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { checkRevocationStatusList2021 } from '../../../src/inspectors';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
@@ -8,21 +6,48 @@ import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-re
 import StatusList2021Suspended from '../../fixtures/v3/cert-rl-status-list-2021-suspended.json';
 import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
 
-describe('checkRevocationStatusList2021 inspector test suite', function () {
-  let requestStub: sinon.SinonStub;
+const tamperedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--tampered.json';
+const undefinedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--undefined.json';
+const notFoundListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--not-found.json';
 
+describe('checkRevocationStatusList2021 inspector test suite', function () {
   beforeAll(function () {
-    requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
-    }).resolves(JSON.stringify(BlockcertsStatusList2021));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
-    }).resolves(JSON.stringify(BlockcertsStatusList2021Suspension));
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021.json') {
+            return JSON.stringify(BlockcertsStatusList2021);
+          }
+
+          if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json') {
+            return JSON.stringify(BlockcertsStatusList2021Suspension);
+          }
+
+          if (url === tamperedListUrl) {
+            return JSON.stringify({
+              ...BlockcertsStatusList2021,
+              credentialSubject: {
+                encodedList: 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA'
+              }
+            });
+          }
+
+          if (url === undefinedListUrl) {
+            return undefined;
+          }
+
+          if (url === notFoundListUrl) {
+            return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
+          }
+        }
+      };
+    });
   });
 
   afterAll(function () {
-    sinon.restore();
+    vi.restoreAllMocks();
   });
 
   describe('when the certificate has been revoked', function () {
@@ -43,48 +68,48 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
 
   describe('when the certificate has not been revoked nor suspended', function () {
     it('should verify', async function () {
-      // eslint-disable-next-line   @typescript-eslint/await-thenable
-      await expect(async () => {
+      let failed = false;
+
+      try {
         await checkRevocationStatusList2021(StatusList2021.credentialStatus);
-      }).resolves;
+      } catch {
+        failed = true;
+      }
+
+      expect(failed).toBe(false);
     });
   });
 
   describe('when the revocation list has been tampered with', function () {
     it('should throw', async function () {
-      const tamperedList = JSON.parse(JSON.stringify(BlockcertsStatusList2021));
-      tamperedList.credentialSubject.encodedList = 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA';
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
-      }).resolves(JSON.stringify(tamperedList));
+      const tamperedList = JSON.parse(JSON.stringify(StatusList2021Revoked));
+      tamperedList.credentialStatus.statusListCredential = tamperedListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
+        await checkRevocationStatusList2021(tamperedList.credentialStatus);
       }).rejects.toThrow('The authenticity of the revocation list could not be verified.');
     });
   });
 
   describe('when no revocation list could be retrieved at the URL', function () {
     it('should throw', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
-      }).resolves(undefined);
+      const undefinedList = JSON.parse(JSON.stringify(StatusList2021Revoked));
+      undefinedList.credentialStatus.statusListCredential = undefinedListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
-      }).rejects.toThrow('No status list could be found at the specified URL for \'statusListCredential\': https://www.blockcerts.org/samples/3.0/status-list-2021.json.');
+        await checkRevocationStatusList2021(undefinedList.credentialStatus);
+      }).rejects.toThrow(`No status list could be found at the specified URL for 'statusListCredential': ${undefinedListUrl}.`);
     });
   });
 
   describe('when the revocation list URL yields a 404 rejection', function () {
     it('should throw', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
-      }).rejects('Error fetching url:https://www.blockcerts.org/samples/3.0/status-list-2021.json; status code:404');
+      const notFoundList = JSON.parse(JSON.stringify(StatusList2021Revoked));
+      notFoundList.credentialStatus.statusListCredential = notFoundListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
-      }).rejects.toThrow('No status list could be found at the specified URL for \'statusListCredential\': https://www.blockcerts.org/samples/3.0/status-list-2021.json.');
+        await checkRevocationStatusList2021(notFoundList.credentialStatus);
+      }).rejects.toThrow(`No status list could be found at the specified URL for 'statusListCredential': ${notFoundListUrl}.`);
     });
   });
 });

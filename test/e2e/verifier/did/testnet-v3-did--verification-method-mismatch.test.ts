@@ -18,7 +18,7 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
                 return JSON.stringify(fixtureIssuerProfile);
               }
 
-              if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+              if (url === `${universalResolverUrl}/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA`) {
                 return JSON.stringify({ didDocument });
               }
             },

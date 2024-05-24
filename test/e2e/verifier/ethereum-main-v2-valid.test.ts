@@ -9,7 +9,7 @@ describe('given the certificate is a valid ethereum main', function () {
       return {
         ...explorerLookup,
         request: async function ({ url }) {
-          if (url === 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json?raw=true') {
+          if (url === 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth-mainnet.json?raw=true') {
             return JSON.stringify({
               '@context': [
                 'https://w3id.org/openbadges/v2',

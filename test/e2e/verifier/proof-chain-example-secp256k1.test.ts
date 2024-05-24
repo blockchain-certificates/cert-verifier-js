@@ -22,12 +22,14 @@ describe('proof chain example', function () {
             return JSON.stringify({ didDocument });
           }
         },
-        lookForTx: () => ({
-          remoteHash: '99d1c6fdb496eae6aa2e357833877ebe4187765780e43a4107fb7abd5968de78',
-          issuingAddress: '0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60',
-          time: '2022-07-15T16:03:48.000Z',
-          revokedAddresses: []
-        })
+        lookForTx: function () {
+          return {
+            remoteHash: '99d1c6fdb496eae6aa2e357833877ebe4187765780e43a4107fb7abd5968de78',
+            issuingAddress: '0x40cf9b7db6fcc742ad0a76b8588c7f8de2b54a60',
+            time: '2022-07-15T16:03:48.000Z',
+            revokedAddresses: []
+          };
+        }
       };
     });
 

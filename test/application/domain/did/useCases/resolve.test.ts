@@ -8,7 +8,6 @@ const didUri = 'did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q';
 const spy = vi.fn();
 
 describe('domain did resolve test suite', function () {
-
   beforeEach(function () {
     vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
       const explorerLookup = await importOriginal();

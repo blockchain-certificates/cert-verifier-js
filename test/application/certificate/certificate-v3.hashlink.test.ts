@@ -1,6 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 import hashlinkAssertion from '../../assertions/hashlink';
 import { Certificate } from '../../../src';
@@ -17,35 +15,43 @@ global.TextDecoder = TextDecoder;
 describe('Certificate v3 test suite', function () {
   let certificate;
 
-  beforeEach(function () {
-    const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-    }).resolves(JSON.stringify({ didDocument }));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureIssuerProfile));
-    requestStub.withArgs({
-      url: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json'
-    }).resolves(JSON.stringify({
-      '@context': [
-        'https://w3id.org/openbadges/v2',
-        'https://w3id.org/blockcerts/3.0'
-      ],
-      type: 'Profile',
-      id: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json',
-      publicKey: [
-        {
-          id: 'ecdsa-koblitz-pubkey:0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c', // address may be different
-          created: '2018-01-01T21:10:10.615+00:00'
+  beforeAll(function () {
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+            return JSON.stringify({ didDocument });
+          }
+
+          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+            return JSON.stringify(fixtureIssuerProfile);
+          }
+
+          if (url === 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json') {
+            return JSON.stringify({
+              '@context': [
+                'https://w3id.org/openbadges/v2',
+                'https://w3id.org/blockcerts/3.0'
+              ],
+              type: 'Profile',
+              id: 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json',
+              publicKey: [
+                {
+                  id: 'ecdsa-koblitz-pubkey:0x3d995ef85a8d1bcbed78182ab225b9f88dc8937c', // address may be different
+                  created: '2018-01-01T21:10:10.615+00:00'
+                }
+              ]
+            });
+          }
         }
-      ]
-    }));
+      };
+    });
   });
 
-  afterEach(function () {
-    certificate = null;
-    sinon.restore();
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
   describe('given the certificate display html property contains hashlinks', function () {

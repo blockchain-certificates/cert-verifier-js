@@ -15,7 +15,7 @@ describe('given the certificate is a revoked ethereum main', function () {
         // replace some exports
         request: async function ({ url }) {
           if (url === 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json?raw=true') {
-            return Promise.resolve(JSON.stringify({
+            return await Promise.resolve(JSON.stringify({
               '@context': [
                 'https://w3id.org/openbadges/v2',
                 'https://w3id.org/blockcerts/3.0'
@@ -33,7 +33,7 @@ describe('given the certificate is a revoked ethereum main', function () {
           }
 
           if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json?assertionId=urn%3Auuid%3A3bc1a96a-3501-46ed-8f75-49612bbac257') {
-            return Promise.resolve(JSON.stringify({
+            return await Promise.resolve(JSON.stringify({
               revokedAssertions: [{
                 id: 'urn:uuid:3bc1a96a-3501-46ed-8f75-49612bbac257',
                 revocationReason: 'Accidentally issued to Ethereum.'

@@ -4,7 +4,6 @@ import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didRe
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
-import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 
 const fixture = BlockcertsV3;
 const assertionIssuerProfile = {
@@ -24,7 +23,6 @@ describe('Parser v3 test suite', function () {
 
   describe('given it is called with valid v3 certificate data', function () {
     let parsedCertificate;
-    let requestStub;
 
     beforeAll(async function () {
       vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {

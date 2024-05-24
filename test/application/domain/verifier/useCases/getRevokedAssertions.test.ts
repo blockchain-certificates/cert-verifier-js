@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture.json';
 
@@ -9,8 +9,7 @@ const issuerIdFixtureRejects = 'http://domain.tld/rejects';
 const errorMessageAssertion = 'Unable to get revocation assertions';
 
 describe('Verifier domain getRevokedAssertions use case test suite', function () {
-
-  beforeEach(function () {
+  beforeAll(function () {
     vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
       const explorerLookup = await importOriginal();
       return {
@@ -26,7 +25,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
           }
 
           if (url === issuerIdFixtureRejects) {
-            return Promise.reject(errorMessageAssertion);
+            return await Promise.reject(errorMessageAssertion);
           }
 
           return JSON.stringify(revokedAssertionsFixture);
@@ -35,7 +34,7 @@ describe('Verifier domain getRevokedAssertions use case test suite', function ()
     });
   });
 
-  afterEach(function () {
+  afterAll(function () {
     vi.restoreAllMocks();
   });
 

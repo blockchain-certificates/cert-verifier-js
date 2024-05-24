@@ -14,7 +14,7 @@ describe('given the certificate is a tampered ethereum', function () {
         // replace some exports
         request: async function ({ url }) {
           if (url === 'https://raw.githubusercontent.com/AnthonyRonning/https-github.com-labnol-files/master/issuer-eth.json?raw=true') {
-            return Promise.resolve({
+            return JSON.stringify({
               '@context': [
                 'https://w3id.org/openbadges/v2',
                 'https://w3id.org/blockcerts/3.0'

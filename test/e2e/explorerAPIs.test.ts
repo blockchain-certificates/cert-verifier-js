@@ -51,7 +51,7 @@ describe('explorerAPIs end to end test suite', function () {
         const instance = new Certificate(BlockcertsV3, { explorerAPIs: [explorerAPI] });
         await instance.init();
         await instance.verify();
-        expect(parsingFunctionSpy).toHaveBeenCalled();
+        expect(parsingFunctionSpy.mock.calls.length > 0).toBe(true);
       });
     });
   });

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi} from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import issuerBlockcertsV1 from '../../fixtures/issuer-blockcerts-v1.json';
 import TestnetV2ValidV1Issuer from '../../fixtures/v2/testnet-valid-v1-issuer-2.0.json';

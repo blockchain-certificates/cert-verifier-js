@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import crypto from 'node:crypto';
-const verifier = require('../../dist/verifier');
+import verifier from '../../dist/verifier';
 
 // @ts-expect-error we just mock the thing
 global.XMLHttpRequest = FakeXmlHttpRequest;
@@ -11,7 +11,7 @@ global.crypto.subtle = crypto.webcrypto.subtle;
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
     const certificate = new verifier.Certificate(FIXTURES.TestnetV1Valid);
-    expect(async () => {
+    await expect(async () => {
       await certificate.init();
     }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
       'See the python cert-verifier for v1.1 verification ' +

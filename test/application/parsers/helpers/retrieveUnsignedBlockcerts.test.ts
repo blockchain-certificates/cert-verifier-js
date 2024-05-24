@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import retrieveUnsignedBlockcerts from '../../../../src/parsers/helpers/retrieveUnsignedBlockcerts';
 import EthereumMainV2Valid from '../../../fixtures/v2/ethereum-main-valid-2.0.json';
 import BlockcertsV3 from '../../../fixtures/v3/testnet-v3-did.json';

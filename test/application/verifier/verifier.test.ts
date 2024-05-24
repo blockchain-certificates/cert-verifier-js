@@ -1,22 +1,20 @@
-import sinon from 'sinon';
+import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import { VERIFICATION_STATUSES } from '../../../src';
 import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
 import Verifier from '../../../src/verifier';
-import domain from '../../../src/domain';
 import { deepCopy } from '../../../src/helpers/object';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { SUB_STEPS, VerificationSteps } from '../../../src/domain/verifier/entities/verificationSteps';
 import verificationStepsV2Mainnet from '../../assertions/verification-steps-v2-mainnet';
 import type { ExplorerAPI } from '@blockcerts/explorer-lookup';
 import type { IVerificationMapItem } from '../../../src/models/VerificationMap';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 import fixtureMainnetIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
-import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
-import v3RevocationList from '../../assertions/v3-revocation-list';
 import fixtureV2MainnetValid from '../../fixtures/v2/mainnet-valid-2.0.json';
 import fixtureBlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
+
+const spy = vi.fn();
 
 describe('Verifier entity test suite', function () {
   let verifierInstance: Verifier;
@@ -34,25 +32,38 @@ describe('Verifier entity test suite', function () {
     }
   };
 
-  beforeEach(function () {
-    const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-    }).resolves(JSON.stringify({ didDocument }));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureBlockcertsIssuerProfile));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json'
-    }).resolves(JSON.stringify(v3RevocationList));
-    requestStub.withArgs({
-      url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
-    }).resolves(JSON.stringify(fixtureMainnetIssuerProfile));
+  beforeAll(function () {
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+            return JSON.stringify(fixtureMainnetIssuerProfile);
+          }
+        },
+        lookForTx: function (args) {
+          spy(args);
+          return {
+            remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+            issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+            time: '2018-02-08T00:23:34.000Z',
+            revokedAddresses: [
+              '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+            ]
+          };
+        }
+      };
+    });
+  });
+
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
   afterEach(function () {
+    spy.mockClear();
     verifierInstance = null;
-    sinon.restore();
   });
 
   describe('constructor method', function () {
@@ -91,12 +102,11 @@ describe('Verifier entity test suite', function () {
               ]
             };
 
-            const lookForTxSpy: sinon.SinonStub = sinon.stub(domain.verifier, 'lookForTx');
             const instance = new Verifier(parametersWithExporerAPI);
             await instance.init();
             await instance.verify();
-            expect(lookForTxSpy.firstCall.args[0].explorerAPIs).toEqual(parametersWithExporerAPI.explorerAPIs);
-            lookForTxSpy.restore();
+            console.log(spy.mock.calls);
+            expect(spy.mock.calls[0][0].explorerAPIs).toEqual(parametersWithExporerAPI.explorerAPIs);
           });
         });
       });
@@ -104,14 +114,6 @@ describe('Verifier entity test suite', function () {
       describe('verify method', function () {
         describe('when starting a new verification process', function () {
           it('should reset the step status property', async function () {
-            sinon.stub(domain.verifier, 'lookForTx').resolves({
-              remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-              issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-              time: '2018-02-08T00:23:34.000Z',
-              revokedAddresses: [
-                '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-              ]
-            });
             const instance = new Verifier(verifierParamFixture);
             await instance.init();
             await instance.verify();

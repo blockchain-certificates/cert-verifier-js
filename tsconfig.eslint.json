@@ -6,6 +6,7 @@
   "compileOnSave": false,
   "include": [
     "src",
-    "test"
+    "test",
+    "vitest.config.ts"
   ]
 }

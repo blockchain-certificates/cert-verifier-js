@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import v2EthFixture from '../../assertions/v2.0-ethereum-main-signature-merkle2017.json';
 import v3EthFixture from '../../assertions/v3.0-alpha-signature-merkle2019.json';
 import ensureValidReceipt from '../../../src/inspectors/ensureValidReceipt';

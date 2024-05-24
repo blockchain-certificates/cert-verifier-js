@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import parseIssuerKeys from '../../../../../src/domain/verifier/useCases/parseIssuerKeys';
 import issuerProfileV1JsonFixture from './fixtures/issuerProfileV1JsonFixture';
 import issuerProfileV2JsonFixture from './fixtures/issuerProfileV2JsonFixture';

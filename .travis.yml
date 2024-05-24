@@ -7,7 +7,7 @@ branches:
   only:
     - master
 before_script:
-  - npm run test -- --silent --noStackTrace
+  - npm run test -- --silent
   - npm run lint
 script:
   - npm run build

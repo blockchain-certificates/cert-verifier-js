@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { Certificate } from '../../../src';
 import TestnetV1Valid from '../../fixtures/v1/testnet-valid-1.2.json';
 

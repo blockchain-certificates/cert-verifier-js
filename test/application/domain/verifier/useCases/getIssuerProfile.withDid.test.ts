@@ -1,8 +1,7 @@
-import sinon from 'sinon';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIssuerProfile';
 import fixtureBlockcertsV3Did from '../../../../fixtures/v3/testnet-v3-did.json';
 import type { Issuer } from '../../../../../src/models/Issuer';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { universalResolverUrl } from '../../../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../../fixtures/issuer-profile.json';
@@ -10,26 +9,36 @@ import didKeyDocument from '../../../../fixtures/did/did:key:z6MkjHnntGvtLjwfAMH
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   describe('given the issuer profile refers to a DID', function () {
-    let requestStub: sinon.SinonStub;
-    let issuerProfile: Issuer;
+    beforeAll(async function () {
+      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+        const explorerLookup = await importOriginal();
+        return {
+          ...explorerLookup,
+          // replace some exports
+          request: async function ({ url }) {
+            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+              return JSON.stringify({ didDocument });
+            }
 
-    beforeEach(async function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request');
-      requestStub.withArgs({
-        url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-      }).resolves(JSON.stringify({ didDocument }));
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
+            if (url === `${universalResolverUrl}/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs`) {
+              return JSON.stringify({ didDocument: didKeyDocument });
+            }
+
+            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+              return JSON.stringify(fixtureIssuerProfile);
+            }
+          }
+        };
+      });
     });
 
-    afterEach(function () {
-      requestStub.restore();
-      issuerProfile = null;
+    afterAll(function () {
+      vi.restoreAllMocks();
     });
 
     describe('and the DID method resolution is supported', function () {
-      beforeEach(async function () {
+      let issuerProfile: Issuer;
+      beforeAll(async function () {
         issuerProfile = await getIssuerProfile(fixtureBlockcertsV3Did.issuer);
       });
 
@@ -58,10 +67,6 @@ describe('Verifier domain getIssuerProfile use case test suite', function () {
           }
         }
         global.Date = MockDate as any;
-
-        requestStub.withArgs({
-          url: `${universalResolverUrl}/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs`
-        }).resolves(JSON.stringify({ didDocument: didKeyDocument }));
 
         const result = await getIssuerProfile(didKeyDocument.id);
         expect(result).toEqual({

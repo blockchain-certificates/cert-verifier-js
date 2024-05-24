@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import blockcertsV3Fixture from '../../fixtures/v3/testnet-v3-did.json';
 import computeLocalHash, { getUnmappedFields } from '../../../src/inspectors/computeLocalHash';
 

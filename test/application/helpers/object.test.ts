@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { deepCopy, isObject } from '../../../src/helpers/object';
 
 describe('deepCopy method', function () {

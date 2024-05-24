@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import currentLocale from '../../../../../src/constants/currentLocale';
 import domain from '../../../../../src/domain';
 

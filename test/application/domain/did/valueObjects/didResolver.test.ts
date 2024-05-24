@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import DidResolver, { universalResolverUrl } from '../../../../../src/domain/did/valueObjects/didResolver';
 
 describe('didResolverUrl value object test suite', function () {

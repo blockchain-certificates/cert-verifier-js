@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain';
 
 describe('addresses domain is mainnet test suite', function () {

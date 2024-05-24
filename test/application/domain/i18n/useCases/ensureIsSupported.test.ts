@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach } from 'vitest';
 import domain from '../../../../../src/domain';
 
 describe('domain i18n ensureIsSupported use case test suite', function () {

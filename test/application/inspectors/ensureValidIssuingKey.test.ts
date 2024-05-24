@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import type { IssuerPublicKeyList } from '../../../src/models/Issuer';
 import { ensureValidIssuingKey } from '../../../src/inspectors';
 

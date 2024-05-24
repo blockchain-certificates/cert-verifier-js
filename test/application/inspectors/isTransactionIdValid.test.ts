@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import isTransactionIdValid from '../../../src/inspectors/isTransactionIdValid';
 
 describe('Inspectors test suite', function () {

@@ -1,5 +1,4 @@
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import { Certificate } from '../../../src';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -7,22 +6,40 @@ import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
 import notAnIssuerProfile from '../../fixtures/v3/testnet-v3--no-did.json';
 
+const errorIssuerProfileRejectsURL = 'https://failing.url';
+const notAnIssuerProfileURL = 'https://not.issuer.profile.url';
+
 describe('Certificate entity test suite', function () {
   const fixture = BlockcertsV3;
-  let requestStub;
 
-  beforeEach(function () {
-    requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-    }).resolves(JSON.stringify({ didDocument }));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureIssuerProfile));
+  beforeAll(function () {
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+            return JSON.stringify({ didDocument });
+          }
+
+          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+            return JSON.stringify(fixtureIssuerProfile);
+          }
+
+          if (url === errorIssuerProfileRejectsURL) {
+            return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
+          }
+
+          if (url === notAnIssuerProfileURL) {
+            return JSON.stringify(notAnIssuerProfile);
+          }
+        }
+      };
+    });
   });
 
-  afterEach(function () {
-    sinon.restore();
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
   describe('constructor method', function () {
@@ -117,10 +134,9 @@ describe('Certificate entity test suite', function () {
 
       describe('when the issuer profile URL yields a server error', function () {
         it('should throw an error', async function () {
-          requestStub.withArgs({
-            url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-          }).rejects();
-          const certificate = new Certificate(fixture);
+          const errorIssuerCertificate = JSON.parse(JSON.stringify(fixture));
+          errorIssuerCertificate.issuer = errorIssuerProfileRejectsURL;
+          const certificate = new Certificate(errorIssuerCertificate);
           await expect(certificate.init())
             .rejects
             .toThrow('Unable to get issuer profile');
@@ -129,10 +145,9 @@ describe('Certificate entity test suite', function () {
 
       describe('when the issuer profile URL is not of a issuer profile', function () {
         it('should throw an error', async function () {
-          requestStub.withArgs({
-            url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-          }).resolves(JSON.stringify(notAnIssuerProfile));
-          const certificate = new Certificate(fixture);
+          const notAnIssuerProfileCertificate = JSON.parse(JSON.stringify(fixture));
+          notAnIssuerProfileCertificate.issuer = notAnIssuerProfileURL;
+          const certificate = new Certificate(notAnIssuerProfileCertificate);
           await expect(certificate.init())
             .rejects
             .toThrow('Unable to get issuer profile - retrieved file does not seem to be a valid profile');

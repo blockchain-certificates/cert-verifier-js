@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import ensureMerkleRootEqual from '../../../src/inspectors/ensureMerkleRootEqual';
 
 describe('Inspectors test suite', function () {

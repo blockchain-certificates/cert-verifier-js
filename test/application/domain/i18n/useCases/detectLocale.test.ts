@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import domain from '../../../../../src/domain';
 
 global.navigator = {} as any;

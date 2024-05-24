@@ -1,6 +1,5 @@
+import { describe, it, expect, beforeAll, beforeEach, vi, afterAll } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import MocknetVCV2CredentialSchema from '../../fixtures/v3/mocknet-vc-v2-credential-schema.json';
 import MocknetVCV2CredentialSchemaInvalid from '../../fixtures/v3/mocknet-vc-v2-credential-schema-invalid.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
@@ -8,13 +7,26 @@ import fixtureCredentialSchema from '../../fixtures/credential-schema-example-id
 
 describe('given the certificate is a valid mocknet (v3.0)', function () {
   beforeAll(function () {
-    const requestStub = sinon.stub(ExplorerLookup, 'request');
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-    }).resolves(JSON.stringify(fixtureBlockcertsIssuerProfile));
-    requestStub.withArgs({
-      url: 'https://www.blockcerts.org/samples/3.0/example-id-card-schema.json'
-    }).resolves(JSON.stringify(fixtureCredentialSchema));
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        // replace some exports
+        request: async function ({ url }) {
+          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+            return JSON.stringify(fixtureBlockcertsIssuerProfile);
+          }
+
+          if (url === 'https://www.blockcerts.org/samples/3.0/example-id-card-schema.json') {
+            return JSON.stringify(fixtureCredentialSchema);
+          }
+        }
+      };
+    });
+  });
+
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
   describe('and complies with its json schema definition', function () {

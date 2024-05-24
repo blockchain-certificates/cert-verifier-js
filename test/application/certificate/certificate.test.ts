@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Certificate } from '../../../src';
 import type { CertificateOptions } from '../../../src/certificate';
 import type { TransactionData } from '../../../src/models/TransactionData';

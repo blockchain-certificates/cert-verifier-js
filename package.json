@@ -109,6 +109,7 @@
     "express": "^4.17.1",
     "husky": "^8.0.1",
     "jasmine-core": "^5.1.0",
+    "jsdom": "^24.0.0",
     "karma": "^6.4.2",
     "karma-chrome-launcher": "^3.2.0",
     "karma-firefox-launcher": "^2.1.2",

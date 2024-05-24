@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { VERIFICATION_STATUSES } from '../../src';
 import FIXTURES from '../fixtures';
 
@@ -11,7 +12,7 @@ describe('verifier build test suite', function () {
       }),
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
-    }).then((res) => res.json());
+    }).then(async (res) => await res.json());
     expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
 
@@ -24,7 +25,7 @@ describe('verifier build test suite', function () {
       }),
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
-    }).then((res) => res.json());
+    }).then(async (res) => await res.json());
     expect(verificationStatus.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
 });

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain/index';
 import type { Receipt } from '../../../../../src/models/Receipt';
 

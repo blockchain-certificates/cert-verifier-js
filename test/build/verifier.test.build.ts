@@ -1,11 +1,8 @@
-/**
- * @jest-environment jsdom
- */
-
+import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
-import { Certificate } from '../../dist/verifier-es';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
+import verifier from '../../dist/verifier';
 
 // @ts-expect-error we just mock the thing
 global.XMLHttpRequest = FakeXmlHttpRequest;
@@ -13,7 +10,7 @@ global.crypto.subtle = crypto.webcrypto.subtle;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
-    const certificate = new Certificate(FIXTURES.TestnetV1Valid);
+    const certificate = new verifier.Certificate(FIXTURES.TestnetV1Valid);
     await expect(async () => {
       await certificate.init();
     }).rejects.toThrow('Verification of v1 certificates is not supported by this component. ' +
@@ -23,7 +20,7 @@ describe('verifier build test suite', function () {
   });
 
   it('works as expected with a v2 certificate', async function () {
-    const certificate = new Certificate(FIXTURES.MainnetV2Valid);
+    const certificate = new verifier.Certificate(FIXTURES.MainnetV2Valid);
     await certificate.init();
     const result = await certificate.verify();
     if (result.status === 'failure') {
@@ -39,7 +36,7 @@ describe('verifier build test suite', function () {
   }, 30000);
 
   it('works as expected with a v3 certificate', async function () {
-    const certificate = new Certificate(FIXTURES.BlockcertsV3);
+    const certificate = new verifier.Certificate(FIXTURES.BlockcertsV3);
     await certificate.init();
     const result = await certificate.verify();
     if (result.status === 'failure') {

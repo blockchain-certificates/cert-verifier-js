@@ -1,24 +1,50 @@
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
 import { type VCCredentialSchema } from '../../../src/models/BlockcertsV3';
 import checkCredentialSchemaConformity from '../../../src/inspectors/checkCredentialSchemaConformity';
 
 describe('checkCredentialSchemaConformity inspector test suite', function () {
-  let requestStub;
-
   beforeAll(function () {
-    requestStub = sinon.stub(ExplorerLookup, 'request');
+    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+      const explorerLookup = await importOriginal();
+      return {
+        ...explorerLookup,
+        request: async function ({ url }) {
+          if (url === 'https://path.to.non.json.schema') {
+            return 'not a json file';
+          }
+
+          if (url === 'https://path.to.json.schema') {
+            return JSON.stringify({
+              $schema: 'http://json-schema.org/draft-04/schema#',
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string'
+                },
+                name: {
+                  type: 'string'
+                }
+              },
+              required: [
+                'id',
+                'name'
+              ]
+            });
+          }
+        }
+      };
+    });
+  });
+
+  afterAll(function () {
+    vi.restoreAllMocks();
   });
 
   describe('when the schema url does not return a proper json object', function () {
     it('should throw an error', async function () {
-      requestStub.withArgs({
-        url: 'https://path.to.json.schema'
-      }).resolves('not a json file');
-
       const credentialSchema: VCCredentialSchema = {
         type: 'JsonSchema',
-        id: 'https://path.to.json.schema'
+        id: 'https://path.to.non.json.schema'
       };
 
       const credentialSubject = {
@@ -27,31 +53,12 @@ describe('checkCredentialSchemaConformity inspector test suite', function () {
 
       await expect(async () => {
         await checkCredentialSchemaConformity(credentialSubject, credentialSchema);
-      }).rejects.toThrow('Specified schema at url: https://path.to.json.schema could not be parsed');
+      }).rejects.toThrow('Specified schema at url: https://path.to.non.json.schema could not be parsed');
     });
   });
 
   describe('when the credentialSubject object does not comply with the json schema', function () {
     it('should throw an error', async function () {
-      requestStub.withArgs({
-        url: 'https://path.to.json.schema'
-      }).resolves(JSON.stringify({
-        $schema: 'http://json-schema.org/draft-04/schema#',
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string'
-          },
-          name: {
-            type: 'string'
-          }
-        },
-        required: [
-          'id',
-          'name'
-        ]
-      }));
-
       const credentialSchema: VCCredentialSchema = {
         type: 'JsonSchema',
         id: 'https://path.to.json.schema'
@@ -69,25 +76,6 @@ describe('checkCredentialSchemaConformity inspector test suite', function () {
 
   describe('when the credentialSubject object complies with the json schema', function () {
     it('should not throw', async function () {
-      requestStub.withArgs({
-        url: 'https://path.to.json.schema'
-      }).resolves(JSON.stringify({
-        $schema: 'http://json-schema.org/draft-04/schema#',
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string'
-          },
-          name: {
-            type: 'string'
-          }
-        },
-        required: [
-          'id',
-          'name'
-        ]
-      }));
-
       const credentialSchema: VCCredentialSchema = {
         type: 'JsonSchema',
         id: 'https://path.to.json.schema'
@@ -98,9 +86,15 @@ describe('checkCredentialSchemaConformity inspector test suite', function () {
         name: 'John Doe'
       };
 
-      expect(async () => {
+      let failed = false;
+
+      try {
         await checkCredentialSchemaConformity(credentialSubject, credentialSchema);
-      }).not.toThrow();
+      } catch {
+        failed = true;
+      }
+
+      expect(failed).toBe(false);
     });
   });
 });

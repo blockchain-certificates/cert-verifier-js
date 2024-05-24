@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { toByteArray, toUTF8Data } from '../../../src/helpers/data';
 
 describe('data helper test suite', function () {

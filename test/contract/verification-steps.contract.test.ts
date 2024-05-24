@@ -1,5 +1,4 @@
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { Certificate } from '../../src';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
@@ -23,77 +22,76 @@ import BlockcertsV3CredentialSchema from '../fixtures/v3/mocknet-vc-v2-credentia
 
 describe('Certificate API Contract test suite', function () {
   describe('verificationSteps property', function () {
-    let requestStub;
+    beforeAll(function () {
+      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+        const explorerLookup = await importOriginal();
+        return {
+          ...explorerLookup,
+          // replace some exports
+          request: async function ({ url }) {
+            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+              return JSON.stringify(fixtureIssuerProfile);
+            }
 
-    beforeEach(function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request');
+            if (url === 'https://www.blockcerts.org/samples/2.0/issuer-testnet.json') {
+              return JSON.stringify(v2RegtestIssuerProfile);
+            }
+
+            if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+              return JSON.stringify(v2IssuerProfile);
+            }
+
+            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+              return JSON.stringify({ didDocument });
+            }
+
+            console.log('url response not mocked', url);
+          }
+        };
+      });
     });
 
-    afterEach(function () {
-      sinon.restore();
+    afterAll(function () {
+      vi.restoreAllMocks();
     });
 
     it('is available for a Mocknet/Regtest certificate', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/2.0/issuer-testnet.json'
-      }).resolves(JSON.stringify(v2RegtestIssuerProfile));
       const instance = new Certificate(RegtestV2Valid);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsV2Regtest);
     });
 
     it('is available for a Mainnet certificate', async function () {
-      requestStub.withArgs({
-        url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
-      }).resolves(JSON.stringify(v2IssuerProfile));
       const instance = new Certificate(MainnetV2Valid);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsV2Mainnet);
     });
 
     it('is available for a V3 certificate with DID', async function () {
-      requestStub.withArgs({
-        url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`
-      }).resolves(JSON.stringify({ didDocument }));
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
       const instance = new Certificate(BlockcertsV3);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsWithDID);
     });
 
     it('is available for a V3 certificate without DID', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
       const instance = new Certificate(BlockcertsV3NoDid);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsNoDID);
     });
 
     it('is available for a V3 certificate with hashlinks to verify', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
       const instance = new Certificate(BlockcertsV3Hashlink);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsHashlink);
     });
 
     it('is available for a V3 certificate with validFrom property set', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
       const instance = new Certificate(BlockcertsV3ValidFrom);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationStepsValidFrom);
     });
 
     it('is available for a V3 certificate with credentialSchema property set', async function () {
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(fixtureIssuerProfile));
       const instance = new Certificate(BlockcertsV3CredentialSchema);
       await instance.init();
       expect(instance.verificationSteps).toEqual(verificationsStepsV3CredentialSchema);

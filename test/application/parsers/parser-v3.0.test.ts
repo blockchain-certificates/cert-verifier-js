@@ -1,5 +1,4 @@
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import parseJSON from '../../../src/parsers';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
@@ -24,25 +23,33 @@ describe('Parser v3 test suite', function () {
 
   describe('given it is called with valid v3 certificate data', function () {
     let parsedCertificate;
-    let requestStub;
 
-    beforeEach(async function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request');
-      requestStub.withArgs({ url: `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ` })
-        .resolves(JSON.stringify({ didDocument }));
-      requestStub.withArgs({
-        url: 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json'
-      }).resolves(JSON.stringify(v3IssuerProfile));
+    beforeAll(async function () {
+      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+        const explorerLookup = await importOriginal();
+        return {
+          ...explorerLookup,
+          // replace some exports
+          request: async function ({ url }) {
+            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+              return JSON.stringify({ didDocument });
+            }
+
+            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+              return JSON.stringify(v3IssuerProfile);
+            }
+          }
+        };
+      });
       parsedCertificate = await parseJSON(fixture);
     });
 
-    afterEach(function () {
-      parsedCertificate = null;
-      requestStub.restore();
+    afterAll(function () {
+      vi.restoreAllMocks();
     });
 
     it('should set the id of the certificate object', function () {
-      expect(parsedCertificate.id).toEqual(fixture.id);
+      expect(parsedCertificate.id).toBe(fixture.id);
     });
 
     it('should set issuedOn of the certificate object', function () {

@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import parseRevocationKey from '../../../../../src/domain/verifier/useCases/parseRevocationKey';
 import issuerProfileNoRevocationKeysFixture from './fixtures/issuerProfileV2JsonFixture';
 import issuerProfileWithRevocationKeysFixture from './fixtures/issuerProfileWithRevocationKeysFixture.json';

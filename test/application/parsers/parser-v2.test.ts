@@ -1,5 +1,4 @@
-import sinon from 'sinon';
-import * as ExplorerLookup from '@blockcerts/explorer-lookup';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import parseJSON from '../../../src/parsers/index';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
@@ -18,19 +17,24 @@ describe('Parser test suite', function () {
 
   describe('given it is called with valid v2 certificate data', function () {
     let parsedCertificate;
-    let requestStub;
 
-    beforeEach(async function () {
-      requestStub = sinon.stub(ExplorerLookup, 'request');
-      requestStub.withArgs({
-        url: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json'
-      }).resolves(JSON.stringify(v2IssuerProfile));
+    beforeAll(async function () {
+      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+        const explorerLookup = await importOriginal();
+        return {
+          ...explorerLookup,
+          request: async function ({ url }) {
+            if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+              return JSON.stringify(v2IssuerProfile);
+            }
+          }
+        };
+      });
       parsedCertificate = await parseJSON(fixture);
     });
 
-    afterEach(function () {
-      parsedCertificate = null;
-      sinon.restore();
+    afterAll(function () {
+      vi.restoreAllMocks();
     });
 
     it('should set the certificateImage of the certificate object', function () {

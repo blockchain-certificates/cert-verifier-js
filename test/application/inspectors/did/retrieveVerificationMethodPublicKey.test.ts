@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { retrieveVerificationMethodPublicKey } from '../../../../src/inspectors';
 
 describe('retrieveVerificationMethodPublicKey test suite', function () {

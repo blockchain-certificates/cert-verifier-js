@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import domain from '../../../../../src/domain';
 
 describe('domain i18n getSupportedLanguages use case test suite', () => {

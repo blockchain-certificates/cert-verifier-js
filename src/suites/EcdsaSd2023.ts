@@ -1,7 +1,9 @@
 import domain from '../domain';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
+// @ts-expect-error: not a typescript package
 import { createVerifyCryptosuite } from '@digitalbazaar/ecdsa-sd-2023-cryptosuite';
+// @ts-expect-error: not a typescript package
 import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 import { Suite } from '../models/Suite';
 import { preloadedContexts } from '../constants';

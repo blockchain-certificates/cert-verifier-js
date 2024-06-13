@@ -8,7 +8,6 @@ import { DataIntegrityProof } from '@digitalbazaar/data-integrity';
 import { Suite } from '../models/Suite';
 import { preloadedContexts } from '../constants';
 import * as inspectors from '../inspectors';
-import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
@@ -29,7 +28,7 @@ export default class EcdsaSd2023 extends Suite {
     SUB_STEPS.checkDocumentSignature
   ];
 
-  public documentToVerify: Blockcerts;
+  public documentToVerify: BlockcertsV3;
   public issuer: Issuer;
   public proof: VCProof;
   public type = 'EcdsaSd2023';
@@ -125,7 +124,7 @@ export default class EcdsaSd2023 extends Suite {
     documents.forEach(document => {
       preloadedContexts[document.url] = document.value;
     });
-    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.getTargetVerificationMethodContainer();
+    preloadedContexts[this.documentToVerify.issuer as string] = this.getTargetVerificationMethodContainer();
     const customLoader = function (url): any {
       if (url in preloadedContexts) {
         return {

@@ -175,7 +175,7 @@ export default class EcdsaSd2023 extends Suite {
       SUB_STEPS.checkDocumentSignature,
       async (): Promise<void> => {
         const suite = new DataIntegrityProof({
-          cryptosuite: createVerifyCryptosuite({ algorithm: 'K-256' })
+          cryptosuite: createVerifyCryptosuite({ requiredAlgorithm: 'K-256' })
         });
         const verificationMethod = this.documentToVerify.proof.verificationMethod;
         const verificationStatus = await jsigs.verify(this.documentToVerify, {

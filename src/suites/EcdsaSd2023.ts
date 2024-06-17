@@ -41,7 +41,7 @@ export default class EcdsaSd2023 extends Suite {
     if (props.executeStep) {
       this.executeStep = props.executeStep;
     }
-    this.documentToVerify = props.document as BlockcertsV3
+    this.documentToVerify = props.document as BlockcertsV3;
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
     this.validateProofType();

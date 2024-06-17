@@ -56,12 +56,20 @@
         "x": "YHzDbKmTSWUisCw4AzY4hzOWDsjM-O8tyJTnFTSR79g",
         "y": "bWCdCls4ukZq7KyWCTOJ8Sta_PJHvCdDIeiRaBD7e98"
       }
+    },
+    {
+      "id": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1-multibase",
+      "controller": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+      "type": "Multikey",
+      "publicKeyMultibase": "zQ3shvX9Dd7cAG7ZcJN4d9DksshpVYSGpqEyrLjopoGpk97CR",
+      "keyAgreement": false
     }
   ],
   "assertionMethod": [
     "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1",
     "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#secp256k1-verification-public-key",
-    "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#secp256k1-derived-public-key"
+    "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#secp256k1-derived-public-key",
+    "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1-multibase"
   ],
   "revocationList": "https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json",
   "email": "",

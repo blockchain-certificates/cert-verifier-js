@@ -220,7 +220,15 @@ export default class MerkleProof2019 extends Suite {
 
   private validateProofType (): void {
     const proofType = this.isProofChain() ? this.proof.chainedProofType : this.proof.type;
-    if (proofType === 'DataIntegrityProof' && this.proof.cryptosuite === this.cryptosuite) {
+    if (proofType === 'DataIntegrityProof') {
+      const proofCryptoSuite = this.proof.cryptosuite;
+      if (!proofCryptoSuite) {
+        throw new Error(`Malformed proof passed. With DataIntegrityProof a cryptosuite must be defined. Expected: ${this.cryptosuite}`);
+      }
+
+      if (proofCryptoSuite !== this.cryptosuite) {
+        throw new Error(`Incompatible proof cryptosuite passed. Expected: ${this.cryptosuite}, Got: ${proofCryptoSuite}`);
+      }
       return;
     }
     if (proofType !== this.type) {

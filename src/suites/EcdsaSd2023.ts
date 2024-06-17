@@ -41,7 +41,7 @@ export default class EcdsaSd2023 extends Suite {
     if (props.executeStep) {
       this.executeStep = props.executeStep;
     }
-    this.documentToVerify = props.document;
+    this.documentToVerify = props.document as BlockcertsV3
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
     this.validateProofType();
@@ -177,7 +177,7 @@ export default class EcdsaSd2023 extends Suite {
         const suite = new DataIntegrityProof({
           cryptosuite: createVerifyCryptosuite({ requiredAlgorithm: 'K-256' })
         });
-        const verificationMethod = this.documentToVerify.proof.verificationMethod;
+        const verificationMethod = (this.documentToVerify.proof as VCProof).verificationMethod;
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
           purpose: new AssertionProofPurpose(),

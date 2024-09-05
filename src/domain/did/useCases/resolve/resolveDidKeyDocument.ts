@@ -1,4 +1,4 @@
-import type { IDidDocument } from '../../../models/DidDocument';
+import type { IDidDocument } from '../../../../models/DidDocument';
 import type { ResolutionOptions } from '@transmute/did-key-common/dist/types/ResolutionOptions';
 import type { ResolutionResponse } from '@transmute/did-key-common/src/types/ResolutionResponse';
 

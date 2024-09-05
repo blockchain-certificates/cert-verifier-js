@@ -1,7 +1,7 @@
-import type { IDidDocument } from '../../../models/DidDocument';
+import type { IDidDocument } from '../../../../models/DidDocument';
 import { request } from '@blockcerts/explorer-lookup';
-import DidResolver from '../valueObjects/didResolver';
-import { isDidKey } from '../../verifier/useCases/getIssuerProfile';
+import DidResolver from '../../valueObjects/didResolver';
+import { isDidKey } from '../../../verifier/useCases/getIssuerProfile';
 import resolveDidKeyDocument from './resolveDidKeyDocument';
 
 interface IUniversalResolverResponse {

@@ -1,5 +1,5 @@
 import resolve from './resolve';
-import resolveDidKeyDocument from './resolveDidKeyDocument';
+import resolveDidKeyDocument from './resolve/resolveDidKeyDocument';
 import getIssuerProfileUrl from './getIssuerProfileUrl';
 
 export {

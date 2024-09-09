@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/vc-did-tdw-blockcerts.json';
-import didDocument from '../../../fixtures/did/did:tdw:blockcerts.org:5mwc87zmepgqnh6gud7ah0z2uu8d.json';
+import didDocument from '../../../fixtures/did/did:tdw:QmfKd3jdBU6LZYyQAP7pQL3X8aEgfqrc9YGiy6Z3om4B3N:blockcerts.org.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-blockcerts.json';
 import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 import fixtureCredentialSchema from '../../../fixtures/credential-schema-example-id-card.json';

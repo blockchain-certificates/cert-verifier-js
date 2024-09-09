@@ -79,7 +79,8 @@
     "jsonld-signatures-merkleproof2019": "^2.7.1",
     "lodash.clonedeep": "^4.5.0",
     "secp256k1": "^5.0.0",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "trustdidweb-ts": "github:blockchain-certificates/trustdidweb-ts#blockcerts-poc"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",

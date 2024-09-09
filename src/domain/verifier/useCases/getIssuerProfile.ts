@@ -4,20 +4,13 @@ import { getText } from '../../i18n/useCases';
 import type { Issuer } from '../../../models/Issuer';
 import domain from '../../../domain';
 import type { IDidDocument } from '../../../models/DidDocument';
+import { isDidKey, isDidUri } from '../../../helpers/did';
 
 // TODO: move these functions to url helper
 function isValidUrl (url: string): boolean {
   // https://stackoverflow.com/a/15734347/4064775
   const regex = /^(ftp|http|https):\/\/[^ "]+$/;
   return regex.test(url);
-}
-
-export function isDidUri (url: string): boolean {
-  return url.startsWith('did:', 0);
-}
-
-export function isDidKey (url: string): boolean {
-  return url.startsWith('did:key:', 0);
 }
 
 function isValidV1Profile (profile: Issuer): boolean {

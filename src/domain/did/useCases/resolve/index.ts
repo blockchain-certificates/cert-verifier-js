@@ -1,8 +1,9 @@
 import type { IDidDocument } from '../../../../models/DidDocument';
 import { request } from '@blockcerts/explorer-lookup';
 import DidResolver from '../../valueObjects/didResolver';
-import { isDidKey } from '../../../verifier/useCases/getIssuerProfile';
+import { isDidKey, isDidTdw } from '../../../../helpers/did';
 import resolveDidKeyDocument from './resolveDidKeyDocument';
+import { resolveDidTdw } from './tdw';
 
 interface IUniversalResolverResponse {
   didResolutionMetadata?: any;
@@ -21,6 +22,11 @@ export default async function resolve (didUri: string, didResolverUrl = DidResol
   if (isDidKey(didUri)) {
     const didDocument = await resolveDidKeyDocument(didUri);
     return didDocument;
+  }
+
+  if (isDidTdw(didUri)) {
+    const didTdw = await resolveDidTdw(didUri);
+    return didTdw.doc;
   }
   const universalResolverResponse: string = await request({ url: `${didResolverUrl}/${didUri}` });
   const parsedUniversalResolverResponse: IUniversalResolverResponse = JSON.parse(universalResolverResponse);

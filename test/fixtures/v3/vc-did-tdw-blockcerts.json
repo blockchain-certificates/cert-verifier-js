@@ -39,7 +39,7 @@
     "BlockcertsCredential",
     "IdCardCredential"
   ],
-  "issuer": "did:tdw:blockcerts.org:5mwc87zmepgqnh6gud7ah0z2uu8d",
+  "issuer": "did:tdw:QmfKd3jdBU6LZYyQAP7pQL3X8aEgfqrc9YGiy6Z3om4B3N:blockcerts.org",
   "validFrom": "2024-03-01T00:00:00Z",
   "validUntil": "2039-28-02T23:59:59Z",
   "id": "urn:uuid:4f5f0100-ccbf-4ca9-9cfc-4f5fc3052d28",
@@ -64,12 +64,12 @@
     "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
   },
   "proof": {
-    "id": "urn:uuid:b224a34e-8f04-4140-b8ab-e878e7d64761",
+    "id": "urn:uuid:1cb149d6-f907-4e86-96e7-2c2620890a9c",
     "type": "DataIntegrityProof",
     "cryptosuite": "merkle-proof-2019",
     "proofPurpose": "assertionMethod",
-    "created": "2024-09-05T15:48:13.520887",
-    "proofValue": "znKD4YGVqA8textpSXjhxreFfnXHJHzZ24aJZWdHY3vvBRt8i1EJm7zN4saq8uR5sjTy231MoTnbkU4ytwK737BZX9V7y7dJWWC521TSaFaadmoypjDtPoxZDRrBxRZ2vo2LgqFpzMH1AgAnZSjD8Wqk6y5gQM7ZZdQN8rAzvURFp3HBeSfwysTT2BQX3axQbEJmrHvigmFgPXkzqns11Ro3q2nnGibLatNDRvZ91vmjnqTzjMo69J1SqGFnPquun7Vwn4z34AUcDMPNB3ucZQeeRsYj8hmTbomNfYxXL3xdm7Vohz7nfbVVhhb",
-    "verificationMethod": "did:tdw:blockcerts.org:5mwc87zmepgqnh6gud7ah0z2uu8d#oGpk97CR"
+    "created": "2024-09-09T16:11:51.082441",
+    "proofValue": "znKD4YGVqA8texu2r9ViFrpTCyyq73sU6R2Mmb5NUcmTmg4bU4QGDDHqkLFVeca1yJJjC1qMQ8N99PracQPea9xouXs4B5m95WySZ4nbC6vH2eKcbwTMU3yC9cPYdkMsBSFTP3jvCv88QesLM2iwWGJqz5TYdwASfUCeDgpGfTXiXQ97C9xJKP3rEniDukSCYMERFh9NhJBnSeZxuEBMZs4r5nPaHxAhbZGHmU2qf2GU55u4KYbFcGDdPvYDWnKBGAKHmsyRsUCZ1dvkg2r27VFvrdsi6Svjsxsb5VJMmVvzb6UumqDYq83AkWm",
+    "verificationMethod": "did:tdw:QmfKd3jdBU6LZYyQAP7pQL3X8aEgfqrc9YGiy6Z3om4B3N:blockcerts.org#oGpk97CR"
   }
 }

@@ -1,9 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/vc-did-tdw-blockcerts.json';
-import didDocument from '../../../fixtures/did/did:tdw:QmfKd3jdBU6LZYyQAP7pQL3X8aEgfqrc9YGiy6Z3om4B3N:blockcerts.org.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-blockcerts.json';
-import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 import fixtureCredentialSchema from '../../../fixtures/credential-schema-example-id-card.json';
 
 describe('Blockcerts v3 signed with did:tdw method', function () {
@@ -19,18 +17,16 @@ describe('Blockcerts v3 signed with did:tdw method', function () {
                 return JSON.stringify(fixtureIssuerProfile);
               }
 
-              if (url === `${universalResolverUrl}/did:tdw:blockcerts.org:5mwc87zmepgqnh6gud7ah0z2uu8d`) {
-                return JSON.stringify({ didDocument });
-              }
+              // with DID:TDW, the DID document is resolved from the DID log file which is fetched
 
               if (url === 'https://www.blockcerts.org/samples/3.0/example-id-card-schema.json') {
                 return JSON.stringify(fixtureCredentialSchema);
               }
             },
             lookForTx: () => ({
-              remoteHash: '024c79c30b140e3ba7377ef1b9c1160c8ac98fcf8e0fd453c56b5da32bd5c161',
+              remoteHash: '91feacb2f66e2ae38d9c95b2c1225141c2e429a8c5d1881d1b4e8bc15eb35763',
               issuingAddress: '0x40Cf9B7DB6FCc742ad0a76B8588C7f8De2b54a60',
-              time: '2024-09-05T13:45:30.000Z',
+              time: '2024-09-09T13:45:30.000Z',
               revokedAddresses: []
             })
           };

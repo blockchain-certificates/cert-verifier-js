@@ -18,8 +18,13 @@
     "skipLibCheck": true
   },
   "compileOnSave": false,
+  "include": [
+    "src/**/*",
+    "node_modules/@noble/**/*",
+    "node_modules/trustdidweb-ts/node_modules/@noble/**/*",
+  ],
   "exclude": [
-    "node_modules",
+//    "node_modules",
     "tests"
   ]
 }

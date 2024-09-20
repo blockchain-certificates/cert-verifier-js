@@ -24,9 +24,9 @@ describe('Blockcerts v3 signed with did:tdw method', function () {
               }
             },
             lookForTx: () => ({
-              remoteHash: '91feacb2f66e2ae38d9c95b2c1225141c2e429a8c5d1881d1b4e8bc15eb35763',
+              remoteHash: '322681a05ea39e2648fdebc5edcf66228e7369bb61ff24f6449ff02d1b79d58a',
               issuingAddress: '0x40Cf9B7DB6FCc742ad0a76B8588C7f8De2b54a60',
-              time: '2024-09-09T13:45:30.000Z',
+              time: '2024-09-10T13:45:30.000Z',
               revokedAddresses: []
             })
           };

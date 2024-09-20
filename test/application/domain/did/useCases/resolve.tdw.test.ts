@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import domain from '../../../../../src/domain';
-import expectedDidDoc from '../../../../fixtures/did/did:tdw:QmfKd3jdBU6LZYyQAP7pQL3X8aEgfqrc9YGiy6Z3om4B3N:blockcerts.org/did.json';
+import expectedDidDoc from '../../../../fixtures/did/did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org/did.json';
 
 describe('resolveDidTdw function', function () {
   it('should return the correct DID doc for a given did', async function () {

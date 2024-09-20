@@ -2,7 +2,7 @@ import { LDMerkleProof2019 } from 'jsonld-signatures-merkleproof2019';
 import * as inspectors from '../inspectors';
 import domain from '../domain';
 import { Suite } from '../models/Suite';
-import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
+import { isDidUri } from '../helpers/did';
 import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
 import { removeEntry } from '../helpers/array';
 import type { ExplorerAPI, TransactionData, IBlockchainObject } from '@blockcerts/explorer-lookup';

@@ -1,0 +1,42 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/multikey/v1"
+  ],
+  "id": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org",
+  "controller": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org",
+  "service": [
+    {
+      "id": "#service-1",
+      "type": "IssuerProfile",
+      "serviceEndpoint": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json"
+    }
+  ],
+  "authentication": [
+    "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#R136fpHy"
+  ],
+  "assertionMethod": [
+    "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#n8DG1gQW",
+    "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#oGpk97CR"
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#R136fpHy",
+      "controller": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org",
+      "type": "Multikey",
+      "publicKeyMultibase": "z6MkeiVau1rSRYvXDJZugLUzMTYqFqphD7yUZSqER136fpHy"
+    },
+    {
+      "id": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#n8DG1gQW",
+      "controller": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org",
+      "type": "Multikey",
+      "publicKeyMultibase": "zQ3shw8MAkueKou9VhRyX1v2hDQ2WENWVQNkg6ifhn8DG1gQW"
+    },
+    {
+      "id": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org#oGpk97CR",
+      "controller": "did:tdw:Qmcox8WT7JK9zaWWcmVFyQE3npmxSzHsB54GZjFp5uFBRn:blockcerts.org",
+      "type": "Multikey",
+      "publicKeyMultibase": "zQ3shvX9Dd7cAG7ZcJN4d9DksshpVYSGpqEyrLjopoGpk97CR"
+    }
+  ]
+}

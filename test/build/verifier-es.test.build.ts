@@ -2,11 +2,9 @@ import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import { Certificate } from '../../dist/verifier-es';
-import crypto from 'node:crypto';
 
 // @ts-expect-error we just mock the thing
 global.XMLHttpRequest = FakeXmlHttpRequest;
-global.crypto.subtle = crypto.webcrypto.subtle;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {

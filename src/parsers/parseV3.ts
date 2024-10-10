@@ -17,10 +17,18 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     expirationDate,
     display,
     validUntil,
-    validFrom
+    proof
   } = certificateJson;
+  let { validFrom } = certificateJson;
   const certificateMetadata = metadata ?? metadataJson;
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
+  if (!validFrom) {
+    let proofObject = proof;
+    if (Array.isArray(proof)) {
+      proofObject = proof[0];
+    }
+    validFrom = proofObject.created;
+  }
   return {
     display,
     expires: expirationDate ?? validUntil,

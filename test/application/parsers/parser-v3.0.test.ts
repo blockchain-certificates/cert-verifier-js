@@ -85,5 +85,51 @@ describe('Parser v3 test suite', function () {
         expect(parsedCertificate.expires).toEqual(fixtureCopy.expirationDate);
       });
     });
+
+    describe('when the validFrom property is set', function () {
+      it('should set the validFrom property', async function () {
+        const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+        fixtureCopy.validFrom = '2021-04-27T00:00:00Z';
+        const parsedCertificate = await parseJSON(fixtureCopy);
+        expect(parsedCertificate.validFrom).toBe(fixtureCopy.validFrom);
+      });
+    });
+
+    describe('when the validFrom property is not set', function () {
+      describe('and the proof object is an array', function () {
+        it('should set the validFrom property to the created property of the first proof', async function () {
+          const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+          delete fixtureCopy.validFrom;
+          const initialProof = fixture.proof;
+          fixtureCopy.proof = [initialProof, {
+            type: 'MerkleProof2019',
+            created: '2024-04-05T13:43:10.870521',
+            proofValue: 'z4zvrPUULnHmaio37FZuwYZDyU39wMYujJCMeypmxMWhh2XoCSMSVoeVRBKeEKUVnqccnmgggyPYLx2xubmvDCP2HWMCcTCLrcpBHJMEzUiwQrixSFStZbxQq9yPVNoYysMcxinfxZTpmH1j5mmGsC2fUP1LEMruXA1fKgupM3Ea97PzUGjgDgSfZqJNKjmFMJYL5tC1R7XoRqYvpKg3NhMrFY9YtyuERDW9do92EPeSw17j5xUZLpj6uGieJVrf5ps4AScoB4tXXTm4eFi4ZkQbbbvkRmPK9bZsyKKxGQ2Bq5cfwPbvPHiaGLSHEBrAYh75so7LwoiKi1VCw7NdsybWmMUf1E547PZhbqTB5hXJD5VBYN6hpoGzc18L6boKN1oveFaHAoFrQsEjmBJ',
+            proofPurpose: 'assertionMethod',
+            verificationMethod: 'did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ#key-1'
+          }];
+          const parsedCertificate = await parseJSON(fixtureCopy);
+          expect(parsedCertificate.validFrom).toBe(fixtureCopy.proof[0].created);
+        });
+      });
+
+      describe('and the proof object is not an array', function () {
+        it('should set the validFrom property to the created property of the proof', async function () {
+          const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+          delete fixtureCopy.validFrom;
+          const parsedCertificate = await parseJSON(fixtureCopy);
+          expect(parsedCertificate.validFrom).toBe(fixture.proof.created);
+        });
+      });
+    });
+
+    describe('when the validUntil property is set', function () {
+      it('should set the validUntil property', async function () {
+        const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+        fixtureCopy.validUntil = '2022-04-27T00:00:00Z';
+        const parsedCertificate = await parseJSON(fixtureCopy);
+        expect(parsedCertificate.expires).toBe(fixtureCopy.validUntil);
+      });
+    });
   });
 });

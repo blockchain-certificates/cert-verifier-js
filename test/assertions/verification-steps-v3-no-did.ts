@@ -88,6 +88,13 @@ export default [
         status: VERIFICATION_STATUSES.DEFAULT
       },
       {
+        code: SUB_STEPS.ensureValidityPeriodStarted,
+        label: defaultLanguageSet.subSteps.ensureValidityPeriodStartedLabel,
+        labelPending: defaultLanguageSet.subSteps.ensureValidityPeriodStartedLabelPending,
+        parentStep: VerificationSteps.statusCheck,
+        status: VERIFICATION_STATUSES.DEFAULT
+      },
+      {
         code: SUB_STEPS.checkExpiresDate,
         label: defaultLanguageSet.subSteps.checkExpiresDateLabel,
         labelPending: defaultLanguageSet.subSteps.checkExpiresDateLabelPending,

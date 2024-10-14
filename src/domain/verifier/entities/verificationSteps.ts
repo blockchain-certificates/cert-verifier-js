@@ -20,7 +20,8 @@ export enum SUB_STEPS {
   checkExpiresDate = 'checkExpiresDate',
   controlVerificationMethod = 'controlVerificationMethod',
   ensureValidityPeriodStarted = 'ensureValidityPeriodStarted',
-  checkCredentialSchemaConformity = 'checkCredentialSchemaConformity'
+  checkCredentialSchemaConformity = 'checkCredentialSchemaConformity',
+  validateDateFormat = 'validateDateFormat'
 }
 
 export type TVerificationStepsList = {
@@ -30,7 +31,8 @@ export type TVerificationStepsList = {
 export const verificationMap = {
   [VerificationSteps.formatValidation]: [
     SUB_STEPS.checkImagesIntegrity,
-    SUB_STEPS.checkCredentialSchemaConformity
+    SUB_STEPS.checkCredentialSchemaConformity,
+    SUB_STEPS.validateDateFormat
   ],
   [VerificationSteps.proofVerification]: [],
   [VerificationSteps.identityVerification]: [

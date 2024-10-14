@@ -4,7 +4,13 @@ import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../valueObjects/VerificationSubstep';
 import type { IVerificationMapItem } from '../../../models/VerificationMap';
 
-export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlinks: boolean, hasValidFrom: boolean, hasCredentialSchema: boolean): SUB_STEPS[] {
+export function getVerificationStepsForCurrentCase (
+  hasDid: boolean,
+  hasHashlinks: boolean,
+  hasValidFrom: boolean,
+  hasCredentialSchema: boolean,
+  isVCV2: boolean
+): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (!hasDid) {
@@ -21,6 +27,10 @@ export function getVerificationStepsForCurrentCase (hasDid: boolean, hasHashlink
 
   if (!hasCredentialSchema) {
     removeEntry(verificationSteps, SUB_STEPS.checkCredentialSchemaConformity);
+  }
+
+  if (!isVCV2) {
+    removeEntry(verificationSteps, SUB_STEPS.validateDateFormat);
   }
 
   return verificationSteps;
@@ -44,11 +54,23 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-export default function getVerificationMap (hasDid: boolean = false, hasHashlinks: boolean = false, hasValidFrom: boolean = false, hasCredentialSchema: boolean = false): {
-  verificationMap: IVerificationMapItem[];
-  verificationProcess: SUB_STEPS[];
-} {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(hasDid, hasHashlinks, hasValidFrom, hasCredentialSchema);
+export default function getVerificationMap (
+  hasDid: boolean = false,
+  hasHashlinks: boolean = false,
+  hasValidFrom: boolean = false,
+  hasCredentialSchema: boolean = false,
+  isVCV2: boolean = false
+): {
+    verificationMap: IVerificationMapItem[];
+    verificationProcess: SUB_STEPS[];
+  } {
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(
+    hasDid,
+    hasHashlinks,
+    hasValidFrom,
+    hasCredentialSchema,
+    isVCV2
+  );
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

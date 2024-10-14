@@ -48,7 +48,9 @@
       "compareIssuingAddressLabel": "Compare addresses",
       "compareIssuingAddressLabelPending": "Comparing addresses",
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
-      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
+      "validateDateFormatLabel": "Validate date format",
+      "validateDateFormatLabelPending": "Validating date format"
     },
     "revocation": {
       "preReason": "Reason given:",
@@ -106,8 +108,9 @@
       "issuerProfileNotSet": "no issuer address given",
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
       "parseIssuerKeys": "Unable to parse JSON out of issuer identification data.",
-      "checkImagesIntegrity":"Image integrity verification proved that the content was modified after issuance.",
-      "ensureValidityPeriodStarted":"This certificate is not yet valid."
+      "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
+      "ensureValidityPeriodStarted": "This certificate is not yet valid.",
+      "validateDateFormat":"The date format specified does not conform with the spec requirements (RFC3339). Property:"
     }
   },
   "fr": {
@@ -159,7 +162,9 @@
       "compareIssuingAddressLabel":  "Comparaison des adresses",
       "compareIssuingAddressLabelPending":  "Comparaison des adresses",
       "checkImagesIntegrityLabel":  "Vérification de l'Intégrité des Images",
-      "checkImagesIntegrityLabelPending":  "Vérification de l'Intégrité des Images"
+      "checkImagesIntegrityLabelPending":  "Vérification de l'Intégrité des Images",
+      "validateDateFormatLabel": "Vérification du format des dates",
+      "validateDateFormatLabelPending": "Vérification du format des dates"
     },
     "revocation": {
       "preReason": "Raison :",
@@ -218,7 +223,8 @@
       "issuerProfileInvalid": "le document distant ne semble pas être un profil d'émetteur valide",
       "parseIssuerKeys": "Impossible de lire le JSON d'identification de l'émetteur",
       "checkImagesIntegrity": "La vérification des images a prouvé que le contenu a été modifié après l'émission.",
-      "ensureValidityPeriodStarted": "Ce certificat n'est pas encore valide."
+      "ensureValidityPeriodStarted": "Ce certificat n'est pas encore valide.",
+      "validateDateFormat": "Le format de date spécifié n'est pas conforme aux exigences de la spécification (RFC3339). Propriété :"
     }
   },
   "es": {
@@ -270,7 +276,9 @@
       "compareIssuingAddressLabel":  "Comparar direcciones",
       "compareIssuingAddressLabelPending":  "Comparando direcciones",
       "checkImagesIntegrityLabel":  "Comprobar Integridad de las Imagens",
-      "checkImagesIntegrityLabelPending":  "Comprobando Integridad de las Imagens"
+      "checkImagesIntegrityLabelPending":  "Comprobando Integridad de las Imagens",
+      "validateDateFormatLabel": "Verificar formato de fecha",
+      "validateDateFormatLabelPending": "Verificando formato de fecha"
     },
     "revocation": {
       "preReason": "Razón dada:",
@@ -329,7 +337,8 @@
       "issuerProfileInvalid": "el documento recogido no parece ser un perfil de emisor valido",
       "parseIssuerKeys": "No se ha podido analizar el JSON de la información de identificación del emisor",
       "checkImagesIntegrity": "La verificación de la integridad de los imagens provó alteración del contenido después de la emisión.",
-      "ensureValidityPeriodStarted": "Este certificado aún no está valido."
+      "ensureValidityPeriodStarted": "Este certificado aún no está valido.",
+      "validateDateFormat": "El formato de fecha especificado no cumple con los requisitos de la especificación (RFC3339). Propiedad:"
     }
   },
   "mt": {
@@ -381,7 +390,9 @@
       "compareIssuingAddressLabel":  "Compare addresses",
       "compareIssuingAddressLabelPending":  "Comparing addresses",
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
-      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
+      "validateDateFormatLabel": "Validate date format",
+      "validateDateFormatLabelPending": "Validating date format"
     },
     "revocation": {
       "preReason": "Raġuni mogħtija:",
@@ -440,7 +451,8 @@
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
       "parseIssuerKeys": "Ma jistax jiġi estratt JSON mid-data tal-identifikazzjoni tal-emittent",
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
-      "ensureValidityPeriodStarted": "This certificate is not yet valid."
+      "ensureValidityPeriodStarted": "This certificate is not yet valid.",
+      "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
     }
   },
   "it-IT": {
@@ -492,7 +504,9 @@
       "compareIssuingAddressLabel":  "Compare addresses",
       "compareIssuingAddressLabelPending":  "Comparing addresses",
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
-      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity"
+      "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
+      "validateDateFormatLabel": "Validate date format",
+      "validateDateFormatLabelPending": "Validating date format"
     },
     "revocation": {
       "preReason": "Motivo indicato:",
@@ -551,7 +565,8 @@
       "issuerProfileInvalid": "retrieved file does not seem to be a valid profile",
       "parseIssuerKeys": "Impossibile analizzare JSON dai dati di identificazione dell'emittente.",
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
-      "ensureValidityPeriodStarted": "This certificate is not yet valid."
+      "ensureValidityPeriodStarted": "This certificate is not yet valid.",
+      "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
     }
   },
   "ja": {
@@ -603,7 +618,9 @@
       "compareIssuingAddressLabel":  "アドレスの照合",
       "compareIssuingAddressLabelPending":  "アドレスを照合",
       "checkImagesIntegrityLabel":  "画像の保全性の確認",
-      "checkImagesIntegrityLabelPending":  "画像の保全性を確認"
+      "checkImagesIntegrityLabelPending":  "画像の保全性を確認",
+      "validateDateFormatLabel": "Validate date format",
+      "validateDateFormatLabelPending": "Validating date format"
     },
     "revocation": {
       "preReason": "理由：",
@@ -662,7 +679,8 @@
       "issuerProfileInvalid": "取得されたファイルが有効なプロフィールではないようです",
       "parseIssuerKeys": "発行者識別データからJSONの解析ができません",
       "checkImagesIntegrity": "データが発行後に変更されたことが画像保全性の検証によって証明されました。",
-      "ensureValidityPeriodStarted": "This certificate is not yet valid."
+      "ensureValidityPeriodStarted": "This certificate is not yet valid.",
+      "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
     }
   }
 }

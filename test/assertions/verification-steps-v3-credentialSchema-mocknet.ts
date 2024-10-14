@@ -17,6 +17,13 @@ export default [
         labelPending: defaultLanguageSet.subSteps.checkCredentialSchemaConformityLabelPending,
         parentStep: VerificationSteps.formatValidation,
         status: VERIFICATION_STATUSES.DEFAULT
+      },
+      {
+        code: 'validateDateFormat',
+        label: defaultLanguageSet.subSteps.validateDateFormatLabel,
+        labelPending: defaultLanguageSet.subSteps.validateDateFormatLabelPending,
+        parentStep: VerificationSteps.formatValidation,
+        status: VERIFICATION_STATUSES.DEFAULT
       }
     ]
   },

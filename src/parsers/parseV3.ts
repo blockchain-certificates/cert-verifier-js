@@ -1,6 +1,6 @@
 import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
-import type { BlockcertsV3 } from '../models/BlockcertsV3';
+import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
 
 function getRecipientFullName (certificateJson): string {
@@ -27,7 +27,7 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     if (Array.isArray(proof)) {
       proofObject = proof[0];
     }
-    validFrom = proofObject.created;
+    validFrom = (proofObject as VCProof).created;
   }
   return {
     display,

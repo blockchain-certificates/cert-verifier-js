@@ -16,6 +16,8 @@ import type { Suite, SuiteAPI } from './models/Suite';
 import type VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 import type { Signers } from './certificate';
 import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarted';
+import validateDateFormat from './inspectors/validateDateFormat';
+import { isVCV2 } from './parsers/helpers/retrieveVCVersion';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -256,7 +258,8 @@ export default class Verifier {
       !!this.issuer.didDocument,
       this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
       !!this.validFrom,
-      !!(this.documentToVerify as BlockcertsV3).credentialSchema
+      !!(this.documentToVerify as BlockcertsV3).credentialSchema,
+      isVCV2(this.documentToVerify['@context'])
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -375,6 +378,16 @@ export default class Verifier {
     await this.executeStep(
       SUB_STEPS.ensureValidityPeriodStarted,
       () => { ensureValidityPeriodStarted(this.validFrom); }
+    );
+  }
+
+  private async validateDateFormat (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.validateDateFormat,
+      () => {
+        const datesToValidate = domain.verifier.getDatesToValidate(this.documentToVerify as BlockcertsV3);
+        validateDateFormat(datesToValidate);
+      }
     );
   }
 

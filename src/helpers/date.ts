@@ -1,5 +1,8 @@
 /* eslint no-useless-escape: 0 prefer-spread: 0 */ // TODO: at some point fix this
 
+// https://www.w3.org/TR/vc-data-model-2.0/#example-regular-expression-to-detect-a-valid-xml-schema-1-1-part-2-datetimestamp
+const RFC3339_DATE_REGEX = /-?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))$/;
+
 function noOffset (s): Date {
   let day = s.slice(0, -5).split(/\D/).map(function (itm) {
     return parseInt(itm, 10) || 0;
@@ -18,8 +21,8 @@ function noOffset (s): Date {
 function dateFromRegex (s: string): Date {
   let day;
   let tz;
-  const rx = /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*)?)([zZ]|([+\-])(\d\d):?(\d\d))?$/;
-  const p = rx.exec(s) ?? [];
+
+  const p = RFC3339_DATE_REGEX.exec(s) ?? [];
   if (p[1]) {
     day = p[1].split(/\D/).map(function (itm) {
       return parseInt(itm, 10) || 0;
@@ -72,4 +75,9 @@ export function dateToUnixTimestamp (date: Date | string): number { // TODO: cle
 
 export function timestampToDateObject (timestamp: number): Date {
   return new Date(timestamp * 1000);
+}
+
+// https://www.w3.org/TR/xmlschema11-2/#dateTimeStamp
+export function validateDateTimeStamp (dateTimeStamp: string): boolean {
+  return RFC3339_DATE_REGEX.test(dateTimeStamp);
 }

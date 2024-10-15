@@ -17,7 +17,7 @@ import MainnetV2Valid from '../fixtures/v2/mainnet-valid-2.0.json';
 import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import BlockcertsV3NoDid from '../fixtures/v3/testnet-v3--no-did.json';
 import BlockcertsV3Hashlink from '../fixtures/v3/testnet-v3-hashlink.json';
-import BlockcertsV3ValidFrom from '../fixtures/v3/mocknet-vc-v2-validFrom-valid.json';
+import BlockcertsV3ValidFrom from '../fixtures/v3/mocknet-vc-v2-invalid-date-format.json';
 import BlockcertsV3CredentialSchema from '../fixtures/v3/mocknet-vc-v2-credential-schema.json';
 
 describe('Certificate API Contract test suite', function () {

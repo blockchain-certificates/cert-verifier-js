@@ -2199,7 +2199,7 @@ var drawChart = (function (exports) {
         step = start, start = stop, stop = step;
         step = i0, i0 = i1, i1 = step;
       }
-      
+
       while (maxIter-- > 0) {
         step = tickIncrement(start, stop, count);
         if (step === prestep) {
@@ -2599,7 +2599,7 @@ var drawChart = (function (exports) {
   	  } else {
   	    return path.replace(/\/$/, '').replace(/.*\//, '');
   	  }
-  	}; 
+  	};
   } (utils$3));
 
   const utils$2 = utils$3;
@@ -2951,9 +2951,9 @@ var drawChart = (function (exports) {
         if (opts.tokens) {
           if (idx === 0 && start !== 0) {
             tokens[idx].isPrefix = true;
-            tokens[idx].value = prefix;
+            tokens[idx].dateTimeStamp = prefix;
           } else {
-            tokens[idx].value = value;
+            tokens[idx].dateTimeStamp = value;
           }
           depth(tokens[idx]);
           state.maxDepth += tokens[idx].depth;
@@ -2969,7 +2969,7 @@ var drawChart = (function (exports) {
         parts.push(value);
 
         if (opts.tokens) {
-          tokens[tokens.length - 1].value = value;
+          tokens[tokens.length - 1].dateTimeStamp = value;
           depth(tokens[tokens.length - 1]);
           state.maxDepth += tokens[tokens.length - 1].depth;
         }

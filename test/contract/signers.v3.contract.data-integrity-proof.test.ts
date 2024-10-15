@@ -32,7 +32,7 @@ describe('Certificate API Contract test suite', function () {
       });
 
       it('should expose the signingDate', function () {
-        expect(instance.signers[0].signingDate).toBe('2024-02-15T15:22:35.361231');
+        expect(instance.signers[0].signingDate).toBe('2024-02-15T15:22:35Z');
       });
 
       it('should expose the signatureSuiteType', function () {

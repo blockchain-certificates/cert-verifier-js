@@ -1,51 +1,87 @@
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
+    {
+      "DOB": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/DOB",
+        "@type": "https://schema.org/Text"
+      },
+      "nationality": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/nationality",
+        "@type": "https://schema.org/Text"
+      },
+      "height": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/height",
+        "@type": "https://schema.org/Text"
+      },
+      "residentialAddressStreet": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressStreet",
+        "@type": "https://schema.org/Text"
+      },
+      "residentialAddressTown": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressTown",
+        "@type": "https://schema.org/Text"
+      },
+      "residentialAddressPostCode": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressPostCode",
+        "@type": "https://schema.org/Text"
+      },
+      "IdCardCredential": {
+        "@id": "https://schemas.learningmachine.com/2017/blockcerts/IdCardCredential",
+        "@type": "https://schema.org/DataType"
+      }
+    },
     "https://w3id.org/security/data-integrity/v2",
     "https://w3id.org/blockcerts/v3.1"
   ],
-  "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
   "type": [
     "VerifiableCredential",
-    "BlockcertsCredential"
+    "BlockcertsCredential",
+    "IdCardCredential"
   ],
   "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
-  "validFrom": "2022-07-13T20:21:40.088Z",
-  "validUntil": "2039-07-13T00:00:00.000Z",
+  "validFrom": "2024-03-01T00:00:00Z",
+  "validUntil": "2039-02-28T23:59:59Z",
+  "id": "urn:uuid:4f5f0100-ccbf-4ca9-9cfc-4f5fc3052d28",
+  "credentialSchema": [
+    {
+      "id": "https://www.blockcerts.org/samples/3.0/example-id-card-schema.json",
+      "type": "JsonSchema"
+    }
+  ],
   "credentialSubject": {
     "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
-    "name": "Julien Fraichot",
-    "email": "julien.fraichot@hyland.com",
-    "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC",
-    "claim": {
-      "name": "Master of Puppets",
-      "description": "Awarded to those who rock"
-    }
+    "name": "John Smith",
+    "nationality": "Canada",
+    "DOB": "05/10/1983",
+    "height": "1.80m",
+    "residentialAddressStreet": "6 Maple Tree street",
+    "residentialAddressTown": "Toronto",
+    "residentialAddressPostCode": "YYZYUL"
   },
-  "metadata": "{\"classOf\":\"2021\"}",
   "display": {
     "contentMediaType": "text/html",
     "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
   },
   "proof": [
     {
-      "id": "urn:uuid:a68a8c11-556b-42dc-b840-55677639db7d",
+      "id": "urn:uuid:3516c929-ebf7-4e45-bd80-c22096782bca",
       "type": "DataIntegrityProof",
       "cryptosuite": "merkle-proof-2019",
       "proofPurpose": "assertionMethod",
-      "created": "2024-02-15T15:22:35.361231",
-      "proofValue": "zEuZQLZTYrdsDv2FbpkZtthsgpG54RGrfTSvyUNDGi1ecmJdY9KMtFSxbbs6pEspqa38GgXJD9ReRosEBrXsXKu4Nk7xMGnm6wfzuCUiwwBCXKrfs8e8r6a1gbyXbzifiJprkeVD9UtaVtdb5QXKHPRikuQR8F9epBejTF7MfQukr1T5U7mZ8nSuKXDJ5epzg6mCANdCFt8ZrYZiLUZGrWpd33BfeuyaJxSGYcfMgjzJGvLnoZpAXHi1MWpNFhxxuTn6BtUbivTJqQhgzUDoXaErWeMEe1z8wRR5TgzNaoULxGp",
+      "created": "2024-10-15T14:12:22Z",
+      "proofValue": "z3hSV9ktErQhBgc1M88j5x6EBcioqSkzSL1Qx44DXgrPDQqeVEj3LHQ6W8Wd8CvkhH42f1uC7Fed92urxKd76diyqRADnxXpn6wLHBaDTYAJ1MLAakcy4zCdRk7FWMppUTYE5TDpkH4eY8aqXAxpajzTuxr3WZQ667v6NFzxfczo6qjLjivpPqE6h3XZT8JuxBhNpSReQQBDS8eLNoXLDLVZsnJQgZzMLVzHie83Aw3kpo5yzi4azjXhmD77cnU17XgkJ4pFKe2bSgvkBgbGjD73qhFJg2rQLgigASx4AuxYYuWbvqgZbo47kssxJPo4bcQ1kPaYEXw37CNV4nmarp2EnyukvSjaCdh8jB2FReSbWCWsoveoj5REGaTpUHtdeoC3VhxCYLkwMe8",
       "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
     },
     {
-      "id": "urn:uuid:d1bf1ef0-efb2-4959-973d-b2abf84f3376",
+      "id": "urn:uuid:e0341578-a164-44e6-9e6b-89fcce044057",
       "type": "DataIntegrityProof",
       "cryptosuite": "merkle-proof-2019",
       "proofPurpose": "assertionMethod",
-      "created": "2024-02-15T15:23:14.293905",
-      "proofValue": "zEuZQLZTYrdsDv2cqZws1GG2poQZff31axabb5RkhpPoZCWin6UtdjSimFRtNr5nKyaY6Yxz26dtn1fenP2h7TMu6TYZhmVj2kTVFZMkPQLcWwfnzSHKv3iGTS19xkxhLakkax9mcMgsoFsWDGvLCPZi9TxyB6z8oSMFCwxE36V5AkfQWswbsNAoaNrgT1yekMMLh9PTDAtKM9FSCDs2kYADLDukoKKRf5Aq34TLshWR3jvrPZr1ccPcff4BbNVe2yMSRzJkFnEVQu3MEuw3zZsLbusXUMo5Q5ZoQYraa6eNPqA",
+      "created": "2024-10-15T14:24:54Z",
+      "proofValue": "zEuZQLZTYrdsDv2GsAyrzVmKpX34SzAdEFqY1EL8usmFvgfh3nU92tVAuWZabmy6Ro3nrxRZXQZaJvYCzwykvZJgpEpYQuuX2MXqWWUEThb1HgjeDbNaxpNvp1T3t8NyhmzFnaGrxQQuQKB1eMByZr1VkoG7FJ5MaAeX4gHDfeosjYob7vjp96vyWTmTJvVZgadE6zsiYaH5uPw8x1C5S2NSpdCzXriCVQddsZJn79Xio6hXsK9mdpVJ6Las8DTh6vKV9t1GPoJRhFDdbhE9JgAjAg3t7heqdEViMGkEyvFCc2U",
       "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1",
-      "previousProof": "urn:uuid:a68a8c11-556b-42dc-b840-55677639db7d"
+      "previousProof": "urn:uuid:3516c929-ebf7-4e45-bd80-c22096782bca"
     }
   ]
 }

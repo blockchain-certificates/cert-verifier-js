@@ -1,8 +1,7 @@
 {
   "@context": [
     "https://www.w3.org/ns/credentials/v2",
-    "https://w3id.org/security/data-integrity/v2",
-    "https://w3id.org/blockcerts/v3.1"
+    "https://w3id.org/blockcerts/v3"
   ],
   "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
   "type": [
@@ -28,12 +27,10 @@
     "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
   },
   "proof": {
-    "id": "urn:uuid:a68a8c11-556b-42dc-b840-55677639db7d",
-    "type": "DataIntegrityProof",
-    "cryptosuite": "merkle-proof-2019",
+    "type": "MerkleProof2019",
+    "created": "2024-01-30T17:36:01.833602",
+    "proofValue": "z3hSV9ktErQhBgc5C758PsevUUCuxBPcFYGxLVGGcT4ZcWr64zeQnkUet1gJJzWmewShoTg72Yb4mZY347sPy6DYgpTfyZUdhzsLBFo8omHLYAEHPc6NAd811A1JxTViWeyZDHzoMwRtuRuehkkrwdQXLjsfTbtLEQKaCJoWug4PXyd5ab86ehRhkSumeNnZrA3GCFcT6upUUSKUfyxM6jJKfAb7YQnTxBgQzu8CuKJUKgZEHLVbYSJ2DZs1USLriQR2t91NyUHU8UhJ8GjXxMUMwT4gai4kYyurnsTZs36yQ7JmURWF1vXfEz9fJgrfJmaizLy1iTAKvSG8cp4mjFJfk8PchPVQti7gMQEMcn9LGfEQZW6ScBhAUZ4aV7eCt3X4cL5qXwBoiCg",
     "proofPurpose": "assertionMethod",
-    "created": "2024-02-15T15:22:35Z",
-    "proofValue": "zEuZQLZTYrdsDv2FbpkZtthsgpG54RGrfTSvyUNDGi1ecmJdY9KMtFSxbbs6pEspqa38GgXJD9ReRosEBrXsXKu4Nk7xMGnm6wfzuCUiwwBCXKrfs8e8r6a1gbyXbzifiJprkeVD9UtaVtdb5QXKHPRikuQR8F9epBejTF7MfQukr1T5U7mZ8nSuKXDJ5epzg6mCANdCFt8ZrYZiLUZGrWpd33BfeuyaJxSGYcfMgjzJGvLnoZpAXHi1MWpNFhxxuTn6BtUbivTJqQhgzUDoXaErWeMEe1z8wRR5TgzNaoULxGp",
     "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
   }
 }

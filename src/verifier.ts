@@ -382,12 +382,11 @@ export default class Verifier {
   }
 
   private async validateDateFormat (): Promise<void> {
-    console.log('document', this.documentToVerify);
     await this.executeStep(
       SUB_STEPS.validateDateFormat,
       () => {
-        const datesToValidate = [this.expires, this.validFrom];
-        validateDateFormat(this.validFrom, 'validFrom');
+        const datesToValidate = domain.verifier.getDatesToValidate(this.documentToVerify as BlockcertsV3);
+        validateDateFormat(datesToValidate);
       }
     );
   }

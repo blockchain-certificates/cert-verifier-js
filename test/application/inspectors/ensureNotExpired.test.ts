@@ -3,7 +3,7 @@ import { ensureNotExpired } from '../../../src/inspectors';
 
 describe('Inspectors test suite', function () {
   describe('ensureNotExpired method', function () {
-    const errorMessage = 'This certificate has expired.';
+    const errorMessage = 'This certificate has expired on Jan 1, 2017';
 
     describe('given it is called with no parameter', function () {
       it('should not throw an error', function () {

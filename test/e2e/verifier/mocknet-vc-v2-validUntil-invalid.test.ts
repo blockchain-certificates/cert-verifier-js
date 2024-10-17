@@ -33,6 +33,6 @@ describe('given the certificate is an expired validUntil', function () {
   });
 
   it('should set the expected error message', function () {
-    expect(result.message).toBe('This certificate has expired.');
+    expect(result.message).toBe('This certificate has expired on Jan 5, 2024');
   });
 });

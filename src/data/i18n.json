@@ -85,7 +85,7 @@
       "couldNotConfirmTx": "Could not confirm the transaction",
       "ensureHashesEqual": "Computed hash does not match remote hash",
       "ensureMerkleRootEqual": "Merkle root does not match remote hash.",
-      "ensureNotExpired": "This certificate has expired.",
+      "ensureNotExpired": "This certificate has expired on ",
       "ensureValidReceipt": "The receipt is malformed. There was a problem navigating the merkle tree in the receipt.",
       "failedJsonLdNormalization": "Failed JSON-LD normalization",
       "foundUnmappedFields": "Found unmapped fields during JSON-LD normalization",
@@ -111,6 +111,10 @@
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
       "ensureValidityPeriodStarted": "This certificate is not yet valid.",
       "validateDateFormat":"The date format specified does not conform with the spec requirements (RFC3339). Property:"
+    },
+    "date": {
+      "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"],
+      "pattern": "MM DD, YYYY"
     }
   },
   "fr": {
@@ -168,7 +172,7 @@
     },
     "revocation": {
       "preReason": "Raison :",
-      "reason": "Ce certificat a été ${CREDENTIAL_STATUS} par l'émetteur.",
+      "reason": "Ce certificat a été ${CREDENTIAL_STATUS} par l'émetteur le ",
       "revocationListAuthenticityFailure": "L'authenticité de la liste de revocation n'a pas pu être validée.",
       "noRevocationStatusList2021Found": "Aucune liste de revocation n'a pu être trouvée à l'URL spécifiée par 'statusListCredential':",
       "revoked": "révoqué",
@@ -225,6 +229,10 @@
       "checkImagesIntegrity": "La vérification des images a prouvé que le contenu a été modifié après l'émission.",
       "ensureValidityPeriodStarted": "Ce certificat n'est pas encore valide.",
       "validateDateFormat": "Le format de date spécifié n'est pas conforme aux exigences de la spécification (RFC3339). Propriété :"
+    },
+    "date": {
+      "months": ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Aout", "Sept", "Oct", "Nov", "Déc"],
+      "pattern": "DD MM YYYY"
     }
   },
   "es": {
@@ -313,7 +321,7 @@
       "couldNotConfirmTx": "No se ha podido confirmar la transacción",
       "ensureHashesEqual": "La cadena binaria calculada no corresponde con la cadena binaria remota",
       "ensureMerkleRootEqual": "La raíz Merkle no corresponde con la cadena binaria remota",
-      "ensureNotExpired": "Este certificado ha expirado",
+      "ensureNotExpired": "Este certificado ha expirado el ",
       "ensureValidReceipt": "El recibo está malformado. Hubo un problema navegando el árbol Merkle en el recibo",
       "failedJsonLdNormalization": "La normalización del JSON-LD ha fallado",
       "foundUnmappedFields": "Se han encontrado campos no mapeados durante la normalización de JSON-LD",
@@ -339,6 +347,10 @@
       "checkImagesIntegrity": "La verificación de la integridad de los imagens provó alteración del contenido después de la emisión.",
       "ensureValidityPeriodStarted": "Este certificado aún no está valido.",
       "validateDateFormat": "El formato de fecha especificado no cumple con los requisitos de la especificación (RFC3339). Propiedad:"
+    },
+    "date": {
+      "months": ["enero", "feb", "marzo", "abr", "mayo", "jun", "jul", "agosto", "set", "oct", "nov", "dic"],
+      "pattern": "MM DD, YYYY"
     }
   },
   "mt": {
@@ -427,7 +439,7 @@
       "couldNotConfirmTx": "Ma setgħetx tiġi kkonfermata t-tranżazzjoni",
       "ensureHashesEqual": "Il-hash ikkalkulat ma jikkorrispondix mar-remote hash",
       "ensureMerkleRootEqual": "Merkle root ma taqbilx mar-remote hash",
-      "ensureNotExpired": "Dan iċ-ċertifikat skada",
+      "ensureNotExpired": "Dan iċ-ċertifikat skada fid-data - ",
       "ensureValidReceipt": "L-irċevuta hija malformata. Kien hemm problema fin-navigazzjoni tal-merkle tree fl-irċevuta",
       "failedJsonLdNormalization": "In-normalizzazzjoni ta' JSON-LD ma rnexxietx",
       "foundUnmappedFields": "Instabu unmapped fields matul in-normalizzazzjoni JSON-LD",
@@ -453,6 +465,10 @@
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
       "ensureValidityPeriodStarted": "This certificate is not yet valid.",
       "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
+    },
+    "date": {
+      "months": ["Jannar", "Frar", "Marzu", "April", "Mejju", "Ġunju", "Lulju", "Awwissu", "Settembru", "Ottubru", "Novembru", "Diċembru"],
+      "pattern": "DD MM YYYY"
     }
   },
   "it-IT": {
@@ -541,7 +557,7 @@
       "couldNotConfirmTx": "Impossibile confermare la transazione",
       "ensureHashesEqual": "L'hash calcolato non corrisponde all'hash remoto",
       "ensureMerkleRootEqual": "La radice di Merkle non corrisponde all'hash remoto.",
-      "ensureNotExpired": "Questo certificato è scaduto.",
+      "ensureNotExpired": "Questo certificato è scaduto il ",
       "ensureValidReceipt": "La ricevuta è malformata. C'è stato un problema nella navigazione dell'albero di Merkle nella ricevuta.",
       "failedJsonLdNormalization": "Normalizzazione JSON-LD fallita",
       "foundUnmappedFields": "Campi non mappati trovati durante la normalizzazione JSON-LD",
@@ -567,6 +583,10 @@
       "checkImagesIntegrity": "Image integrity verification proved that the content was modified after issuance.",
       "ensureValidityPeriodStarted": "This certificate is not yet valid.",
       "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
+    },
+    "date": {
+      "months": ["Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"],
+      "pattern": "DD MM YYYY"
     }
   },
   "ja": {
@@ -655,7 +675,7 @@
       "couldNotConfirmTx": "取引を確認できませんでした",
       "ensureHashesEqual": "算出されたハッシュがリモートハッシュと一致しませんでした",
       "ensureMerkleRootEqual": "Merkle rootがリモートハッシュと一致しませんでした",
-      "ensureNotExpired": "この証明書の有効期限が切れています",
+      "ensureNotExpired": "この証明書の有効期限が切れています ",
       "ensureValidReceipt": "レシートに異常があります。レシート内のMerkle treeを辿る際に問題が発生しました。",
       "failedJsonLdNormalization": "JSON-LDの正規化に失敗しました",
       "foundUnmappedFields": "JSON-LDの正規化時にマップされていないフィールドを検出しました",
@@ -681,6 +701,10 @@
       "checkImagesIntegrity": "データが発行後に変更されたことが画像保全性の検証によって証明されました。",
       "ensureValidityPeriodStarted": "This certificate is not yet valid.",
       "validateDateFormat": "The date format specified does not conform with the spec requirements (RFC3339). Property:"
+    },
+    "date": {
+      "months": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+      "pattern": "YYYY年-MM-DD日"
     }
   }
 }

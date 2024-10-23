@@ -59,7 +59,7 @@
     "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.7",
     "@blockcerts/explorer-lookup": "^1.5.1",
     "@blockcerts/hashlink-verifier": "^1.6.0",
-    "@blockcerts/schemas": "^3.6.3",
+    "@blockcerts/schemas": "^3.7.2",
     "@did-core/did-ld-json": "npm:@blockcerts/did-ld-json@^0.1.2",
     "@digitalbazaar/data-integrity": "^2.1.0",
     "@digitalbazaar/ecdsa-sd-2023-cryptosuite": "github:blockchain-certificates/ecdsa-sd-2023-cryptosuite#chore/secp256k1-with-multikey-fork",

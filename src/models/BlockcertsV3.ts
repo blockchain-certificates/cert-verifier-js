@@ -50,9 +50,12 @@ export interface VerifiableCredential {
     id?: string;
     // more properties as defined per implementation
   }>;
+  proof: VCProof | VCProof[];
+  // VC V2
   validFrom?: string; // expect dateTime
   validUntil?: string; // expect dateTime
-  proof: VCProof | VCProof[];
+  name?: string;
+  description?: string;
 }
 
 export interface BlockcertsV3Display {

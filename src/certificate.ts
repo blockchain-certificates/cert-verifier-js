@@ -46,7 +46,7 @@ export interface Signers {
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
-  public description?: string; // v1
+  public description?: string; // v1, v3.2
   public display?: BlockcertsV3Display;
   public expires: string;
   public validFrom: string;
@@ -57,7 +57,7 @@ export default class Certificate {
   public issuer: Issuer;
   public locale: string; // enum?
   public metadataJson: any; // TODO: define metadataJson interface.
-  public name?: string; // TODO: not formally set in V3
+  public name?: string;
   public options: CertificateOptions;
   public recipientFullName: string;
   public recordLink: string;

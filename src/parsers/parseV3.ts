@@ -17,7 +17,9 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     expirationDate,
     display,
     validUntil,
-    proof
+    proof,
+    name,
+    description
   } = certificateJson;
   let { validFrom } = certificateJson;
   const certificateMetadata = metadata ?? metadataJson;
@@ -36,6 +38,8 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     issuedOn: issuanceDate ?? validFrom, // maintain backwards compatibility
     id,
     issuer,
+    name,
+    description,
     metadataJson: certificateMetadata,
     recipientFullName: getRecipientFullName(certificateJson),
     recordLink: id

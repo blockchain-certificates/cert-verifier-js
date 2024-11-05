@@ -1,6 +1,6 @@
 import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
-import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
+import type { BlockcertsV3, MultilingualVcField, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
 
 function getRecipientFullName (certificateJson): string {
@@ -8,7 +8,19 @@ function getRecipientFullName (certificateJson): string {
   return credentialSubject.name || '';
 }
 
-export default async function parseV3 (certificateJson: BlockcertsV3): Promise<ParsedCertificate> {
+function getPropertyValueForCurrentLanguage (property: string, field: string | MultilingualVcField[] = '', locale: string): string {
+  if (typeof field === 'string') {
+    return field;
+  }
+  return field
+    // find value by exact match
+    .find((f) => f['@language'] === locale)?.['@value'] ??
+    // find value by shorthand (ie. 'en-US' -> 'en')
+    field.find((f) => f['@language'].split('-')[0] === locale.split('-')[0])?.['@value'] ??
+    field[0]['@value'];
+}
+
+export default async function parseV3 (certificateJson: BlockcertsV3, locale: string): Promise<ParsedCertificate> {
   const {
     issuer: issuerProfileUrl,
     metadataJson, metadata,
@@ -38,8 +50,8 @@ export default async function parseV3 (certificateJson: BlockcertsV3): Promise<P
     issuedOn: issuanceDate ?? validFrom, // maintain backwards compatibility
     id,
     issuer,
-    name,
-    description,
+    name: getPropertyValueForCurrentLanguage('name', name, locale),
+    description: getPropertyValueForCurrentLanguage('description', description, locale),
     metadataJson: certificateMetadata,
     recipientFullName: getRecipientFullName(certificateJson),
     recordLink: id

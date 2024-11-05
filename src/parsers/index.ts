@@ -40,10 +40,10 @@ export {
   retrieveBlockcertsVersion
 };
 
-export default async function parseJSON (certificateJson: Blockcerts): Promise<ParsedCertificate> {
+export default async function parseJSON (certificateJson: Blockcerts, locale: string = ''): Promise<ParsedCertificate> {
   try {
     const blockcertsVersion: BlockcertsVersion = retrieveBlockcertsVersion(certificateJson['@context']);
-    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson);
+    const parsedCertificate = await versionParserMap[blockcertsVersion.versionNumber](certificateJson, locale);
     parsedCertificate.isFormatValid = true;
     return parsedCertificate;
   } catch (error) {

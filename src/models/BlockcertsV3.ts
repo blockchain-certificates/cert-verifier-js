@@ -21,6 +21,12 @@ export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): strin
   return proof.verificationMethod;
 }
 
+export interface MultilingualVcField {
+  '@value': string;
+  '@language': string;
+  '@direction'?: string;
+}
+
 export interface VerifiableCredential {
   '@context': JsonLDContext;
   id: string;
@@ -54,8 +60,8 @@ export interface VerifiableCredential {
   // VC V2
   validFrom?: string; // expect dateTime
   validUntil?: string; // expect dateTime
-  name?: string;
-  description?: string;
+  name?: string | MultilingualVcField[];
+  description?: string | MultilingualVcField[];
 }
 
 export interface BlockcertsV3Display {

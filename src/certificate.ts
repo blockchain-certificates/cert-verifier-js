@@ -123,7 +123,7 @@ export default class Certificate {
   }
 
   private async parseJson (certificateDefinition: Blockcerts): Promise<void> {
-    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition);
+    const parsedCertificate: ParsedCertificate = await parseJSON(certificateDefinition, this.locale);
     if (!parsedCertificate.isFormatValid) {
       throw new Error(parsedCertificate.error);
     }

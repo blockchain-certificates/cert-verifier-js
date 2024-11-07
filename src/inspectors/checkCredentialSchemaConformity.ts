@@ -5,9 +5,13 @@ import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import { getText } from '../domain/i18n/useCases';
 import type { VCCredentialSchema } from '../models/BlockcertsV3';
 
-export default async function checkCredentialSchemaConformity (credentialSubject: any, credentialSchema: VCCredentialSchema | VCCredentialSchema[]): Promise<void> {
+export default async function checkCredentialSchemaConformity (credentialSubject: any | any[], credentialSchema: VCCredentialSchema | VCCredentialSchema[]): Promise<void> {
   if (!Array.isArray(credentialSchema)) {
     credentialSchema = [credentialSchema];
+  }
+
+  if (!Array.isArray(credentialSubject)) {
+    credentialSubject = [credentialSubject];
   }
 
   for (const schemaInfo of credentialSchema) {
@@ -21,9 +25,11 @@ export default async function checkCredentialSchemaConformity (credentialSubject
     }
 
     const validate = validator(schema);
-    const result = validate(credentialSubject);
-    if (!result) {
-      throw new VerifierError(SUB_STEPS.checkCredentialSchemaConformity, getText('errors', 'checkCredentialSchemaConformity'));
+    for (const subject of credentialSubject) {
+      const result = validate(subject);
+      if (!result) {
+        throw new VerifierError(SUB_STEPS.checkCredentialSchemaConformity, getText('errors', 'checkCredentialSchemaConformity'));
+      }
     }
   }
 }

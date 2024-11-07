@@ -34,7 +34,7 @@ export interface VerifiableCredential {
   credentialStatus?: VCCredentialStatus | VCCredentialStatus[];
   credentialSchema?: VCCredentialSchema | VCCredentialSchema[];
   issuer: string | Issuer;
-  credentialSubject?: any;
+  credentialSubject?: any | any[];
   expirationDate?: string;
   evidence?: Array<{
     type: string[];
@@ -83,20 +83,23 @@ export interface VCCredentialSchema {
   id: string;
 }
 
-export interface BlockcertsV3 extends VerifiableCredential {
-  credentialSubject: {
-    id?: string;
-    publicKey?: string;
-    name?: string;
+// CredentialSubject can technically be anything the issuer wants, but we define a basic structure
+export interface BlockcertsV3BasicCredentialSubject {
+  id?: string;
+  publicKey?: string;
+  name?: string;
+  type?: string;
+  claim?: {
     type?: string;
-    claim?: {
-      type?: string;
-      id?: string;
-      name?: string;
-      description?: string;
-      criteria?: string;
-    };
+    id?: string;
+    name?: string;
+    description?: string;
+    criteria?: string;
   };
+}
+
+export interface BlockcertsV3 extends VerifiableCredential {
+  credentialSubject: BlockcertsV3BasicCredentialSubject | BlockcertsV3BasicCredentialSubject[];
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;

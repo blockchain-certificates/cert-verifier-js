@@ -2,10 +2,11 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import parseJSON from '../../../src/parsers';
 import MonolingualBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-name-description.json';
 import MultilingualBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-name-description-multilingual.json';
+import MultipleCredentialSubjectsBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-credential-subject-array.json';
 import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('Parser v3 test suite', function () {
-  describe('given it is called with valid v3 certificate data', function () {
+  describe('given it is called with valid v3.2 certificate data', function () {
     beforeAll(function () {
       vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
         const explorerLookup = await importOriginal();
@@ -98,6 +99,36 @@ describe('Parser v3 test suite', function () {
           it('should return the correct language (ar)', async function () {
             const parsedCertificate = await parseJSON(MultilingualBlockcertsV3, 'ar');
             expect(parsedCertificate.description).toBe('مثال على Blockcerts (ليس مستندًا رسميًا) يسلط الضوء على عناصر مواصفات VC v2 المختلفة');
+          });
+        });
+      });
+    });
+
+    describe('Getting the recipient full name', function () {
+      describe('when the credential subject is not an array', function () {
+        it('should return the recipient full name', async function () {
+          const parsedCertificate = await parseJSON(MonolingualBlockcertsV3);
+          expect(parsedCertificate.recipientFullName).toBe('John Smith');
+        });
+      });
+
+      describe('when the credential subject is an array', function () {
+        describe('and the current language is specified in the certificate', function () {
+          it('should return the recipient full name according to the language', async function () {
+            const parsedCertificate = await parseJSON(MultipleCredentialSubjectsBlockcertsV3, 'fr');
+            expect(parsedCertificate.recipientFullName).toBe('Jean Forgeron');
+          });
+
+          it('should return the recipient full name according to the language if a subset', async function () {
+            const parsedCertificate = await parseJSON(MultipleCredentialSubjectsBlockcertsV3, 'fr-CA');
+            expect(parsedCertificate.recipientFullName).toBe('Jean Forgeron');
+          });
+        });
+
+        describe('and the current language is not specified in the certificate', function () {
+          it('should return the first recipient full name', async function () {
+            const parsedCertificate = await parseJSON(MultipleCredentialSubjectsBlockcertsV3, 'it');
+            expect(parsedCertificate.recipientFullName).toBe('John Smith');
           });
         });
       });

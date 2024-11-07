@@ -1,31 +1,27 @@
 import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
-import type { BlockcertsV3, MultilingualVcField, VCProof } from '../models/BlockcertsV3';
+import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
 
-function getRecipientFullName (certificateJson: BlockcertsV3, locale: string): string {
-  let { credentialSubject } = certificateJson;
-
-  if (!Array.isArray(credentialSubject)) {
-    credentialSubject = [credentialSubject];
+function getPropertyValueForCurrentLanguage (propertyName: string, field: any, locale: string): string {
+  if (typeof field === 'undefined') {
+    return '';
   }
 
-  return credentialSubject
-    .find((f) => f['@language'] === locale)?.name ??
-    credentialSubject.find((f) => f['@language']?.split('-')[0] === locale.split('-')[0])?.name ??
-    credentialSubject[0].name;
-}
-
-function getPropertyValueForCurrentLanguage (property: string, field: string | MultilingualVcField[] = '', locale: string): string {
   if (typeof field === 'string') {
     return field;
   }
+
+  if (!Array.isArray(field)) {
+    field = [field];
+  }
+
   return field
     // find value by exact match
-    .find((f) => f['@language'] === locale)?.['@value'] ??
+    .find((f) => f['@language'] === locale)?.[propertyName] ??
     // find value by shorthand (ie. 'en-US' -> 'en')
-    field.find((f) => f['@language'].split('-')[0] === locale.split('-')[0])?.['@value'] ??
-    field[0]['@value'];
+    field.find((f) => f['@language']?.split('-')[0] === locale.split('-')[0])?.[propertyName] ??
+    field[0][propertyName];
 }
 
 export default async function parseV3 (certificateJson: BlockcertsV3, locale: string): Promise<ParsedCertificate> {
@@ -39,7 +35,8 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
     validUntil,
     proof,
     name,
-    description
+    description,
+    credentialSubject
   } = certificateJson;
   let { validFrom } = certificateJson;
   const certificateMetadata = metadata ?? metadataJson;
@@ -58,10 +55,10 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
     issuedOn: issuanceDate ?? validFrom, // maintain backwards compatibility
     id,
     issuer,
-    name: getPropertyValueForCurrentLanguage('name', name, locale),
-    description: getPropertyValueForCurrentLanguage('description', description, locale),
+    name: getPropertyValueForCurrentLanguage('@value', name, locale),
+    description: getPropertyValueForCurrentLanguage('@value', description, locale),
     metadataJson: certificateMetadata,
-    recipientFullName: getRecipientFullName(certificateJson, locale),
+    recipientFullName: getPropertyValueForCurrentLanguage('name', credentialSubject, locale),
     recordLink: id
   };
 }

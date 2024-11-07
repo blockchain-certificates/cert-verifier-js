@@ -3,9 +3,17 @@ import type { Issuer } from '../models/Issuer';
 import type { BlockcertsV3, MultilingualVcField, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
 
-function getRecipientFullName (certificateJson): string {
-  const { credentialSubject } = certificateJson;
-  return credentialSubject.name || '';
+function getRecipientFullName (certificateJson: BlockcertsV3, locale: string): string {
+  let { credentialSubject } = certificateJson;
+
+  if (!Array.isArray(credentialSubject)) {
+    credentialSubject = [credentialSubject];
+  }
+
+  return credentialSubject
+    .find((f) => f['@language'] === locale)?.name ??
+    credentialSubject.find((f) => f['@language']?.split('-')[0] === locale.split('-')[0])?.name ??
+    credentialSubject[0].name;
 }
 
 function getPropertyValueForCurrentLanguage (property: string, field: string | MultilingualVcField[] = '', locale: string): string {
@@ -53,7 +61,7 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
     name: getPropertyValueForCurrentLanguage('name', name, locale),
     description: getPropertyValueForCurrentLanguage('description', description, locale),
     metadataJson: certificateMetadata,
-    recipientFullName: getRecipientFullName(certificateJson),
+    recipientFullName: getRecipientFullName(certificateJson, locale),
     recordLink: id
   };
 }

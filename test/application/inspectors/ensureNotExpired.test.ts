@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { ensureNotExpired } from '../../../src/inspectors';
 
 describe('Inspectors test suite', function () {
@@ -28,6 +28,22 @@ describe('Inspectors test suite', function () {
         expect(function () {
           ensureNotExpired(fixtureDate);
         }).not.toThrow();
+      });
+    });
+
+    describe.only('given it expires in UTC-6 timezone', function () {
+      describe('and the current date is in UTC timezone and at that time it has expired', function () {
+        it('should not thrown an error', function () {
+          const mockDate = '2017-01-01T01:00:00Z';
+
+          vi.setSystemTime(mockDate);
+
+          const fixtureDate = '2017-01-01T02:00:00-06:00';
+          expect(function () {
+            ensureNotExpired(fixtureDate);
+          }).not.toThrow();
+          vi.useRealTimers();
+        });
       });
     });
   });

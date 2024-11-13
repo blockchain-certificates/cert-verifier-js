@@ -7,6 +7,7 @@ import getVerificationMap from './getVerificationMap';
 import lookForTx from './lookForTx';
 import parseIssuerKeys from './parseIssuerKeys';
 import parseRevocationKey from './parseRevocationKey';
+import validateVerifiableCredential from './validateVerifiableCredential';
 
 export {
   convertToVerificationSubsteps,
@@ -17,5 +18,6 @@ export {
   getVerificationMap,
   lookForTx,
   parseIssuerKeys,
-  parseRevocationKey
+  parseRevocationKey,
+  validateVerifiableCredential
 };

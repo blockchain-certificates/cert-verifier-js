@@ -19,6 +19,16 @@ describe('Parser v3 test suite', function () {
       const parsedCertificate = await parseJSON(fixtureCopy);
       expect(parsedCertificate.isFormatValid).toBe(false);
     });
+
+    describe('when the certificate is not a valid Verifiable Credential', function () {
+      it('should throw an error', async function () {
+        const fixtureCopy = JSON.parse(JSON.stringify(fixture));
+        fixtureCopy.issuanceDate = '2022-05-22';
+        const parsedCertificate = await parseJSON(fixtureCopy);
+        expect(parsedCertificate.isFormatValid).toBe(false);
+        expect(parsedCertificate.error).toBe('Document presented is not a valid Verifiable Credential: issuanceDate must be a valid RFC3339 string. Received: `2022-05-22`');
+      });
+    });
   });
 
   describe('given it is called with valid v3 certificate data', function () {

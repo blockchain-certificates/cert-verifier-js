@@ -1,30 +1,25 @@
 import { CONTEXT_URLS } from '@blockcerts/schemas';
-import type { BlockcertsV3 } from '../../../models/BlockcertsV3';
-import type { JsonLDContext } from '../../../models/Blockcerts';
 import { isValidUrl } from '../../../helpers/url';
-import { Issuer } from '../../../models/Issuer';
+import type { BlockcertsV3, VCCredentialStatus, VCCredentialSchema } from '../../../models/BlockcertsV3';
+import type { JsonLDContext } from '../../../models/Blockcerts';
+import { type Issuer } from '../../../models/Issuer';
 
-// Type definitions
-type CredentialSubject = Record<string, any>;
-type CredentialSchema = { id: string, type: string };
-type CredentialStatus = { id: string, type: string };
-
-function validateRFC3339Date(date: string): boolean {
+function validateRFC3339Date (date: string): boolean {
   const regex = /^-?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))$/;
   return regex.test(date);
 }
 
-function isV1VerifiableCredential(context: JsonLDContext): boolean {
+function isV1VerifiableCredential (context: JsonLDContext): boolean {
   return context.includes(CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V1_CONTEXT);
 }
 
-function isV2VerifiableCredential(context: JsonLDContext): boolean {
+function isV2VerifiableCredential (context: JsonLDContext): boolean {
   return context.includes(CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V2_CONTEXT);
 }
 
-function validateUrl(url: string): void {
+function validateUrl (url: string, property: string = ''): void {
   if (!isValidUrl(url)) {
-    throw new Error(`Invalid URL: ${url}`);
+    throw new Error(`Invalid URL: ${url}. ${property ? `Property: ${property}` : ''}`);
   }
 }
 
@@ -35,22 +30,22 @@ function validateType (certificateType: string[]): void {
   }
   const containsCompulsoryTypes = compulsoryTypes.filter(type => certificateType.includes(type));
   if (certificateType.length === 0 || containsCompulsoryTypes.length === 0) {
-    throw new Error('`type` property must contain `VerifiableCredential` or `VerifiablePresentation`');
+    throw new Error('`type` property must include `VerifiableCredential` or `VerifiablePresentation`');
   }
 }
 
 function validateContext (context: JsonLDContext, type: string[]): void {
-  const vcContextUrl: string[] = [CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V1_CONTEXT, CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V2_CONTEXT];
+  const vcContextUrls: string[] = [CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V1_CONTEXT, CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V2_CONTEXT];
 
   if (!Array.isArray(context)) {
     throw new Error('`@context` property must be an array');
   }
-  if (!vcContextUrl.includes(context[0] as string)) {
+  if (!vcContextUrls.includes(context[0] as string)) {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    throw new Error(`First @context must be one of ${vcContextUrl}, given ${context[0] as string}`);
+    throw new Error(`First @context must be one of ${vcContextUrls.join(', ')}, given ${context[0] as string}`);
   }
   if (isV1VerifiableCredential(context) && isV2VerifiableCredential(context)) {
-    throw new Error('Cannot have both v1 and v2 Verifiable Credentials contexts');
+    throw new Error('Cannot have both v1 and v2 Verifiable Credential contexts');
   }
   if (type.length > 1 && context.length === 1) {
     throw new Error(`More specific type: ${type[1]} was detected but no additional context provided`);
@@ -85,42 +80,26 @@ function validateDateRFC3339StringFormat (date: string, propertyName: string): v
   }
 }
 
-function validateIssuanceDate(certificateIssuanceDate: string): void {
-  validateDateRFC3339StringFormat(certificateIssuanceDate, 'issuanceDate');
-}
-
-function validateExpirationDate(certificateExpirationDate: string): void {
-  validateDateRFC3339StringFormat(certificateExpirationDate, 'expirationDate');
-}
-
-function validateValidFromDate(certificateValidFromDate: string): void {
-  validateDateRFC3339StringFormat(certificateValidFromDate, 'validFrom');
-}
-
-function validateValidUntilDate(certificateValidUntilDate: string): void {
-  validateDateRFC3339StringFormat(certificateValidUntilDate, 'validUntil');
-}
-
-function validateCredentialStatus(certificateCredentialStatus: CredentialStatus | CredentialStatus[]): void {
+function validateCredentialStatus (certificateCredentialStatus: VCCredentialStatus | VCCredentialStatus[]): void {
   const statuses = Array.isArray(certificateCredentialStatus) ? certificateCredentialStatus : [certificateCredentialStatus];
   statuses.forEach(status => {
     if (!status.id) {
       throw new Error('credentialStatus.id must be defined');
     }
-    validateUrl(status.id);
+    validateUrl(status.id, 'credentialStatus.id');
     if (typeof status.type !== 'string') {
       throw new Error('credentialStatus.type must be a string');
     }
   });
 }
 
-function validateCredentialSchema(certificateCredentialSchema: CredentialSchema | CredentialSchema[]): void {
+function validateCredentialSchema (certificateCredentialSchema: VCCredentialSchema | VCCredentialSchema[]): void {
   const schemas = Array.isArray(certificateCredentialSchema) ? certificateCredentialSchema : [certificateCredentialSchema];
   schemas.forEach(schema => {
     if (!schema.id) {
       throw new Error('credentialSchema.id must be defined');
     }
-    validateUrl(schema.id);
+    validateUrl(schema.id, 'credentialSchema.id');
     if (schema.type !== 'JsonSchema') {
       throw new Error('credentialSchema.type must be `JsonSchema`');
     }
@@ -128,7 +107,7 @@ function validateCredentialSchema(certificateCredentialSchema: CredentialSchema 
 }
 
 export default function validateVerifiableCredential (credential: BlockcertsV3): void {
-  if (!credential.credentialSubject){
+  if (!credential.credentialSubject) {
     throw new Error('`credentialSubject` must be defined');
   }
 
@@ -139,19 +118,18 @@ export default function validateVerifiableCredential (credential: BlockcertsV3):
 
   if (isV1VerifiableCredential(credential['@context'])) {
     if (credential.issuanceDate) {
-      validateIssuanceDate(credential.issuanceDate);
+      validateDateRFC3339StringFormat(credential.issuanceDate, 'issuanceDate');
     }
     if (credential.expirationDate) {
-      validateExpirationDate(credential.expirationDate);
+      validateDateRFC3339StringFormat(credential.expirationDate, 'expirationDate');
     }
   }
-
   if (isV2VerifiableCredential(credential['@context'])) {
     if (credential.validFrom) {
-      validateValidFromDate(credential.validFrom);
+      validateDateRFC3339StringFormat(credential.validFrom, 'validFrom');
     }
     if (credential.validUntil) {
-      validateValidUntilDate(credential.validUntil);
+      validateDateRFC3339StringFormat(credential.validUntil, 'validUntil')
     }
   }
 

@@ -129,7 +129,7 @@ export default function validateVerifiableCredential (credential: BlockcertsV3):
       validateDateRFC3339StringFormat(credential.validFrom, 'validFrom');
     }
     if (credential.validUntil) {
-      validateDateRFC3339StringFormat(credential.validUntil, 'validUntil')
+      validateDateRFC3339StringFormat(credential.validUntil, 'validUntil');
     }
   }
 

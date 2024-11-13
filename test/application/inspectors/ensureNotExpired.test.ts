@@ -31,7 +31,7 @@ describe('Inspectors test suite', function () {
       });
     });
 
-    describe.only('given it expires in UTC-6 timezone', function () {
+    describe('given it expires in UTC-6 timezone', function () {
       describe('and the current date is in UTC timezone and at that time it has expired', function () {
         it('should not thrown an error', function () {
           const mockDate = '2017-01-01T01:00:00Z';

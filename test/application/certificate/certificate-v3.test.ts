@@ -95,7 +95,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow('Unable to get issuer profile - no issuer address given');
+            .toThrow('Document presented is not a valid Verifiable Credential: `issuer` must be a URL string or an object with an `id` URL string');
         });
       });
 
@@ -106,7 +106,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow('Unable to get issuer profile - no issuer address given');
+            .toThrow('Document presented is not a valid Verifiable Credential: `issuer` must be a URL string or an object with an `id` URL string');
         });
       });
 
@@ -117,7 +117,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow('Unable to get issuer profile - no issuer address given');
+            .toThrow('Document presented is not a valid Verifiable Credential: `issuer` must be a URL string or an object with an `id` URL string');
         });
       });
 
@@ -128,7 +128,7 @@ describe('Certificate entity test suite', function () {
           const certificate = new Certificate(failingFixture);
           await expect(certificate.init())
             .rejects
-            .toThrow('Unable to get issuer profile - no issuer address given');
+            .toThrow('Document presented is not a valid Verifiable Credential: `issuer` must be a URL string or an object with an `id` URL string');
         });
       });
 

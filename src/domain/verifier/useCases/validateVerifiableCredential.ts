@@ -54,8 +54,9 @@ function validateContext (context: JsonLDContext, type: string[]): void {
 
 function validateIssuer (certificateIssuer: string | Issuer): void {
   let hasError = false;
-
-  if (typeof certificateIssuer === 'string' && !isValidUrl(certificateIssuer)) {
+  if (certificateIssuer == null) {
+    hasError = true;
+  } else if (typeof certificateIssuer === 'string' && !isValidUrl(certificateIssuer)) {
     hasError = true;
   } else if (typeof certificateIssuer === 'object' && !isValidUrl(certificateIssuer.id)) {
     hasError = true;

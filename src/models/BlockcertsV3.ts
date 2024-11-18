@@ -21,6 +21,10 @@ export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): strin
   return proof.verificationMethod;
 }
 
+export function isVerifiablePresentation (credential: BlockcertsV3 | VerifiablePresentation): credential is VerifiablePresentation {
+  return credential.type.includes('VerifiablePresentation');
+}
+
 export interface MultilingualVcField {
   '@value': string;
   '@language': string;

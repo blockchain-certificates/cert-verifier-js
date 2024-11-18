@@ -8,6 +8,7 @@ import type {
 } from '../../../models/BlockcertsV3';
 import type { JsonLDContext } from '../../../models/Blockcerts';
 import { type Issuer } from '../../../models/Issuer';
+import { isVerifiablePresentation } from '../../../models/BlockcertsV3';
 
 function validateRFC3339Date (date: string): boolean {
   const regex = /^-?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))$/;
@@ -110,10 +111,6 @@ function validateCredentialSchema (certificateCredentialSchema: VCCredentialSche
       throw new Error('credentialSchema.type must be `JsonSchema`');
     }
   });
-}
-
-export function isVerifiablePresentation (credential: BlockcertsV3 | VerifiablePresentation): credential is VerifiablePresentation {
-  return credential.type.includes('VerifiablePresentation');
 }
 
 export default function validateVerifiableCredential (credential: BlockcertsV3 | VerifiablePresentation): void {

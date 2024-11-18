@@ -254,14 +254,14 @@ export default class Verifier {
   }
 
   private prepareVerificationProcess (): void {
-    const verificationModel = domain.verifier.getVerificationMap(
-      !!this.issuer.didDocument,
-      this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
-      !!this.validFrom,
-      !!(this.documentToVerify as BlockcertsV3).credentialSchema,
-      isVCV2(this.documentToVerify['@context']),
-      isVerifiablePresentation(this.documentToVerify as BlockcertsV3)
-    );
+    const verificationModel = domain.verifier.getVerificationMap({
+      hasDid: !!this.issuer.didDocument,
+      hasHashlinks: this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
+      hasValidFrom: !!this.validFrom,
+      hasCredentialSchema: !!(this.documentToVerify as BlockcertsV3).credentialSchema,
+      isVCV2: isVCV2(this.documentToVerify['@context']),
+      isVerifiablePresentation: isVerifiablePresentation(this.documentToVerify as BlockcertsV3)
+    });
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
 

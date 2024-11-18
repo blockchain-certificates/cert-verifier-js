@@ -1,6 +1,11 @@
 import { CONTEXT_URLS } from '@blockcerts/schemas';
 import { isValidUrl } from '../../../helpers/url';
-import type { BlockcertsV3, VCCredentialStatus, VCCredentialSchema } from '../../../models/BlockcertsV3';
+import type {
+  BlockcertsV3,
+  VCCredentialStatus,
+  VCCredentialSchema,
+  VerifiablePresentation
+} from '../../../models/BlockcertsV3';
 import type { JsonLDContext } from '../../../models/Blockcerts';
 import { type Issuer } from '../../../models/Issuer';
 
@@ -107,7 +112,16 @@ function validateCredentialSchema (certificateCredentialSchema: VCCredentialSche
   });
 }
 
-export default function validateVerifiableCredential (credential: BlockcertsV3): void {
+export function isVerifiablePresentation (credential: BlockcertsV3 | VerifiablePresentation): credential is VerifiablePresentation {
+  return credential.type.includes('VerifiablePresentation');
+}
+
+export default function validateVerifiableCredential (credential: BlockcertsV3 | VerifiablePresentation): void {
+  if (isVerifiablePresentation(credential)) {
+    credential.verifiableCredential.forEach(vc => { validateVerifiableCredential(vc); });
+    return;
+  }
+
   if (!credential.credentialSubject) {
     throw new Error('`credentialSubject` must be defined');
   }

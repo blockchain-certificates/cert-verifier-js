@@ -1,0 +1,139 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://w3id.org/security/data-integrity/v2"
+  ],
+  "id": "urn:uuid:bbba9667-8ec1-445f-82c9-a57251dd731c",
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+  "validFrom": "2022-07-13T20:21:40.088Z",
+  "holder": "Julien Fraichot",
+  "verifiableCredential": [
+    {
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://w3id.org/vc/status-list/2021/v1",
+        "https://w3id.org/blockcerts/v3"
+      ],
+      "id": "urn:uuid:bbba8553-8ec1-445f-82c9-a57251dd731c",
+      "type": [
+        "VerifiableCredential",
+        "BlockcertsCredential"
+      ],
+      "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+      "issuanceDate": "2022-08-18T14:04:24Z",
+      "credentialSubject": {
+        "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+        "name": "Julien Fraichot",
+        "email": "julien.fraichot@hyland.com",
+        "publicKey": "ecdsa-koblitz-pubkey:1BPQXndcz5Uf3qZQkgnvJC87LUD5n7a2mC"
+      },
+      "credentialStatus": {
+        "id": "https://www.blockcerts.org/samples/3.0/status-list-2021.json#23546",
+        "type": "StatusList2021Entry",
+        "statusPurpose": "revocation",
+        "statusListIndex": "23546",
+        "statusListCredential": "https://www.blockcerts.org/samples/3.0/status-list-2021.json"
+      },
+      "display": {
+        "contentMediaType": "text/html",
+        "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Hello world</div>"
+      },
+      "proof": {
+        "type": "MerkleProof2019",
+        "created": "2023-05-12T17:55:25.332864",
+        "proofValue": "z3hSV9ktErQhBgc1GLhkb7LPCdGrhat2N9pQJHeMYsiTeRR4CpVR5xWacdKoFCk6YnMZsZ43eKBQcXKibs6vGUYJ6RWfKHNBKbyjELXytWLkmqGSUepZCBpKDa3JxiWDwTdKjxdi5XuYWDn6xbwrAa1aKSx51sdzbbx4ub2Zs6z8yZgCMtcwdK2Ty43MAiNXRaGCxCBafyxe9MjxeWbnBB1ATz4AH4Zs83KhyjmFMEvjstuQPhXKnAtboqKM4ym15A74jLUmJHxFZNyaNtcSmiDnF9aehWhZ2rKpKHQojPNzRZx4vKk8Dmqej21r99GLxMj3s5n7rKSaPNNqjibaERoEYxgwK2J4bwCAfmVaeUNCZwQCKMqzrttJcVoY9j7qeUt2wJ1GDz6Tb6G",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": null
+      }
+    },
+    {
+      "@context": [
+        "https://www.w3.org/ns/credentials/v2",
+        {
+          "DOB": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/DOB",
+            "@type": "https://schema.org/Text"
+          },
+          "nationality": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/nationality",
+            "@type": "https://schema.org/Text"
+          },
+          "height": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/height",
+            "@type": "https://schema.org/Text"
+          },
+          "residentialAddressStreet": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressStreet",
+            "@type": "https://schema.org/Text"
+          },
+          "residentialAddressTown": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressTown",
+            "@type": "https://schema.org/Text"
+          },
+          "residentialAddressPostCode": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/residentialAddressPostCode",
+            "@type": "https://schema.org/Text"
+          },
+          "IdCardCredential": {
+            "@id": "https://schemas.learningmachine.com/2017/blockcerts/IdCardCredential",
+            "@type": "https://schema.org/DataType"
+          }
+        },
+        "https://w3id.org/security/data-integrity/v2",
+        "https://w3id.org/blockcerts/v3.2"
+      ],
+      "type": [
+        "VerifiableCredential",
+        "BlockcertsCredential",
+        "IdCardCredential"
+      ],
+      "name": "Canadian Id Card",
+      "description": "A Blockcerts example (not an official document) highlighting various VC v2 spec items",
+      "issuer": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json",
+      "validFrom": "2024-03-01T00:00:00Z",
+      "validUntil": "2039-02-28T23:59:59Z",
+      "id": "urn:uuid:4f5f0100-ccbf-4ca9-9cfc-4f5fc3052d28",
+      "credentialSchema": [
+        {
+          "id": "https://www.blockcerts.org/samples/3.0/example-id-card-schema.json",
+          "type": "JsonSchema"
+        }
+      ],
+      "credentialSubject": {
+        "id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+        "name": "Julien Fraichot",
+        "nationality": "Canada",
+        "DOB": "05/10/1983",
+        "height": "1.80m",
+        "residentialAddressStreet": "6 Maple Tree street",
+        "residentialAddressTown": "Toronto",
+        "residentialAddressPostCode": "YYZYUL"
+      },
+      "display": {
+        "contentMediaType": "text/html",
+        "content": "<div style=\"background-color:transparent;padding:6px;display:inline-flex;align-items:center;flex-direction:column\">Yo</div>"
+      },
+      "proof": {
+        "id": "urn:uuid:24234d1c-d4d8-4ab0-b39c-dbfa34453c57",
+        "type": "DataIntegrityProof",
+        "cryptosuite": "merkle-proof-2019",
+        "proofPurpose": "assertionMethod",
+        "created": "2024-10-22T17:46:57Z",
+        "proofValue": "zEuZQLZTYrdsDv2b4UaTDmwfUkysUhJGNFY5dhtvEby9iaip6ivoEUCXsYVv6ZzFgxoxwE1AxRpBgxf498vvUobDFTNd1qJ84afnmucg7cHAJCXiXWY8EmYpKgeXckNtiyzZmgDSCeegHkrwUSaM7G2fz2byGYBhweuysT76mhUbFwPGBzQpgQX6tgsvQS8dtSW8zXHKoK7PyvoQwkJvfoHoHCTZd4QnVPPPisYnjN6ZUAw38Zow7evEkK3VdHmcCi2gRfWrjvvutAtfXoT1sSLx5v2V4T1sRbH7kFoEY2VS5VA",
+        "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+      }
+    }
+  ],
+  "proof": {
+    "id": "urn:uuid:5152ac49-6482-4786-a8e7-403a08911b57",
+    "type": "DataIntegrityProof",
+    "cryptosuite": "merkle-proof-2019",
+    "proofPurpose": "assertionMethod",
+    "created": "2024-11-14T14:48:14Z",
+    "proofValue": "zEuZQLZTYrdsDv2Fg4StnuhNoZepSop1D6hPZrBaYKhr11qEhYcbsM2Bkfrem5o6KuH39kCiN6Hb4RgC5VS5gj5oEr5hfypVu4oLsAvnJwhV6wUcW4QRCDsdn2fZjAUzWfqrXcc3VRsyE9JRm782VjvoHAWaZzF3ZBjCE9cznbDy5gbmFwevFQmEgHkDPm94ErM1NZe3HGULiaLR68ezUgh7AfYtzbCtLoJpsDpujqURZkJsWXDdE8DSgbCUxfk2ZCUjCGM7upe3sZ2CPRoShmm3p2Nh3bM2JGBPp4EmWYs2ssv",
+    "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"
+  }
+}

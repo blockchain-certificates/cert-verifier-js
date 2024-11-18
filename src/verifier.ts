@@ -5,7 +5,7 @@ import { SUB_STEPS, VerificationSteps } from './domain/verifier/entities/verific
 import { VerifierError } from './models';
 import { getText } from './domain/i18n/useCases';
 import { difference } from './helpers/array';
-import { getVCProofVerificationMethod } from './models/BlockcertsV3';
+import { getVCProofVerificationMethod, isVerifiablePresentation } from './models/BlockcertsV3';
 import type { ExplorerAPI, TransactionData } from '@blockcerts/explorer-lookup';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import type { Blockcerts } from './models/Blockcerts';
@@ -259,7 +259,8 @@ export default class Verifier {
       this.hashlinkVerifier?.hasHashlinksToVerify() ?? false,
       !!this.validFrom,
       !!(this.documentToVerify as BlockcertsV3).credentialSchema,
-      isVCV2(this.documentToVerify['@context'])
+      isVCV2(this.documentToVerify['@context']),
+      isVerifiablePresentation(this.documentToVerify as BlockcertsV3)
     );
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;

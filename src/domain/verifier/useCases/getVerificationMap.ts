@@ -9,7 +9,8 @@ export function getVerificationStepsForCurrentCase (
   hasHashlinks: boolean,
   hasValidFrom: boolean,
   hasCredentialSchema: boolean,
-  isVCV2: boolean
+  isVCV2: boolean,
+  isVerifiablePresentation: boolean
 ): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
@@ -21,7 +22,7 @@ export function getVerificationStepsForCurrentCase (
     removeEntry(verificationSteps, SUB_STEPS.checkImagesIntegrity);
   }
 
-  if (!hasValidFrom) {
+  if (!hasValidFrom || isVerifiablePresentation) {
     removeEntry(verificationSteps, SUB_STEPS.ensureValidityPeriodStarted);
   }
 
@@ -59,7 +60,8 @@ export default function getVerificationMap (
   hasHashlinks: boolean = false,
   hasValidFrom: boolean = false,
   hasCredentialSchema: boolean = false,
-  isVCV2: boolean = false
+  isVCV2: boolean = false,
+  isVerifiablePresentation: boolean = false
 ): {
     verificationMap: IVerificationMapItem[];
     verificationProcess: SUB_STEPS[];
@@ -69,7 +71,8 @@ export default function getVerificationMap (
     hasHashlinks,
     hasValidFrom,
     hasCredentialSchema,
-    isVCV2
+    isVCV2,
+    isVerifiablePresentation
   );
   return {
     verificationProcess,

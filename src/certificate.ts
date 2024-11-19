@@ -13,8 +13,9 @@ import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { SignatureImage } from './models';
 import type { BlockcertsV3, BlockcertsV3Display } from './models/BlockcertsV3';
-import type { IVerificationMapItem } from './models/VerificationMap';
 import { isVerifiablePresentation } from './models/BlockcertsV3';
+import type { IVerificationMapItem } from './models/VerificationMap';
+import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 
 export interface ExplorerURLs {
   main: string;
@@ -113,7 +114,6 @@ export default class Certificate {
       }
     }
     await this.parseJson(this.certificateJson);
-
     this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       expires: this.expires,
@@ -129,6 +129,9 @@ export default class Certificate {
   }
 
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
+    let mainDocumentVerificationStatus = await this.verifier.verify(stepCallback);
+    this.setSigners();
+
     if (this.isVerifiablePresentation) {
       let i = 0;
       console.log('VP has', this.verifiableCredentials.length, 'credentials');
@@ -142,13 +145,20 @@ export default class Certificate {
           id: vc.id,
           verificationStatus
         });
+
+        if (verificationStatus.status !== VERIFICATION_STATUSES.SUCCESS) {
+          mainDocumentVerificationStatus = {
+            ...mainDocumentVerificationStatus,
+            status: VERIFICATION_STATUSES.FAILURE,
+            message: `Credential ${vc.name ? vc.name + ' ' : ''}with id ${vc.id} failed verification. Error: ${verificationStatus.message}`,
+            errors: [verificationStatus]
+          };
+          break;
+        }
       }
     }
-    const verificationStatus = await this.verifier.verify(stepCallback);
 
-    this.setSigners();
-
-    return verificationStatus;
+    return mainDocumentVerificationStatus;
   }
 
   private async parseJson (certificateDefinition: Blockcerts): Promise<void> {

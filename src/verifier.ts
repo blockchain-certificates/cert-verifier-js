@@ -34,6 +34,7 @@ export interface IFinalVerificationStatus {
   code: VerificationSteps.final;
   status: VERIFICATION_STATUSES;
   message: string;
+  errors?: IFinalVerificationStatus[];
 }
 
 interface StepVerificationStatus {

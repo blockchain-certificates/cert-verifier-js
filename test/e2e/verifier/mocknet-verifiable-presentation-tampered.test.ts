@@ -1,5 +1,5 @@
 import { describe, it, expect, afterAll, beforeAll, vi } from 'vitest';
-import VerifiablePresentationFixture from '../../fixtures/v3/mocknet-verifiable-presentation.json';
+import VerifiablePresentationFixture from '../../fixtures/v3/mocknet-verifiable-presentation-tampered.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 import fixtureCredentialSchema from '../../fixtures/credential-schema-example-id-card.json';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
@@ -28,10 +28,20 @@ describe('Verifiable Presentation test suite', function () {
     vi.restoreAllMocks();
   });
 
-  it('should verify successfully', async function () {
-    const certificate = new Certificate(VerifiablePresentationFixture);
-    await certificate.init();
-    const result = await certificate.verify();
-    expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
+  describe('given the presentation has been modified', function () {
+    let result;
+    beforeAll(async function () {
+      const certificate = new Certificate(VerifiablePresentationFixture);
+      await certificate.init();
+      result = await certificate.verify();
+    });
+
+    it('should fail verification', function () {
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+    });
+
+    it('should provide the error message', function () {
+      expect(result.message).toBe('Computed hash does not match remote hash');
+    });
   });
 });

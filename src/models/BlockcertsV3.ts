@@ -1,5 +1,6 @@
 import type { Issuer } from './Issuer';
 import type { JsonLDContext } from './Blockcerts';
+import type { CONTENT_MEDIA_TYPES } from './contentMediaTypes';
 
 export interface VCProof {
   type: string;
@@ -77,7 +78,7 @@ export interface VerifiableCredential {
 }
 
 export interface BlockcertsV3Display {
-  contentMediaType: string;
+  contentMediaType: CONTENT_MEDIA_TYPES;
   content: string;
   contentEncoding?: string;
 }

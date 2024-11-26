@@ -75,6 +75,7 @@ export default class Certificate {
   public verifiableCredentials: Certificate[];
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
+  public verificationStatus: IFinalVerificationStatus;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -135,16 +136,13 @@ export default class Certificate {
     if (this.isVerifiablePresentation) {
       let i = 0;
       console.log('VP has', this.verifiableCredentials.length, 'credentials');
-      const credentialVerificationStatus = [];
       for (const vc of this.verifiableCredentials) {
         i++;
         console.log('now verifying certificate', i, vc.id);
-        const verificationStatus = await vc.verify(stepCallback);
+        const verificationStatus = await vc.verify();
         console.log('verificationStatus', vc.id, verificationStatus);
-        credentialVerificationStatus.push({
-          id: vc.id,
-          verificationStatus
-        });
+
+        vc.verificationStatus = verificationStatus;
 
         if (verificationStatus.status !== VERIFICATION_STATUSES.SUCCESS) {
           mainDocumentVerificationStatus = {
@@ -158,6 +156,7 @@ export default class Certificate {
       }
     }
 
+    this.verificationStatus = mainDocumentVerificationStatus;
     return mainDocumentVerificationStatus;
   }
 

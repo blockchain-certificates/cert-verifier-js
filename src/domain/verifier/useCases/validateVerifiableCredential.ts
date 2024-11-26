@@ -1,8 +1,14 @@
 import { CONTEXT_URLS } from '@blockcerts/schemas';
 import { isValidUrl } from '../../../helpers/url';
-import type { BlockcertsV3, VCCredentialStatus, VCCredentialSchema } from '../../../models/BlockcertsV3';
+import type {
+  BlockcertsV3,
+  VCCredentialStatus,
+  VCCredentialSchema,
+  VerifiablePresentation
+} from '../../../models/BlockcertsV3';
 import type { JsonLDContext } from '../../../models/Blockcerts';
 import { type Issuer } from '../../../models/Issuer';
+import { isVerifiablePresentation } from '../../../models/BlockcertsV3';
 
 function validateRFC3339Date (date: string): boolean {
   const regex = /^-?([1-9][0-9]{3,}|0[0-9]{3})-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T(([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?|(24:00:00(\.0+)?))(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))$/;
@@ -107,7 +113,12 @@ function validateCredentialSchema (certificateCredentialSchema: VCCredentialSche
   });
 }
 
-export default function validateVerifiableCredential (credential: BlockcertsV3): void {
+export default function validateVerifiableCredential (credential: BlockcertsV3 | VerifiablePresentation): void {
+  if (isVerifiablePresentation(credential)) {
+    credential.verifiableCredential.forEach(vc => { validateVerifiableCredential(vc); });
+    return;
+  }
+
   if (!credential.credentialSubject) {
     throw new Error('`credentialSubject` must be defined');
   }

@@ -2,6 +2,7 @@ import domain from '../domain';
 import type { Issuer } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ParsedCertificate } from './index';
+import { isVerifiablePresentation } from '../models/BlockcertsV3';
 
 function getPropertyValueForCurrentLanguage (propertyName: string, field: any, locale: string): string {
   if (typeof field === 'undefined') {
@@ -24,9 +25,16 @@ function getPropertyValueForCurrentLanguage (propertyName: string, field: any, l
     field[0][propertyName];
 }
 
+function getProofObject (proof: VCProof | VCProof[]): VCProof {
+  let proofObject = proof;
+  if (Array.isArray(proof)) {
+    proofObject = proof[0];
+  }
+  return proofObject as VCProof;
+}
+
 export default async function parseV3 (certificateJson: BlockcertsV3, locale: string): Promise<ParsedCertificate> {
   const {
-    issuer: issuerProfileUrl,
     metadataJson, metadata,
     issuanceDate,
     id,
@@ -38,6 +46,9 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
     description,
     credentialSubject
   } = certificateJson;
+  let {
+    issuer: issuerProfileUrl
+  } = certificateJson;
   try {
     domain.verifier.validateVerifiableCredential(certificateJson);
   } catch (error) {
@@ -45,13 +56,14 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
   }
   let { validFrom } = certificateJson;
   const certificateMetadata = metadata ?? metadataJson;
+  if (isVerifiablePresentation(certificateJson)) {
+    const proofObject = getProofObject(proof);
+    issuerProfileUrl = proofObject.verificationMethod?.split('#')[0];
+  }
   const issuer: Issuer = await domain.verifier.getIssuerProfile(issuerProfileUrl);
   if (!validFrom) {
-    let proofObject = proof;
-    if (Array.isArray(proof)) {
-      proofObject = proof[0];
-    }
-    validFrom = (proofObject as VCProof).created;
+    const proofObject = getProofObject(proof);
+    validFrom = proofObject.created;
   }
   return {
     display,

@@ -8,3 +8,5 @@ export { getSupportedLanguages } from './domain/i18n/useCases';
 export { BLOCKCHAINS, CERTIFICATE_VERSIONS } from './constants';
 export { SignatureImage } from './models';
 export { retrieveBlockcertsVersion } from './parsers';
+export { isVerifiablePresentation } from './models/BlockcertsV3';
+export { CONTENT_MEDIA_TYPES } from './models/contentMediaTypes';

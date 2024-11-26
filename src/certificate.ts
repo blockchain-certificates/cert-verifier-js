@@ -13,7 +13,9 @@ import type { Blockcerts } from './models/Blockcerts';
 import type { Issuer } from './models/Issuer';
 import type { SignatureImage } from './models';
 import type { BlockcertsV3, BlockcertsV3Display } from './models/BlockcertsV3';
+import { isVerifiablePresentation } from './models/BlockcertsV3';
 import type { IVerificationMapItem } from './models/VerificationMap';
+import { VERIFICATION_STATUSES } from './constants/verificationStatuses';
 
 export interface ExplorerURLs {
   main: string;
@@ -53,6 +55,7 @@ export default class Certificate {
   public explorerAPIs: ExplorerAPI[] = [];
   public id: string;
   public isFormatValid: boolean;
+  public isVerifiablePresentation: boolean;
   public issuedOn: string;
   public issuer: Issuer;
   public locale: string; // enum?
@@ -69,8 +72,10 @@ export default class Certificate {
   public subtitle?: string; // v1
   public hashlinkVerifier: HashlinkVerifier;
   public hasHashlinks: boolean = false;
+  public verifiableCredentials: Certificate[];
   public verificationSteps: IVerificationMapItem[];
   public verifier: Verifier;
+  public verificationStatus: IFinalVerificationStatus;
 
   constructor (certificateDefinition: Blockcerts | string, options: CertificateOptions = {}) {
     // Options
@@ -86,9 +91,20 @@ export default class Certificate {
 
     // Keep certificate JSON object
     this.certificateJson = deepCopy<Blockcerts>(certificateDefinition);
+    this.isVerifiablePresentation = isVerifiablePresentation(this.certificateJson as any);
+
+    if (this.isVerifiablePresentation) {
+      this.verifiableCredentials = (this.certificateJson as any)
+        .verifiableCredential?.map((vc: Blockcerts) => new Certificate(vc, options)) ?? [];
+    }
   }
 
   async init (): Promise<void> {
+    if (this.isVerifiablePresentation) {
+      for (const vc of this.verifiableCredentials) {
+        await vc.init();
+      }
+    }
     // Parse certificate
     if ((this.certificateJson as BlockcertsV3).display?.content) {
       const hashlinks = getHashlinksFrom((this.certificateJson as BlockcertsV3).display.content);
@@ -99,7 +115,6 @@ export default class Certificate {
       }
     }
     await this.parseJson(this.certificateJson);
-
     this.verifier = new Verifier({
       certificateJson: this.certificateJson,
       expires: this.expires,
@@ -115,11 +130,34 @@ export default class Certificate {
   }
 
   async verify (stepCallback?: IVerificationStepCallbackFn): Promise<IFinalVerificationStatus> {
-    const verificationStatus = await this.verifier.verify(stepCallback);
-
+    let mainDocumentVerificationStatus = await this.verifier.verify(stepCallback);
     this.setSigners();
 
-    return verificationStatus;
+    if (this.isVerifiablePresentation) {
+      let i = 0;
+      console.log('VP has', this.verifiableCredentials.length, 'credentials');
+      for (const vc of this.verifiableCredentials) {
+        i++;
+        console.log('now verifying certificate', i, vc.id);
+        const verificationStatus = await vc.verify();
+        console.log('verificationStatus', vc.id, verificationStatus);
+
+        vc.verificationStatus = verificationStatus;
+
+        if (verificationStatus.status !== VERIFICATION_STATUSES.SUCCESS) {
+          mainDocumentVerificationStatus = {
+            ...mainDocumentVerificationStatus,
+            status: VERIFICATION_STATUSES.FAILURE,
+            message: `Credential ${vc.name ? vc.name + ' ' : ''}with id ${vc.id} failed verification. Error: ${verificationStatus.message}`,
+            errors: [verificationStatus]
+          };
+          break;
+        }
+      }
+    }
+
+    this.verificationStatus = mainDocumentVerificationStatus;
+    return mainDocumentVerificationStatus;
   }
 
   private async parseJson (certificateDefinition: Blockcerts): Promise<void> {

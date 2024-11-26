@@ -4,13 +4,22 @@ import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../valueObjects/VerificationSubstep';
 import type { IVerificationMapItem } from '../../../models/VerificationMap';
 
-export function getVerificationStepsForCurrentCase (
-  hasDid: boolean,
-  hasHashlinks: boolean,
-  hasValidFrom: boolean,
-  hasCredentialSchema: boolean,
-  isVCV2: boolean
-): SUB_STEPS[] {
+export interface VerificationMapFilters {
+  hasDid?: boolean;
+  hasHashlinks?: boolean;
+  hasValidFrom?: boolean;
+  hasCredentialSchema?: boolean;
+  isVCV2?: boolean;
+  isVerifiablePresentation?: boolean;
+}
+export function getVerificationStepsForCurrentCase ({
+  hasDid = false,
+  hasHashlinks = false,
+  hasValidFrom = false,
+  hasCredentialSchema = false,
+  isVCV2 = false,
+  isVerifiablePresentation = false
+}: VerificationMapFilters): SUB_STEPS[] {
   const verificationSteps = Object.values(SUB_STEPS);
 
   if (!hasDid) {
@@ -21,7 +30,7 @@ export function getVerificationStepsForCurrentCase (
     removeEntry(verificationSteps, SUB_STEPS.checkImagesIntegrity);
   }
 
-  if (!hasValidFrom) {
+  if (!hasValidFrom || isVerifiablePresentation) {
     removeEntry(verificationSteps, SUB_STEPS.ensureValidityPeriodStarted);
   }
 
@@ -54,23 +63,11 @@ function getFullStepsWithSubSteps (verificationSubStepsList: SUB_STEPS[]): IVeri
     }));
 }
 
-export default function getVerificationMap (
-  hasDid: boolean = false,
-  hasHashlinks: boolean = false,
-  hasValidFrom: boolean = false,
-  hasCredentialSchema: boolean = false,
-  isVCV2: boolean = false
-): {
-    verificationMap: IVerificationMapItem[];
-    verificationProcess: SUB_STEPS[];
-  } {
-  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(
-    hasDid,
-    hasHashlinks,
-    hasValidFrom,
-    hasCredentialSchema,
-    isVCV2
-  );
+export default function getVerificationMap (filters: VerificationMapFilters = {}): {
+  verificationMap: IVerificationMapItem[];
+  verificationProcess: SUB_STEPS[];
+} {
+  const verificationProcess: SUB_STEPS[] = getVerificationStepsForCurrentCase(filters);
   return {
     verificationProcess,
     verificationMap: getFullStepsWithSubSteps(verificationProcess)

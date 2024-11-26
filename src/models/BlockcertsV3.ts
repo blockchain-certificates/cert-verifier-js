@@ -1,5 +1,6 @@
 import type { Issuer } from './Issuer';
 import type { JsonLDContext } from './Blockcerts';
+import type { CONTENT_MEDIA_TYPES } from './contentMediaTypes';
 
 export interface VCProof {
   type: string;
@@ -21,10 +22,22 @@ export function getVCProofVerificationMethod (proof: VCProof | VCProof[]): strin
   return proof.verificationMethod;
 }
 
+export function isVerifiablePresentation (credential: BlockcertsV3 | VerifiablePresentation): credential is VerifiablePresentation {
+  return credential.type.includes('VerifiablePresentation');
+}
+
 export interface MultilingualVcField {
   '@value': string;
   '@language': string;
   '@direction'?: string;
+}
+
+export interface VerifiablePresentation {
+  '@context': JsonLDContext;
+  id?: string;
+  type: string[];
+  verifiableCredential?: BlockcertsV3[];
+  holder?: string;
 }
 
 export interface VerifiableCredential {
@@ -65,7 +78,7 @@ export interface VerifiableCredential {
 }
 
 export interface BlockcertsV3Display {
-  contentMediaType: string;
+  contentMediaType: CONTENT_MEDIA_TYPES;
   content: string;
   contentEncoding?: string;
 }
@@ -103,8 +116,6 @@ export interface BlockcertsV3 extends VerifiableCredential {
   metadata?: string;
   display?: BlockcertsV3Display;
   nonce?: string;
-  proof: VCProof | VCProof[];
-
   /**
    * @deprecated v3 alpha only
    */

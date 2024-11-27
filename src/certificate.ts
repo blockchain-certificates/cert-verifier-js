@@ -151,7 +151,6 @@ export default class Certificate {
             message: `Credential ${vc.name ? vc.name + ' ' : ''}with id ${vc.id} failed verification. Error: ${verificationStatus.message}`,
             errors: [verificationStatus]
           };
-          break;
         }
       }
     }

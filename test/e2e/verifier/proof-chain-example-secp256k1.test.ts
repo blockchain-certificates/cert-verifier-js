@@ -32,9 +32,6 @@ describe('proof chain example', function () {
         }
       };
     });
-
-    instance = new Certificate(fixture as any);
-    await instance.init();
   });
 
   afterAll(function () {
@@ -42,6 +39,8 @@ describe('proof chain example', function () {
   });
 
   it('verifies as expected', async function () {
+    instance = new Certificate(fixture as any);
+    await instance.init();
     const result = await instance.verify();
     expect(result.message).toEqual({
       description: 'All the signatures of this certificate have successfully verified.',
@@ -49,4 +48,14 @@ describe('proof chain example', function () {
     });
     expect(result.status).toBe('success');
   });
+  // TODO: uncomment the following if jsonld-signatures follows the spec https://github.com/digitalbazaar/jsonld-signatures/issues/185
+  // describe('when the verifier\'s proofPurpose does not match the document\'s proof purpose', function () {
+  //   it('should fail verification', async function () {
+  //     const certificate = new Certificate(fixture as any, { proofPurpose: 'authentication' });
+  //     await certificate.init();
+  //     const result = await certificate.verify();
+  //
+  //     expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+  //   });
+  // });
 });

@@ -15,7 +15,7 @@ import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IDidDocument } from '../models/DidDocument';
 import { VerifierError } from '../models';
 
-const { purposes: { AssertionProofPurpose } } = jsigs;
+const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
@@ -35,6 +35,8 @@ export default class EcdsaSd2023 extends Suite {
   public cryptosuite = 'ecdsa-sd-2023';
   public publicKey: string;
   public verificationKey: any;
+  public proofPurpose: string;
+  private readonly proofPurposeMap: any;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -44,6 +46,11 @@ export default class EcdsaSd2023 extends Suite {
     this.documentToVerify = props.document as BlockcertsV3;
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
+    this.proofPurpose = props.proofPurpose ?? 'assertionMethod';
+    this.proofPurposeMap = {
+      authentication: AuthenticationProofPurpose,
+      assertionMethod: AssertionProofPurpose
+    };
     this.validateProofType();
   }
 
@@ -180,6 +187,8 @@ export default class EcdsaSd2023 extends Suite {
         const verificationMethod = (this.documentToVerify.proof as VCProof).verificationMethod;
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
+          // TODO: uncomment the following if jsonld-signatures follows the spec https://github.com/digitalbazaar/jsonld-signatures/issues/185
+          // purpose: new this.proofPurposeMap[this.proofPurpose](),
           purpose: new AssertionProofPurpose(),
           documentLoader: this.generateDocumentLoader([
             {

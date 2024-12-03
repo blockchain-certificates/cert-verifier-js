@@ -30,6 +30,9 @@ export interface CertificateOptions {
   explorerAPIs?: ExplorerAPI[];
   // specify your own DID resolver url
   didResolverUrl?: string;
+  // allows to define a specific purpose verification for the verifier (authentication, assertionMethod, etc)
+  // https://www.w3.org/TR/vc-data-integrity/#proof-purposes
+  proofPurpose?: string;
 }
 
 export interface Signers {
@@ -62,6 +65,7 @@ export default class Certificate {
   public metadataJson: any; // TODO: define metadataJson interface.
   public name?: string;
   public options: CertificateOptions;
+  public proofPurpose: string;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;
@@ -123,7 +127,8 @@ export default class Certificate {
       issuer: this.issuer,
       hashlinkVerifier: this.hashlinkVerifier,
       revocationKey: this.revocationKey,
-      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs)
+      explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
+      proofPurpose: this.proofPurpose
     });
     await this.verifier.init();
     this.verificationSteps = this.verifier.getVerificationSteps();
@@ -177,6 +182,7 @@ export default class Certificate {
     // Set locale
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
     this.explorerAPIs = this.options.explorerAPIs ?? [];
+    this.proofPurpose = this.options.proofPurpose;
 
     if (options.didResolverUrl) {
       domain.did.didResolver.url = options.didResolverUrl;

@@ -74,9 +74,10 @@ export default class Verifier {
   public proofVerifiers: Suite[] = [];
   public verificationProcess: SUB_STEPS[];
   public proofMap: TVerifierProofMap;
+  public proofPurpose: string;
 
   constructor (
-    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom }: {
+    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom, proofPurpose }: {
       certificateJson: Blockcerts;
       expires: string;
       validFrom?: string;
@@ -85,6 +86,7 @@ export default class Verifier {
       hashlinkVerifier: HashlinkVerifier;
       revocationKey: string;
       explorerAPIs?: ExplorerAPI[];
+      proofPurpose?: string;
     }
   ) {
     this.expires = expires;
@@ -94,6 +96,7 @@ export default class Verifier {
     this.hashlinkVerifier = hashlinkVerifier;
     this.revocationKey = revocationKey;
     this.explorerAPIs = explorerAPIs;
+    this.proofPurpose = proofPurpose;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
   }
@@ -216,7 +219,8 @@ export default class Verifier {
         document: this.documentToVerify,
         proof,
         explorerAPIs: this.explorerAPIs,
-        issuer: this.issuer
+        issuer: this.issuer,
+        proofPurpose: this.proofPurpose
       };
 
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));

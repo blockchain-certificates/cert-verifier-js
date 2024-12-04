@@ -11,6 +11,8 @@
       "statusCheckLabelPending": "Checking record status"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "Assert proof purpose",
+      "assertProofPurposeLabelPending": "Asserting proof purpose",
       "getTransactionIdLabel": "Get transaction ID",
       "getTransactionIdLabelPending": "Getting transaction ID",
       "computeLocalHashLabel": "Compute local hash",
@@ -129,6 +131,8 @@
       "statusCheckLabelPending": "Vérification du status"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "Vérification de l'objectif de la signature",
+      "assertProofPurposeLabelPending": "Vérification de l'objectif de la signature",
       "getTransactionIdLabel": "Obtention de l'identifiant de transaction",
       "getTransactionIdLabelPending": "Obtention de l'identifiant de transaction",
       "computeLocalHashLabel": "Calcul du hash local",
@@ -247,6 +251,8 @@
       "statusCheckLabelPending": "Verificando Estado de Grabación"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "Afirmar propósito de la prueba",
+      "assertProofPurposeLabelPending": "Afirmando propósito de la prueba",
       "getTransactionIdLabel": "Obtener Identificación de Transacción",
       "getTransactionIdLabelPending": "Obteniendo Identificación de Transacción",
       "computeLocalHashLabel": "Calcular cadena binaria local",
@@ -365,6 +371,8 @@
       "statusCheckLabelPending": "Ir-record status qed jiġi ċċekkjat"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "Assert proof purpose",
+      "assertProofPurposeLabelPending": "Asserting proof purpose",
       "getTransactionIdLabel": "Ikseb l-ID ta' tranżazzjoni",
       "getTransactionIdLabelPending": "L-ID ta' tranżazzjoni qed tiġi mniżżla",
       "computeLocalHashLabel": "Ikkalkula l-hash lokali",
@@ -483,6 +491,8 @@
       "statusCheckLabelPending": "Verifica stato del record"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "Assert proof purpose",
+      "assertProofPurposeLabelPending": "Asserting proof purpose",
       "getTransactionIdLabel": "Ottenere ID transazione",
       "getTransactionIdLabelPending": "Ottieni ID transazione",
       "computeLocalHashLabel": "Calcolare hash locale",
@@ -601,6 +611,8 @@
       "statusCheckLabelPending": "ステータスを確認"
     },
     "subSteps": {
+      "assertProofPurposeLabel": "証明の目的を主弭する",
+      "assertProofPurposeLabelPending": "証明の目的を主弭中",
       "getTransactionIdLabel": "取引IDの取得",
       "getTransactionIdLabelPending": "取引IDを取得",
       "computeLocalHashLabel": "ローカルハッシュの算出",

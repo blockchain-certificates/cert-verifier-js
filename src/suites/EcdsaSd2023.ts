@@ -188,8 +188,8 @@ export default class EcdsaSd2023 extends Suite {
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
           // TODO: uncomment the following if jsonld-signatures follows the spec https://github.com/digitalbazaar/jsonld-signatures/issues/185
-          // purpose: new this.proofPurposeMap[this.proofPurpose](),
-          purpose: new AssertionProofPurpose(),
+          purpose: new this.proofPurposeMap[this.proofPurpose](),
+          // purpose: new AssertionProofPurpose(),
           documentLoader: this.generateDocumentLoader([
             {
               url: verificationMethod,

@@ -37,6 +37,13 @@ export default [
         proofType: 'MerkleProof2019',
         subSteps: [
           {
+            code: 'assertProofPurpose',
+            label: defaultLanguageSet.subSteps.assertProofPurposeLabel,
+            labelPending: defaultLanguageSet.subSteps.assertProofPurposeLabelPending,
+            parentStep: 'proofVerification',
+            status: VERIFICATION_STATUSES.DEFAULT
+          },
+          {
             code: 'computeLocalHash',
             label: defaultLanguageSet.subSteps.computeLocalHashLabel,
             labelPending: defaultLanguageSet.subSteps.computeLocalHashLabelPending,

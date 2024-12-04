@@ -12,6 +12,7 @@ export interface SuiteAPI {
   explorerAPIs?: ExplorerAPI[];
   proof: VCProof | MerkleProof2017;
   issuer: Issuer;
+  proofPurpose?: string;
 }
 
 export abstract class Suite {

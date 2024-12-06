@@ -30,6 +30,13 @@ export default [
         proofType: 'MerkleProof2019',
         subSteps: [
           {
+            code: 'assertProofValidity',
+            label: defaultLanguageSet.subSteps.assertProofValidityLabel,
+            labelPending: defaultLanguageSet.subSteps.assertProofValidityLabelPending,
+            parentStep: 'proofVerification',
+            status: VERIFICATION_STATUSES.DEFAULT
+          },
+          {
             code: 'getTransactionId',
             label: defaultLanguageSet.subSteps.getTransactionIdLabel,
             labelPending: defaultLanguageSet.subSteps.getTransactionIdLabelPending,

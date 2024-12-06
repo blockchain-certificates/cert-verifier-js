@@ -33,6 +33,9 @@ export interface CertificateOptions {
   // allows to define a specific purpose verification for the verifier (authentication, assertionMethod, etc)
   // https://www.w3.org/TR/vc-data-integrity/#proof-purposes
   proofPurpose?: string;
+  // restricts the verification to (a) specific domain(s) - useful for authentication, should match the domain property in the proof
+  // https://www.w3.org/TR/vc-data-integrity/#defn-domain
+  domain?: string | string[];
 }
 
 export interface Signers {
@@ -53,6 +56,7 @@ export default class Certificate {
   public certificateJson: Blockcerts;
   public description?: string; // v1, v3.2
   public display?: BlockcertsV3Display;
+  public proofDomain?: string | string[];
   public expires: string;
   public validFrom: string;
   public explorerAPIs: ExplorerAPI[] = [];
@@ -128,7 +132,8 @@ export default class Certificate {
       hashlinkVerifier: this.hashlinkVerifier,
       revocationKey: this.revocationKey,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
-      proofPurpose: this.proofPurpose
+      proofPurpose: this.proofPurpose,
+      proofDomain: this.proofDomain
     });
     await this.verifier.init();
     this.verificationSteps = this.verifier.getVerificationSteps();
@@ -183,6 +188,7 @@ export default class Certificate {
     this.locale = domain.i18n.ensureIsSupported(this.options.locale === 'auto' ? domain.i18n.detectLocale() : this.options.locale);
     this.explorerAPIs = this.options.explorerAPIs ?? [];
     this.proofPurpose = this.options.proofPurpose;
+    this.proofDomain = this.options.domain;
 
     if (options.didResolverUrl) {
       domain.did.didResolver.url = options.didResolverUrl;

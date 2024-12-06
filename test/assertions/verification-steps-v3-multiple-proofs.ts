@@ -7,7 +7,7 @@ const defaultLanguageSet = i18n[currentLocale.locale];
 
 const merkleProof2019VerificationSubsteps = [
   {
-    code: 'assertProofPurpose',
+    code: 'assertProofValidity',
     label: 'Assert proof purpose',
     labelPending: 'Asserting proof purpose',
     parentStep: 'proofVerification',

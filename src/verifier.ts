@@ -54,6 +54,7 @@ export enum SupportedVerificationSuites {
 export default class Verifier {
   public expires: string;
   public validFrom: string;
+  public proofDomain: string | string[];
   public id: string;
   public issuer: Issuer;
   public revocationKey: string;
@@ -77,7 +78,7 @@ export default class Verifier {
   public proofPurpose: string;
 
   constructor (
-    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom, proofPurpose }: {
+    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom, proofPurpose, proofDomain }: {
       certificateJson: Blockcerts;
       expires: string;
       validFrom?: string;
@@ -87,6 +88,7 @@ export default class Verifier {
       revocationKey: string;
       explorerAPIs?: ExplorerAPI[];
       proofPurpose?: string;
+      proofDomain?: string | string[];
     }
   ) {
     this.expires = expires;
@@ -97,6 +99,7 @@ export default class Verifier {
     this.revocationKey = revocationKey;
     this.explorerAPIs = explorerAPIs;
     this.proofPurpose = proofPurpose;
+    this.proofDomain = proofDomain;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
   }
@@ -220,7 +223,8 @@ export default class Verifier {
         proof,
         explorerAPIs: this.explorerAPIs,
         issuer: this.issuer,
-        proofPurpose: this.proofPurpose
+        proofPurpose: this.proofPurpose,
+        proofDomain: this.proofDomain
       };
 
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));

@@ -13,6 +13,7 @@ export interface SuiteAPI {
   proof: VCProof | MerkleProof2017;
   issuer: Issuer;
   proofPurpose?: string;
+  proofDomain?: string | string[];
 }
 
 export abstract class Suite {

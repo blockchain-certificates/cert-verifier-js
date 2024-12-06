@@ -30,9 +30,9 @@ export default [
         proofType: 'MerkleProof2019',
         subSteps: [
           {
-            code: 'assertProofPurpose',
-            label: defaultLanguageSet.subSteps.assertProofPurposeLabel,
-            labelPending: defaultLanguageSet.subSteps.assertProofPurposeLabelPending,
+            code: 'assertProofValidity',
+            label: defaultLanguageSet.subSteps.assertProofValidityLabel,
+            labelPending: defaultLanguageSet.subSteps.assertProofValidityLabelPending,
             parentStep: 'proofVerification',
             status: VERIFICATION_STATUSES.DEFAULT
           },

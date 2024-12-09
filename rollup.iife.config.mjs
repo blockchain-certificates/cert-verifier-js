@@ -5,10 +5,11 @@ import typescript from '@rollup/plugin-typescript';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import polyfills from 'rollup-plugin-polyfill-node';
+import multi from '@rollup/plugin-multi-entry';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
-  input: 'src/index.ts',
+  input: ['src/index.ts', 'node_modules/setimmediate/setImmediate.js'],
   output: [
     {
       file: 'dist/verifier-iife.js',
@@ -26,6 +27,7 @@ export default {
     }),
     typescript(),
     commonjs(),
+    multi(),
     json(),
     globals(),
     builtins(),

@@ -32,6 +32,6 @@ describe('ecdsa-sd-2023 signed and derived document test suite', function () {
   });
 
   it('should expose the expected error message', function () {
-    expect(result.message).toBe('The document\'s EcdsaSd2023 signature could not be confirmed: "proof.proofValue" must be a derived proof.');
+    expect(result.message).toBe('The document\'s EcdsaSd2023 signature could not be confirmed: The proof does not include a valid "proofValue" property.');
   });
 });

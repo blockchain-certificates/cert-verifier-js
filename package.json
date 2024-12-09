@@ -75,8 +75,8 @@
     "buffer": "^6.0.3",
     "jsonld": "^8.3.2",
     "jsonld-checker": "npm:@blockcerts/jsonld-checker@^0.1.9",
-    "jsonld-signatures": "^11.2.1",
-    "jsonld-signatures-merkleproof2019": "^2.10.0",
+    "jsonld-signatures": "^11.3.2",
+    "jsonld-signatures-merkleproof2019": "^2.11.0",
     "lodash.clonedeep": "^4.5.0",
     "secp256k1": "^5.0.0",
     "sha256": "^0.2.0"
@@ -87,6 +87,7 @@
     "@decentralized-identity/did-common-typescript": "^0.1.19",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-multi-entry": "^6.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.4.5",

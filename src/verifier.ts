@@ -51,10 +51,23 @@ export enum SupportedVerificationSuites {
   EcdsaSd2023 = 'EcdsaSd2023'
 }
 
+export interface VerifierAPI {
+  certificateJson: Blockcerts;
+  expires: string;
+  validFrom?: string;
+  id: string;
+  issuer: Issuer;
+  hashlinkVerifier: HashlinkVerifier;
+  revocationKey: string;
+  explorerAPIs?: ExplorerAPI[];
+  proofPurpose?: string;
+  proofDomain?: string | string[];
+  proofChallenge?: string;
+}
+
 export default class Verifier {
   public expires: string;
   public validFrom: string;
-  public proofDomain: string | string[];
   public id: string;
   public issuer: Issuer;
   public revocationKey: string;
@@ -75,22 +88,23 @@ export default class Verifier {
   public proofVerifiers: Suite[] = [];
   public verificationProcess: SUB_STEPS[];
   public proofMap: TVerifierProofMap;
-  public proofPurpose: string;
+  public proofPurpose?: string;
+  public proofDomain?: string | string[];
+  public proofChallenge?: string;
 
-  constructor (
-    { certificateJson, expires, hashlinkVerifier, id, issuer, revocationKey, explorerAPIs, validFrom, proofPurpose, proofDomain }: {
-      certificateJson: Blockcerts;
-      expires: string;
-      validFrom?: string;
-      id: string;
-      issuer: Issuer;
-      hashlinkVerifier: HashlinkVerifier;
-      revocationKey: string;
-      explorerAPIs?: ExplorerAPI[];
-      proofPurpose?: string;
-      proofDomain?: string | string[];
-    }
-  ) {
+  constructor ({
+    certificateJson,
+    expires,
+    hashlinkVerifier,
+    id,
+    issuer,
+    revocationKey,
+    explorerAPIs,
+    validFrom,
+    proofPurpose,
+    proofDomain,
+    proofChallenge
+  }: VerifierAPI) {
     this.expires = expires;
     this.validFrom = validFrom;
     this.id = id;
@@ -100,6 +114,7 @@ export default class Verifier {
     this.explorerAPIs = explorerAPIs;
     this.proofPurpose = proofPurpose;
     this.proofDomain = proofDomain;
+    this.proofChallenge = proofChallenge;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
   }
@@ -224,7 +239,8 @@ export default class Verifier {
         explorerAPIs: this.explorerAPIs,
         issuer: this.issuer,
         proofPurpose: this.proofPurpose,
-        proofDomain: this.proofDomain
+        proofDomain: this.proofDomain,
+        proofChallenge: this.proofChallenge
       };
 
       this.proofVerifiers.push(new this.supportedVerificationSuites[proofTypes[index]](suiteOptions));

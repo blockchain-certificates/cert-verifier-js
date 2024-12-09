@@ -8,6 +8,8 @@ export interface VCProof {
   proofValue?: string;
   jws?: string;
   proofPurpose: string;
+  domain?: string;
+  challenge?: string;
   verificationMethod: string;
   chainedProofType?: string;
   previousProof?: any;

@@ -15,7 +15,7 @@ import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IDidDocument } from '../models/DidDocument';
 import { VerifierError } from '../models';
 
-const { purposes: { AssertionProofPurpose } } = jsigs;
+const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
@@ -35,6 +35,10 @@ export default class EcdsaSd2023 extends Suite {
   public cryptosuite = 'ecdsa-sd-2023';
   public publicKey: string;
   public verificationKey: any;
+  public proofPurpose: string;
+  public challenge: string;
+  public domain: string | string[];
+  private readonly proofPurposeMap: any;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -44,6 +48,13 @@ export default class EcdsaSd2023 extends Suite {
     this.documentToVerify = props.document as BlockcertsV3;
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
+    this.proofPurpose = props.proofPurpose ?? 'assertionMethod';
+    this.challenge = props.proofChallenge ?? '';
+    this.domain = props.proofDomain;
+    this.proofPurposeMap = {
+      authentication: AuthenticationProofPurpose,
+      assertionMethod: AssertionProofPurpose
+    };
     this.validateProofType();
   }
 
@@ -139,7 +150,7 @@ export default class EcdsaSd2023 extends Suite {
   }
 
   private getErrorMessage (verificationStatus): string {
-    return verificationStatus.results[0].error.cause.message;
+    return verificationStatus.error.errors[0].message;
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
@@ -178,9 +189,15 @@ export default class EcdsaSd2023 extends Suite {
           cryptosuite: createVerifyCryptosuite({ requiredAlgorithm: 'K-256' })
         });
         const verificationMethod = (this.documentToVerify.proof as VCProof).verificationMethod;
+        if (this.proofPurpose === 'authentication' && !this.proof.challenge) {
+          this.proof.challenge = '';
+        }
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
-          purpose: new AssertionProofPurpose(),
+          purpose: new this.proofPurposeMap[this.proofPurpose]({
+            challenge: this.challenge,
+            domain: this.domain
+          }),
           documentLoader: this.generateDocumentLoader([
             {
               url: verificationMethod,

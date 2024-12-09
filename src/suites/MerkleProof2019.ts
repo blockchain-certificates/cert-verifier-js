@@ -56,8 +56,9 @@ export default class MerkleProof2019 extends Suite {
   public type = 'MerkleProof2019';
   public cryptosuite = 'merkle-proof-2019';
   public suite: LDMerkleProof2019;
-  public proofPurpose: string;
-  public proofDomain: string | string[];
+  public proofPurpose?: string;
+  public proofDomain?: string | string[];
+  public proofChallenge?: string;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -68,6 +69,7 @@ export default class MerkleProof2019 extends Suite {
     this.issuer = props.issuer;
     this.proofPurpose = props.proofPurpose;
     this.proofDomain = props.proofDomain;
+    this.proofChallenge = props.proofChallenge;
     this.validateProofType();
     this.receipt = parseReceipt(this.proof);
     this.transactionId = domain.certificates.getTransactionId(this.receipt);
@@ -169,12 +171,14 @@ export default class MerkleProof2019 extends Suite {
         this.getTargetVerificationMethodContainer(),
         getVCProofVerificationMethod(this.proof)
       );
+
     this.suite = new LDMerkleProof2019({
       document: this.documentToVerify,
       proof: this.proof,
       verificationMethod: this.verificationMethodPublicKey,
       proofPurpose: this.proofPurpose,
       domain: this.proofDomain,
+      challenge: this.proofChallenge,
       options: {
         explorerAPIs: this.explorerAPIs,
         executeStepMethod: this.executeStep

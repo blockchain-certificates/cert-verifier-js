@@ -36,6 +36,10 @@ export interface CertificateOptions {
   // restricts the verification to (a) specific domain(s) - useful for authentication, should match the domain property in the proof
   // https://www.w3.org/TR/vc-data-integrity/#defn-domain
   domain?: string | string[];
+  // the property must match the one provided by the proof
+  // https://www.w3.org/TR/vc-data-integrity/#defn-challenge
+  // https://github.com/w3c/vc-data-integrity/issues/324#issuecomment-2521054375
+  challenge?: string;
 }
 
 export interface Signers {
@@ -56,7 +60,6 @@ export default class Certificate {
   public certificateJson: Blockcerts;
   public description?: string; // v1, v3.2
   public display?: BlockcertsV3Display;
-  public proofDomain?: string | string[];
   public expires: string;
   public validFrom: string;
   public explorerAPIs: ExplorerAPI[] = [];
@@ -70,6 +73,8 @@ export default class Certificate {
   public name?: string;
   public options: CertificateOptions;
   public proofPurpose: string;
+  public proofDomain?: string | string[];
+  public proofChallenge?: string;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;
@@ -133,7 +138,8 @@ export default class Certificate {
       revocationKey: this.revocationKey,
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proofPurpose: this.proofPurpose,
-      proofDomain: this.proofDomain
+      proofDomain: this.proofDomain,
+      proofChallenge: this.proofChallenge
     });
     await this.verifier.init();
     this.verificationSteps = this.verifier.getVerificationSteps();
@@ -189,6 +195,7 @@ export default class Certificate {
     this.explorerAPIs = this.options.explorerAPIs ?? [];
     this.proofPurpose = this.options.proofPurpose;
     this.proofDomain = this.options.domain;
+    this.proofChallenge = this.options.challenge;
 
     if (options.didResolverUrl) {
       domain.did.didResolver.url = options.didResolverUrl;

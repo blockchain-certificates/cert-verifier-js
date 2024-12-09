@@ -14,6 +14,7 @@ export interface SuiteAPI {
   issuer: Issuer;
   proofPurpose?: string;
   proofDomain?: string | string[];
+  proofChallenge?: string;
 }
 
 export abstract class Suite {

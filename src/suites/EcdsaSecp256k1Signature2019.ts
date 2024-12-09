@@ -17,7 +17,7 @@ import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
 import type { IDidDocument } from '../models/DidDocument';
 
-const { purposes: { AssertionProofPurpose } } = jsigs;
+const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
@@ -36,6 +36,10 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   public type = 'EcdsaSecp256k1Signature2019';
   public verificationKey: EcdsaSecp256k1VerificationKey2019;
   public publicKey: string;
+  public proofPurpose: string;
+  public challenge: string;
+  public domain: string | string[];
+  private readonly proofPurposeMap: any;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -45,6 +49,13 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     this.documentToVerify = props.document;
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
+    this.proofPurpose = props.proofPurpose ?? 'assertionMethod';
+    this.challenge = props.proofChallenge ?? '';
+    this.domain = props.proofDomain;
+    this.proofPurposeMap = {
+      authentication: AuthenticationProofPurpose,
+      assertionMethod: AssertionProofPurpose
+    };
     this.validateProofType();
   }
 
@@ -146,6 +157,10 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     return this.issuer.didDocument ?? this.issuer;
   }
 
+  private getErrorMessage (verificationStatus): string {
+    return verificationStatus.error.errors[0].message;
+  }
+
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
@@ -188,15 +203,24 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         // TODO: date property should exist but we are currently using a forked implementation which does not expose it
         (suite as any).date = new Date(Date.now()).toISOString();
 
+        if (this.proofPurpose === 'authentication' && !this.proof.challenge) {
+          this.proof.challenge = '';
+        }
+
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
-          purpose: new AssertionProofPurpose(),
+          purpose: new this.proofPurposeMap[this.proofPurpose]({
+            challenge: this.challenge,
+            domain: this.domain
+          }),
           documentLoader: this.generateDocumentLoader()
         });
 
         if (!verificationStatus.verified) {
           console.error(JSON.stringify(verificationStatus, null, 2));
-          throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
+          throw new VerifierError(SUB_STEPS.checkDocumentSignature,
+            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`
+          );
         } else {
           console.log('Credential Secp256k1 signature successfully verified');
         }

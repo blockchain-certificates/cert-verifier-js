@@ -16,7 +16,7 @@ import type VerificationSubstep from '../domain/verifier/valueObjects/Verificati
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 
-const { purposes: { AssertionProofPurpose } } = jsigs;
+const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
@@ -35,6 +35,10 @@ export default class Ed25519Signature2020 extends Suite {
   public type = 'Ed25519Signature2020';
   public verificationKey: Ed25519VerificationKey2020;
   public publicKey: string;
+  public proofPurpose: string;
+  public challenge: string;
+  public domain: string | string[];
+  private readonly proofPurposeMap: any;
 
   constructor (props: SuiteAPI) {
     super(props);
@@ -44,6 +48,13 @@ export default class Ed25519Signature2020 extends Suite {
     this.documentToVerify = props.document;
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
+    this.proofPurpose = props.proofPurpose ?? 'assertionMethod';
+    this.challenge = props.proofChallenge ?? '';
+    this.domain = props.proofDomain;
+    this.proofPurposeMap = {
+      authentication: AuthenticationProofPurpose,
+      assertionMethod: AssertionProofPurpose
+    };
     this.validateProofType();
   }
 
@@ -146,6 +157,10 @@ export default class Ed25519Signature2020 extends Suite {
     return document;
   }
 
+  private getErrorMessage (verificationStatus): string {
+    return verificationStatus.error.errors[0].message;
+  }
+
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
@@ -190,15 +205,23 @@ export default class Ed25519Signature2020 extends Suite {
         const suite = new Ed25519VerificationSuite({ key: this.verificationKey });
         suite.date = new Date(Date.now()).toISOString();
 
+        if (this.proofPurpose === 'authentication' && !this.proof.challenge) {
+          this.proof.challenge = '';
+        }
+
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
-          purpose: new AssertionProofPurpose(),
+          purpose: new this.proofPurposeMap[this.proofPurpose]({
+            challenge: this.challenge,
+            domain: this.domain
+          }),
           documentLoader: this.generateDocumentLoader()
         });
 
         if (!verificationStatus.verified) {
           console.error(JSON.stringify(verificationStatus, null, 2));
-          throw new VerifierError(SUB_STEPS.checkDocumentSignature, `The document's ${this.type} signature could not be confirmed`);
+          throw new VerifierError(SUB_STEPS.checkDocumentSignature,
+            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`);
         } else {
           console.log('Credential Ed25519 signature successfully verified');
         }

@@ -36,6 +36,8 @@ export default class EcdsaSd2023 extends Suite {
   public publicKey: string;
   public verificationKey: any;
   public proofPurpose: string;
+  public challenge: string;
+  public domain: string | string[];
   private readonly proofPurposeMap: any;
 
   constructor (props: SuiteAPI) {
@@ -47,6 +49,8 @@ export default class EcdsaSd2023 extends Suite {
     this.issuer = props.issuer;
     this.proof = props.proof as VCProof;
     this.proofPurpose = props.proofPurpose ?? 'assertionMethod';
+    this.challenge = props.proofChallenge ?? '';
+    this.domain = props.proofDomain;
     this.proofPurposeMap = {
       authentication: AuthenticationProofPurpose,
       assertionMethod: AssertionProofPurpose
@@ -146,7 +150,7 @@ export default class EcdsaSd2023 extends Suite {
   }
 
   private getErrorMessage (verificationStatus): string {
-    return verificationStatus.results[0].error.cause.message;
+    return verificationStatus.error.errors[0].message;
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
@@ -185,11 +189,15 @@ export default class EcdsaSd2023 extends Suite {
           cryptosuite: createVerifyCryptosuite({ requiredAlgorithm: 'K-256' })
         });
         const verificationMethod = (this.documentToVerify.proof as VCProof).verificationMethod;
+        if (this.proofPurpose === 'authentication' && !this.proof.challenge) {
+          this.proof.challenge = '';
+        }
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
-          // TODO: uncomment the following if jsonld-signatures follows the spec https://github.com/digitalbazaar/jsonld-signatures/issues/185
-          purpose: new this.proofPurposeMap[this.proofPurpose](),
-          // purpose: new AssertionProofPurpose(),
+          purpose: new this.proofPurposeMap[this.proofPurpose]({
+            challenge: this.challenge,
+            domain: this.domain
+          }),
           documentLoader: this.generateDocumentLoader([
             {
               url: verificationMethod,

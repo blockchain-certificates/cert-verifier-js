@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { Certificate } from '../../../src';
+import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import multipleProofsVerificationSteps from '../../assertions/verification-steps-v3-multiple-proofs';
 import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -53,6 +53,17 @@ describe('proof chain example', function () {
     expect(result.message).toEqual({
       description: 'All the signatures of this certificate have successfully verified.',
       label: 'Verified'
+    });
+  });
+
+  describe('when the verifier\'s proofPurpose does not match the document\'s proof purpose', function () {
+    it('should fail verification', async function () {
+      const certificate = new Certificate(fixture as any, { proofPurpose: 'authentication' });
+      await certificate.init();
+      const result = await certificate.verify();
+
+      expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
+      expect(result.message).toBe('The document\'s Ed25519Signature2020 signature could not be confirmed: Did not verify any proofs; insufficient proofs matched the acceptable suite(s) and required purpose(s).');
     });
   });
 });

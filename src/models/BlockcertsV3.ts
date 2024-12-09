@@ -7,7 +7,7 @@ export interface VCProof {
   created: string;
   proofValue?: string;
   jws?: string;
-  proofPurpose?: string;
+  proofPurpose: string;
   domain?: string;
   challenge?: string;
   verificationMethod: string;

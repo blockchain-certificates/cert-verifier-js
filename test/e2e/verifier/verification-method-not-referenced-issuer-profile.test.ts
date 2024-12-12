@@ -30,12 +30,16 @@ describe('Proof verification method is not referenced in issuer profile test sui
     // as on init we will try and retrieve the MerkleProof2019's issuer profile to get the verification method
     // The added proof is a dummy as we will not get to verification stage
     const modifiedFixture = JSON.parse(JSON.stringify(fixture));
-    const proofs = [{
-      type: 'EcdsaSecp256k1Signature2019',
-      proofValue: '0x1',
-      verificationMethod: 'did:example:0x123456789'
-    },
-    modifiedFixture.proof];
+    const proofs = [
+      {
+        type: 'EcdsaSecp256k1Signature2019',
+        proofValue: '0x1',
+        verificationMethod: 'did:example:0x123456789',
+        created: '2023-03-30T15:08:26Z',
+        proofPurpose: 'assertionMethod'
+      },
+      modifiedFixture.proof
+    ];
     modifiedFixture.proof = proofs;
 
     const certificate = new Certificate(modifiedFixture);

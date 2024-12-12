@@ -4,7 +4,7 @@ import type {
   BlockcertsV3,
   VCCredentialStatus,
   VCCredentialSchema,
-  VerifiablePresentation
+  VerifiablePresentation, VCProof
 } from '../../../models/BlockcertsV3';
 import type { JsonLDContext } from '../../../models/Blockcerts';
 import { type Issuer } from '../../../models/Issuer';
@@ -113,6 +113,16 @@ function validateCredentialSchema (certificateCredentialSchema: VCCredentialSche
   });
 }
 
+function validateProof (proof: VCProof): void {
+  if (!proof.created) {
+    throw new Error('`proof.created` must be defined');
+  }
+
+  if (!proof.proofPurpose) {
+    throw new Error('`proof.proofPurpose` must be defined');
+  }
+}
+
 export default function validateVerifiableCredential (credential: BlockcertsV3 | VerifiablePresentation): void {
   if (isVerifiablePresentation(credential)) {
     credential.verifiableCredential.forEach(vc => { validateVerifiableCredential(vc); });
@@ -152,4 +162,16 @@ export default function validateVerifiableCredential (credential: BlockcertsV3 |
   if (credential.credentialSchema) {
     validateCredentialSchema(credential.credentialSchema);
   }
+
+  if (!credential.proof) {
+    throw new Error('`proof` must be defined');
+  }
+
+  let { proof } = credential;
+  if (!Array.isArray(proof)) {
+    proof = [proof];
+  }
+  proof.forEach(p => {
+    validateProof(p);
+  });
 }

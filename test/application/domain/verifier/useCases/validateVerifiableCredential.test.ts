@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import validateVerifiableCredential from '../../../../src/domain/verifier/useCases/validateVerifiableCredential';
-import validFixture from '../../../fixtures/v3/mocknet-vc-v2-name-description-multilingual.json';
+import validateVerifiableCredential from '../../../../../src/domain/verifier/useCases/validateVerifiableCredential';
+import validFixture from '../../../../fixtures/v3/mocknet-vc-v2-name-description-multilingual.json';
 import { CONTEXT_URLS } from '@blockcerts/schemas';
 describe('domain verifier validateVerifiableCredential test suite', function () {
   describe('given the credential is well formed', function () {
@@ -375,6 +375,36 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
               });
             });
           });
+        });
+      });
+
+      describe('when the proof property is missing', function () {
+        it('should throw an error', function () {
+          const fixture = { ...validFixture };
+          delete fixture.proof;
+          expect(function () {
+            validateVerifiableCredential(fixture);
+          }).toThrow('`proof` must be defined');
+        });
+      });
+
+      describe('when the proof.created property is missing', function () {
+        it('should throw an error', function () {
+          const fixture = JSON.parse(JSON.stringify(validFixture));
+          delete fixture.proof.created;
+          expect(function () {
+            validateVerifiableCredential(fixture);
+          }).toThrow('`proof.created` must be defined');
+        });
+      });
+
+      describe('when the proof.proofPurpose property is missing', function () {
+        it('should throw an error', function () {
+          const fixture = JSON.parse(JSON.stringify(validFixture));
+          delete fixture.proof.proofPurpose;
+          expect(function () {
+            validateVerifiableCredential(fixture);
+          }).toThrow('`proof.proofPurpose` must be defined');
         });
       });
     });

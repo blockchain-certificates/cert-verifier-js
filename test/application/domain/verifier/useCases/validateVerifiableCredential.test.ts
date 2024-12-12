@@ -154,6 +154,57 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
         });
       });
 
+      describe('validateCredentialSubject method', function () {
+        describe('given the credentialSubject is an invalid type', function () {
+          const invalidCredentialSubjectTypes = [
+            'string', 10, true
+          ];
+          invalidCredentialSubjectTypes.forEach(function (type) {
+            it(`should throw an error when the credentialSubject is a ${typeof type}`, function () {
+              const fixture = { ...validFixture, credentialSubject: type };
+              expect(function () {
+                validateVerifiableCredential(fixture);
+              }).toThrow('`credentialSubject` must be an object');
+            });
+          });
+        });
+
+        describe('given the credentialSubject is a falsy value', function () {
+          const falsyValues = [null, undefined];
+          falsyValues.forEach(function (value) {
+            it(`should throw an error when ${value}`, function () {
+              const fixture = { ...validFixture, credentialSubject: value };
+              expect(function () {
+                validateVerifiableCredential(fixture);
+              }).toThrow('`credentialSubject` must be defined');
+            });
+          });
+        });
+
+        describe('given the credentialSubject is an empty array', function () {
+          it('should throw an error', function () {
+            const fixture = { ...validFixture, credentialSubject: [] };
+            expect(function () {
+              validateVerifiableCredential(fixture);
+            }).toThrow('`credentialSubject` cannot be an empty array');
+          });
+        });
+
+        describe('given the credentialSubject is an array of invalid types', function () {
+          const invalidCredentialSubjectTypes = [
+            'string', 10, true
+          ];
+          invalidCredentialSubjectTypes.forEach(function (type) {
+            it(`should throw an error when the credentialSubject item is a ${typeof type}`, function () {
+              const fixture = { ...validFixture, credentialSubject: [type] };
+              expect(function () {
+                validateVerifiableCredential(fixture);
+              }).toThrow('`credentialSubject` must be an object');
+            });
+          });
+        });
+      });
+
       describe('validateCredentialStatus method', function () {
         describe('when the credentialStatus property is defined', function () {
           describe('when the property is an object but the id is not defined', function () {

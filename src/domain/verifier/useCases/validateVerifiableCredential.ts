@@ -87,6 +87,22 @@ function validateDateRFC3339StringFormat (date: string, propertyName: string): v
   }
 }
 
+function validateCredentialSubject (credentialSubject: any): void {
+  if (typeof credentialSubject !== 'object') {
+    throw new Error('`credentialSubject` must be an object');
+  }
+
+  if (Array.isArray(credentialSubject) && credentialSubject.length === 0) {
+    throw new Error('`credentialSubject` cannot be an empty array');
+  }
+
+  if (Array.isArray(credentialSubject)) {
+    credentialSubject.forEach(subject => {
+      validateCredentialSubject(subject);
+    });
+  }
+}
+
 function validateCredentialStatus (certificateCredentialStatus: VCCredentialStatus | VCCredentialStatus[]): void {
   const statuses = Array.isArray(certificateCredentialStatus) ? certificateCredentialStatus : [certificateCredentialStatus];
   statuses.forEach(status => {
@@ -132,6 +148,8 @@ export default function validateVerifiableCredential (credential: BlockcertsV3 |
   if (!credential.credentialSubject) {
     throw new Error('`credentialSubject` must be defined');
   }
+
+  validateCredentialSubject(credential.credentialSubject);
 
   validateType(credential.type);
   validateContext(credential['@context'], credential.type);

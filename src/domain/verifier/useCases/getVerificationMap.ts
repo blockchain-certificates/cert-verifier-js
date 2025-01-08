@@ -1,4 +1,8 @@
-import getParentVerificationSteps, { type VerificationSteps, SUB_STEPS, verificationMap } from '../entities/verificationSteps'; // TODO: circular dependency
+import getParentVerificationSteps, {
+  SUB_STEPS,
+  verificationMap,
+  VerificationSteps
+} from '../entities/verificationSteps'; // TODO: circular dependency
 import domain from '../../index';
 import { removeEntry } from '../../../helpers/array';
 import type VerificationSubstep from '../valueObjects/VerificationSubstep';
@@ -20,27 +24,29 @@ export function getVerificationStepsForCurrentCase ({
   isVCV2 = false,
   isVerifiablePresentation = false
 }: VerificationMapFilters): SUB_STEPS[] {
-  const verificationSteps = Object.values(SUB_STEPS);
+  const baseMap = JSON.parse(JSON.stringify(verificationMap));
 
   if (!hasDid) {
-    removeEntry(verificationSteps, SUB_STEPS.controlVerificationMethod);
+    removeEntry(baseMap[VerificationSteps.identityVerification], SUB_STEPS.controlVerificationMethod);
   }
 
   if (!hasHashlinks) {
-    removeEntry(verificationSteps, SUB_STEPS.checkImagesIntegrity);
+    removeEntry(baseMap[VerificationSteps.formatValidation], SUB_STEPS.checkImagesIntegrity);
   }
 
   if (!hasValidFrom || isVerifiablePresentation) {
-    removeEntry(verificationSteps, SUB_STEPS.ensureValidityPeriodStarted);
+    removeEntry(baseMap[VerificationSteps.statusCheck], SUB_STEPS.ensureValidityPeriodStarted);
   }
 
   if (!hasCredentialSchema) {
-    removeEntry(verificationSteps, SUB_STEPS.checkCredentialSchemaConformity);
+    removeEntry(baseMap[VerificationSteps.formatValidation], SUB_STEPS.checkCredentialSchemaConformity);
   }
 
   if (!isVCV2) {
-    removeEntry(verificationSteps, SUB_STEPS.validateDateFormat);
+    removeEntry(baseMap[VerificationSteps.formatValidation], SUB_STEPS.validateDateFormat);
   }
+
+  const verificationSteps = Object.keys(baseMap).map(parentStep => baseMap[parentStep]).flat();
 
   return verificationSteps;
 }

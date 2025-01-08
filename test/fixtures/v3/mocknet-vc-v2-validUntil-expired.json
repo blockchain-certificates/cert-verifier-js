@@ -28,7 +28,7 @@
   },
   "proof": {
     "type": "MerkleProof2019",
-    "created": "2024-01-30T16:07:01.438179",
+    "created": "2024-01-30T16:07:01Z",
     "proofValue": "z3hSV9ktEtnCfHQbFgTm6PznefHQCnWZvJyUvtCNu7Sw1y5UaVevPpejsCLZebzMCDx8L9ky5gNqThpa6b8ynkjeYC6ecVkcohKPL7m6DfaeYKBaofKyUad2YeXasdu7c2WvSykiRaaM28BEmAtUMUQq3KYX9S2qmMW3tRmPNyJhUUKiiJnojb7fcJx3NZ81iwodou7ExTntZFZyqBSwrzTXmrJwt3KnEFQvY4S2p5B4SbPfxxkLK5ipYsFjghuK64xXDgH1uDwac3xcjVo18EGiNPewwfHVeQktTvsi7jeaBKQWin858Wkb88Ueu6r85oq8heWdCbMUsABYBNJvDSZqq4RDVFQQZdxk1x657HAAZyMj9zgWdG7vPe1g1rL3SNd7k5iqTLdmpsA",
     "proofPurpose": "assertionMethod",
     "verificationMethod": "https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json#key-1"

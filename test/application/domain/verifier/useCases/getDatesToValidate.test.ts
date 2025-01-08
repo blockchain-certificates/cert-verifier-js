@@ -15,7 +15,7 @@ describe('domain verifier getDatesToValidate test suite', function () {
         property: 'validUntil'
       },
       {
-        dateTimeStamp: '2024-01-30T16:07:01.438179',
+        dateTimeStamp: '2024-01-30T16:07:01Z',
         property: 'proof MerkleProof2019 created'
       }
     ];

@@ -38,7 +38,7 @@ function isValidV1Profile (profile: Issuer): boolean {
 }
 
 function isValidProfile (profile: Issuer): boolean {
-  const validTypes: string[] = ['issuer', 'profile']; // https://w3id.org/openbadges#Profile
+  const validTypes: string[] = ['issuer', 'profile', 'blockcertsissuerprofile']; // https://w3id.org/openbadges#Profile
   const { type } = profile;
   if (!type) {
     return false;

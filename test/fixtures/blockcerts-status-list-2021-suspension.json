@@ -5,7 +5,7 @@
   ],
   "id": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json",
   "issuer": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
-  "issuanceDate": "2023-04-17T14:20:19.643Z",
+  "validFrom": "2023-04-17T14:20:19.643Z",
   "type": [
     "VerifiableCredential",
     "BitstringStatusListCredential"
@@ -13,13 +13,13 @@
   "credentialSubject": {
     "id": "https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#list",
     "type": "BitstringStatusList",
-    "encodedList": "H4sIAAAAAAAAA-3OMQ0AAAgDsEnBv0qSmeCgVdAEgM_mOgAAAAAAAAAAAAAAAAAAQC2PqyzsAEAAAA"
+    "encodedList": "H4sIAAAAAAAAA-3OQQ0AAAgEIJ_GsH9KY5ybkIAqAD6bdADgl04HAAAAAAAAAAAAAAAAgLsWQFhQ2QBAAAA"
   },
   "proof": {
     "type": "EcdsaSecp256k1Signature2019",
-    "created": "2024-03-19T14:29:36.999Z",
+    "created": "2025-03-07T13:36:31.691Z",
     "verificationMethod": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M#zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
     "proofPurpose": "assertionMethod",
-    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..QrmTmaXHRJH46npXKcvIfhrAFw8JfbuD4udQD9hKLtxONtgIxuhD8aczy6lBzMybEu7W2cJKAeW3_jnUOOeTlQ"
+    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..P5anf-CqL9ZT1r2BHxEXFc8m76Hse3cpmiiugfGpOA9z3Pq0EMv-F-RNp5t1OZ0l5gWFrjErG2RwmNTNxUtVmg"
   }
 }

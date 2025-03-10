@@ -214,6 +214,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
+            controller: this.getTargetVerificationMethodContainer(),
             challenge: this.challenge,
             domain: this.domain
           }),

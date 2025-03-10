@@ -15,6 +15,7 @@ import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
+import type { IDidDocument } from '../models/DidDocument';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -157,6 +158,10 @@ export default class Ed25519Signature2020 extends Suite {
     return document;
   }
 
+  private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
+    return this.issuer.didDocument ?? this.issuer;
+  }
+
   private getErrorMessage (verificationStatus): string {
     return verificationStatus.error.errors[0].message;
   }
@@ -165,7 +170,7 @@ export default class Ed25519Signature2020 extends Suite {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<Ed25519VerificationKey2020> => {
-        const verificationMethod = this.issuer.didDocument.verificationMethod
+        const verificationMethod = this.getTargetVerificationMethodContainer().verificationMethod
           .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
 
         if (!verificationMethod) {
@@ -212,6 +217,7 @@ export default class Ed25519Signature2020 extends Suite {
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
+            controller: this.getTargetVerificationMethodContainer(),
             challenge: this.challenge,
             domain: this.domain
           }),

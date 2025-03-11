@@ -282,7 +282,8 @@ export default class Verifier {
       hasValidFrom: !!this.validFrom,
       hasCredentialSchema: !!(this.documentToVerify as BlockcertsV3).credentialSchema,
       isVCV2: isVCV2(this.documentToVerify['@context']),
-      isVerifiablePresentation: isVerifiablePresentation(this.documentToVerify as BlockcertsV3)
+      isVerifiablePresentation: isVerifiablePresentation(this.documentToVerify as BlockcertsV3),
+      isIssuerProfileSigned: !!this.issuer.proof
     });
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -440,6 +441,20 @@ export default class Verifier {
         this.issuer.didDocument,
         getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
       );
+    });
+  }
+
+  private async verifyIssuerProfile (): Promise<void> {
+    // only v3 support
+    // console.log('We will verify the issuer profile', this.issuer);
+    if (!this.issuer.proof) {
+      return;
+    }
+
+    const { default: verifyIssuerProfile } = await import('./inspectors/verifyIssuerProfile');
+
+    await this.executeStep(SUB_STEPS.verifyIssuerProfile, async () => {
+      await verifyIssuerProfile(this.issuer);
     });
   }
 

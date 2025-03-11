@@ -1,6 +1,7 @@
 import { cryptoSuiteToType } from '../helpers/cryptoSuite';
 import { SupportedVerificationSuites } from '../verifier';
 import { type Suite } from '../models/Suite';
+import { type Issuer } from '../models/Issuer';
 
 async function loadRequiredVerificationSuite (proofType: string): Promise<Suite> {
   if (proofType === SupportedVerificationSuites.MerkleProof2019) {
@@ -24,7 +25,7 @@ async function loadRequiredVerificationSuite (proofType: string): Promise<Suite>
   }
 }
 
-export default async function verifyIssuerProfile (issuerProfile: any): Promise<any> {
+export default async function verifyIssuerProfile (issuerProfile: Issuer): Promise<any> {
   if (!issuerProfile.proof) {
     console.warn('No proof found in the issuer profile.');
     return;
@@ -50,6 +51,6 @@ export default async function verifyIssuerProfile (issuerProfile: any): Promise<
   try {
     await suite.verifyProof();
   } catch (e) {
-    throw new Error(`Issuer profile verification failed: ${e.message}`);
+    throw new Error(`Issuer profile verification failed: ${e.message}`); // TODO: i18n
   }
 }

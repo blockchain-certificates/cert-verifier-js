@@ -15,6 +15,8 @@ import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
+import type { IDidDocument } from '../models/DidDocument';
+import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -154,7 +156,36 @@ export default class Ed25519Signature2020 extends Suite {
       delete document.proof;
       document.proof = initialProof;
     }
+    // when the document to verify is an issuer profile and it was brought up by a DID
+    // the didDocument gets appended. However it is not part of the initial document
+    delete (document as any).didDocument;
+
     return document;
+  }
+
+  private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
+    if (this.issuer.didDocument) {
+      const verificationMethod = this.findVerificationMethod(this.issuer.didDocument.verificationMethod);
+      if (verificationMethod) {
+        return this.issuer.didDocument;
+      }
+    }
+
+    const verificationMethod = this.findVerificationMethod(this.issuer.verificationMethod);
+    if (verificationMethod) {
+      const controller = {
+        ...this.issuer
+      };
+      delete controller.didDocument; // not defined in JSONLD for verification
+      return controller;
+    }
+
+    return null;
+  }
+
+  private findVerificationMethod (verificationMethods: IDidDocumentPublicKey[]): IDidDocumentPublicKey {
+    return verificationMethods.find(
+      verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
   }
 
   private getErrorMessage (verificationStatus): string {
@@ -165,8 +196,13 @@ export default class Ed25519Signature2020 extends Suite {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<Ed25519VerificationKey2020> => {
-        const verificationMethod = this.issuer.didDocument.verificationMethod
-          .find(verificationMethod => verificationMethod.id === this.proof.verificationMethod);
+        const issuerDoc = this.getTargetVerificationMethodContainer();
+        if (!issuerDoc) {
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
+            'The verification method of the document does not match the provided issuer.');
+        }
+
+        const verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod);
 
         if (!verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
@@ -212,6 +248,7 @@ export default class Ed25519Signature2020 extends Suite {
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
+            controller: this.getTargetVerificationMethodContainer(),
             challenge: this.challenge,
             domain: this.domain
           }),

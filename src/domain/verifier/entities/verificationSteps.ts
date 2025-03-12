@@ -19,6 +19,7 @@ export enum SUB_STEPS {
   checkRevokedStatus = 'checkRevokedStatus',
   checkExpiresDate = 'checkExpiresDate',
   controlVerificationMethod = 'controlVerificationMethod',
+  verifyIssuerProfile = 'verifyIssuerProfile',
   ensureValidityPeriodStarted = 'ensureValidityPeriodStarted',
   checkCredentialSchemaConformity = 'checkCredentialSchemaConformity',
   validateDateFormat = 'validateDateFormat'
@@ -36,6 +37,7 @@ export const verificationMap = {
   ],
   [VerificationSteps.proofVerification]: [],
   [VerificationSteps.identityVerification]: [
+    SUB_STEPS.verifyIssuerProfile,
     SUB_STEPS.controlVerificationMethod
   ],
   [VerificationSteps.statusCheck]: [

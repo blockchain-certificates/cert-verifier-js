@@ -195,6 +195,7 @@ export default class EcdsaSd2023 extends Suite {
         const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
+            controller: this.getTargetVerificationMethodContainer(),
             challenge: this.challenge,
             domain: this.domain
           }),

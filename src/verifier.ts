@@ -18,6 +18,7 @@ import type { Signers } from './certificate';
 import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarted';
 import validateDateFormat from './inspectors/validateDateFormat';
 import { isVCV2 } from './parsers/helpers/retrieveVCVersion';
+import { cryptoSuiteToType } from './helpers/cryptoSuite';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -172,12 +173,8 @@ export default class Verifier {
     return erroredStep ? this._failed(erroredStep) : this._succeed();
   }
 
-  private convertCryptosuiteToType (cryptosuite: string): string {
-    // transform kebab-case to camelCase and capitalize first char to fall back to legacy name
-    // NOTE: this might be a bit naive but works in the case of MerkleProof2019 which at this time
-    // is the only implementation
-    cryptosuite = cryptosuite.replace(/-./g, x => x[1].toUpperCase());
-    return cryptosuite.charAt(0).toUpperCase() + cryptosuite.slice(1);
+  private convertCryptosuiteToType (cryptoSuite: string): string {
+    return cryptoSuiteToType(cryptoSuite);
   }
 
   private getRevocationListUrl (): string {
@@ -285,7 +282,8 @@ export default class Verifier {
       hasValidFrom: !!this.validFrom,
       hasCredentialSchema: !!(this.documentToVerify as BlockcertsV3).credentialSchema,
       isVCV2: isVCV2(this.documentToVerify['@context']),
-      isVerifiablePresentation: isVerifiablePresentation(this.documentToVerify as BlockcertsV3)
+      isVerifiablePresentation: isVerifiablePresentation(this.documentToVerify as BlockcertsV3),
+      isIssuerProfileSigned: !!this.issuer.proof
     });
     this.verificationSteps = verificationModel.verificationMap;
     this.verificationProcess = verificationModel.verificationProcess;
@@ -443,6 +441,20 @@ export default class Verifier {
         this.issuer.didDocument,
         getVCProofVerificationMethod((this.documentToVerify as BlockcertsV3).proof)
       );
+    });
+  }
+
+  private async verifyIssuerProfile (): Promise<void> {
+    // only v3 support
+    // console.log('We will verify the issuer profile', this.issuer);
+    if (!this.issuer.proof) {
+      return;
+    }
+
+    const { default: verifyIssuerProfile } = await import('./inspectors/verifyIssuerProfile');
+
+    await this.executeStep(SUB_STEPS.verifyIssuerProfile, async () => {
+      await verifyIssuerProfile(this.issuer);
     });
   }
 

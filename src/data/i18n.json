@@ -52,7 +52,9 @@
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
       "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
       "validateDateFormatLabel": "Validate date format",
-      "validateDateFormatLabelPending": "Validating date format"
+      "validateDateFormatLabelPending": "Validating date format",
+      "verifyIssuerProfileLabel": "Verify issuer profile",
+      "verifyIssuerProfileLabelPending":"Verifying issuer profile"
     },
     "revocation": {
       "preReason": "Reason given:",
@@ -172,7 +174,9 @@
       "checkImagesIntegrityLabel":  "Vérification de l'Intégrité des Images",
       "checkImagesIntegrityLabelPending":  "Vérification de l'Intégrité des Images",
       "validateDateFormatLabel": "Vérification du format des dates",
-      "validateDateFormatLabelPending": "Vérification du format des dates"
+      "validateDateFormatLabelPending": "Vérification du format des dates",
+      "verifyIssuerProfileLabel":  "Vérification du profil de l'émetteur",
+      "verifyIssuerProfileLabelPending": "Vérification du profil de l'émetteur"
     },
     "revocation": {
       "preReason": "Raison :",
@@ -292,7 +296,9 @@
       "checkImagesIntegrityLabel":  "Comprobar Integridad de las Imagens",
       "checkImagesIntegrityLabelPending":  "Comprobando Integridad de las Imagens",
       "validateDateFormatLabel": "Verificar formato de fecha",
-      "validateDateFormatLabelPending": "Verificando formato de fecha"
+      "validateDateFormatLabelPending": "Verificando formato de fecha",
+      "verifyIssuerProfileLabel":  "Verificar perfil del emisor",
+      "verifyIssuerProfileLabelPending": "Verificando perfil del emisor"
     },
     "revocation": {
       "preReason": "Razón dada:",
@@ -412,7 +418,9 @@
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
       "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
       "validateDateFormatLabel": "Validate date format",
-      "validateDateFormatLabelPending": "Validating date format"
+      "validateDateFormatLabelPending": "Validating date format",
+      "verifyIssuerProfileLabel":  "Verify issuer profile",
+      "verifyIssuerProfileLabelPending": "Verifying issuer profile"
     },
     "revocation": {
       "preReason": "Raġuni mogħtija:",
@@ -532,7 +540,9 @@
       "checkImagesIntegrityLabel":  "Verify Images Integrity",
       "checkImagesIntegrityLabelPending":  "Verifying Images Integrity",
       "validateDateFormatLabel": "Validate date format",
-      "validateDateFormatLabelPending": "Validating date format"
+      "validateDateFormatLabelPending": "Validating date format",
+      "verifyIssuerProfileLabel":  "Verify issuer profile",
+      "verifyIssuerProfileLabelPending": "Verifying issuer profile"
     },
     "revocation": {
       "preReason": "Motivo indicato:",
@@ -652,7 +662,9 @@
       "checkImagesIntegrityLabel":  "画像の保全性の確認",
       "checkImagesIntegrityLabelPending":  "画像の保全性を確認",
       "validateDateFormatLabel": "Validate date format",
-      "validateDateFormatLabelPending": "Validating date format"
+      "validateDateFormatLabelPending": "Validating date format",
+      "verifyIssuerProfileLabel":  "Verify issuer profile",
+      "verifyIssuerProfileLabelPending": "Verifying issuer profile"
     },
     "revocation": {
       "preReason": "理由：",

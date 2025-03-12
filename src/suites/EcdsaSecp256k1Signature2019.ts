@@ -35,7 +35,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   public proof: VCProof;
   public type = 'EcdsaSecp256k1Signature2019';
   public verificationKey: EcdsaSecp256k1VerificationKey2019;
-  public publicKey: string;
+  public publicKey: any;
   public proofPurpose: string;
   public challenge: string;
   public domain: string | string[];
@@ -173,6 +173,10 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         if (verificationMethod.publicKeyJwk && !verificationMethod.publicKeyBase58) {
           const hexKey = publicKeyHexFromJwk(verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
           verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
+
+          if (!this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {
+            this.documentToVerify['@context'].push('https://w3id.org/security/suites/secp256k1-2019/v1');
+          }
         }
         this.publicKey = verificationMethod.publicKeyBase58;
 
@@ -210,6 +214,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
+            controller: this.getTargetVerificationMethodContainer(),
             challenge: this.challenge,
             domain: this.domain
           }),

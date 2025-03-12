@@ -29,5 +29,7 @@ export default function retrieveVerificationMethodPublicKey (
       'retrieveVerificationMethodPublicKey',
       `${baseError} - ${domain.i18n.getText('errors', 'retrieveVerificationMethodPublicKey')}`);
   }
-  return verificationMethodPublicKey;
+  return {
+    ...verificationMethodPublicKey
+  };
 }

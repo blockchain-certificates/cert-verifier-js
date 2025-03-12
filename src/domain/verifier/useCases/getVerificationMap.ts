@@ -15,6 +15,7 @@ export interface VerificationMapFilters {
   hasCredentialSchema?: boolean;
   isVCV2?: boolean;
   isVerifiablePresentation?: boolean;
+  isIssuerProfileSigned?: boolean;
 }
 export function getVerificationStepsForCurrentCase ({
   hasDid = false,
@@ -22,7 +23,8 @@ export function getVerificationStepsForCurrentCase ({
   hasValidFrom = false,
   hasCredentialSchema = false,
   isVCV2 = false,
-  isVerifiablePresentation = false
+  isVerifiablePresentation = false,
+  isIssuerProfileSigned = false
 }: VerificationMapFilters): SUB_STEPS[] {
   const baseMap = JSON.parse(JSON.stringify(verificationMap));
 
@@ -44,6 +46,10 @@ export function getVerificationStepsForCurrentCase ({
 
   if (!isVCV2) {
     removeEntry(baseMap[VerificationSteps.formatValidation], SUB_STEPS.validateDateFormat);
+  }
+
+  if (!isIssuerProfileSigned) {
+    removeEntry(baseMap[VerificationSteps.identityVerification], SUB_STEPS.verifyIssuerProfile);
   }
 
   const verificationSteps = Object.keys(baseMap).map(parentStep => baseMap[parentStep]).flat();

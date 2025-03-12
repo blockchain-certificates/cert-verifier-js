@@ -1,14 +1,19 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did--verification-method-mismatch.json';
 import didDocument from '../../../fixtures/did/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-blockcerts.json';
 import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
+import verificationStepsV3WithDidSignedIssuerProfileAssertion
+  from '../../../assertions/verification-steps-v3-with-did-signed-issuer-profile';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {
   describe('given the proof holds a verification method', function () {
     describe('and the verification method does not match the provided issuer profile DID', function () {
-      it('should not verify successfully', async function () {
+      let certificate;
+      let result;
+
+      beforeAll(async function () {
         vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
           const explorerLookup = await importOriginal();
           return {
@@ -31,12 +36,22 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
           };
         });
 
-        const certificate = new Certificate(fixture);
+        certificate = new Certificate(fixture);
         await certificate.init();
-        const result = await certificate.verify();
+        result = await certificate.verify();
+      });
+
+      afterAll(function () {
+        vi.restoreAllMocks();
+      });
+
+      it('should not verify successfully', function () {
         expect(result.status).toBe(VERIFICATION_STATUSES.FAILURE);
         expect(result.message).toBe('Issuer identity mismatch - The identity document provided by the issuer does not match the verification method');
-        vi.restoreAllMocks();
+      });
+
+      it('should verify the signed issuer profile as part of the verification steps', function () {
+        expect(certificate.verificationSteps).toEqual(verificationStepsV3WithDidSignedIssuerProfileAssertion);
       });
     });
   });

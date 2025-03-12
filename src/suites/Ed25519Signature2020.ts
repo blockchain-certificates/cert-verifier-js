@@ -158,7 +158,7 @@ export default class Ed25519Signature2020 extends Suite {
     }
     // when the document to verify is an issuer profile and it was brought up by a DID
     // the didDocument gets appended. However it is not part of the initial document
-    delete document.didDocument;
+    delete (document as any).didDocument;
 
     return document;
   }

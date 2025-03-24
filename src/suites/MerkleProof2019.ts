@@ -6,7 +6,6 @@ import { isDidUri } from '../domain/verifier/useCases/getIssuerProfile';
 import { getVCProofVerificationMethod } from '../models/BlockcertsV3';
 import { removeEntry } from '../helpers/array';
 import type { ExplorerAPI, TransactionData, IBlockchainObject } from '@blockcerts/explorer-lookup';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { Receipt } from '../models/Receipt';
 import type { Issuer, IssuerPublicKeyList } from '../models/Issuer';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
@@ -14,6 +13,7 @@ import type VerificationSubstep from '../domain/verifier/valueObjects/Verificati
 import type { SuiteAPI } from '../models/Suite';
 import type { ITransactionLink } from '../domain/certificates/useCases/getTransactionLink';
 import type { IDidDocument } from '../models/DidDocument';
+import type IVerificationMethod from '../models/VerificationMethod';
 
 enum SUB_STEPS {
   getTransactionId = 'getTransactionId',
@@ -25,6 +25,7 @@ enum SUB_STEPS {
   checkMerkleRoot = 'checkMerkleRoot',
   checkReceipt = 'checkReceipt',
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  ensureVerificationMethodValidity = 'ensureVerificationMethodValidity',
   deriveIssuingAddressFromPublicKey = 'deriveIssuingAddressFromPublicKey',
   compareIssuingAddress = 'compareIssuingAddress',
   checkAuthenticity = 'checkAuthenticity'
@@ -49,7 +50,7 @@ export default class MerkleProof2019 extends Suite {
   public receipt: Receipt;
   public issuerPublicKeyList: IssuerPublicKeyList;
   public issuer: Issuer;
-  public verificationMethodPublicKey: IDidDocumentPublicKey;
+  public verificationMethod: IVerificationMethod;
   public derivedIssuingAddress: string;
   public hasDid: boolean;
   public proof: VCProof;
@@ -166,7 +167,7 @@ export default class MerkleProof2019 extends Suite {
 
   private async setVerificationSuite (): Promise<void> {
     await this.setIssuerFromProofVerificationMethod();
-    this.verificationMethodPublicKey = inspectors
+    this.verificationMethod = inspectors
       .retrieveVerificationMethodPublicKey(
         this.getTargetVerificationMethodContainer(),
         getVCProofVerificationMethod(this.proof)
@@ -175,7 +176,7 @@ export default class MerkleProof2019 extends Suite {
     this.suite = new LDMerkleProof2019({
       document: this.documentToVerify,
       proof: this.proof,
-      verificationMethod: this.verificationMethodPublicKey,
+      verificationMethod: this.verificationMethod,
       proofPurpose: this.proofPurpose,
       domain: this.proofDomain,
       challenge: this.proofChallenge,
@@ -194,7 +195,28 @@ export default class MerkleProof2019 extends Suite {
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
-    return this.issuer.didDocument ?? this.issuer;
+    if (this.issuer.didDocument) {
+      const verificationMethod = this.findVerificationMethod(this.issuer.didDocument.verificationMethod);
+      if (verificationMethod) {
+        return this.issuer.didDocument;
+      }
+    }
+
+    const verificationMethod = this.findVerificationMethod(this.issuer.verificationMethod);
+    if (verificationMethod) {
+      const controller = {
+        ...this.issuer
+      };
+      delete controller.didDocument; // not defined in JSONLD for verification
+      return controller;
+    }
+
+    return null;
+  }
+
+  private findVerificationMethod (verificationMethods: IVerificationMethod[]): IVerificationMethod {
+    return verificationMethods.find(
+      verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
   }
 
   private isProofChain (): boolean {

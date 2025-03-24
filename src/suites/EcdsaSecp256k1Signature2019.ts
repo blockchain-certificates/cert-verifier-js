@@ -10,6 +10,7 @@ import { deepCopy } from '../helpers/object';
 import { publicKeyBase58FromPublicKeyHex, publicKeyHexFromJwk } from '../helpers/keyUtils';
 import * as inspectors from '../inspectors';
 import type { Blockcerts } from '../models/Blockcerts';
+import type IVerificationMethod from '../models/VerificationMethod';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
@@ -21,12 +22,14 @@ const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsig
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  ensureVerificationMethodValidity = 'ensureVerificationMethodValidity',
   checkDocumentSignature = 'checkDocumentSignature'
 }
 
 export default class EcdsaSecp256k1Signature2019 extends Suite {
   public verificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.ensureVerificationMethodValidity,
     SUB_STEPS.checkDocumentSignature
   ];
 
@@ -35,6 +38,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   public proof: VCProof;
   public type = 'EcdsaSecp256k1Signature2019';
   public verificationKey: EcdsaSecp256k1VerificationKey2019;
+  public verificationMethod: IVerificationMethod;
   public publicKey: any;
   public proofPurpose: string;
   public challenge: string;
@@ -154,7 +158,28 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
-    return this.issuer.didDocument ?? this.issuer;
+    if (this.issuer.didDocument) {
+      const verificationMethod = this.findVerificationMethod(this.issuer.didDocument.verificationMethod);
+      if (verificationMethod) {
+        return this.issuer.didDocument;
+      }
+    }
+
+    const verificationMethod = this.findVerificationMethod(this.issuer.verificationMethod);
+    if (verificationMethod) {
+      const controller = {
+        ...this.issuer
+      };
+      delete controller.didDocument; // not defined in JSONLD for verification
+      return controller;
+    }
+
+    return null;
+  }
+
+  private findVerificationMethod (verificationMethods: IVerificationMethod[]): IVerificationMethod {
+    return verificationMethods.find(
+      verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
   }
 
   private getErrorMessage (verificationStatus): string {
@@ -165,23 +190,23 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
-        const verificationMethod = inspectors.retrieveVerificationMethodPublicKey(
+        this.verificationMethod = inspectors.retrieveVerificationMethodPublicKey(
           this.getTargetVerificationMethodContainer(),
           this.proof.verificationMethod
         );
 
-        if (verificationMethod.publicKeyJwk && !verificationMethod.publicKeyBase58) {
-          const hexKey = publicKeyHexFromJwk(verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
-          verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
+        if (this.verificationMethod.publicKeyJwk && !this.verificationMethod.publicKeyBase58) {
+          const hexKey = publicKeyHexFromJwk(this.verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
+          this.verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
 
           if (!this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {
             this.documentToVerify['@context'].push('https://w3id.org/security/suites/secp256k1-2019/v1');
           }
         }
-        this.publicKey = verificationMethod.publicKeyBase58;
+        this.publicKey = this.verificationMethod.publicKeyBase58;
 
         const key = EcdsaSecp256k1VerificationKey2019.from({
-          ...verificationMethod
+          ...this.verificationMethod
         });
 
         if (!key) {
@@ -194,6 +219,26 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         }
 
         return key;
+      },
+      this.type
+    );
+  }
+
+  private async ensureVerificationMethodValidity (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.ensureVerificationMethodValidity,
+      async (): Promise<void> => {
+        if (this.verificationMethod.expires) {
+          const expirationDate = new Date(this.verificationMethod.expires).getTime();
+          if (expirationDate < Date.now()) {
+            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired');
+          }
+        }
+
+        if (this.verificationMethod.revoked) {
+          // waiting on clarification https://github.com/w3c/cid/issues/152
+          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked');
+        }
       },
       this.type
     );

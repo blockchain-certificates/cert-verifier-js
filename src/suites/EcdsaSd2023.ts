@@ -9,6 +9,7 @@ import { Suite } from '../models/Suite';
 import { preloadedContexts } from '../constants';
 import * as inspectors from '../inspectors';
 import type { Issuer } from '../models/Issuer';
+import type IVerificationMethod from '../models/VerificationMethod';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
@@ -19,12 +20,14 @@ const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsig
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  ensureVerificationMethodValidity = 'ensureVerificationMethodValidity',
   checkDocumentSignature = 'checkDocumentSignature'
 }
 
 export default class EcdsaSd2023 extends Suite {
   public verificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.ensureVerificationMethodValidity,
     SUB_STEPS.checkDocumentSignature
   ];
 
@@ -35,6 +38,7 @@ export default class EcdsaSd2023 extends Suite {
   public cryptosuite = 'ecdsa-sd-2023';
   public publicKey: string;
   public verificationKey: any;
+  public verificationMethod: IVerificationMethod;
   public proofPurpose: string;
   public challenge: string;
   public domain: string | string[];
@@ -154,28 +158,69 @@ export default class EcdsaSd2023 extends Suite {
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
-    return this.issuer.didDocument ?? this.issuer;
+    if (this.issuer.didDocument) {
+      const verificationMethod = this.findVerificationMethod(this.issuer.didDocument.verificationMethod);
+      if (verificationMethod) {
+        return this.issuer.didDocument;
+      }
+    }
+
+    const verificationMethod = this.findVerificationMethod(this.issuer.verificationMethod);
+    if (verificationMethod) {
+      const controller = {
+        ...this.issuer
+      };
+      delete controller.didDocument; // not defined in JSONLD for verification
+      return controller;
+    }
+
+    return null;
+  }
+
+  private findVerificationMethod (verificationMethods: IVerificationMethod[]): IVerificationMethod {
+    return verificationMethods.find(
+      verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
   }
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
       async (): Promise<any> => {
-        const verificationMethodPublicKey = inspectors.retrieveVerificationMethodPublicKey(
+        this.verificationMethod = inspectors.retrieveVerificationMethodPublicKey(
           this.getTargetVerificationMethodContainer(),
           this.proof.verificationMethod
         );
 
-        if (!verificationMethodPublicKey) {
+        if (!this.verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
 
         // TODO: revoked property should exist but we are currently using a forked implementation which does not expose it
-        if ((verificationMethodPublicKey as any).revoked) {
+        if ((this.verificationMethod as any).revoked) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
         }
 
-        return verificationMethodPublicKey;
+        return this.verificationMethod;
+      },
+      this.type
+    );
+  }
+
+  private async ensureVerificationMethodValidity (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.ensureVerificationMethodValidity,
+      async (): Promise<void> => {
+        if (this.verificationMethod.expires) {
+          const expirationDate = new Date(this.verificationMethod.expires).getTime();
+          if (expirationDate < Date.now()) {
+            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired');
+          }
+        }
+
+        if (this.verificationMethod.revoked) {
+          // waiting on clarification https://github.com/w3c/cid/issues/152
+          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked');
+        }
       },
       this.type
     );

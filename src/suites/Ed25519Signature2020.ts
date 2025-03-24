@@ -11,23 +11,25 @@ import { VerifierError } from '../models';
 import { preloadedContexts } from '../constants';
 import { deepCopy } from '../helpers/object';
 import type { Blockcerts } from '../models/Blockcerts';
+import type IVerificationMethod from '../models/VerificationMethod';
 import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IDidDocument } from '../models/DidDocument';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
 enum SUB_STEPS {
   retrieveVerificationMethodPublicKey = 'retrieveVerificationMethodPublicKey',
+  ensureVerificationMethodValidity = 'ensureVerificationMethodValidity',
   checkDocumentSignature = 'checkDocumentSignature'
 }
 
 export default class Ed25519Signature2020 extends Suite {
   public verificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
+    SUB_STEPS.ensureVerificationMethodValidity,
     SUB_STEPS.checkDocumentSignature
   ];
 
@@ -36,6 +38,7 @@ export default class Ed25519Signature2020 extends Suite {
   public proof: VCProof;
   public type = 'Ed25519Signature2020';
   public verificationKey: Ed25519VerificationKey2020;
+  public verificationMethod: IVerificationMethod;
   public publicKey: string;
   public proofPurpose: string;
   public challenge: string;
@@ -183,7 +186,7 @@ export default class Ed25519Signature2020 extends Suite {
     return null;
   }
 
-  private findVerificationMethod (verificationMethods: IDidDocumentPublicKey[]): IDidDocumentPublicKey {
+  private findVerificationMethod (verificationMethods: IVerificationMethod[]): IVerificationMethod {
     return verificationMethods.find(
       verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
   }
@@ -202,22 +205,22 @@ export default class Ed25519Signature2020 extends Suite {
             'The verification method of the document does not match the provided issuer.');
         }
 
-        const verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod);
+        this.verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod);
 
-        if (!verificationMethod) {
+        if (!this.verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
             'The verification method of the document does not match the provided issuer.');
         }
 
         try {
-          this.publicKey = verificationMethod.publicKeyMultibase ??
-            await this.publicKeyJwkToString(verificationMethod);
+          this.publicKey = this.verificationMethod.publicKeyMultibase ??
+            await this.publicKeyJwkToString(this.verificationMethod);
         } catch (e) {
           console.error('ERROR retrieving Ed25519Signature2020 public key', e);
         }
 
         const key = await Ed25519VerificationKey2020.from({
-          ...verificationMethod
+          ...this.verificationMethod
         });
 
         if (!key) {
@@ -229,6 +232,26 @@ export default class Ed25519Signature2020 extends Suite {
         }
 
         return key;
+      },
+      this.type
+    );
+  }
+
+  private async ensureVerificationMethodValidity (): Promise<void> {
+    await this.executeStep(
+      SUB_STEPS.ensureVerificationMethodValidity,
+      async (): Promise<void> => {
+        if (this.verificationMethod.expires) {
+          const expirationDate = new Date(this.verificationMethod.expires).getTime();
+          if (expirationDate < Date.now()) {
+            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired');
+          }
+        }
+
+        if (this.verificationMethod.revoked) {
+          // waiting on clarification https://github.com/w3c/cid/issues/152
+          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked');
+        }
       },
       this.type
     );

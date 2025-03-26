@@ -196,27 +196,24 @@ export default class MerkleProof2019 extends Suite {
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
     if (this.issuer.didDocument) {
-      const verificationMethod = this.findVerificationMethod(this.issuer.didDocument.verificationMethod);
-      if (verificationMethod) {
-        return this.issuer.didDocument;
-      }
+      return this.issuer.didDocument;
     }
 
-    const verificationMethod = this.findVerificationMethod(this.issuer.verificationMethod);
-    if (verificationMethod) {
-      const controller = {
-        ...this.issuer
-      };
-      delete controller.didDocument; // not defined in JSONLD for verification
-      return controller;
-    }
-
-    return null;
+    // let's assume the verification method is in the issuer profile and further checks will fail
+    // if that's not the case
+    const controller = {
+      ...this.issuer
+    };
+    delete controller.didDocument; // not defined in JSONLD for verification
+    return controller;
   }
 
-  private findVerificationMethod (verificationMethods: IVerificationMethod[]): IVerificationMethod {
-    return verificationMethods.find(
-      verificationMethod => verificationMethod.id === this.proof.verificationMethod) ?? null;
+  private findVerificationMethod (verificationMethods: IVerificationMethod[], controller: string): IVerificationMethod {
+    return verificationMethods?.find(
+      verificationMethod => {
+        return verificationMethod.id === this.proof.verificationMethod ||
+          controller + verificationMethod.id === this.proof.verificationMethod;
+      }) ?? null;
   }
 
   private isProofChain (): boolean {

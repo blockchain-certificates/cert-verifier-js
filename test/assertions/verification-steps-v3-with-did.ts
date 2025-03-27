@@ -107,6 +107,13 @@ export default [
             status: VERIFICATION_STATUSES.DEFAULT
           },
           {
+            code: 'ensureVerificationMethodValidity',
+            label: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabel,
+            labelPending: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabelPending,
+            parentStep: VerificationSteps.identityVerification,
+            status: VERIFICATION_STATUSES.DEFAULT
+          },
+          {
             code: 'compareIssuingAddress',
             label: defaultLanguageSet.subSteps.compareIssuingAddressLabel,
             labelPending: defaultLanguageSet.subSteps.compareIssuingAddressLabelPending,

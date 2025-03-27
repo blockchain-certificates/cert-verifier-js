@@ -1,6 +1,6 @@
 import type { IDidDocument } from './DidDocument';
-import type { IDidDocumentPublicKey } from '@decentralized-identity/did-common-typescript';
 import type { VCProof } from './BlockcertsV3';
+import type IVerificationMethod from './VerificationMethod';
 
 export type IssuerPublicKeyList = Record<string, ParsedKeyObjectV2>;
 
@@ -43,7 +43,7 @@ export interface Issuer {
   issuingEstimateUrl?: string;
   // blockcerts v3
   didDocument?: IDidDocument;
-  verificationMethod?: IDidDocumentPublicKey[];
+  verificationMethod?: IVerificationMethod[];
   issuer?: Issuer;
   proof?: VCProof;
 

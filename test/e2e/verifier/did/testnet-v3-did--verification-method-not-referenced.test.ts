@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { Certificate } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did--verification-method-not-referenced.json';
 import didDocument from '../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
-import fixtureIssuerProfile from '../../../fixtures/issuer-profile.json';
+import fixtureIssuerProfile from '../../../fixtures/issuer-blockcerts.json';
 import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 
 describe('Blockcerts v3 beta signed with DID test suite', function () {

@@ -89,6 +89,13 @@ export default [
             status: VERIFICATION_STATUSES.DEFAULT
           },
           {
+            code: 'ensureVerificationMethodValidity',
+            label: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabel,
+            labelPending: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabelPending,
+            parentStep: VerificationSteps.proofVerification,
+            status: VERIFICATION_STATUSES.DEFAULT
+          },
+          {
             code: 'checkDocumentSignature',
             label: 'Check document signature',
             labelPending: 'Checking document signature',
@@ -128,6 +135,13 @@ export default [
             code: 'deriveIssuingAddressFromPublicKey',
             label: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabel,
             labelPending: defaultLanguageSet.subSteps.deriveIssuingAddressFromPublicKeyLabelPending,
+            parentStep: VerificationSteps.identityVerification,
+            status: VERIFICATION_STATUSES.DEFAULT
+          },
+          {
+            code: 'ensureVerificationMethodValidity',
+            label: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabel,
+            labelPending: defaultLanguageSet.subSteps.ensureVerificationMethodValidityLabelPending,
             parentStep: VerificationSteps.identityVerification,
             status: VERIFICATION_STATUSES.DEFAULT
           },

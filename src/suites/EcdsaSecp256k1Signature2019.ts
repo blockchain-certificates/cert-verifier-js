@@ -207,7 +207,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         this.publicKey = this.verificationMethod.publicKeyBase58;
 
         const key = EcdsaSecp256k1VerificationKey2019.from({
-          ...this.verificationMethod
+          ...this.verificationMethod as any // old package does not match CID definition of verification method
         });
 
         if (!key) {

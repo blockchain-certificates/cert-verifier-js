@@ -206,7 +206,7 @@ export default class Ed25519Signature2020 extends Suite {
             'The verification method of the document does not match the provided issuer.');
         }
 
-        this.verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod);
+        this.verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod, issuerDoc.id  );
 
         if (!this.verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,

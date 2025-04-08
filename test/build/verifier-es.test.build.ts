@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import { Certificate } from '../../dist/verifier-es';

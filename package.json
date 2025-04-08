@@ -47,8 +47,8 @@
   "dependencies": {
     "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.7",
     "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.7",
-    "@blockcerts/explorer-lookup": "^1.5.1",
-    "@blockcerts/hashlink-verifier": "^1.6.0",
+    "@blockcerts/explorer-lookup": "^1.5.2",
+    "@blockcerts/hashlink-verifier": "^2.0.0",
     "@blockcerts/schemas": "^3.9.0",
     "@did-core/did-ld-json": "npm:@blockcerts/did-ld-json@^0.1.2",
     "@digitalbazaar/data-integrity": "^2.1.0",
@@ -66,7 +66,7 @@
     "jsonld": "^8.3.2",
     "jsonld-checker": "npm:@blockcerts/jsonld-checker@^0.1.9",
     "jsonld-signatures": "^11.5.0",
-    "jsonld-signatures-merkleproof2019": "^2.13.0",
+    "jsonld-signatures-merkleproof2019": "^2.13.1",
     "lodash.clonedeep": "^4.5.0",
     "secp256k1": "^5.0.0",
     "sha256": "^0.2.0"

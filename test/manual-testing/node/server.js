@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-require-imports: 0 */
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const certVerifierJs = require('../../../dist/verifier-node');

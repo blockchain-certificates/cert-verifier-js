@@ -35,7 +35,6 @@ describe('Blockcerts v3 beta signed with DID test suite', function () {
         await certificate.init();
         const result = await certificate.verify();
         // expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
-        // eslint-disable-next-line no-template-curly-in-string
         expect(result.message).toEqual({ description: 'This is a valid ${chain} certificate.', label: 'Verified', linkText: 'View transaction link' });
         vi.restoreAllMocks();
       });

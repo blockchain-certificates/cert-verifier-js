@@ -12,7 +12,6 @@ export default function ensureValidReceipt (receipt: Receipt): void {
     const proof = receipt.proof ?? receipt.path;
     const isProof = !!proof;
     if (isProof) {
-      // eslint-disable-next-line @typescript-eslint/no-for-in-array
       for (const index in proof) {
         const node = proof[index];
         let appendedBuffer;

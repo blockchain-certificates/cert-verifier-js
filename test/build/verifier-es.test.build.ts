@@ -1,4 +1,3 @@
-import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
 import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
 import { Certificate } from '../../dist/verifier-es';
@@ -26,7 +25,6 @@ describe('verifier build test suite', function () {
     }
     expect(result.message).toEqual({
       label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });
@@ -42,7 +40,6 @@ describe('verifier build test suite', function () {
     }
     expect(result.message).toEqual({
       label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });

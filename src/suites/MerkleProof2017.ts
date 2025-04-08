@@ -63,7 +63,6 @@ export default class MerkleProof2017 extends Suite {
     this.adaptVerificationProcessToChain();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async init (): Promise<void> {}
 
   async verifyProof (): Promise<void> {
@@ -76,7 +75,6 @@ export default class MerkleProof2017 extends Suite {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async verifyIdentity (): Promise<void> {}
 
   getProofVerificationSteps (parentStepKey): VerificationSubstep[] {

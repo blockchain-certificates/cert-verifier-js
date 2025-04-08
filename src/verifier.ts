@@ -483,7 +483,6 @@ export default class Verifier {
         message = {
           ...domain.i18n.getComposedText('success', 'generic'),
           description: domain.i18n.getComposedText('success', 'generic').description
-            // eslint-disable-next-line no-template-curly-in-string
             .replace('${SIGNATURE_TYPE}', this.proofVerifiers[0].type)
         };
       }

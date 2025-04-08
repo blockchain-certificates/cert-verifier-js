@@ -31,9 +31,7 @@
     "build:node": "rollup -c rollup.node.config.mjs",
     "transpile:mocks:iife": "rollup -c test/build/scripts/rollup.mocks.config.mjs",
     "clean:lib:ts": "rimraf lib/\"**\"/*.ts",
-    "lint": "npm run lint:js && npm run lint:ts",
-    "lint:js": "semistandard --verbose",
-    "lint:ts": "eslint . --ext .ts",
+    "lint": "eslint . --ext .ts",
     "semantic-release": "HUSKY=0 semantic-release",
     "prepare": "husky install"
   },
@@ -46,14 +44,6 @@
     "Julien Fraichot"
   ],
   "license": "MIT",
-  "semistandard": {
-    "globals": [
-      "XMLHttpRequest"
-    ],
-    "ignore": [
-      "dist/"
-    ]
-  },
   "dependencies": {
     "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.7",
     "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.7",
@@ -85,6 +75,7 @@
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",
     "@decentralized-identity/did-common-typescript": "^0.1.19",
+    "@eslint/js": "^9.24.0",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-multi-entry": "^6.0.1",
@@ -92,23 +83,14 @@
     "@rollup/plugin-typescript": "^11.1.5",
     "@types/node": "^20.4.5",
     "@types/sinon": "^17.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^7.3.1",
     "@vitest/coverage-istanbul": "^1.6.0",
     "body-parser": "^1.19.0",
     "brfs": "^2.0.2",
     "codecov": "^3.0.4",
+    "commitlint": "^19.8.0",
     "crypto": "^1.0.1",
     "dts-bundle-generator": "^9.0.0",
-    "eslint": "^8.53.0",
-    "eslint-config-semistandard": "^17.0.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-config-standard-with-typescript": "^39.1.1",
-    "eslint-plugin-import": "^2.29.0",
-    "eslint-plugin-n": "^17.17.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "eslint-plugin-standard": "^5.0.0",
+    "eslint": "^9.24.0",
     "express": "^4.17.1",
     "husky": "^9.1.5",
     "jasmine-core": "^5.1.0",
@@ -118,7 +100,7 @@
     "karma-firefox-launcher": "^2.1.2",
     "karma-jasmine": "^5.1.0",
     "node-fetch": "^3.3.2",
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.9",
     "rimraf": "^6.0.1",
     "rollup": "^4.22.4",
     "rollup-plugin-livereload": "^2.0.0",
@@ -129,11 +111,12 @@
     "rollup-plugin-terser": "^7.0.0",
     "rollup-plugin-visualizer": "^5.9.2",
     "semantic-release": "^24.1.2",
-    "semistandard": "^16.0.0",
     "sinon": "^17.0.1",
     "snazzy": "^9.0.0",
+    "ts-node": "^10.9.2",
     "tslib": "^2.4.0",
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.29.1",
     "vitest": "^2.1.1",
     "xmlhttprequest": "^1.8.0"
   }

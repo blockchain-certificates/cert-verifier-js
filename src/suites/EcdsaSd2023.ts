@@ -62,7 +62,6 @@ export default class EcdsaSd2023 extends Suite {
     this.validateProofType();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async init (): Promise<void> {}
 
   async verifyProof (): Promise<void> {
@@ -75,7 +74,6 @@ export default class EcdsaSd2023 extends Suite {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   async verifyIdentity (): Promise<void> {}
 
   getProofVerificationSteps (parentStepKey): VerificationSubstep[] {

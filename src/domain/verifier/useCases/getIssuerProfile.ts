@@ -21,9 +21,7 @@ export function isDidKey (url: string): boolean {
 }
 
 function isValidV1Profile (profile: Issuer): boolean {
-  // eslint-disable-next-line camelcase,@typescript-eslint/naming-convention
   const { issuer_key, revocation_key, issuerKeys, revocationKeys } = profile;
-  // eslint-disable-next-line camelcase
   if (!!issuer_key && !!revocation_key) {
     // https://github.com/blockchain-certificates/cert-schema/blob/master/cert_schema/1.1/issuer-schema-v1-1.json
     return true;

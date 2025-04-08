@@ -1,6 +1,2 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 npm run lint
-npx --no-install jest --clearCache
 npm run test

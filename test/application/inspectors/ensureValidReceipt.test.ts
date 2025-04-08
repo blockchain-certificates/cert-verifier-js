@@ -36,7 +36,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.targetHash = 'fonky';
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -45,7 +45,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.proof.push({ left: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -54,7 +54,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.proof.push({ right: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -63,7 +63,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.proof.push({});
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('The receipt is malformed. There was a problem navigating the merkle tree in the receipt.'));
+        }).toThrow('The receipt is malformed. There was a problem navigating the merkle tree in the receipt.');
       });
     });
   });
@@ -84,7 +84,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.targetHash = 'fonky';
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -93,7 +93,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.path.push({ left: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -102,7 +102,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.path.push({ right: 'fonky' });
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('Invalid Merkle Receipt. Proof hash did not match Merkle root'));
+        }).toThrow('Invalid Merkle Receipt. Proof hash did not match Merkle root');
       });
     });
 
@@ -111,7 +111,7 @@ describe('ensureValidReceipt inspector test suite', function () {
         invalidFixture.path.push({});
         expect(() => {
           ensureValidReceipt(invalidFixture);
-        }).toThrow(new Error('The receipt is malformed. There was a problem navigating the merkle tree in the receipt.'));
+        }).toThrow('The receipt is malformed. There was a problem navigating the merkle tree in the receipt.');
       });
     });
   });

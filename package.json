@@ -61,7 +61,7 @@
     "@transmute/did-key-secp256k1": "^0.3.0-unstable.10",
     "@transmute/ed25519-key-pair": "^0.7.0-unstable.63",
     "@trust/keyto": "^1.0.1",
-    "bs58": "^5.0.0",
+    "bs58": "^6.0.0",
     "buffer": "^6.0.3",
     "jsonld": "^8.3.2",
     "jsonld-checker": "npm:@blockcerts/jsonld-checker@^0.1.9",

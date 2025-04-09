@@ -47,7 +47,6 @@ function validateContext (context: JsonLDContext, type: string[]): void {
     throw new Error('`@context` property must be an array');
   }
   if (!vcContextUrls.includes(context[0] as string)) {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     throw new Error(`First @context must be one of ${vcContextUrls.join(', ')}, given ${context[0] as string}`);
   }
   if (isV1VerifiableCredential(context) && isV2VerifiableCredential(context)) {

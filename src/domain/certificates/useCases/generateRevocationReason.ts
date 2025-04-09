@@ -5,7 +5,6 @@ export enum CREDENTIAL_STATUS_OPTIONS {
   'SUSPENDED' = 'suspended'
 }
 
-// eslint-disable-next-line no-template-curly-in-string
 const CREDENTIAL_STATUS_PLACEHOLDER = '${CREDENTIAL_STATUS}';
 
 export default function generateRevocationReason (reason: string = '', status: CREDENTIAL_STATUS_OPTIONS = CREDENTIAL_STATUS_OPTIONS.REVOKED): string {

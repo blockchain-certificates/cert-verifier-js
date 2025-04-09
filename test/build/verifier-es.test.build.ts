@@ -26,7 +26,6 @@ describe('verifier build test suite', function () {
     }
     expect(result.message).toEqual({
       label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });
@@ -42,7 +41,6 @@ describe('verifier build test suite', function () {
     }
     expect(result.message).toEqual({
       label: 'Verified',
-      // eslint-disable-next-line no-template-curly-in-string
       description: 'This is a valid ${chain} certificate.',
       linkText: 'View transaction link'
     });

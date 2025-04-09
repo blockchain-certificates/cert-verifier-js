@@ -6,14 +6,12 @@ describe('Inspectors test suite', function () {
   describe('ensureNotRevoked method', function () {
     describe('given it is called without revokedAddresses', function () {
       it('should return nothing', function () {
-        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
         expect(ensureNotRevoked()).toBeUndefined();
       });
     });
 
     describe('given it is called without keys', function () {
       it('should return nothing', function () {
-        // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
         expect(ensureNotRevoked(revokedAssertionsFixture.revokedAssertions)).toBeUndefined();
       });
     });

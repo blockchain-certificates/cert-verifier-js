@@ -46,7 +46,6 @@ describe('End-to-end i18n test suite', function () {
       const expectedOutput = {
         code: 'final',
         message: {
-          // eslint-disable-next-line no-template-curly-in-string
           description: 'Este es un certificado válido de ${chain}.',
           label: 'Verificado',
           linkText: 'Ver enlace de transacción'

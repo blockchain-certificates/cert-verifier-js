@@ -1,3 +1,0 @@
-dist/index.d.ts
-test/build/mocks/FakeXmlHttpRequest.iife.js
-test/build/mocks/FakeXmlHttpRequest.cjs

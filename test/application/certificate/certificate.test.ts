@@ -23,7 +23,6 @@ describe('Certificate entity test suite', function () {
       describe('given it is invoked with invalid certificate data', function () {
         it('should return an error', function () {
           expect(function () {
-            /* eslint no-new: "off" */
             new Certificate('invalid-certificate-data');
           }).toThrowError('This is not a valid certificate');
         });
@@ -32,7 +31,6 @@ describe('Certificate entity test suite', function () {
       describe('given it is invoked with no certificate data', function () {
         it('should throw an error', function () {
           expect(function () {
-            /* eslint no-new: "off" */
             new Certificate(undefined);
           }).toThrowError('This is not a valid certificate');
         });

@@ -91,7 +91,7 @@
     "crypto": "^1.0.1",
     "dts-bundle-generator": "^9.0.0",
     "eslint": "^9.24.0",
-    "express": "^4.17.1",
+    "express": "^5.1.0",
     "husky": "^9.1.7",
     "jasmine-core": "^5.1.0",
     "jsdom": "^24.0.0",

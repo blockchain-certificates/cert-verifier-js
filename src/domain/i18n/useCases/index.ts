@@ -4,6 +4,7 @@ import getComposedText from './getComposedText';
 import getText from './getText';
 import getSupportedLanguages from './getSupportedLanguages';
 import getDateFormat from './getDateFormat';
+import setLocale from './setLocale';
 
 export {
   detectLocale,
@@ -11,5 +12,6 @@ export {
   getComposedText,
   getText,
   getSupportedLanguages,
-  getDateFormat
+  getDateFormat,
+  setLocale
 };

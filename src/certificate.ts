@@ -4,7 +4,6 @@ import parseJSON from './parsers/index';
 import type { IFinalVerificationStatus, IVerificationStepCallbackFn } from './verifier';
 import Verifier from './verifier';
 import { DEFAULT_OPTIONS } from './constants';
-import currentLocale from './constants/currentLocale';
 import { deepCopy } from './helpers/object';
 import convertHashlink, { getHashlinksFrom } from './parsers/helpers/convertHashlink';
 import type { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
@@ -201,7 +200,7 @@ export default class Certificate {
       domain.did.didResolver.url = options.didResolverUrl;
     }
 
-    currentLocale.locale = this.locale;
+    domain.i18n.setLocale(this.locale);
   }
 
   private async _setProperties ({

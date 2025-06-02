@@ -307,7 +307,7 @@
       "verifyIssuerProfileLabelPending": "Verificando perfil del emisor"
     },
     "revocation": {
-      "preReason": "Razón dada:",
+      "preReason": "Motivo:",
       "reason": "Este certificado ha sido ${CREDENTIAL_STATUS} por el emisor.",
       "revocationListAuthenticityFailure": "La authenticidad de la lista de revocación no se pudo confirmar.",
       "noRevocationStatusList2021Found": "No lista de revocación encontrada en la URL dada por 'statusListCredential':",

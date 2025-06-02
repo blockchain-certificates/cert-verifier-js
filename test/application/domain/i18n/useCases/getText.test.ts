@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest';
-import currentLocale from '../../../../../src/constants/currentLocale';
 import domain from '../../../../../src/domain';
 
 describe('domain i18n getText use case test suite', function () {
@@ -21,10 +20,10 @@ describe('domain i18n getText use case test suite', function () {
 
   describe('given the current locale does not exist in the i18n data', function () {
     it('should return an error', function () {
-      currentLocale.locale = 'fr-FR';
+      domain.i18n.setLocale('fr-FR');
       const res = domain.i18n.getText('group', 'item');
       expect(res).toBe('[missing locale data]');
-      currentLocale.locale = 'en-US';
+      domain.i18n.setLocale('en-US');
     });
   });
 

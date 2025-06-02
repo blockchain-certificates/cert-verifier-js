@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import domain from '../../../../../src/domain';
 import { CREDENTIAL_STATUS_OPTIONS } from '../../../../../src/domain/certificates/useCases/generateRevocationReason';
 
@@ -34,6 +34,31 @@ describe('domain certificates generate revocation reason test suite', function (
       const revocationReasonAssertion = 'This certificate has been suspended by the issuer.';
       const result = domain.certificates.generateRevocationReason('', CREDENTIAL_STATUS_OPTIONS.SUSPENDED);
       expect(result).toBe(revocationReasonAssertion);
+    });
+  });
+
+  describe('when the locale is set to Spanish', function () {
+    beforeEach(function () {
+      domain.i18n.setLocale('es');
+    });
+
+    afterEach(function () {
+      domain.i18n.setLocale('en');
+    });
+
+    it('should return the revocation message in Spanish', function () {
+      const reasonFixture = 'Esta es una razón de ejemplo.';
+      const revocationReasonAssertion = `Este certificado ha sido revocado por el emisor. Motivo: ${reasonFixture}`;
+      const result = domain.certificates.generateRevocationReason(reasonFixture);
+      expect(result).toBe(revocationReasonAssertion);
+    });
+
+    describe('when the credential is suspended', function () {
+      it('should return the suspension message in Spanish', function () {
+        const revocationReasonAssertion = 'Este certificado ha sido suspendido por el emisor.';
+        const result = domain.certificates.generateRevocationReason('', CREDENTIAL_STATUS_OPTIONS.SUSPENDED);
+        expect(result).toBe(revocationReasonAssertion);
+      });
     });
   });
 });

@@ -12,5 +12,5 @@ export default function generateRevocationReason (reason: string = '', status: C
   reason = reason.trim();
   reason = reason.length > 0 ? ` ${getText('revocation', 'preReason')} ${reason}${reason.slice(-1) !== '.' ? '.' : ''}` : '';
   return `${getText('revocation', 'reason')
-    .replace(CREDENTIAL_STATUS_PLACEHOLDER, getText('revocation', statusText))}${reason}`;
+    .replace(CREDENTIAL_STATUS_PLACEHOLDER, statusText)}${reason}`;
 }

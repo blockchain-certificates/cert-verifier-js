@@ -111,7 +111,7 @@
     "rollup-plugin-terser": "^7.0.0",
     "rollup-plugin-visualizer": "^6.0.1",
     "semantic-release": "^24.1.2",
-    "sinon": "^20.0.0",
+    "sinon": "^21.0.0",
     "snazzy": "^9.0.0",
     "ts-node": "^10.9.2",
     "tslib": "^2.4.0",

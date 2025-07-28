@@ -140,7 +140,12 @@ function validateProof (proof: VCProof): void {
 
 export default function validateVerifiableCredential (credential: BlockcertsV3 | VerifiablePresentation): void {
   if (isVerifiablePresentation(credential)) {
-    credential.verifiableCredential.forEach(vc => { validateVerifiableCredential(vc); });
+    // verifiableCredential property is optional
+    if (credential.verifiableCredential) {
+      credential.verifiableCredential.forEach(vc => {
+        validateVerifiableCredential(vc);
+      });
+    }
     return;
   }
 

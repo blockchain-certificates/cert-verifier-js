@@ -1,22 +1,22 @@
 import domain from '../domain';
+import {cryptosuite as eddsaRdfc2022CryptoSuite} from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+import {DataIntegrityProof} from '@digitalbazaar/data-integrity';
+import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
-import { EcdsaSecp256k1VerificationKey2019 } from '@blockcerts/ecdsa-secp256k1-verification-key-2019';
-import { EcdsaSecp256k1Signature2019 as Secp256k1VerificationSuite } from '@blockcerts/ecdsa-secp256k1-signature-2019';
-import { Suite } from '../models/Suite';
-import { VerifierError } from '../models';
-import { preloadedContexts } from '../constants';
-import { deepCopy } from '../helpers/object';
-import { publicKeyBase58FromPublicKeyHex, publicKeyHexFromJwkSecp256k1 } from '../helpers/keyUtils';
-import * as inspectors from '../inspectors';
+import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
+import { Suite, type SuiteAPI } from '../models/Suite';
+import type { VCProof } from '../models/BlockcertsV3';
 import type { Blockcerts } from '../models/Blockcerts';
-import type IVerificationMethod from '../models/VerificationMethod';
 import type { Issuer } from '../models/Issuer';
-import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import type { SuiteAPI } from '../models/Suite';
-import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import type { ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
-import type { IDidDocument } from '../models/DidDocument';
+import type IVerificationMethod from '../models/VerificationMethod';
+import VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
+import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
+import { preloadedContexts } from '../constants';
+import { BlockcertsV3 } from '../models/BlockcertsV3';
+import { IDidDocument } from '../models/DidDocument';
+import { VerifierError } from '../models';
+import { jwkToMultibaseEd25519 } from '../helpers/keyUtils';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -26,20 +26,21 @@ enum SUB_STEPS {
   checkDocumentSignature = 'checkDocumentSignature'
 }
 
-export default class EcdsaSecp256k1Signature2019 extends Suite {
+export default class EddsaRdfc2022 extends Suite {
   public verificationProcess = [
     SUB_STEPS.retrieveVerificationMethodPublicKey,
     SUB_STEPS.ensureVerificationMethodValidity,
     SUB_STEPS.checkDocumentSignature
   ];
-
   public documentToVerify: Blockcerts;
   public issuer: Issuer;
   public proof: VCProof;
-  public type = 'EcdsaSecp256k1Signature2019';
-  public verificationKey: EcdsaSecp256k1VerificationKey2019;
+  public type = 'EddsaRdfc2022';
+  public cryptosuite = 'eddsa-rdfc-2022';
+  public multikeyRepresentation: Ed25519Multikey;
+  public verificationKey: Ed25519VerificationKey2020;
   public verificationMethod: IVerificationMethod;
-  public publicKey: any;
+  public publicKey: string;
   public proofPurpose: string;
   public challenge: string;
   public domain: string | string[];
@@ -118,8 +119,24 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
+  private async publicKeyJwkToString (publicKeyJwk: any): Promise<string> {
+    const publicKeyString = await Ed25519KeyPair.fingerprintFromPublicKey(publicKeyJwk);
+    return publicKeyString;
+  }
+
   private validateProofType (): void {
     const proofType = this.isProofChain() ? this.proof.chainedProofType : this.proof.type;
+    if (proofType === 'DataIntegrityProof') {
+      const proofCryptoSuite = this.proof.cryptosuite;
+      if (!proofCryptoSuite) {
+        throw new Error(`Malformed proof passed. With DataIntegrityProof a cryptosuite must be defined. Expected: ${this.cryptosuite}`);
+      }
+
+      if (proofCryptoSuite !== this.cryptosuite) {
+        throw new Error(`Incompatible proof cryptosuite passed. Expected: ${this.cryptosuite}, Got: ${proofCryptoSuite}`);
+      }
+      return;
+    }
     if (proofType !== this.type) {
       throw new Error(`Incompatible proof type passed. Expected: ${this.type}, Got: ${proofType}`);
     }
@@ -130,7 +147,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
   }
 
   private generateDocumentLoader (): any {
-    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.getTargetVerificationMethodContainer();
+    preloadedContexts[(this.documentToVerify as BlockcertsV3).issuer as string] = this.issuer.didDocument;
+    preloadedContexts[this.proof.verificationMethod] = this.getMultikeyRepresentation();
     const customLoader = function (url): any {
       if (url in preloadedContexts) {
         return {
@@ -144,15 +162,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     return customLoader;
   }
 
-  private retrieveInitialDocument (): BlockcertsV3 {
-    const document: BlockcertsV3 = deepCopy<BlockcertsV3>(this.documentToVerify as BlockcertsV3);
-    if (Array.isArray(document.proof)) {
-      // TODO: handle case when secp256k1 proof is chained
-      const initialProof = document.proof.find(p => p.type === this.type);
-      delete document.proof;
-      document.proof = initialProof;
-    }
-    return document;
+  private getErrorMessage (verificationStatus): string {
+    return verificationStatus.error.errors[0].message;
   }
 
   private getTargetVerificationMethodContainer (): Issuer | IDidDocument {
@@ -181,39 +192,50 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
       }) ?? null;
   }
 
-  private getErrorMessage (verificationStatus): string {
-    return verificationStatus.error.errors[0].message;
+  private getMultikeyRepresentation () {
+    const multikey = {
+      '@context': 'https://w3id.org/security/multikey/v1',
+      type: 'Multikey',
+      publicKeyMultibase: jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk),
+      id: typeof this.verificationMethod.id === 'string' ? this.verificationMethod.id : undefined,
+      controller: typeof this.verificationMethod.controller === 'string' ? this.verificationMethod.controller : undefined
+    };
+    return multikey
   }
 
   private async retrieveVerificationMethodPublicKey (): Promise<void> {
     this.verificationKey = await this.executeStep(
       SUB_STEPS.retrieveVerificationMethodPublicKey,
-      async (): Promise<EcdsaSecp256k1VerificationKey2019> => {
-        this.verificationMethod = inspectors.retrieveVerificationMethodPublicKey(
-          this.getTargetVerificationMethodContainer(),
-          this.proof.verificationMethod
-        );
-
-        if (this.verificationMethod.publicKeyJwk && !this.verificationMethod.publicKeyBase58) {
-          const hexKey = publicKeyHexFromJwkSecp256k1(this.verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
-          this.verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
-
-          if (!this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {
-            this.documentToVerify['@context'].push('https://w3id.org/security/suites/secp256k1-2019/v1');
-          }
+      async (): Promise<Ed25519VerificationKey2020> => {
+        const issuerDoc = this.getTargetVerificationMethodContainer();
+        if (!issuerDoc) {
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
+            'The verification method of the document does not match the provided issuer.');
         }
-        this.publicKey = this.verificationMethod.publicKeyBase58;
 
-        const key = EcdsaSecp256k1VerificationKey2019.from({
-          ...this.verificationMethod as any // old package does not match CID definition of verification method
+        this.verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod, issuerDoc.id);
+
+        if (!this.verificationMethod) {
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
+            'The verification method of the document does not match the provided issuer.');
+        }
+
+        try {
+          this.publicKey = this.verificationMethod.publicKeyMultibase ??
+            await this.publicKeyJwkToString(this.verificationMethod);
+        } catch (e) {
+          console.error('ERROR retrieving Ed25519Signature2020 public key', e);
+        }
+
+        const key = await Ed25519Multikey.from({
+          ...this.verificationMethod
         });
 
         if (!key) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
         }
 
-        // TODO: revoked property should exist but we are currently using a forked implementation which does not expose it
-        if ((key as any).revoked) {
+        if (key.revoked) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
         }
 
@@ -247,15 +269,8 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
     await this.executeStep(
       SUB_STEPS.checkDocumentSignature,
       async (): Promise<void> => {
-        const suite = new Secp256k1VerificationSuite({ key: this.verificationKey });
-        // TODO: date property should exist but we are currently using a forked implementation which does not expose it
-        (suite as any).date = new Date(Date.now()).toISOString();
-
-        if (this.proofPurpose === 'authentication' && !this.proof.challenge) {
-          this.proof.challenge = '';
-        }
-
-        const verificationStatus = await jsigs.verify(this.retrieveInitialDocument(), {
+        const suite = new DataIntegrityProof({cryptosuite: eddsaRdfc2022CryptoSuite});
+        const verificationStatus = await jsigs.verify(this.documentToVerify, {
           suite,
           purpose: new this.proofPurposeMap[this.proofPurpose]({
             controller: this.getTargetVerificationMethodContainer(),
@@ -268,10 +283,9 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         if (!verificationStatus.verified) {
           console.error(JSON.stringify(verificationStatus, null, 2));
           throw new VerifierError(SUB_STEPS.checkDocumentSignature,
-            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`
-          );
+            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`);
         } else {
-          console.log('Credential Secp256k1 signature successfully verified');
+          console.log('Credential EddsaRdfc2022 signature successfully verified');
         }
       },
       this.type

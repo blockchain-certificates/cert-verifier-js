@@ -49,7 +49,8 @@ export enum SupportedVerificationSuites {
   MerkleProof2019 = 'MerkleProof2019',
   Ed25519Signature2020 = 'Ed25519Signature2020',
   EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019',
-  EcdsaSd2023 = 'EcdsaSd2023'
+  EcdsaSd2023 = 'EcdsaSd2023',
+  EddsaRdfc2022 = 'EddsaRdfc2022'
 }
 
 export interface VerifierAPI {
@@ -83,7 +84,8 @@ export default class Verifier {
     [SupportedVerificationSuites.MerkleProof2019]: null,
     [SupportedVerificationSuites.Ed25519Signature2020]: null,
     [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null,
-    [SupportedVerificationSuites.EcdsaSd2023]: null
+    [SupportedVerificationSuites.EcdsaSd2023]: null,
+    [SupportedVerificationSuites.EddsaRdfc2022]: null
   }; // defined here to later check if the proof type of the document is supported for verification
 
   public proofVerifiers: Suite[] = [];
@@ -272,6 +274,11 @@ export default class Verifier {
     if (documentProofTypes.includes(SupportedVerificationSuites.EcdsaSd2023)) {
       const { default: EcdsaSd2023VerificationSuite } = await import('./suites/EcdsaSd2023');
       this.supportedVerificationSuites.EcdsaSd2023 = EcdsaSd2023VerificationSuite as unknown as Suite;
+    }
+
+    if (documentProofTypes.includes(SupportedVerificationSuites.EddsaRdfc2022)) {
+      const { default: EddsaRdfc2022VerificationSuite } = await import('./suites/EddsaRdfc2022');
+      this.supportedVerificationSuites.EddsaRdfc2022 = EddsaRdfc2022VerificationSuite as unknown as Suite;
     }
   }
 

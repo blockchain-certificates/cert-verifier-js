@@ -1,0 +1,18 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2"
+  ],
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "proof": {
+    "type": "DataIntegrityProof",
+    "created": "2025-07-25T15:54:22Z",
+    "verificationMethod": "did:key:z6MkpJySvETLnxhQG9DzEdmKJtysBDjuuTeDfUj1uNNCUqcj#z6MkpJySvETLnxhQG9DzEdmKJtysBDjuuTeDfUj1uNNCUqcj",
+    "cryptosuite": "eddsa-rdfc-2022",
+    "proofPurpose": "authentication",
+    "challenge": "uFLOeUzjbCkc0K-21LUKrig",
+    "domain": "github.com/w3c/vc-data-model-2.0-test-suite",
+    "proofValue": "z2gTNRcAyi9Va1Y96Hnv5e9C1dtX6UNL4STgwZfdUXrMThPrquEHRQ4XfF6XZFZBWAkCCWfHcFGJpfRJYbyvYtNA8"
+  }
+}

@@ -1,9 +1,13 @@
 import domain from '../domain';
+// @ts-expect-error: not a typescript package
 import {cryptosuite as eddsaRdfc2022CryptoSuite} from '@digitalbazaar/eddsa-rdfc-2022-cryptosuite';
+// @ts-expect-error: not a typescript package
 import {DataIntegrityProof} from '@digitalbazaar/data-integrity';
+// @ts-expect-error: not a typescript package
 import * as Ed25519Multikey from '@digitalbazaar/ed25519-multikey';
 import jsigs from 'jsonld-signatures';
 import jsonld from 'jsonld';
+// @ts-expect-error: not a typescript package
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 import { Suite, type SuiteAPI } from '../models/Suite';
 import type { VCProof } from '../models/BlockcertsV3';
@@ -16,7 +20,7 @@ import { preloadedContexts } from '../constants';
 import { BlockcertsV3 } from '../models/BlockcertsV3';
 import { IDidDocument } from '../models/DidDocument';
 import { VerifierError } from '../models';
-import { jwkToMultibaseEd25519 } from '../helpers/keyUtils';
+import { IPublicKeyJwk, jwkToMultibaseEd25519 } from '../helpers/keyUtils';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -37,7 +41,6 @@ export default class EddsaRdfc2022 extends Suite {
   public proof: VCProof;
   public type = 'EddsaRdfc2022';
   public cryptosuite = 'eddsa-rdfc-2022';
-  public multikeyRepresentation: Ed25519Multikey;
   public verificationKey: Ed25519VerificationKey2020;
   public verificationMethod: IVerificationMethod;
   public publicKey: string;
@@ -196,7 +199,7 @@ export default class EddsaRdfc2022 extends Suite {
     const multikey = {
       '@context': 'https://w3id.org/security/multikey/v1',
       type: 'Multikey',
-      publicKeyMultibase: jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk),
+      publicKeyMultibase: jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk as IPublicKeyJwk),
       id: typeof this.verificationMethod.id === 'string' ? this.verificationMethod.id : undefined,
       controller: typeof this.verificationMethod.controller === 'string' ? this.verificationMethod.controller : undefined
     };

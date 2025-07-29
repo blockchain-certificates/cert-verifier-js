@@ -15,7 +15,7 @@ import type { Issuer } from '../models/Issuer';
 import type VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
-import type { ISecp256k1PublicKeyJwk } from '../helpers/keyUtils';
+import type { IPublicKeyJwk } from '../helpers/keyUtils';
 import type { IDidDocument } from '../models/DidDocument';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
@@ -195,7 +195,7 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
         );
 
         if (this.verificationMethod.publicKeyJwk && !this.verificationMethod.publicKeyBase58) {
-          const hexKey = publicKeyHexFromJwkSecp256k1(this.verificationMethod.publicKeyJwk as ISecp256k1PublicKeyJwk);
+          const hexKey = publicKeyHexFromJwkSecp256k1(this.verificationMethod.publicKeyJwk as IPublicKeyJwk);
           this.verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
 
           if (!this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {

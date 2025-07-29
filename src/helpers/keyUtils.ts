@@ -54,21 +54,21 @@ export const publicKeyBase58FromUint8Array = (publicKey: Uint8Array<any>): strin
 }
 
 export function jwkToPublicKeyBytesEd25519(jwk: IPublicKeyJwk) {
-  const {kty, crv, x} = jwk;
-  if(kty !== 'OKP') {
+  const { kty, crv, x } = jwk;
+  if (kty !== 'OKP') {
     throw new TypeError('"jwk.kty" must be "OKP".');
   }
-  if(crv !== 'Ed25519') {
+  if (crv !== 'Ed25519') {
     throw new TypeError('"jwk.crv" must be "Ed25519".');
   }
-  if(typeof x !== 'string') {
+  if (typeof x !== 'string') {
     throw new TypeError('"jwk.x" must be a string.');
   }
   const publicKey = base64url.decode(jwk.x);
-  if(publicKey.length !== 32) {
+  if (publicKey.length !== 32) {
     throw new Error(
       `Invalid public key size (${publicKey.length}); ` +
-      `expected ${32}.`);
+      `expected 32.`);
   }
   return publicKey;
 }

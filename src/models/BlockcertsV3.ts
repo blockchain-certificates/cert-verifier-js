@@ -42,6 +42,11 @@ export interface VerifiablePresentation {
   holder?: string;
 }
 
+export interface VCObject {
+  type: string;
+  id?: string;
+}
+
 export interface VerifiableCredential {
   '@context': JsonLDContext;
   id: string;
@@ -51,26 +56,15 @@ export interface VerifiableCredential {
   issuer: string | Issuer;
   credentialSubject?: any | any[];
   expirationDate?: string;
-  evidence?: Array<{
-    type: string[];
-    id?: string;
-    // more properties as defined per implementation
-  }>;
+  evidence?: VCObject | VCObject[];
   holder?: {
     type?: string;
     id?: string;
   };
   issued?: string;
   issuanceDate?: string;
-  refreshService?: {
-    type?: string;
-    id?: string; // must be URI
-  };
-  termsOfUse?: Array<{
-    type: string;
-    id?: string;
-    // more properties as defined per implementation
-  }>;
+  refreshService?: VCObject | VCObject[];
+  termsOfUse?: VCObject | VCObject[];
   proof: VCProof | VCProof[];
   // VC V2
   validFrom?: string; // expect dateTime

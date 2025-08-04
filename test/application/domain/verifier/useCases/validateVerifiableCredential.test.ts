@@ -230,7 +230,7 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
               const fixture = { ...validFixture, credentialStatus: { id: 'https://example.com' } };
               expect(function () {
                 validateVerifiableCredential(fixture);
-              }).toThrow('credentialStatus.type must be a string');
+              }).toThrow('credentialStatus.type must be defined');
             });
           });
 
@@ -271,7 +271,7 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
                 };
                 expect(function () {
                   validateVerifiableCredential(fixture);
-                }).toThrow('credentialStatus.type must be a string');
+                }).toThrow('credentialStatus.type must be defined');
               });
             });
 
@@ -324,22 +324,7 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
               const fixture = { ...validFixture, credentialSchema: { id: 'https://example.com' } };
               expect(function () {
                 validateVerifiableCredential(fixture);
-              }).toThrow('credentialSchema.type must be `JsonSchema`');
-            });
-          });
-
-          describe('when the property is an object but the type is not the correct value', function () {
-            it('should throw an error', function () {
-              const fixture = {
-                ...validFixture,
-                credentialSchema: {
-                  id: 'https://example.com',
-                  type: 'InvalidType'
-                }
-              };
-              expect(function () {
-                validateVerifiableCredential(fixture);
-              }).toThrow('credentialSchema.type must be `JsonSchema`');
+              }).toThrow('credentialSchema.type must be defined');
             });
           });
 
@@ -380,28 +365,7 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
                 };
                 expect(function () {
                   validateVerifiableCredential(fixture);
-                }).toThrow('credentialSchema.type must be `JsonSchema`');
-              });
-            });
-
-            describe('and one of the objects does not have the correct value', function () {
-              it('should throw an error', function () {
-                const fixture = {
-                  ...validFixture,
-                  credentialSchema: [
-                    {
-                      type: 'JsonSchema',
-                      id: 'https://example.com'
-                    },
-                    {
-                      id: 'https://other.example.com',
-                      type: 'InvalidType'
-                    }
-                  ]
-                };
-                expect(function () {
-                  validateVerifiableCredential(fixture);
-                }).toThrow('credentialSchema.type must be `JsonSchema`');
+                }).toThrow('credentialSchema.type must be defined');
               });
             });
 

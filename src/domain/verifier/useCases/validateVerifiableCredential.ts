@@ -2,9 +2,7 @@ import { CONTEXT_URLS } from '@blockcerts/schemas';
 import { isValidUrl } from '../../../helpers/url';
 import type {
   BlockcertsV3,
-  VCCredentialStatus,
-  VCCredentialSchema,
-  VerifiablePresentation, VCProof
+  VerifiablePresentation, VCProof, VCObject
 } from '../../../models/BlockcertsV3';
 import type { JsonLDContext } from '../../../models/Blockcerts';
 import { type Issuer } from '../../../models/Issuer';
@@ -102,28 +100,16 @@ function validateCredentialSubject (credentialSubject: any): void {
   }
 }
 
-function validateCredentialStatus (certificateCredentialStatus: VCCredentialStatus | VCCredentialStatus[]): void {
-  const statuses = Array.isArray(certificateCredentialStatus) ? certificateCredentialStatus : [certificateCredentialStatus];
-  statuses.forEach(status => {
-    if (!status.id) {
-      throw new Error('credentialStatus.id must be defined');
+function validatePropTypeAndId (prop: VCObject | VCObject[], propName: string): void {
+  const props = Array.isArray(prop) ? prop : [prop];
+  props.forEach(p => {
+    console.log('validating prop', propName, p);
+    if (!p.id) {
+      throw new Error(`${propName}.id must be defined`);
     }
-    validateUrl(status.id, 'credentialStatus.id');
-    if (typeof status.type !== 'string') {
-      throw new Error('credentialStatus.type must be a string');
-    }
-  });
-}
-
-function validateCredentialSchema (certificateCredentialSchema: VCCredentialSchema | VCCredentialSchema[]): void {
-  const schemas = Array.isArray(certificateCredentialSchema) ? certificateCredentialSchema : [certificateCredentialSchema];
-  schemas.forEach(schema => {
-    if (!schema.id) {
-      throw new Error('credentialSchema.id must be defined');
-    }
-    validateUrl(schema.id, 'credentialSchema.id');
-    if (schema.type !== 'JsonSchema') {
-      throw new Error('credentialSchema.type must be `JsonSchema`');
+    validateUrl(p.id, `${propName}.id`);
+    if (!p.type) {
+      throw new Error(`${propName}.type must be defined`);
     }
   });
 }
@@ -178,11 +164,23 @@ export default function validateVerifiableCredential (credential: BlockcertsV3 |
   }
 
   if (credential.credentialStatus) {
-    validateCredentialStatus(credential.credentialStatus);
+    validatePropTypeAndId(credential.credentialStatus, 'credentialStatus');
   }
 
   if (credential.credentialSchema) {
-    validateCredentialSchema(credential.credentialSchema);
+    validatePropTypeAndId(credential.credentialSchema, 'credentialSchema');
+  }
+
+  if (credential.termsOfUse) {
+    validatePropTypeAndId(credential.termsOfUse, 'termsOfUse');
+  }
+
+  if (credential.evidence) {
+    validatePropTypeAndId(credential.evidence, 'evidence');
+  }
+
+  if (credential.refreshService) {
+    validatePropTypeAndId(credential.refreshService, 'refreshService');
   }
 
   if (!credential.proof) {

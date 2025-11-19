@@ -198,7 +198,9 @@ export default class EcdsaSecp256k1Signature2019 extends Suite {
           const hexKey = publicKeyHexFromJwkSecp256k1(this.verificationMethod.publicKeyJwk as IPublicKeyJwk);
           this.verificationMethod.publicKeyBase58 = publicKeyBase58FromPublicKeyHex(hexKey);
 
-          if (!this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {
+          // EcdsaSecp256k1Signature2019 library does not follow DataIntegrityProof spec, some words get dropped
+          if (this.documentToVerify['@context'].includes('https://www.w3.org/ns/credentials/v2') &&
+              !this.documentToVerify['@context'].includes('https://w3id.org/security/suites/secp256k1-2019/v1')) {
             this.documentToVerify['@context'].push('https://w3id.org/security/suites/secp256k1-2019/v1');
           }
         }

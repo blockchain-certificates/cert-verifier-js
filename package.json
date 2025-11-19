@@ -45,7 +45,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.8",
+    "@blockcerts/ecdsa-secp256k1-signature-2019": "^0.1.11",
     "@blockcerts/ecdsa-secp256k1-verification-key-2019": "^0.1.9",
     "@blockcerts/explorer-lookup": "^1.6.0",
     "@blockcerts/hashlink-verifier": "^2.0.0",

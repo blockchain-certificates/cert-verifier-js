@@ -31,8 +31,7 @@
     "build:node": "rollup -c rollup.node.config.mjs",
     "transpile:mocks:iife": "rollup -c test/build/scripts/rollup.mocks.config.mjs",
     "clean:lib:ts": "rimraf lib/\"**\"/*.ts",
-    "lint": "eslint . --ext .ts",
-    "prepare": "husky install"
+    "lint": "eslint . --ext .ts"
   },
   "publishConfig": {
     "access": "public"

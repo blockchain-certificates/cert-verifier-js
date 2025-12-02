@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     coverage: {
       enabled: true,
-      provider: 'v8', // or 'istanbul'
+      provider: 'istanbul', // or 'v8'
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage'
     }

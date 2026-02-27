@@ -82,7 +82,7 @@
     "@rollup/plugin-multi-entry": "^7.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
-    "@types/node": "^24.0.13",
+    "@types/node": "^25.3.2",
     "@types/sinon": "^21.0.0",
     "@vitest/coverage-istanbul": "^4.0.14",
     "body-parser": "^2.2.0",

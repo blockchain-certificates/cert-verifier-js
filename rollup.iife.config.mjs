@@ -6,7 +6,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import polyfills from 'rollup-plugin-polyfill-node';
 import multi from '@rollup/plugin-multi-entry';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 export default {
   input: ['src/index.ts', 'node_modules/setimmediate/setImmediate.js'],

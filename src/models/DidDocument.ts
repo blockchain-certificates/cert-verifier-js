@@ -12,7 +12,7 @@ export interface IServiceEndpoint {
 
 export interface IDidDocument {
   id?: string;
-  '@context'?: Array<string | IDidContext>;
+  '@context': Array<string | IDidContext>;
   verificationMethod?: IDidDocumentPublicKey[];
   authentication?: Array<string | IDidDocumentPublicKey>;
   assertionMethod?: string[];

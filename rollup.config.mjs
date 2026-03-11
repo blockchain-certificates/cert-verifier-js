@@ -27,7 +27,10 @@ export default {
       preferBuiltins: true,
       extensions: ['.js', '.json']
     }),
-    typescript(),
+    typescript({
+      include: ['src/**/*.ts'],
+      exclude: ['node_modules/**']
+    }),
     commonjs(),
     json(),
     globals(),

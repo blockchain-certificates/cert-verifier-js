@@ -25,7 +25,10 @@ export default {
       browser: true,
       preferBuiltins: true
     }),
-    typescript(),
+    typescript({
+      include: ['src/**/*.ts'],
+      exclude: ['node_modules/**']
+    }),
     commonjs(),
     multi(),
     json(),

@@ -18,7 +18,10 @@ export default {
       mainFields: ['module', 'main'],
       dedupe: ['node-fetch']
     }),
-    typescript(),
+    typescript({
+      include: ['src/**/*.ts'],
+      exclude: ['node_modules/**']
+    }),
     commonjs(),
     json()
   ]

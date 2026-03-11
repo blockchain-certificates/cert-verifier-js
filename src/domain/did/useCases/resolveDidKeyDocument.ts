@@ -1,7 +1,6 @@
 import type { IDidDocument } from '../../../models/DidDocument';
 import type { ResolutionOptions } from '@transmute/did-key-common/dist/types/ResolutionOptions';
 import type { ResolutionResponse } from '@transmute/did-key-common/src/types/ResolutionResponse';
-import type { DidDocument } from '@decentralized-identity/did-common-typescript';
 import { keyUtils } from '@blockcerts/ecdsa-secp256k1-verification-key-2019';
 import * as base58 from "bs58";
 
@@ -17,7 +16,7 @@ enum SupportedSuite {
 
 async function generateDidDocumentFromDid (did: string): Promise<IDidDocument> {
   const publicKeyMultibase = did.substring(8);
-  const publicKeyBytes = Uint8Array.from(base58.decode(publicKeyMultibase.slice(1)).slice(2));
+  const publicKeyBytes = Uint8Array.from((base58 as any).decode(publicKeyMultibase.slice(1)).slice(2));
   const keyId = did + '#' + publicKeyMultibase;
   return {
     '@context': ['https://www.w3.org/ns/did/v1'],
@@ -32,9 +31,8 @@ async function generateDidDocumentFromDid (did: string): Promise<IDidDocument> {
     assertionMethod: [keyId],
     capabilityDelegation: [keyId],
     capabilityInvocation: [keyId],
-    keyAgreement: [keyId],
-
-  }
+    keyAgreement: [keyId as any],
+  } as any
 }
 
 const supportedSuiteMap: Record<string, SupportedSuite> = {
@@ -51,8 +49,8 @@ async function getResolver (suite: SupportedSuite): Promise<TransmuteDidKeyResol
   if (suite === SupportedSuite.SECP256K1) {
     return {
       generate: () => { throw new Error('generate not implemented') },
-      resolve: async (did: string): ResolutionResponse => ({
-        didDocument: await generateDidDocumentFromDid(did) as DidDocument
+      resolve: async (did: string): Promise<ResolutionResponse> => ({
+        didDocument: await generateDidDocumentFromDid(did) as any
       })
     };
   }

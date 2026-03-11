@@ -1,13 +1,12 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import domain from '../../../../../src/domain';
 
-global.navigator = {} as any;
-
 describe('domain i18n detectLocale use case test suite', function () {
   describe('given it detected the navigator locale', function () {
     beforeEach(function () {
-      (navigator as any).__defineGetter__('language', function () {
-        return 'fr-FR';
+      Object.defineProperty(globalThis.navigator, 'language', {
+        configurable: true,
+        get: () => 'fr-FR'
       });
     });
 
@@ -19,8 +18,9 @@ describe('domain i18n detectLocale use case test suite', function () {
 
   describe('given it did not get any navigator properties', function () {
     beforeEach(function () {
-      (navigator as any).__defineGetter__('language', function () {
-        return null;
+      Object.defineProperty(globalThis.navigator, 'language', {
+        configurable: true,
+        get: () => null
       });
     });
 

@@ -6,8 +6,6 @@ import domain from '../../../src/domain';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
 
-global.navigator = {} as any;
-
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('certificate definition', function () {
@@ -86,11 +84,9 @@ describe('Certificate entity test suite', function () {
 
           describe('when the locale is set to auto', function () {
             beforeEach(function () {
-              interface ExtendedNavigator extends Navigator {
-                __defineGetter__: (prop: string, cb) => any;
-              }
-              (navigator as ExtendedNavigator).__defineGetter__('language', function () {
-                return 'it';
+              Object.defineProperty(globalThis.navigator, 'language', {
+                configurable: true,
+                get: () => 'it'
               });
             });
 

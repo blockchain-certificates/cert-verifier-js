@@ -66,7 +66,7 @@ function toPublicKeyBytes({ jwk } = {} as any): Uint8Array {
 
 /** convert jwk to hex encoded public key */
 export const publicKeyHexFromJwkSecp256k1 = (jwk: IPublicKeyJwk): string => {
-  return Buffer.from(toPublicKeyBytes({ jwk })).toString('hex');
+  return buffer.from(toPublicKeyBytes({ jwk })).toString('hex');
 };
 
 /** convert publicKeyHex to base58 */

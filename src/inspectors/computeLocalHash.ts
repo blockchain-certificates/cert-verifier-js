@@ -1,6 +1,7 @@
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
 import { sha256 } from '@noble/hashes/sha2.js';
+import { Buffer } from 'buffer';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';

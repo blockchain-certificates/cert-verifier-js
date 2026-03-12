@@ -4,11 +4,10 @@ import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import polyfills from 'rollup-plugin-polyfill-node';
 import globals from 'rollup-plugin-node-globals';
-import multi from '@rollup/plugin-multi-entry';
 import terser from '@rollup/plugin-terser';
 
 export default {
-  input: ['src/index.ts', 'node_modules/setimmediate/setImmediate.js'],
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/verifier-iife.js',
@@ -24,15 +23,14 @@ export default {
       browser: true,
       preferBuiltins: false
     }),
+    commonjs(),
+    polyfills(),
+    globals(),
     typescript({
       include: ['src/**/*.ts'],
       exclude: ['node_modules/**']
     }),
-    commonjs(),
-    multi(),
     json(),
-    globals(),
-    polyfills(),
     terser()
   ]
 };

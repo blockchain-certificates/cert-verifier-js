@@ -453,7 +453,6 @@ export default class Verifier {
 
   private async verifyIssuerProfile (): Promise<void> {
     // only v3 support
-    // console.log('We will verify the issuer profile', this.issuer);
     if (!this.issuer.proof) {
       return;
     }

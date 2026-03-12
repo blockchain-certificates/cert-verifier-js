@@ -27,14 +27,14 @@ export default {
       preferBuiltins: false,
       extensions: ['.js', '.json']
     }),
+    commonjs(),
+    polyfills(),
+    globals(),
     typescript({
       include: ['src/**/*.ts'],
       exclude: ['node_modules/**']
     }),
-    commonjs(),
     json(),
-    globals(),
-    polyfills(),
     visualizer({
       filename: 'bundle-esm-stats.html',
       title: 'Cert-Verifier-JS bundle stats',

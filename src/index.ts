@@ -2,9 +2,9 @@ import Certificate from './certificate';
 import VerificationSubstep from './domain/verifier/valueObjects/VerificationSubstep';
 
 if (typeof globalThis.setImmediate === 'undefined') {
-  globalThis.setImmediate = (fn, ...args) => {
+  globalThis.setImmediate = ((fn: (...args: any[]) => void, ...args: any[]) => {
     return setTimeout(fn, 0, ...args);
-  };
+  }) as any;
 }
 
 export { Certificate, VerificationSubstep };

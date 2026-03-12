@@ -55,23 +55,23 @@ var v2IssuerProfile = {
 };
 
 var v2RevocationList = {
-    '@context': 'https://w3id.org/openbadges/v2',
-    type: 'RevocationList',
-    id: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json',
-    issuer: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json',
-    revokedAssertions: [{
-            id: 'https://blockcerts.learningmachine.com/certificate/43f53f7cecad512a829b9d879687bfa2',
-            revocationReason: 'Test'
-        }, {
-            id: 'https://blockcerts.learningmachine.com/certificate/62808269186b5d1fac0edb296fa40bf7',
-            revocationReason: 'Please contact the recipient for a link to the re-issued Blockcert.'
-        }, {
-            id: 'https://blockcerts.learningmachine.com/certificate/da9bbb1781035e03b76ac2245c23a42e',
-            revocationReason: 'Incorrect Issue Date. New credential to be issued.'
-        }, {
-            id: 'https://blockcerts.learningmachine.com/certificate/c4e09dfafc4a53e8a7f630df7349fd39',
-            revocationReason: 'Incorrect Issue Date. New credential to be issued.'
-        }]
+  '@context': 'https://w3id.org/openbadges/v2',
+  type: 'RevocationList',
+  id: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json',
+  issuer: 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json',
+  revokedAssertions: [{
+    id: 'https://blockcerts.learningmachine.com/certificate/43f53f7cecad512a829b9d879687bfa2',
+    revocationReason: 'Test'
+  }, {
+    id: 'https://blockcerts.learningmachine.com/certificate/62808269186b5d1fac0edb296fa40bf7',
+    revocationReason: 'Please contact the recipient for a link to the re-issued Blockcert.'
+  }, {
+    id: 'https://blockcerts.learningmachine.com/certificate/da9bbb1781035e03b76ac2245c23a42e',
+    revocationReason: 'Incorrect Issue Date. New credential to be issued.'
+  }, {
+    id: 'https://blockcerts.learningmachine.com/certificate/c4e09dfafc4a53e8a7f630df7349fd39',
+    revocationReason: 'Incorrect Issue Date. New credential to be issued.'
+  }]
 };
 
 const universalResolverUrl = 'https://dev.uniresolver.io/1.0/identifiers';
@@ -151,91 +151,103 @@ var fixtureIssuerProfile = {
 };
 
 var v3RevocationList = {
-    '@context': 'https://w3id.org/openbadges/v2',
-    id: 'https://w3id.org/blockcerts/samples/3.0/revocation-list-blockcerts.json',
-    type: 'RevocationList',
-    issuer: 'https://w3id.org/blockcerts/samples/3.0/issuer-blockcerts.json',
-    revokedAssertions: []
+  '@context': 'https://w3id.org/openbadges/v2',
+  id: 'https://w3id.org/blockcerts/samples/3.0/revocation-list-blockcerts.json',
+  type: 'RevocationList',
+  issuer: 'https://w3id.org/blockcerts/samples/3.0/issuer-blockcerts.json',
+  revokedAssertions: []
 };
 
 // after editing run npm run transpile:mocks:iife
-class FakeXmlHttpRequest {
-  open (method, url) {
-    this.url = url;
+const FakeFetch = async (input, init) => {
+  const url =
+      typeof input === 'string'
+          ? input
+          : input instanceof URL
+              ? input.toString()
+              : input.url;
+
+  const responseText = getMockResponseText(url);
+
+  if (responseText === undefined) {
+    return {
+      ok: false,
+      status: 404,
+      text: async () => ''
+    };
   }
 
-  send () {
-    this.status = 200;
-    this.responseText = this.getMockResponseText();
-    this.onload();
-  }
+  return {
+    ok: true,
+    status: 200,
+    text: async () => responseText
+  };
+};
 
-  onload () {}
+function getMockResponseText(url) {
+  switch (url) {
+    case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json':
+      return JSON.stringify(v2IssuerProfile);
 
-  setRequestHeader () {}
+    case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39':
+      return JSON.stringify(v2RevocationList);
 
-  getMockResponseText () {
-    switch (this.url) {
-      case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json':
-        return JSON.stringify(v2IssuerProfile);
+    case `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`:
+      return JSON.stringify({ didDocument });
 
-      case 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39':
-        return JSON.stringify(v2RevocationList);
+    case 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json':
+      return JSON.stringify(fixtureIssuerProfile);
 
-      case `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`:
-        return JSON.stringify({ didDocument });
+    case 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json':
+      return JSON.stringify(v3RevocationList);
 
-      case 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json':
-        return JSON.stringify(fixtureIssuerProfile);
-
-      case 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json':
-        return JSON.stringify(v3RevocationList);
-
-      case 'https://blockstream.info/api/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd':
-        return JSON.stringify({
-          vout: [
-            {
-              // hash
-              scriptpubkey: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8'
-            }
-          ],
-          vin: [
-            {
-              prevout: {
-                // issuing adress
-                scriptpubkey_address: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-              }
-            }
-          ],
-          status: {
-            confirmed: true,
-            block_time: new Date('2018-02-08T00:23:34.000Z').getTime() / 1000
+    case 'https://blockstream.info/api/tx/2378076e8e140012814e98a2b2cb1af07ec760b239c1d6d93ba54d658a010ecd':
+      return JSON.stringify({
+        vout: [
+          {
+            // hash
+            scriptpubkey: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8'
           }
-        });
-
-      case 'https://blockstream.info/testnet/api/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e':
-        return JSON.stringify({
-          vout: [
-            {
-              // hash
-              scriptpubkey: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6'
+        ],
+        vin: [
+          {
+            prevout: {
+              // issuing adress
+              scriptpubkey_address: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
             }
-          ],
-          vin: [
-            {
-              prevout: {
-                // issuing adress
-                scriptpubkey_address: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am'
-              }
-            }
-          ],
-          status: {
-            confirmed: true,
-            block_time: new Date('2022-04-05T18:45:30.000Z').getTime() / 1000
           }
-        });
-    }
+        ],
+        status: {
+          confirmed: true,
+          block_time: new Date('2018-02-08T00:23:34.000Z').getTime() / 1000
+        }
+      });
+
+    case 'https://blockstream.info/testnet/api/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e':
+      return JSON.stringify({
+        vout: [
+          {
+            // hash
+            scriptpubkey: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6'
+          }
+        ],
+        vin: [
+          {
+            prevout: {
+              // issuing adress
+              scriptpubkey_address: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am'
+            }
+          }
+        ],
+        status: {
+          confirmed: true,
+          block_time: new Date('2022-04-05T18:45:30.000Z').getTime() / 1000
+        }
+      });
+
+    default:
+      return undefined;
   }
 }
 
-exports.FakeXmlHttpRequest = FakeXmlHttpRequest;
+exports.FakeFetch = FakeFetch;

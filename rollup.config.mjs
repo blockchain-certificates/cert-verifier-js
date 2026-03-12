@@ -2,7 +2,7 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import builtins from 'rollup-plugin-node-builtins';
+import polyfills from 'rollup-plugin-polyfill-node';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -24,7 +24,7 @@ export default {
     resolve({
       browser: true,
       mainFields: ['module', 'import', 'main'],
-      preferBuiltins: true,
+      preferBuiltins: false,
       extensions: ['.js', '.json']
     }),
     typescript({
@@ -34,7 +34,7 @@ export default {
     commonjs(),
     json(),
     globals(),
-    builtins(),
+    polyfills(),
     visualizer({
       filename: 'bundle-esm-stats.html',
       title: 'Cert-Verifier-JS bundle stats',

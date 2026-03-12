@@ -16,7 +16,7 @@
     "test:build": "npm run test:manual:node:server& npm run test:build:esm && npm run test:build:cjs && npm run test:build:node && npm run test:build:iife && kill -9 $(lsof -t -i:4000)",
     "test:build:node": "vitest run --dir test/build -c test/build/vitest.config.build.node.ts --silent",
     "test:build:cjs": "vitest run --dir test/build -c test/build/vitest.config.build.cjs.ts --silent",
-    "test:build:esm": "vitest run --dir test/build -c test/build/vitest.config.build.esm.ts --silent",
+    "test:build:esm": "vitest run --dir test/build -c test/build/vitest.config.build.esm.ts",
     "test:build:iife": "karma start --single-run",
     "test:manual:browser": "rollup -c test/manual-testing/browser/rollup.config.mjs",
     "test:manual:node:server": "node test/manual-testing/node/server.js",
@@ -63,7 +63,7 @@
     "buffer": "^6.0.3",
     "jsonld": "^9.0.0",
     "jsonld-signatures": "^11.5.0",
-    "jsonld-signatures-merkleproof2019": "^2.19.2",
+    "jsonld-signatures-merkleproof2019": "^2.20.0",
     "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {
@@ -99,7 +99,6 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.22.4",
     "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "github:blockchain-certificates/rollup-plugin-node-globals",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-serve": "^1.1.0",

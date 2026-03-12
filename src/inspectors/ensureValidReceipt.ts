@@ -1,4 +1,4 @@
-import sha256 from 'sha256';
+import { sha256 } from '@noble/hashes/sha2.js';
 import VerifierError from '../models/verifierError';
 import { toByteArray } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';

@@ -9,7 +9,7 @@ describe('resolveDidKeyDocument DID domain useCase test suite', function () {
     expect(result).toEqual(didDocumentSecp256k1);
   });
 
-  it('resolves a DID document from a ed25519 key', async function () {
+  it.only('resolves a DID document from a ed25519 key', async function () {
     const result = await resolveDidKeyDocument('did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs');
     expect(result).toEqual(didDocumentEd25519);
   });

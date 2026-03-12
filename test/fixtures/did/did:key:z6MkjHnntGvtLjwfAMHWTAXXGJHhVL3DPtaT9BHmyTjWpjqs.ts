@@ -1,7 +1,6 @@
 export default {
   '@context': [
-    'https://www.w3.org/ns/did/v1',
-    'https://w3id.org/security/suites/jws-2020/v1'
+    'https://www.w3.org/ns/did/v1'
   ],
   id: 'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs',
   verificationMethod: [
@@ -26,6 +25,9 @@ export default {
     'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs'
   ],
   capabilityDelegation: [
+    'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs'
+  ],
+  keyAgreement: [
     'did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs#z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs'
   ]
 };

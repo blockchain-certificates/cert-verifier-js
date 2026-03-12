@@ -108,3 +108,7 @@ export const jwkToMultibaseEd25519 = (jwk: IPublicKeyJwk): string => {
   const publicKeyBase58 = publicKeyBase58FromUint8Array(uint8ArrayPublicKey);
   return `z${publicKeyBase58}`;
 }
+
+export function publicKeyMultibaseToBytes (publicKeyMultibase: string): Uint8Array {
+  return Uint8Array.from((bs58 as any).decode(publicKeyMultibase.slice(1)).slice(2))
+}

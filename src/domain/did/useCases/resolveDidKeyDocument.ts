@@ -3,6 +3,7 @@ import type { ResolutionOptions } from '@transmute/did-key-common/dist/types/Res
 import type { ResolutionResponse } from '@transmute/did-key-common/src/types/ResolutionResponse';
 import { keyUtils } from '@blockcerts/ecdsa-secp256k1-verification-key-2019';
 import * as base58 from "bs58";
+import {publicKeyMultibaseToBytes} from "../../../helpers/keyUtils";
 
 interface TransmuteDidKeyResolver {
   generate: (keyGenOptions: any, resolutionOptions: ResolutionOptions) => any;
@@ -14,17 +15,19 @@ enum SupportedSuite {
   SECP256K1 = 'secp256k1'
 }
 
-async function generateDidDocumentFromDid (did: string): Promise<IDidDocument> {
-  const publicKeyMultibase = did.substring(8);
-  const publicKeyBytes = Uint8Array.from((base58 as any).decode(publicKeyMultibase.slice(1)).slice(2));
-  const keyId = did + '#' + publicKeyMultibase;
+function generateDidDoc ({
+  keyId,
+  did,
+  keyType,
+  jwk
+}) {
   return {
     '@context': ['https://www.w3.org/ns/did/v1'],
     verificationMethod: [{
       id: keyId,
-      type: 'EcdsaVerificationKey2019',
+      type: keyType,
       controller: did,
-      publicKeyJwk: keyUtils.publicKeyJWKFrom.publicKeyUint8Array(publicKeyBytes, '')
+      publicKeyJwk: jwk
     }],
     id: did,
     authentication: [keyId],
@@ -35,6 +38,23 @@ async function generateDidDocumentFromDid (did: string): Promise<IDidDocument> {
   } as any
 }
 
+async function generateDidDocumentFromDidSecp256k1 (did: string): Promise<IDidDocument> {
+  const publicKeyMultibase = did.substring(8);
+  const publicKeyBytes = publicKeyMultibaseToBytes(publicKeyMultibase);
+  const jwk = keyUtils.publicKeyJWKFrom.publicKeyUint8Array(publicKeyBytes, '');
+  const keyId = did + '#' + publicKeyMultibase;
+  return generateDidDoc({ keyId, did, jwk, keyType: 'EcdsaVerificationKey2019'})
+}
+
+async function generateDidDocumentFromDidEd25519 (did: string): Promise<IDidDocument> {
+  const multiKey = await import('@digitalbazaar/ed25519-multikey');
+  const publicKeyMultibase = did.substring(8);
+  const publicKeyBytes = publicKeyMultibaseToBytes(publicKeyMultibase);
+  const jwk = await multiKey.toJwk({ keyPair: { publicKey: publicKeyBytes }});
+  const keyId = did + '#' + publicKeyMultibase;
+  return generateDidDoc({ keyId, did, jwk, keyType: 'JsonWebKey2020' });
+}
+
 const supportedSuiteMap: Record<string, SupportedSuite> = {
   'did:key:z6Mk': SupportedSuite.ED25519,
   'did:key:zQ3s': SupportedSuite.SECP256K1
@@ -42,15 +62,19 @@ const supportedSuiteMap: Record<string, SupportedSuite> = {
 
 async function getResolver (suite: SupportedSuite): Promise<TransmuteDidKeyResolver> {
   if (suite === SupportedSuite.ED25519) {
-    const didKeyResolver = await import('@transmute/did-key-ed25519');
-    return didKeyResolver;
+    return {
+      generate: () => { throw new Error('generate not implemented') },
+      resolve: async (did:string): Promise<ResolutionResponse> => ({
+        didDocument: await generateDidDocumentFromDidEd25519(did) as any
+      })
+    }
   }
 
   if (suite === SupportedSuite.SECP256K1) {
     return {
       generate: () => { throw new Error('generate not implemented') },
       resolve: async (did: string): Promise<ResolutionResponse> => ({
-        didDocument: await generateDidDocumentFromDid(did) as any
+        didDocument: await generateDidDocumentFromDidSecp256k1(did) as any
       })
     };
   }

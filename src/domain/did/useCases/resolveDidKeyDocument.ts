@@ -1,14 +1,6 @@
 import type { IDidDocument } from '../../../models/DidDocument';
-import type { ResolutionOptions } from '@transmute/did-key-common/dist/types/ResolutionOptions';
-import type { ResolutionResponse } from '@transmute/did-key-common/src/types/ResolutionResponse';
 import { keyUtils } from '@blockcerts/ecdsa-secp256k1-verification-key-2019';
-import * as base58 from "bs58";
-import {publicKeyMultibaseToBytes} from "../../../helpers/keyUtils";
-
-interface TransmuteDidKeyResolver {
-  generate: (keyGenOptions: any, resolutionOptions: ResolutionOptions) => any;
-  resolve: (didKeyUri: string, options?: ResolutionOptions) => Promise<ResolutionResponse>;
-}
+import { publicKeyMultibaseToBytes } from '../../../helpers/keyUtils';
 
 enum SupportedSuite {
   ED25519 = 'ed25519',
@@ -60,11 +52,10 @@ const supportedSuiteMap: Record<string, SupportedSuite> = {
   'did:key:zQ3s': SupportedSuite.SECP256K1
 };
 
-async function getResolver (suite: SupportedSuite): Promise<TransmuteDidKeyResolver> {
+async function getResolver (suite: SupportedSuite): Promise<{ resolve(did: string): Promise<{ didDocument: IDidDocument }> }> {
   if (suite === SupportedSuite.ED25519) {
     return {
-      generate: () => { throw new Error('generate not implemented') },
-      resolve: async (did:string): Promise<ResolutionResponse> => ({
+      resolve: async (did:string): Promise<{ didDocument: IDidDocument }> => ({
         didDocument: await generateDidDocumentFromDidEd25519(did) as any
       })
     }
@@ -72,8 +63,7 @@ async function getResolver (suite: SupportedSuite): Promise<TransmuteDidKeyResol
 
   if (suite === SupportedSuite.SECP256K1) {
     return {
-      generate: () => { throw new Error('generate not implemented') },
-      resolve: async (did: string): Promise<ResolutionResponse> => ({
+      resolve: async (did: string): Promise<{ didDocument: IDidDocument }> => ({
         didDocument: await generateDidDocumentFromDidSecp256k1(did) as any
       })
     };
@@ -87,8 +77,8 @@ export default async function resolveDidKeyDocument (didKeyUri: string): Promise
   if (supportedSuiteMap[keyPrefix]) {
     const resolver = await getResolver(supportedSuiteMap[keyPrefix]);
 
-    const { didDocument } = await resolver.resolve(didKeyUri, { accept: 'application/did+json' });
-    return didDocument as unknown as IDidDocument; // transmute libs has a lighter definition of DidDocument
+    const { didDocument } = await resolver.resolve(didKeyUri);
+    return didDocument;
   }
 
   throw new Error('Unsupported did:key suite');

@@ -1,6 +1,6 @@
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
-import sha256 from 'sha256';
+import { sha256 } from '@noble/hashes/sha2.js';
 import { preloadedContexts } from '../constants';
 import { toUTF8Data } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
@@ -62,6 +62,6 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
       `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
     );
   } else {
-    return sha256(toUTF8Data(normalizedDocument));
+    return Buffer.from(sha256(Uint8Array.from(toUTF8Data(normalizedDocument)))).toString('hex');
   }
 }

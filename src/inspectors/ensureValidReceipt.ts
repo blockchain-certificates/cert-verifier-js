@@ -17,10 +17,10 @@ export default function ensureValidReceipt (receipt: Receipt): void {
         let appendedBuffer;
         if (typeof node.left !== 'undefined') {
           appendedBuffer = toByteArray(`${node.left}${proofHash}`);
-          proofHash = sha256(appendedBuffer);
+          proofHash = Buffer.from(sha256(Uint8Array.from(appendedBuffer))).toString('hex');
         } else if (typeof node.right !== 'undefined') {
           appendedBuffer = toByteArray(`${proofHash}${node.right}`);
-          proofHash = sha256(appendedBuffer);
+          proofHash = Buffer.from(sha256(Uint8Array.from(appendedBuffer))).toString('hex');
         } else {
           throw new VerifierError(
             'checkReceipt',

@@ -102,7 +102,7 @@
     "rollup-plugin-node-globals": "github:blockchain-certificates/rollup-plugin-node-globals",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-visualizer": "^6.0.1",
+    "rollup-plugin-visualizer": "^7.0.1",
     "sinon": "^21.0.0",
     "snazzy": "^9.0.0",
     "ts-node": "^10.9.2",

@@ -39,6 +39,7 @@ async function generateDidDocumentFromDidSecp256k1 (did: string): Promise<IDidDo
 }
 
 async function generateDidDocumentFromDidEd25519 (did: string): Promise<IDidDocument> {
+  // @ts-expect-error not a ts package
   const multiKey = await import('@digitalbazaar/ed25519-multikey');
   const publicKeyMultibase = did.substring(8);
   const publicKeyBytes = publicKeyMultibaseToBytes(publicKeyMultibase);

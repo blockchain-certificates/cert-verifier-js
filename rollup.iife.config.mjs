@@ -2,9 +2,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
 import polyfills from 'rollup-plugin-polyfill-node';
+import globals from 'rollup-plugin-node-globals';
 import multi from '@rollup/plugin-multi-entry';
 import terser from '@rollup/plugin-terser';
 
@@ -23,7 +22,7 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true
+      preferBuiltins: false
     }),
     typescript({
       include: ['src/**/*.ts'],
@@ -33,7 +32,6 @@ export default {
     multi(),
     json(),
     globals(),
-    builtins(),
     polyfills(),
     terser()
   ]

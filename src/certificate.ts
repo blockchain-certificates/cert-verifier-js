@@ -149,13 +149,8 @@ export default class Certificate {
     this.setSigners();
 
     if (this.isVerifiablePresentation) {
-      let i = 0;
-      console.log('VP has', this.verifiableCredentials.length, 'credentials');
       for (const vc of this.verifiableCredentials) {
-        i++;
-        console.log('now verifying certificate', i, vc.id);
         const verificationStatus = await vc.verify();
-        console.log('verificationStatus', vc.id, verificationStatus);
 
         vc.verificationStatus = verificationStatus;
 

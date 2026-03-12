@@ -103,7 +103,6 @@ function validateCredentialSubject (credentialSubject: any): void {
 function validatePropTypeAndId (prop: VCObject | VCObject[], propName: string): void {
   const props = Array.isArray(prop) ? prop : [prop];
   props.forEach(p => {
-    console.log('validating prop', propName, p);
     if (!p.id) {
       throw new Error(`${propName}.id must be defined`);
     }

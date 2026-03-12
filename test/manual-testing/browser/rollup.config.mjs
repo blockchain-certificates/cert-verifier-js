@@ -5,7 +5,7 @@ import livereload from 'rollup-plugin-livereload';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import globals from 'rollup-plugin-node-globals';
-import builtins from 'rollup-plugin-node-builtins';
+import polyfills from 'rollup-plugin-polyfill-node';
 import fs from 'fs';
 
 const BUILD_OUTPUT_FOLDER = 'test/manual-testing/browser';
@@ -24,7 +24,7 @@ export default [
       commonjs(),
       json(),
       globals(),
-      builtins(),
+      polyfills(),
       typescript(),
       resolve({
         browser: true,

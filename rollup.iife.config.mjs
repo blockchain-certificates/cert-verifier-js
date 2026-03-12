@@ -2,14 +2,12 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
 import polyfills from 'rollup-plugin-polyfill-node';
-import multi from '@rollup/plugin-multi-entry';
-import { terser } from 'rollup-plugin-terser';
+import globals from 'rollup-plugin-node-globals';
+import terser from '@rollup/plugin-terser';
 
 export default {
-  input: ['src/index.ts', 'node_modules/setimmediate/setImmediate.js'],
+  input: 'src/index.ts',
   output: [
     {
       file: 'dist/verifier-iife.js',
@@ -23,15 +21,16 @@ export default {
   plugins: [
     resolve({
       browser: true,
-      preferBuiltins: true
+      preferBuiltins: false
     }),
-    typescript(),
     commonjs(),
-    multi(),
-    json(),
-    globals(),
-    builtins(),
     polyfills(),
+    globals(),
+    typescript({
+      include: ['src/**/*.ts'],
+      exclude: ['node_modules/**']
+    }),
+    json(),
     terser()
   ]
 };

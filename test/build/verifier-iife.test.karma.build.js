@@ -115,7 +115,7 @@ const fixtureV3 = {
 };
 
 // @ts-expect-error we just mock the thing
-window.XMLHttpRequest = mockXHR.FakeXmlHttpRequest;
+window.fetch = mockFetch.FakeFetch;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {

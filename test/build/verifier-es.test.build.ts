@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import FIXTURES from '../fixtures';
-import { FakeXmlHttpRequest } from './mocks/FakeXmlHttpRequest';
+import { FakeFetch } from './mocks/FakeFetch';
 import { Certificate } from '../../dist/verifier-es';
 
 // @ts-expect-error we just mock the thing
-global.XMLHttpRequest = FakeXmlHttpRequest;
+global.fetch = FakeFetch;
 
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {

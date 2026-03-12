@@ -1,6 +1,4 @@
-import keyto from '@trust/keyto';
 import bs58 from 'bs58';
-import secp256k1 from 'secp256k1';
 import { Buffer as BufferPolyfill } from 'buffer';
 // @ts-expect-error: not a typescript package
 import * as base64url from 'base64url-universal';
@@ -25,23 +23,50 @@ export interface IPublicKeyJwk {
   kid?: string;
 }
 
+const ECDSA_CURVE = {
+  P256: 'P-256',
+  P384: 'P-384',
+  P521: 'P-521',
+  // compatibility with @peculiar/webcrypto
+  secp256k1: 'K-256',
+}
+
+function getSecretKeySize({ curve }: { curve: string }): number {
+  if (curve === ECDSA_CURVE.P256 || curve === ECDSA_CURVE.secp256k1 || curve === 'secp256k1') {
+    return 32
+  }
+  if (curve === ECDSA_CURVE.P384) {
+    return 48
+  }
+  if (curve === ECDSA_CURVE.P521) {
+    return 66
+  }
+  throw new TypeError(`Unsupported curve "${curve}".`)
+}
+
+function toPublicKeyBytes({ jwk } = {} as any): Uint8Array {
+  if (jwk?.kty !== 'EC') {
+    throw new TypeError('"jwk.kty" must be "EC".')
+  }
+  const { crv: curve } = jwk
+  const secretKeySize = getSecretKeySize({ curve })
+  // convert `x` coordinate to compressed public key
+  const x = base64url.decode(jwk.x)
+  const y = base64url.decode(jwk.y)
+  // public key size is always secret key size + 1
+  const publicKeySize = secretKeySize + 1
+  const publicKey = new Uint8Array(publicKeySize)
+  // use even / odd status of `y` coordinate for compressed header
+  const even = y[y.length - 1] % 2 === 0
+  publicKey[0] = even ? 2 : 3
+  // write `x` coordinate at end of multikey buffer to zero-fill it
+  publicKey.set(x, publicKey.length - x.length)
+  return publicKey
+}
+
 /** convert jwk to hex encoded public key */
 export const publicKeyHexFromJwkSecp256k1 = (jwk: IPublicKeyJwk): string => {
-  const uncompressedPublicKey = keyto
-    .from(
-      {
-        ...jwk,
-        crv: 'K-256'
-      },
-      'jwk'
-    )
-    .toString('blk', 'public');
-
-  const compressed = secp256k1.publicKeyConvert(
-    buffer.from(uncompressedPublicKey, 'hex'),
-    true
-  );
-  return buffer.from(compressed).toString('hex');
+  return buffer.from(toPublicKeyBytes({ jwk })).toString('hex');
 };
 
 /** convert publicKeyHex to base58 */
@@ -82,4 +107,8 @@ export const jwkToMultibaseEd25519 = (jwk: IPublicKeyJwk): string => {
   uint8ArrayPublicKey.set(publicKeyBytes, MULTICODEC_PUBLIC_HEADER.length);
   const publicKeyBase58 = publicKeyBase58FromUint8Array(uint8ArrayPublicKey);
   return `z${publicKeyBase58}`;
+}
+
+export function publicKeyMultibaseToBytes (publicKeyMultibase: string): Uint8Array {
+  return Uint8Array.from((bs58 as any).decode(publicKeyMultibase.slice(1)).slice(2))
 }

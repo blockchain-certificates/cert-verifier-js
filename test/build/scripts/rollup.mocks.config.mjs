@@ -4,16 +4,16 @@ import json from '@rollup/plugin-json';
 
 // run manually this script
 export default {
-  input: 'test/build/mocks/FakeXmlHttpRequest.js',
+  input: 'test/build/mocks/FakeFetch.js',
   output: [
     {
-      file: 'test/build/mocks/FakeXmlHttpRequest.iife.js',
+      file: 'test/build/mocks/FakeFetch.iife.js',
       format: 'iife',
-      name: 'mockXHR',
+      name: 'mockFetch',
       generatedCode: 'es2015'
     },
     {
-      file: 'test/build/mocks/FakeXmlHttpRequest.cjs',
+      file: 'test/build/mocks/FakeFetch.cjs',
       format: 'cjs'
     }
   ],

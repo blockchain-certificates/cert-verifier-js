@@ -15,7 +15,6 @@ import type { Blockcerts } from '../models/Blockcerts';
 import type { Issuer } from '../models/Issuer';
 import type IVerificationMethod from '../models/VerificationMethod';
 import VerificationSubstep from '../domain/verifier/valueObjects/VerificationSubstep';
-import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
 import { preloadedContexts } from '../constants';
 import { BlockcertsV3 } from '../models/BlockcertsV3';
 import { IDidDocument } from '../models/DidDocument';
@@ -122,9 +121,8 @@ export default class EddsaRdfc2022 extends Suite {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
-  private async publicKeyJwkToString (publicKeyJwk: any): Promise<string> {
-    const publicKeyString = await Ed25519KeyPair.fingerprintFromPublicKey(publicKeyJwk);
-    return publicKeyString;
+  private async publicKeyJwkToString (publicKey: any): Promise<string> {
+    return jwkToMultibaseEd25519(publicKey.publicKeyJwk);
   }
 
   private validateProofType (): void {

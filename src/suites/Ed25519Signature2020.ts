@@ -5,7 +5,6 @@ import jsonld from 'jsonld';
 import { Ed25519VerificationKey2020 } from '@digitalbazaar/ed25519-verification-key-2020';
 // @ts-expect-error: not a typescript package
 import { Ed25519Signature2020 as Ed25519VerificationSuite } from '@digitalbazaar/ed25519-signature-2020';
-import { Ed25519KeyPair } from '@transmute/ed25519-key-pair';
 import { Suite } from '../models/Suite';
 import { VerifierError } from '../models';
 import { preloadedContexts } from '../constants';
@@ -17,6 +16,7 @@ import type VerificationSubstep from '../domain/verifier/valueObjects/Verificati
 import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IDidDocument } from '../models/DidDocument';
+import {jwkToMultibaseEd25519} from "../helpers/keyUtils";
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -118,9 +118,8 @@ export default class Ed25519Signature2020 extends Suite {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
-  private async publicKeyJwkToString (publicKeyJwk: any): Promise<string> {
-    const publicKeyString = await Ed25519KeyPair.fingerprintFromPublicKey(publicKeyJwk);
-    return publicKeyString;
+  private publicKeyJwkToString (publicKey: any): string {
+    return jwkToMultibaseEd25519(publicKey.publicKeyJwk);
   }
 
   private validateProofType (): void {
@@ -213,7 +212,7 @@ export default class Ed25519Signature2020 extends Suite {
 
         try {
           this.publicKey = this.verificationMethod.publicKeyMultibase ??
-            await this.publicKeyJwkToString(this.verificationMethod);
+            this.publicKeyJwkToString(this.verificationMethod);
         } catch (e) {
           console.error('ERROR retrieving Ed25519Signature2020 public key', e);
         }

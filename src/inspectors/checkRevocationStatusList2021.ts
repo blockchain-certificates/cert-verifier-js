@@ -44,6 +44,8 @@ export default async function checkRevocationStatusList2021 (credentialStatus: V
     credentialStatus = [credentialStatus];
   }
 
+  let triggeredSuspension = false;
+
   for (const status of credentialStatus) {
     const credentialIndex = parseInt(status.statusListIndex, 10);
     const revocationCredential: VerifiableCredential = await getRevocationCredential(status.statusListCredential);
@@ -58,8 +60,14 @@ export default async function checkRevocationStatusList2021 (credentialStatus: V
     const decodedList: RevocationList = await decodeList({ encodedList });
 
     if (decodedList.isRevoked(credentialIndex)) {
-      const statusText = status.statusPurpose === 'revocation' ? CREDENTIAL_STATUS_OPTIONS.REVOKED : CREDENTIAL_STATUS_OPTIONS.SUSPENDED;
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', statusText));
+      if (status.statusPurpose === 'revocation') {
+        throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', CREDENTIAL_STATUS_OPTIONS.REVOKED));
+      }
+      triggeredSuspension = true;
     }
+  }
+
+  if (triggeredSuspension) {
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', CREDENTIAL_STATUS_OPTIONS.SUSPENDED));
   }
 }

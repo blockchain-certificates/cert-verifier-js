@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import fixture from '../fixtures/v3/proof-chain-example-ed25519.json';
 import { Certificate } from '../../src';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
-import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../fixtures/issuer-blockcerts.json';
 import v3RevocationList from '../assertions/v3-revocation-list';
 import * as ExplorerLookup from '@blockcerts/explorer-lookup';

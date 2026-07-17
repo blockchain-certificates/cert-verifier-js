@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import parseJSON from '../../../src/parsers';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 const fixture = BlockcertsV3;

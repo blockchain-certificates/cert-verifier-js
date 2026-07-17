@@ -3,9 +3,9 @@ import getIssuerProfile from '../../../../../src/domain/verifier/useCases/getIss
 import fixtureBlockcertsV3Did from '../../../../fixtures/v3/testnet-v3-did.json';
 import type { Issuer } from '../../../../../src/models/Issuer';
 import { universalResolverUrl } from '../../../../../src/domain/did/valueObjects/didResolver';
-import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../../../fixtures/issuer-profile.json';
-import didKeyDocument from '../../../../fixtures/did/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
+import didKeyDocument from '../../../../fixtures/did/did-key-z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
 
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   describe('given the issuer profile refers to a DID', function () {

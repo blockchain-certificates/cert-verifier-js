@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import fixture from '../../fixtures/v3/proof-chain-example-secp256k1.json';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
 describe('proof chain example', function () {

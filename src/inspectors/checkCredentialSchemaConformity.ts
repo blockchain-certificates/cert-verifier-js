@@ -21,7 +21,7 @@ export default async function checkCredentialSchemaConformity (credentialSubject
       schema = JSON.parse(rawSchema);
     } catch (e) {
       console.error(e);
-      throw new Error(`Specified schema at url: ${schemaInfo.id} could not be parsed`);
+      throw new Error(`Specified schema at url: ${schemaInfo.id} could not be parsed`, { cause: e });
     }
 
     const validate = validator(schema);

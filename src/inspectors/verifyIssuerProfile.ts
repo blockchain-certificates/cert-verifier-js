@@ -51,6 +51,6 @@ export default async function verifyIssuerProfile (issuerProfile: Issuer): Promi
   try {
     await suite.verifyProof();
   } catch (e) {
-    throw new Error(`Issuer profile verification failed: ${e.message}`); // TODO: i18n
+    throw new Error(`Issuer profile verification failed: ${e.message}`, { cause: e }); // TODO: i18n
   }
 }

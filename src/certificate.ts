@@ -97,7 +97,7 @@ export default class Certificate {
       try {
         certificateDefinition = JSON.parse(certificateDefinition) as Blockcerts;
       } catch (err) {
-        throw new Error(domain.i18n.getText('errors', 'certificateNotValid'));
+        throw new Error(domain.i18n.getText('errors', 'certificateNotValid'), { cause: err });
       }
     }
 

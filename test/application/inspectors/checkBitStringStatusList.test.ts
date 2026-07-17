@@ -113,6 +113,29 @@ describe('checkBitStringStatusList inspector test suite', function () {
     });
   });
 
+  describe('when there are multiple non-revocation entries', function () {
+    it('should report suspended when one of the suspension entries is active', async function () {
+      const inactiveSuspensionEntry = {
+        id: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#0',
+        type: 'StatusList2021Entry',
+        statusPurpose: 'suspension',
+        statusListIndex: '0',
+        statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+      };
+      const activeSuspensionEntry = {
+        id: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#12354',
+        type: 'StatusList2021Entry',
+        statusPurpose: 'suspension',
+        statusListIndex: '12354',
+        statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+      };
+
+      await expect(async () => {
+        await checkBitStringStatusList([inactiveSuspensionEntry, activeSuspensionEntry]);
+      }).rejects.toThrow('This certificate has been suspended by the issuer.');
+    });
+  });
+
   describe('when the certificate is both revoked and suspended', function () {
     const revokedEntry = {
       id: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json#23547',

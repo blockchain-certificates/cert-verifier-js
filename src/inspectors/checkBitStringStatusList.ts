@@ -44,6 +44,12 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
     credentialStatus = [credentialStatus];
   }
 
+  credentialStatus = [...credentialStatus].sort((a, b) => {
+    if (a.statusPurpose === 'revocation') return -1;
+    if (b.statusPurpose === 'revocation') return 1;
+    return 0;
+  });
+
   for (const status of credentialStatus) {
     const credentialIndex = parseInt(status.statusListIndex, 10);
     const revocationCredential: VerifiableCredential = await getRevocationCredential(status.statusListCredential);

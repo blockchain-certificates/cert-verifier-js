@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import { checkRevocationStatusList2021 } from '../../../src/inspectors';
+import { checkBitStringStatusList } from '../../../src/inspectors';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
 import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-revoked.json';
@@ -10,7 +10,7 @@ const tamperedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021
 const undefinedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--undefined.json';
 const notFoundListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--not-found.json';
 
-describe('checkRevocationStatusList2021 inspector test suite', function () {
+describe('checkBitStringStatusList inspector test suite', function () {
   beforeAll(function () {
     vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
       const explorerLookup = await importOriginal();
@@ -53,7 +53,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
   describe('when the certificate has been revoked', function () {
     it('should throw', async function () {
       await expect(async () => {
-        await checkRevocationStatusList2021(StatusList2021Revoked.credentialStatus);
+        await checkBitStringStatusList(StatusList2021Revoked.credentialStatus);
       }).rejects.toThrow('This certificate has been revoked by the issuer.');
     });
   });
@@ -61,7 +61,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
   describe('when the certificate has been suspended', function () {
     it('should throw', async function () {
       await expect(async () => {
-        await checkRevocationStatusList2021(StatusList2021Suspended.credentialStatus);
+        await checkBitStringStatusList(StatusList2021Suspended.credentialStatus);
       }).rejects.toThrow('This certificate has been suspended by the issuer.');
     });
   });
@@ -71,7 +71,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
       let failed = false;
 
       try {
-        await checkRevocationStatusList2021(StatusList2021.credentialStatus);
+        await checkBitStringStatusList(StatusList2021.credentialStatus);
       } catch {
         failed = true;
       }
@@ -86,7 +86,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
       tamperedList.credentialStatus.statusListCredential = tamperedListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(tamperedList.credentialStatus);
+        await checkBitStringStatusList(tamperedList.credentialStatus);
       }).rejects.toThrow('The authenticity of the revocation list could not be verified.');
     });
   });
@@ -97,7 +97,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
       undefinedList.credentialStatus.statusListCredential = undefinedListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(undefinedList.credentialStatus);
+        await checkBitStringStatusList(undefinedList.credentialStatus);
       }).rejects.toThrow(`No status list could be found at the specified URL for 'statusListCredential': ${undefinedListUrl}.`);
     });
   });
@@ -108,7 +108,7 @@ describe('checkRevocationStatusList2021 inspector test suite', function () {
       notFoundList.credentialStatus.statusListCredential = notFoundListUrl;
 
       await expect(async () => {
-        await checkRevocationStatusList2021(notFoundList.credentialStatus);
+        await checkBitStringStatusList(notFoundList.credentialStatus);
       }).rejects.toThrow(`No status list could be found at the specified URL for 'statusListCredential': ${notFoundListUrl}.`);
     });
   });

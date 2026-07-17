@@ -24,7 +24,6 @@
     "test:manual:node:verify": "node test/manual-testing/node/request.mjs",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:report": "npx codecov -f coverage/lcov.info",
     "build": "rimraf dist && npm run build:esm && npm run build:iife && npm run build:node && npm run dts:bundle && npm run test:build",
     "build:esm": "rollup -c",
     "build:iife": "rollup -c rollup.iife.config.mjs",

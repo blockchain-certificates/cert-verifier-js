@@ -11,6 +11,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
 
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +42,11 @@ jobs:
         run: npm run test:coverage
 
       - name: Report coverage
-        run: npm run test:coverage:report
+        uses: codecov/codecov-action@v6
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: true
+          use_oidc: true
 
       - name: Release
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'

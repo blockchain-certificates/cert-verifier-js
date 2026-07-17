@@ -376,9 +376,9 @@ export default class Verifier {
 
   private async checkRevokedStatus (): Promise<void> {
     if ((this.documentToVerify as BlockcertsV3).credentialStatus) {
-      const { default: checkRevocationStatusList2021 } = await import('./inspectors/checkRevocationStatusList2021');
+      const { default: checkBitStringStatusList } = await import('./inspectors/checkBitStringStatusList');
       await this.executeStep(SUB_STEPS.checkRevokedStatus, async () => {
-        await checkRevocationStatusList2021((this.documentToVerify as BlockcertsV3).credentialStatus);
+        await checkBitStringStatusList((this.documentToVerify as BlockcertsV3).credentialStatus);
       });
       return;
     }

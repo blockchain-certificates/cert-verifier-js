@@ -39,7 +39,7 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
   }
 }
 
-export default async function checkRevocationStatusList2021 (credentialStatus: VCCredentialStatus | VCCredentialStatus[]): Promise<void> {
+export default async function checkBitStringStatusList (credentialStatus: VCCredentialStatus | VCCredentialStatus[]): Promise<void> {
   if (!Array.isArray(credentialStatus)) {
     credentialStatus = [credentialStatus];
   }

@@ -1,4 +1,4 @@
-import checkRevocationStatusList2021 from './checkRevocationStatusList2021';
+import checkBitStringStatusList from './checkBitStringStatusList';
 import computeLocalHash from './computeLocalHash';
 import ensureHashesEqual from './ensureHashesEqual';
 import ensureMerkleRootEqual from './ensureMerkleRootEqual';
@@ -11,7 +11,7 @@ import controlVerificationMethod from './did/controlVerificationMethod';
 import retrieveVerificationMethodPublicKey from './did/retrieveVerificationMethodPublicKey';
 
 export {
-  checkRevocationStatusList2021,
+  checkBitStringStatusList,
   computeLocalHash,
   controlVerificationMethod,
   ensureHashesEqual,

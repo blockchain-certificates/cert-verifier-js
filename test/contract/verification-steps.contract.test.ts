@@ -8,7 +8,7 @@ import verificationStepsValidFrom from '../assertions/verification-steps-v3-vali
 import verificationsStepsV2Regtest from '../assertions/verification-steps-v2-regtest';
 import verificationsStepsV2Mainnet from '../assertions/verification-steps-v2-mainnet';
 import verificationsStepsV3CredentialSchema from '../assertions/verification-steps-v3-credentialSchema-mocknet';
-import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../fixtures/issuer-profile.json';
 import v2IssuerProfile from '../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 import v2RegtestIssuerProfile from '../assertions/v2-testnet-issuer-profile.json';

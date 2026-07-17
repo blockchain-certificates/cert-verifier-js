@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { getIssuerProfileUrl } from '../../../../../src/domain/did/useCases';
-import didDocument from '../../../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
 describe('domain did getIssuerProfileUrl test suite', function () {
   describe('given it is called with a DID document which does not contain a service object', function () {

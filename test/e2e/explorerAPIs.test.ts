@@ -4,7 +4,7 @@ import Certificate from '../../src/certificate';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import fixtureIssuerProfile from '../fixtures/issuer-blockcerts.json';
-import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
 describe('explorerAPIs end to end test suite', function () {
   describe('given a custom explorer API with a parsingFunction is set', function () {

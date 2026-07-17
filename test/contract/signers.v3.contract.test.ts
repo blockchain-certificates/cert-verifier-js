@@ -3,7 +3,7 @@ import * as ExplorerLookup from '@blockcerts/explorer-lookup';
 import { Certificate } from '../../src';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
-import didDocument from '../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../assertions/v3-revocation-list';
 

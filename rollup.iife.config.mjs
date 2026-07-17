@@ -28,8 +28,7 @@ export default {
     globals(),
     typescript({
       include: ['src/**/*.ts'],
-      exclude: ['node_modules/**'],
-      outDir: 'dist'
+      exclude: ['node_modules/**']
     }),
     json(),
     terser()

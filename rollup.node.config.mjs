@@ -20,8 +20,7 @@ export default {
     }),
     typescript({
       include: ['src/**/*.ts'],
-      exclude: ['node_modules/**'],
-      outDir: 'dist/verifier-node'
+      exclude: ['node_modules/**']
     }),
     commonjs(),
     json()

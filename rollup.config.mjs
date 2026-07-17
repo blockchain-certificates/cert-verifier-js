@@ -32,7 +32,8 @@ export default {
     globals(),
     typescript({
       include: ['src/**/*.ts'],
-      exclude: ['node_modules/**']
+      exclude: ['node_modules/**'],
+      outDir: 'dist'
     }),
     json(),
     visualizer({

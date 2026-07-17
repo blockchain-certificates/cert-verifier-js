@@ -4,7 +4,7 @@ import json from '@rollup/plugin-json';
 
 // run manually this script
 export default {
-  input: 'test/build/mocks/FakeFetch.js',
+  input: 'test/build/mocks/FakeFetch.ts',
   output: [
     {
       file: 'test/build/mocks/FakeFetch.iife.js',

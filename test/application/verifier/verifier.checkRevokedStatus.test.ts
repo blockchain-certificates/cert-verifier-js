@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import Verifier from '../../../src/verifier';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import v3RevocationList from '../../assertions/v3-revocation-list';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';

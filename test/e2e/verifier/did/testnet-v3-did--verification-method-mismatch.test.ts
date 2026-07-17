@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { Certificate, VERIFICATION_STATUSES } from '../../../../src';
 import fixture from '../../../fixtures/v3/testnet-v3-did--verification-method-mismatch.json';
-import didDocument from '../../../fixtures/did/did:ion:EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA.json';
+import didDocument from '../../../fixtures/did/did-ion-EiAdjtCU7lOOND5xRgjpDiAB2DxAs9-QoFBAbcd3ttZsSA.json';
 import fixtureIssuerProfile from '../../../fixtures/issuer-blockcerts.json';
 import { universalResolverUrl } from '../../../../src/domain/did/valueObjects/didResolver';
 import verificationStepsV3WithDidSignedIssuerProfileAssertion

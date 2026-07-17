@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 import hashlinkAssertion from '../../assertions/hashlink';
 import { Certificate } from '../../../src';
-import didDocument from '../../fixtures/did/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
+import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import fixtureIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 import BlockcertsV3Hashlink from '../../fixtures/v3/testnet-v3-hashlink.json';

@@ -110,4 +110,56 @@ describe('checkBitStringStatusList inspector test suite', function () {
       }).rejects.toThrow(`No status list could be found at the specified URL for 'statusListCredential': ${notFoundListUrl}.`);
     });
   });
+
+  describe('when there are multiple non-revocation entries', function () {
+    it('should report suspended when one of the suspension entries is active', async function () {
+      const inactiveSuspensionEntry = {
+        id: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#0',
+        type: 'StatusList2021Entry',
+        statusPurpose: 'suspension',
+        statusListIndex: '0',
+        statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+      };
+      const activeSuspensionEntry = {
+        id: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#12354',
+        type: 'StatusList2021Entry',
+        statusPurpose: 'suspension',
+        statusListIndex: '12354',
+        statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+      };
+
+      await expect(async () => {
+        await checkBitStringStatusList([inactiveSuspensionEntry, activeSuspensionEntry]);
+      }).rejects.toThrow('This certificate has been suspended by the issuer.');
+    });
+  });
+
+  describe('when the certificate is both revoked and suspended', function () {
+    const revokedEntry = {
+      id: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json#23547',
+      type: 'StatusList2021Entry',
+      statusPurpose: 'revocation',
+      statusListIndex: '23547',
+      statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+    };
+    const suspendedEntry = {
+      id: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json#12354',
+      type: 'StatusList2021Entry',
+      statusPurpose: 'suspension',
+      statusListIndex: '12354',
+      statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json'
+    };
+
+    it('should report revoked when the revocation entry comes first', async function () {
+      await expect(async () => {
+        await checkBitStringStatusList([revokedEntry, suspendedEntry]);
+      }).rejects.toThrow('This certificate has been revoked by the issuer.');
+    });
+
+    it('should report revoked when the suspension entry comes first', async function () {
+      await expect(async () => {
+        await checkBitStringStatusList([suspendedEntry, revokedEntry]);
+      }).rejects.toThrow('This certificate has been revoked by the issuer.');
+    });
+  });
 });

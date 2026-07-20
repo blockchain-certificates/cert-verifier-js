@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, vi } from 'vitest';
+import { describe, it, expect, afterAll, beforeEach, vi } from 'vitest';
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import sinon from 'sinon';
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
@@ -12,47 +12,45 @@ import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4H
 import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../../assertions/v3-revocation-list';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json') {
+        return JSON.stringify(v3RevocationList);
+      }
+    },
+    lookForTx: function (args) {
+      if (args.transactionId === '043e60228b3b4cde1a9e55f04b6471eb1705b0a6b403f1e1fa6a3274ef4a63a9') {
+        return {
+          remoteHash: '731225437616acfe1d4d3d671a27afefc15576c7d9911dab4acaf63f8fa09e8d',
+          issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+          time: '2022-03-24T21:50:16.000Z',
+          revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+        };
+      }
+      return {
+        remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
+        issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+        time: '2022-04-05T18:45:30.000Z',
+        revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+      };
+    }
+  };
+});
+
 describe('Certificate test suite', function () {
   describe('verify method', function () {
     let certificate;
-
-    beforeAll(function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          request: async function ({ url }) {
-            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-              return JSON.stringify({ didDocument });
-            }
-
-            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-              return JSON.stringify(fixtureIssuerProfile);
-            }
-
-            if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json') {
-              return JSON.stringify(v3RevocationList);
-            }
-          },
-          lookForTx: function (args) {
-            if (args.transactionId === '043e60228b3b4cde1a9e55f04b6471eb1705b0a6b403f1e1fa6a3274ef4a63a9') {
-              return {
-                remoteHash: '731225437616acfe1d4d3d671a27afefc15576c7d9911dab4acaf63f8fa09e8d',
-                issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-                time: '2022-03-24T21:50:16.000Z',
-                revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
-              };
-            }
-            return {
-              remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
-              issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-              time: '2022-04-05T18:45:30.000Z',
-              revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
-            };
-          }
-        };
-      });
-    });
 
     afterAll(function () {
       vi.restoreAllMocks();

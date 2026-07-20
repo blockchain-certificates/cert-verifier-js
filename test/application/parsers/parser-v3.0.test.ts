@@ -5,6 +5,23 @@ import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
 import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(v3IssuerProfile);
+      }
+    }
+  };
+});
+
 const fixture = BlockcertsV3;
 const assertionIssuerProfile = {
   ...v3IssuerProfile,
@@ -35,22 +52,6 @@ describe('Parser v3 test suite', function () {
     let parsedCertificate;
 
     beforeAll(async function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          // replace some exports
-          request: async function ({ url }) {
-            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-              return JSON.stringify({ didDocument });
-            }
-
-            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-              return JSON.stringify(v3IssuerProfile);
-            }
-          }
-        };
-      });
       parsedCertificate = await parseJSON(fixture);
     });
 

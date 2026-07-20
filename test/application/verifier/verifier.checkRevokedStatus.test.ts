@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, afterAll, vi } from 'vitest';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import Verifier from '../../../src/verifier';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
@@ -13,42 +13,40 @@ import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
 import MainnetV2Revoked from '../../fixtures/v2/mainnet-revoked-2.0.json';
 import BlockcertsV3VerificationMethodIssuerProfile from '../../fixtures/v3/testnet-v3-verification-method-issuer-profile.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureBlockcertsIssuerProfile);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json?assertionId=urn%3Auuid%3Abbba8553-8ec1-445f-82c9-a57251dd731c') {
+        return JSON.stringify(v3RevocationList);
+      }
+
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+        return JSON.stringify(fixtureMainnetIssuerProfile);
+      }
+
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39') {
+        return JSON.stringify(fixtureMainnetRevocationList);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021.json') {
+        return JSON.stringify(BlockcertsStatusList2021);
+      }
+    }
+  };
+});
+
 describe('Verifier checkRevokedStatus method test suite', function () {
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        // replace some exports
-        request: async function ({ url }) {
-          if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-            return JSON.stringify({ didDocument });
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return JSON.stringify(fixtureBlockcertsIssuerProfile);
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json?assertionId=urn%3Auuid%3Abbba8553-8ec1-445f-82c9-a57251dd731c') {
-            return JSON.stringify(v3RevocationList);
-          }
-
-          if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
-            return JSON.stringify(fixtureMainnetIssuerProfile);
-          }
-
-          if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39') {
-            return JSON.stringify(fixtureMainnetRevocationList);
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021.json') {
-            return JSON.stringify(BlockcertsStatusList2021);
-          }
-        }
-      };
-    });
-  });
-
   afterAll(function () {
     vi.restoreAllMocks();
   });

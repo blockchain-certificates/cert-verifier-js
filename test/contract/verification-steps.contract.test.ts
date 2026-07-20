@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, afterAll, vi } from 'vitest';
 import { Certificate } from '../../src';
 import { universalResolverUrl } from '../../src/domain/did/valueObjects/didResolver';
 import verificationsStepsWithDID from '../assertions/verification-steps-v3-with-did';
@@ -20,37 +20,35 @@ import BlockcertsV3Hashlink from '../fixtures/v3/testnet-v3-hashlink.json';
 import BlockcertsV3ValidFrom from '../fixtures/v3/mocknet-vc-v2-invalid-date-format.json';
 import BlockcertsV3CredentialSchema from '../fixtures/v3/mocknet-vc-v2-credential-schema.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/2.0/issuer-testnet.json') {
+        return JSON.stringify(v2RegtestIssuerProfile);
+      }
+
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+        return JSON.stringify(v2IssuerProfile);
+      }
+
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      console.log('url response not mocked', url);
+    }
+  };
+});
+
 describe('Certificate API Contract test suite', function () {
   describe('verificationSteps property', function () {
-    beforeAll(function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          // replace some exports
-          request: async function ({ url }) {
-            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-              return JSON.stringify(fixtureIssuerProfile);
-            }
-
-            if (url === 'https://www.blockcerts.org/samples/2.0/issuer-testnet.json') {
-              return JSON.stringify(v2RegtestIssuerProfile);
-            }
-
-            if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
-              return JSON.stringify(v2IssuerProfile);
-            }
-
-            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-              return JSON.stringify({ didDocument });
-            }
-
-            console.log('url response not mocked', url);
-          }
-        };
-      });
-    });
-
     afterAll(function () {
       vi.restoreAllMocks();
     });

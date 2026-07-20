@@ -3,6 +3,18 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import MocknetVCV2ValidFromValid from '../../fixtures/v3/mocknet-vc-v2-validFrom-valid.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return getIssuerProfileResponse();
+      }
+    }
+  };
+});
+
 function getIssuerProfileResponse (): string {
   const issuerProfile = {
     ...fixtureBlockcertsIssuerProfile
@@ -21,17 +33,6 @@ function getIssuerProfileResponse (): string {
 describe('given the certificate is signed by a revoked MerkleProof2019 verification method', function () {
   // this test will expire in 2039
   it('should fail verification', async function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return getIssuerProfileResponse();
-          }
-        }
-      };
-    });
 
     const certificate = new Certificate(MocknetVCV2ValidFromValid);
     await certificate.init();

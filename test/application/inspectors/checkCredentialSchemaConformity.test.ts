@@ -1,41 +1,39 @@
-import { describe, it, expect, beforeAll, vi, afterAll } from 'vitest';
+import { describe, it, expect, vi, afterAll } from 'vitest';
 import { type VCCredentialSchema } from '../../../src/models/BlockcertsV3';
 import checkCredentialSchemaConformity from '../../../src/inspectors/checkCredentialSchemaConformity';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://path.to.non.json.schema') {
+        return 'not a json file';
+      }
+
+      if (url === 'https://path.to.json.schema') {
+        return JSON.stringify({
+          $schema: 'http://json-schema.org/draft-04/schema#',
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string'
+            },
+            name: {
+              type: 'string'
+            }
+          },
+          required: [
+            'id',
+            'name'
+          ]
+        });
+      }
+    }
+  };
+});
+
 describe('checkCredentialSchemaConformity inspector test suite', function () {
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://path.to.non.json.schema') {
-            return 'not a json file';
-          }
-
-          if (url === 'https://path.to.json.schema') {
-            return JSON.stringify({
-              $schema: 'http://json-schema.org/draft-04/schema#',
-              type: 'object',
-              properties: {
-                id: {
-                  type: 'string'
-                },
-                name: {
-                  type: 'string'
-                }
-              },
-              required: [
-                'id',
-                'name'
-              ]
-            });
-          }
-        }
-      };
-    });
-  });
-
   afterAll(function () {
     vi.restoreAllMocks();
   });

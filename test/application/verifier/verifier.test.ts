@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, afterAll, vi } from 'vitest';
 import { HashlinkVerifier } from '@blockcerts/hashlink-verifier';
 import { VERIFICATION_STATUSES } from '../../../src';
 import { BLOCKCHAINS } from '@blockcerts/explorer-lookup';
@@ -13,6 +13,29 @@ import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.jso
 import fixtureMainnetIssuerProfile from '../../fixtures/issuer-profile-mainnet-example.json';
 import fixtureV2MainnetValid from '../../fixtures/v2/mainnet-valid-2.0.json';
 import fixtureBlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
+
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+        return JSON.stringify(fixtureMainnetIssuerProfile);
+      }
+    },
+    lookForTx: function (args) {
+      spy(args);
+      return {
+        remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+        issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+        time: '2018-02-08T00:23:34.000Z',
+        revokedAddresses: [
+          '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+        ]
+      };
+    }
+  };
+});
 
 const spy = vi.fn();
 
@@ -31,31 +54,6 @@ describe('Verifier entity test suite', function () {
       type: 'MerkleProof2017'
     }
   };
-
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
-            return JSON.stringify(fixtureMainnetIssuerProfile);
-          }
-        },
-        lookForTx: function (args) {
-          spy(args);
-          return {
-            remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-            issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-            time: '2018-02-08T00:23:34.000Z',
-            revokedAddresses: [
-              '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-            ]
-          };
-        }
-      };
-    });
-  });
 
   afterAll(function () {
     vi.restoreAllMocks();

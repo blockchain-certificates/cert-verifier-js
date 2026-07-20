@@ -6,6 +6,28 @@ import BlockcertsV3 from '../fixtures/v3/testnet-v3-did.json';
 import fixtureIssuerProfile from '../fixtures/issuer-blockcerts.json';
 import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      switch (url) {
+        case 'https://blockcerts.org/test':
+        case 'https://api.blockcypher.com/v1/btc/test3/txs/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e?limit=500':
+        case 'https://blockstream.info/testnet/api/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e':
+          return '{}';
+
+        case `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`:
+          return JSON.stringify({ didDocument });
+
+        case 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json':
+          return JSON.stringify(fixtureIssuerProfile);
+      }
+    }
+  };
+});
+
 describe('explorerAPIs end to end test suite', function () {
   describe('given a custom explorer API with a parsingFunction is set', function () {
     describe('and the verification process occurs', function () {
@@ -26,27 +48,6 @@ describe('explorerAPIs end to end test suite', function () {
           parsingFunction: parsingFunctionSpy
         };
 
-        vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-          const explorerLookup = await importOriginal();
-          return {
-            ...explorerLookup,
-            // replace some exports
-            request: async function ({ url }) {
-              switch (url) {
-                case 'https://blockcerts.org/test':
-                case 'https://api.blockcypher.com/v1/btc/test3/txs/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e?limit=500':
-                case 'https://blockstream.info/testnet/api/tx/140ee9382a5c84433b9c89a5d9fea26c47415838b5841deb0c36a8a4b9121f2e':
-                  return '{}';
-
-                case `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`:
-                  return JSON.stringify({ didDocument });
-
-                case 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json':
-                  return JSON.stringify(fixtureIssuerProfile);
-              }
-            }
-          };
-        });
 
         const instance = new Certificate(BlockcertsV3, { explorerAPIs: [explorerAPI] });
         await instance.init();

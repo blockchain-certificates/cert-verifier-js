@@ -1,31 +1,29 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import domain from '../../../../../src/domain';
 import assertionIonDidDocument from '../../../../assertions/ion-did-document-btc-addresses.json';
 import { universalResolverUrl } from '../../../../../src/domain/did/valueObjects/didResolver';
+
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      spy(url); // passing url argument to spy for later comparison
+      if (url === `${universalResolverUrl}/${didUri}`) {
+        return JSON.stringify({ didDocument: assertionIonDidDocument });
+      }
+
+      return '{}';
+    }
+  };
+});
 
 // vi.mock is hoisted so we need to declare those properties at the top level scope
 const didUri = 'did:ion:EiBwVs4miVMfBd6KbQlMtZ_7oIWaQGVWVsKir6PhRg4m9Q';
 const spy = vi.fn();
 
 describe('domain did resolve test suite', function () {
-  beforeEach(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        // replace some exports
-        request: async function ({ url }) {
-          spy(url); // passing url argument to spy for later comparison
-          if (url === `${universalResolverUrl}/${didUri}`) {
-            return JSON.stringify({ didDocument: assertionIonDidDocument });
-          }
-
-          return '{}';
-        }
-      };
-    });
-  });
-
   afterEach(function () {
     spy.mockClear();
     vi.restoreAllMocks();

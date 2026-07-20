@@ -3,21 +3,22 @@ import { Certificate, VERIFICATION_STATUSES } from '../../../src';
 import fixture from '../../fixtures/v3/ecdsa-sd-2023-signed-credential.json';
 import fixtureIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+    }
+  };
+});
+
 describe('ecdsa-sd-2023 signed and derived document test suite', function () {
   let result;
 
   beforeAll(async function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return JSON.stringify(fixtureIssuerProfile);
-          }
-        }
-      };
-    });
     const certificate = new Certificate(fixture as any);
     await certificate.init();
     result = await certificate.verify();

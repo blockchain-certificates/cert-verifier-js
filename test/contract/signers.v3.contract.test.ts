@@ -7,38 +7,39 @@ import didDocument from '../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqe
 import fixtureIssuerProfile from '../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../assertions/v3-revocation-list';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json') {
+        return JSON.stringify(v3RevocationList);
+      }
+    },
+    lookForTx: () => ({
+      remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
+      issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
+      time: '2022-04-05T18:45:30.000Z',
+      revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
+    })
+  };
+});
+
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
     describe('given there is only one signature to the V3 document', function () {
       let instance;
 
       beforeAll(async function () {
-        vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-          const explorerLookup = await importOriginal();
-          return {
-            ...explorerLookup,
-            // replace some exports
-            request: async function ({ url }) {
-              if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-                return JSON.stringify({ didDocument });
-              }
-
-              if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-                return JSON.stringify(fixtureIssuerProfile);
-              }
-
-              if (url === 'https://www.blockcerts.org/samples/3.0/revocation-list-blockcerts.json') {
-                return JSON.stringify(v3RevocationList);
-              }
-            },
-            lookForTx: () => ({
-              remoteHash: '68df661ae14f926878aabbe5ca33e46376e8bfb397c1364c2f1fa653ecd8b4b6',
-              issuingAddress: 'mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am',
-              time: '2022-04-05T18:45:30.000Z',
-              revokedAddresses: ['mgdWjvq4RYAAP5goUNagTRMx7Xw534S5am']
-            })
-          };
-        });
         instance = new Certificate(BlockcertsV3);
         await instance.init();
         await instance.verify();

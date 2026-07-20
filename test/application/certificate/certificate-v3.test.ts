@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import { Certificate } from '../../../src';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
@@ -6,37 +6,35 @@ import fixtureIssuerProfile from '../../fixtures/issuer-profile.json';
 import BlockcertsV3 from '../../fixtures/v3/testnet-v3-did.json';
 import notAnIssuerProfile from '../../fixtures/v3/testnet-v3--no-did.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+
+      if (url === errorIssuerProfileRejectsURL) {
+        return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
+      }
+
+      if (url === notAnIssuerProfileURL) {
+        return JSON.stringify(notAnIssuerProfile);
+      }
+    }
+  };
+});
+
 const errorIssuerProfileRejectsURL = 'https://failing.url';
 const notAnIssuerProfileURL = 'https://not.issuer.profile.url';
 
 describe('Certificate entity test suite', function () {
   const fixture = BlockcertsV3;
-
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-            return JSON.stringify({ didDocument });
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return JSON.stringify(fixtureIssuerProfile);
-          }
-
-          if (url === errorIssuerProfileRejectsURL) {
-            return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
-          }
-
-          if (url === notAnIssuerProfileURL) {
-            return JSON.stringify(notAnIssuerProfile);
-          }
-        }
-      };
-    });
-  });
 
   afterAll(function () {
     vi.restoreAllMocks();

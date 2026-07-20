@@ -4,24 +4,25 @@ import { Certificate } from '../../src';
 import BlockcertsV3DataIntegrityProof from '../fixtures/v3/mocknet-vc-v2-data-integrity-proof.json';
 import fixtureBlockcertsIssuerProfile from '../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureBlockcertsIssuerProfile);
+      }
+    }
+  };
+});
+
 describe('Certificate API Contract test suite', function () {
   describe('signers property', function () {
     describe('given there is only one DataIntegrityProof signature to the V3 document', function () {
       let instance;
 
       beforeAll(async function () {
-        vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-          const explorerLookup = await importOriginal();
-          return {
-            ...explorerLookup,
-            // replace some exports
-            request: async function ({ url }) {
-              if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-                return JSON.stringify(fixtureBlockcertsIssuerProfile);
-              }
-            }
-          };
-        });
         instance = new Certificate(BlockcertsV3DataIntegrityProof);
         await instance.init();
         await instance.verify();

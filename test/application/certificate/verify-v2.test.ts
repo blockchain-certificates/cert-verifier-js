@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi, beforeAll } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import domain from '../../../src/domain';
 import { SUB_STEPS, VerificationSteps } from '../../../src/domain/verifier/entities/verificationSteps';
@@ -7,45 +7,43 @@ import v2RevocationList from '../../assertions/v2-revocation-list';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
 import MainnetV2Revoked from '../../fixtures/v2/mainnet-revoked-2.0.json';
+
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+        return JSON.stringify(v2IssuerProfile);
+      }
+
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39') {
+        return JSON.stringify(v2RevocationList);
+      }
+    },
+    lookForTx: function (args) {
+      if (args.transactionId === 'd298fa7a2d593e6bc208a339fce287df3560ef2d4c975e571542f79d3ca680f4') {
+        return {
+          remoteHash: '4f877ca8cf3029c248e53cc93b6929ca28af2f11092785efcbc99127c9695d9d',
+          issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+          time: '2020-09-02T16:39:43.000Z',
+          revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo']
+        };
+      }
+      return {
+        remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
+        issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
+        time: '2018-02-08T00:23:34.000Z',
+        revokedAddresses: [
+          '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
+        ]
+      };
+    }
+  };
+});
 describe('Certificate test suite', function () {
   describe('verify method', function () {
     let certificate;
-
-    beforeAll(function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          request: async function ({ url }) {
-            if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
-              return JSON.stringify(v2IssuerProfile);
-            }
-
-            if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e/revocation.json?assertionId=https%3A%2F%2Fblockcerts.learningmachine.com%2Fcertificate%2Fc4e09dfafc4a53e8a7f630df7349fd39') {
-              return JSON.stringify(v2RevocationList);
-            }
-          },
-          lookForTx: function (args) {
-            if (args.transactionId === 'd298fa7a2d593e6bc208a339fce287df3560ef2d4c975e571542f79d3ca680f4') {
-              return {
-                remoteHash: '4f877ca8cf3029c248e53cc93b6929ca28af2f11092785efcbc99127c9695d9d',
-                issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-                time: '2020-09-02T16:39:43.000Z',
-                revokedAddresses: ['1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo']
-              };
-            }
-            return {
-              remoteHash: 'b2ceea1d52627b6ed8d919ad1039eca32f6e099ef4a357cbb7f7361c471ea6c8',
-              issuingAddress: '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo',
-              time: '2018-02-08T00:23:34.000Z',
-              revokedAddresses: [
-                '1AwdUWQzJgfDDjeKtpPzMfYMHejFBrxZfo'
-              ]
-            };
-          }
-        };
-      });
-    });
 
     afterEach(function () {
       certificate = null;

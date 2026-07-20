@@ -3,22 +3,23 @@ import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v3/example-non-chained-proofs.json';
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureBlockcertsIssuerProfile);
+      }
+    }
+  };
+});
+
 describe('proof chain example', function () {
   let certificate;
   let result;
 
   beforeAll(async function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return JSON.stringify(fixtureBlockcertsIssuerProfile);
-          }
-        }
-      };
-    });
     certificate = new Certificate(fixture);
     await certificate.init();
     result = await certificate.verify();

@@ -15,7 +15,7 @@ describe('Inspectors test suite', function () {
 
     describe('given it is called with a past date', function () {
       it('should throw an error', function () {
-        const assertionDate = '2017-01-01';
+        const assertionDate = '2017-01-01T12:00:00Z';
         expect(function () {
           ensureNotExpired(assertionDate);
         }).toThrow(errorMessage);

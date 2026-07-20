@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import typescript from '@rollup/plugin-typescript';
 import polyfills from 'rollup-plugin-polyfill-node';
-import globals from 'rollup-plugin-node-globals';
+import inject from '@rollup/plugin-inject';
 import terser from '@rollup/plugin-terser';
 
 export default {
@@ -19,13 +19,24 @@ export default {
     }
   ],
   plugins: [
+    {
+      name: 'strip-node-protocol',
+      resolveId (id) {
+        if (id.startsWith('node:')) {
+          return this.resolve(id.slice(5));
+        }
+      }
+    },
     resolve({
       browser: true,
       preferBuiltins: false
     }),
-    commonjs(),
+    commonjs({ defaultIsModuleExports: true }),
     polyfills(),
-    globals(),
+    inject({
+      Buffer: ['buffer', 'Buffer'],
+      process: ['process', 'default']
+    }),
     typescript({
       include: ['src/**/*.ts'],
       exclude: ['node_modules/**']

@@ -1,6 +1,29 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, afterAll, vi } from 'vitest';
 import getRevokedAssertions from '../../../../../src/domain/verifier/useCases/getRevokedAssertions';
 import revokedAssertionsFixture from './fixtures/revokedAssertionsFixture.json';
+
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      spy(url);
+
+      if (url === issuerIdFixtureNoRevokedAssertions) {
+        const revokedAssertionsAssertionCopy = { ...revokedAssertionsFixture };
+        delete revokedAssertionsAssertionCopy.revokedAssertions;
+        return JSON.stringify(revokedAssertionsAssertionCopy);
+      }
+
+      if (url === issuerIdFixtureRejects) {
+        return await Promise.reject(errorMessageAssertion);
+      }
+
+      return JSON.stringify(revokedAssertionsFixture);
+    }
+  };
+});
 
 const spy = vi.fn();
 const issuerIdFixtureNoRevokedAssertions = 'http://domain.tld/no-revoked-assertions';
@@ -9,31 +32,6 @@ const issuerIdFixtureRejects = 'http://domain.tld/rejects';
 const errorMessageAssertion = 'Unable to get revocation assertions';
 
 describe('Verifier domain getRevokedAssertions use case test suite', function () {
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        // replace some exports
-        request: async function ({ url }) {
-          spy(url);
-
-          if (url === issuerIdFixtureNoRevokedAssertions) {
-            const revokedAssertionsAssertionCopy = { ...revokedAssertionsFixture };
-            delete revokedAssertionsAssertionCopy.revokedAssertions;
-            return JSON.stringify(revokedAssertionsAssertionCopy);
-          }
-
-          if (url === issuerIdFixtureRejects) {
-            return await Promise.reject(errorMessageAssertion);
-          }
-
-          return JSON.stringify(revokedAssertionsFixture);
-        }
-      };
-    });
-  });
-
   afterAll(function () {
     vi.restoreAllMocks();
   });

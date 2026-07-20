@@ -1,27 +1,25 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, afterAll, vi } from 'vitest';
 import parseJSON from '../../../src/parsers';
 import MonolingualBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-name-description.json';
 import MultilingualBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-name-description-multilingual.json';
 import MultipleCredentialSubjectsBlockcertsV3 from '../../fixtures/v3/mocknet-vc-v2-credential-subject-array.json';
 import v3IssuerProfile from '../../fixtures/issuer-blockcerts.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(v3IssuerProfile);
+      }
+    }
+  };
+});
+
 describe('Parser v3 test suite', function () {
   describe('given it is called with valid v3.2 certificate data', function () {
-    beforeAll(function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          // replace some exports
-          request: async function ({ url }) {
-            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-              return JSON.stringify(v3IssuerProfile);
-            }
-          }
-        };
-      });
-    });
-
     afterAll(function () {
       vi.restoreAllMocks();
     });

@@ -7,31 +7,29 @@ import didDocument from '../../../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ
 import fixtureIssuerProfile from '../../../../fixtures/issuer-profile.json';
 import didKeyDocument from '../../../../fixtures/did/did-key-z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    // replace some exports
+    request: async function ({ url }) {
+      if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
+        return JSON.stringify({ didDocument });
+      }
+
+      if (url === `${universalResolverUrl}/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs`) {
+        return JSON.stringify({ didDocument: didKeyDocument });
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureIssuerProfile);
+      }
+    }
+  };
+});
+
 describe('Verifier domain getIssuerProfile use case test suite', function () {
   describe('given the issuer profile refers to a DID', function () {
-    beforeAll(async function () {
-      vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-        const explorerLookup = await importOriginal();
-        return {
-          ...explorerLookup,
-          // replace some exports
-          request: async function ({ url }) {
-            if (url === `${universalResolverUrl}/did:ion:EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ`) {
-              return JSON.stringify({ didDocument });
-            }
-
-            if (url === `${universalResolverUrl}/did:key:z6MkjHnntGvtLjwfAMHWTAXXGJHhVL3DPtaT9BHmyTjWpjqs`) {
-              return JSON.stringify({ didDocument: didKeyDocument });
-            }
-
-            if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-              return JSON.stringify(fixtureIssuerProfile);
-            }
-          }
-        };
-      });
-    });
-
     afterAll(function () {
       vi.restoreAllMocks();
     });

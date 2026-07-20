@@ -3,23 +3,24 @@ import { Certificate } from '../../../src';
 import fixture from '../../fixtures/v2/mainnet-valid-2.0.json';
 import v2IssuerProfile from '../../assertions/v2-issuer-profile-5a4fe9931f607f0f3452a65e.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
+        return JSON.stringify(v2IssuerProfile);
+      }
+    }
+  };
+});
+
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
     describe('given it is called with valid v2 certificate data', function () {
       let certificate;
 
       beforeAll(async function () {
-        vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-          const explorerLookup = await importOriginal();
-          return {
-            ...explorerLookup,
-            request: async function ({ url }) {
-              if (url === 'https://blockcerts.learningmachine.com/issuer/5a4fe9931f607f0f3452a65e.json') {
-                return JSON.stringify(v2IssuerProfile);
-              }
-            }
-          };
-        });
         certificate = new Certificate(fixture);
         await certificate.init();
       });

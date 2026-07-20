@@ -4,23 +4,24 @@ import MocknetVCV2DataIntegrityProofMultipleSignaturesNonChained from '../../fix
 import fixtureBlockcertsIssuerProfile from '../../fixtures/issuer-blockcerts.json';
 import fixtureCredentialSchema from '../../fixtures/credential-schema-example-id-card.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
+        return JSON.stringify(fixtureBlockcertsIssuerProfile);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/example-id-card-schema.json') {
+        return JSON.stringify(fixtureCredentialSchema);
+      }
+    }
+  };
+});
+
 describe('given the certificate is signed with multiple non chained DataIntegrityProof Merkle Proof 2019', function () {
   it('should be a valid verification', async function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://www.blockcerts.org/samples/3.0/issuer-blockcerts.json') {
-            return JSON.stringify(fixtureBlockcertsIssuerProfile);
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/example-id-card-schema.json') {
-            return JSON.stringify(fixtureCredentialSchema);
-          }
-        }
-      };
-    });
     const certificate = new Certificate(MocknetVCV2DataIntegrityProofMultipleSignaturesNonChained);
     await certificate.init();
     const result = await certificate.verify();

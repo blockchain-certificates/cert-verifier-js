@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, afterAll, vi } from 'vitest';
 import { checkBitStringStatusList } from '../../../src/inspectors';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
@@ -6,46 +6,44 @@ import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-re
 import StatusList2021Suspended from '../../fixtures/v3/cert-rl-status-list-2021-suspended.json';
 import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
 
+vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
+  const explorerLookup = await importOriginal();
+  return {
+    ...explorerLookup,
+    request: async function ({ url }) {
+      if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021.json') {
+        return JSON.stringify(BlockcertsStatusList2021);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json') {
+        return JSON.stringify(BlockcertsStatusList2021Suspension);
+      }
+
+      if (url === tamperedListUrl) {
+        return JSON.stringify({
+          ...BlockcertsStatusList2021,
+          credentialSubject: {
+            encodedList: 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA'
+          }
+        });
+      }
+
+      if (url === undefinedListUrl) {
+        return undefined;
+      }
+
+      if (url === notFoundListUrl) {
+        return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
+      }
+    }
+  };
+});
+
 const tamperedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--tampered.json';
 const undefinedListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--undefined.json';
 const notFoundListUrl = 'https://www.blockcerts.org/samples/3.0/status-list-2021--not-found.json';
 
 describe('checkBitStringStatusList inspector test suite', function () {
-  beforeAll(function () {
-    vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
-      const explorerLookup = await importOriginal();
-      return {
-        ...explorerLookup,
-        request: async function ({ url }) {
-          if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021.json') {
-            return JSON.stringify(BlockcertsStatusList2021);
-          }
-
-          if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json') {
-            return JSON.stringify(BlockcertsStatusList2021Suspension);
-          }
-
-          if (url === tamperedListUrl) {
-            return JSON.stringify({
-              ...BlockcertsStatusList2021,
-              credentialSubject: {
-                encodedList: 'H4sIAAAAAAAAA-3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA'
-              }
-            });
-          }
-
-          if (url === undefinedListUrl) {
-            return undefined;
-          }
-
-          if (url === notFoundListUrl) {
-            return await Promise.reject(new Error('Error fetching url:' + url + '; status code:404'));
-          }
-        }
-      };
-    });
-  });
-
   afterAll(function () {
     vi.restoreAllMocks();
   });

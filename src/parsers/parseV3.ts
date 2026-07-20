@@ -53,7 +53,7 @@ export default async function parseV3 (certificateJson: BlockcertsV3, locale: st
     domain.verifier.validateVerifiableCredential(certificateJson);
   } catch (error) {
     console.error('Error validating the Verifiable Credential format: ', error.message);
-    throw new Error(`Document presented is not a valid Verifiable Credential: ${error.message}`, { cause: error });
+    throw new Error(`Document presented is not a valid Verifiable Credential: ${error.message}`);
   }
   let { validFrom } = certificateJson;
   const certificateMetadata = metadata ?? metadataJson;

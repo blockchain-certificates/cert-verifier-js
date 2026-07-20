@@ -1,5 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
-import { decodeList } from '@digitalbazaar/vc-revocation-list';
+// @ts-expect-error not a TS package
+import { decodeList, type RevocationList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
 import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import Certificate from '../certificate';
@@ -7,7 +8,6 @@ import { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
 import domain from '../domain';
 import { CREDENTIAL_STATUS_OPTIONS } from '../domain/certificates/useCases/generateRevocationReason';
 import type { BlockcertsV3, VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
-import type { RevocationList } from '@digitalbazaar/vc-revocation-list';
 
 async function getRevocationCredential (statusListUrl: string): Promise<VerifiableCredential> {
   const statusList = await request({

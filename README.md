@@ -135,7 +135,7 @@ The constructor automatically parses a certificate. Call `certificate.init()` to
     - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`. If set to `auto` it will use the user's browser language if available, or default to `en-US`. See the [dedicated section](#i18n) for more information.
     - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.
     - didResolverUrl: (`String`): pass this option to specify your own did resolver url. By default this library uses the DIF universal resolver which is not recommended for production use.
-    - statusListCredentialCacheUrl: (`String`): HTTP URL of a caching service used to store/retrieve [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/) status list credentials between verifications. See the [dedicated section](#statusListCredentialCacheUrl) for more information.
+    - statusListCredentialCacheUrl: (`String`): HTTP URL of a caching service, or a filesystem path to a local JSON cache file (Node/server-side only), used to store/retrieve [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/) status list credentials between verifications. See the [dedicated section](#statusListCredentialCacheUrl) for more information.
 
 #### Returns
 The certificate instance has the following properties:
@@ -305,26 +305,41 @@ The `assertionId` is appended to the `revocationList` URL request as query param
  More details here [in this ticket](https://github.com/blockchain-certificates/cert-verifier-js/issues/715).
 
 ## statusListCredentialCacheUrl
-When verifying a credential using [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/), the library fetches the status list credential referenced by `credentialStatus.statusListCredential`. This can be cached to avoid unnecessary network requests, by providing the `statusListCredentialCacheUrl` option with an HTTP URL of a caching service, as follows:
+When verifying a credential using [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/), the library fetches the status list credential referenced by `credentialStatus.statusListCredential`. This can be cached to avoid unnecessary network requests, by providing the `statusListCredentialCacheUrl` option, as follows:
 
 ```javascript
+// HTTP caching service
 const certificate = new Certificate(definition, { statusListCredentialCacheUrl: 'https://my-caching-service.example.com/status-list-cache' });
+
+// filesystem cache file (Node/server-side only)
+const certificate = new Certificate(definition, { statusListCredentialCacheUrl: './cache/status-list-cache.json' });
 ```
 
-The library manages the caching strategy itself:
-- The caching service is queried with `GET {statusListCredentialCacheUrl}` with a `url` query parameter added (any existing query params on `statusListCredentialCacheUrl` are preserved). It is expected to respond with a JSON payload of shape `{ credential: Object, cachedAt: number }` (`cachedAt` being a millisecond epoch timestamp), or a falsy/error response if nothing is cached for that URL.
+The value of `statusListCredentialCacheUrl` determines which caching strategy is used:
+- if it is an HTTP(S) URL (starts with `http://` or `https://`), the library uses an **HTTP caching service** strategy (see below).
+- otherwise, it is treated as a **filesystem path** (relative or absolute) to a local JSON cache file, read/written directly with Node's `fs` module. This strategy is only usable server-side (Node); it cannot be used in a browser context.
+
+Regardless of the strategy used, the library manages the caching decision itself:
 - The status list credential's own [`ttl`](https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslistcredential) property (expressed in milliseconds, expected on `credentialSubject.ttl`) determines how long a cached entry may be trusted. If `Date.now() - cachedAt` is lower than the `ttl`, the cached credential is used and the status list is not re-fetched.
-- If the cached entry is missing, stale, or the caching service is unreachable, the library falls back to fetching the status list credential from `statusListCredential`. If that fetched document defines a `ttl`, the library writes it back to the cache with `POST {statusListCredentialCacheUrl}` and a body of `{ url: statusListCredentialUrl, credential: Object, cachedAt: number }`.
+- If the cached entry is missing, stale, or the cache backend is unreachable, the library falls back to fetching the status list credential from `statusListCredential`. If that fetched document defines a `ttl`, the library writes it back to the cache.
 - If the status list credential does not define a `ttl`, no caching strategy is employed for it (no read, no write) even when `statusListCredentialCacheUrl` is set.
 - If `statusListCredentialCacheUrl` is not provided, no caching strategy is employed and the status list credential is always fetched fresh, matching the library's prior behavior.
-- This library does not implement any dedicated authorization/auth-token mechanism for the caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
+- This library does not implement any dedicated authorization/auth-token mechanism for the HTTP caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
 
-### Caching service response contract
-The caching service **must** honor the following contract on `GET {statusListCredentialCacheUrl}`:
-- if there is no cache entry for the requested status list URL, it must return a falsy/empty response (e.g. HTTP 404, or an empty body) — this is treated as a normal cache miss and the library transparently falls back to fetching the status list credential.
-- if there is a cache entry, it must return a JSON body exactly shaped as `{ "credential": Object, "cachedAt": number }`, where `credential` is the previously cached status list credential and `cachedAt` is the millisecond epoch timestamp at which it was cached.
+Both strategies share the same cache entry shape, `{ cachedAt: number, credential: Object }`, so that a caching backend doesn't need to be aware of which strategy is used when storing entries keyed by status list URL:
 
-If the caching service returns a response that is present but does not conform to this contract (e.g. invalid JSON, or a JSON object missing `credential` or with a non-numeric `cachedAt`), the library considers this a misconfigured caching service integration and throws a `VerifierError`, failing the verification rather than silently falling back — this is meant to make integration mistakes obvious rather than fail open and hide a broken cache.
+### HTTP caching service contract
+- The caching service is queried with `GET {statusListCredentialCacheUrl}` with a `url` query parameter added (any existing query params on `statusListCredentialCacheUrl` are preserved). It is expected to respond with a JSON payload of shape `{ credential: Object, cachedAt: number }` (`cachedAt` being a millisecond epoch timestamp), or a falsy/error response if nothing is cached for that URL.
+- A fresh fetch is written back with `POST {statusListCredentialCacheUrl}` and a body of `{ url: statusListCredentialUrl, credential: Object, cachedAt: number }`.
+- If there is no cache entry for the requested status list URL, the service must return a falsy/empty response (e.g. HTTP 404, or an empty body) — this is treated as a normal cache miss and the library transparently falls back to fetching the status list credential.
+
+### Filesystem cache file contract
+- The file at `statusListCredentialCacheUrl` (resolved relative to `process.cwd()` when a relative path is given) holds a single JSON object keyed by status list credential URL: `{ [url]: { cachedAt: number, credential: Object } }`.
+- If the file does not exist yet, it is treated as an empty store (cache miss for every URL), and is created (along with any missing intermediate directories) on the first write.
+- A fresh fetch is written back by reading the whole file, merging in the new entry keyed by the status list URL, and rewriting the file in full — there is no file locking, so concurrent writes to the same cache file from multiple processes are not safe.
+
+### Contract violations
+If the cache backend (HTTP response body, or filesystem cache file content) is present but does not conform to the `{ cachedAt, credential }` shape described above (e.g. invalid JSON, or an object missing `credential` or with a non-numeric `cachedAt`), the library considers this a misconfigured caching integration and throws a `VerifierError`, failing the verification rather than silently falling back — this is meant to make integration mistakes obvious rather than fail open and hide a broken cache.
 
 ## Contribute
 

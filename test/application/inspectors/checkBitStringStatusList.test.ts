@@ -1,4 +1,7 @@
 import { describe, it, expect, afterAll, afterEach, beforeEach, vi } from 'vitest';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'fs/promises';
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { checkBitStringStatusList } from '../../../src/inspectors';
 import Certificate from '../../../src/certificate';
 import { VERIFICATION_STATUSES } from '../../../src/constants/verificationStatuses';
@@ -320,9 +323,9 @@ describe('checkBitStringStatusList inspector test suite', function () {
       it('should not throw when the caching service reports no cache entry (empty response)', async function () {
         cacheServiceGetResponseOverride = undefined;
 
-        await expect(async () => {
-          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
-        }).not.toThrow();
+        await expect(
+          checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl })
+        ).resolves.toBeUndefined();
       });
 
       it('should throw when the caching service response is not valid JSON', async function () {
@@ -347,6 +350,138 @@ describe('checkBitStringStatusList inspector test suite', function () {
         await expect(async () => {
           await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
         }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+      });
+    });
+  });
+
+  describe('when a statusListCredentialCacheUrl is provided as a filesystem path', function () {
+    let verifySpy: any;
+    let initSpy: any;
+    let cacheDir: string;
+    let cacheFilePath: string;
+
+    const noTtlEntry = {
+      id: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json#23546',
+      type: 'StatusList2021Entry',
+      statusPurpose: 'revocation',
+      statusListIndex: '23546',
+      statusListCredential: 'https://www.blockcerts.org/samples/3.0/status-list-2021.json'
+    };
+
+    const cacheableEntry = {
+      id: `${withTtlListUrl}#23546`,
+      type: 'StatusList2021Entry',
+      statusPurpose: 'revocation',
+      statusListIndex: '23546',
+      statusListCredential: withTtlListUrl
+    };
+
+    beforeEach(async function () {
+      initSpy = vi.spyOn(Certificate.prototype, 'init').mockResolvedValue(undefined);
+      verifySpy = vi.spyOn(Certificate.prototype, 'verify').mockResolvedValue({
+        status: VERIFICATION_STATUSES.SUCCESS
+      } as any);
+
+      cacheDir = await mkdtemp(join(tmpdir(), 'cert-verifier-js-status-list-cache-'));
+      cacheFilePath = join(cacheDir, 'status-list-cache.json');
+      withTtlListFetchCount = 0;
+    });
+
+    afterEach(async function () {
+      initSpy.mockRestore();
+      verifySpy.mockRestore();
+      await rm(cacheDir, { recursive: true, force: true });
+    });
+
+    describe('and the option is not set', function () {
+      it('should never write a cache file', async function () {
+        await checkBitStringStatusList(cacheableEntry);
+
+        await expect(readFile(cacheFilePath, 'utf-8')).rejects.toThrow();
+      });
+    });
+
+    describe('and the status list credential has no ttl', function () {
+      it('should not write to the cache', async function () {
+        await checkBitStringStatusList(noTtlEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        await expect(readFile(cacheFilePath, 'utf-8')).rejects.toThrow();
+      });
+    });
+
+    describe('and the status list credential has a ttl', function () {
+      it('should write a fresh fetch to the cache file, keyed by url, shaped as { cachedAt, credential }', async function () {
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        const store = JSON.parse(await readFile(cacheFilePath, 'utf-8'));
+        expect(Object.keys(store)).toEqual([withTtlListUrl]);
+        expect(store[withTtlListUrl].credential.credentialSubject.ttl).toBe(60000);
+        expect(typeof store[withTtlListUrl].cachedAt).toBe('number');
+      });
+
+      it('should create intermediate directories for the cache file path if missing', async function () {
+        const nestedCacheFilePath = join(cacheDir, 'nested', 'dir', 'status-list-cache.json');
+
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: nestedCacheFilePath });
+
+        const store = JSON.parse(await readFile(nestedCacheFilePath, 'utf-8'));
+        expect(store[withTtlListUrl].credential.credentialSubject.ttl).toBe(60000);
+      });
+
+      it('should serve subsequent calls within the ttl window from the cache without refetching', async function () {
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        withTtlListFetchCount = 0;
+
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        expect(withTtlListFetchCount).toBe(0);
+      });
+
+      it('should refetch and re-cache once the cached entry has expired', async function () {
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        const store = JSON.parse(await readFile(cacheFilePath, 'utf-8'));
+        store[withTtlListUrl].cachedAt = Date.now() - 120000; // 2 minutes ago, ttl is 60s
+        await writeFile(cacheFilePath, JSON.stringify(store), 'utf-8');
+
+        withTtlListFetchCount = 0;
+
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        expect(withTtlListFetchCount).toBe(1);
+      });
+    });
+
+    describe('and the cache file does not match the expected contract', function () {
+      it('should not throw when no cache file has been written yet', async function () {
+        await expect(
+          checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath })
+        ).resolves.toBeUndefined();
+      });
+
+      it('should throw when the cache file does not contain valid JSON', async function () {
+        await mkdir(cacheDir, { recursive: true });
+        await writeFile(cacheFilePath, 'not-json', 'utf-8');
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheFilePath}.`);
+      });
+
+      it('should throw when the cache entry for the url is missing the credential property', async function () {
+        await writeFile(cacheFilePath, JSON.stringify({ [withTtlListUrl]: { cachedAt: Date.now() } }), 'utf-8');
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheFilePath}.`);
+      });
+
+      it('should throw when the cache entry for the url has a non-numeric cachedAt property', async function () {
+        await writeFile(cacheFilePath, JSON.stringify({ [withTtlListUrl]: { credential: withTtlCredential, cachedAt: 'yesterday' } }), 'utf-8');
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheFilePath}.`);
       });
     });
   });

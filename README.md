@@ -135,6 +135,7 @@ The constructor automatically parses a certificate. Call `certificate.init()` to
     - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`. If set to `auto` it will use the user's browser language if available, or default to `en-US`. See the [dedicated section](#i18n) for more information.
     - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.
     - didResolverUrl: (`String`): pass this option to specify your own did resolver url. By default this library uses the DIF universal resolver which is not recommended for production use.
+    - statusListCredentialCacheUrl: (`String`): HTTP URL of a caching service used to store/retrieve [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/) status list credentials between verifications. See the [dedicated section](#statusListCredentialCacheUrl) for more information.
 
 #### Returns
 The certificate instance has the following properties:
@@ -302,6 +303,21 @@ The consumer needs to write their own function for each service used.
 The `assertionId` is appended to the `revocationList` URL request as query parameter, to allow the filtering of the
  `revokedAssertions` by the provider: `{revocationList}?assertionId={assertionIdValue}` 
  More details here [in this ticket](https://github.com/blockchain-certificates/cert-verifier-js/issues/715).
+
+## statusListCredentialCacheUrl
+When verifying a credential using [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/), the library fetches the status list credential referenced by `credentialStatus.statusListCredential`. This can be cached to avoid unnecessary network requests, by providing the `statusListCredentialCacheUrl` option with an HTTP URL of a caching service, as follows:
+
+```javascript
+const certificate = new Certificate(definition, { statusListCredentialCacheUrl: 'https://my-caching-service.example.com/status-list-cache' });
+```
+
+The library manages the caching strategy itself:
+- The caching service is queried with `GET {statusListCredentialCacheUrl}` with a `url` query parameter added (any existing query params on `statusListCredentialCacheUrl` are preserved). It is expected to respond with a JSON payload of shape `{ credential: Object, cachedAt: number }` (`cachedAt` being a millisecond epoch timestamp), or a falsy/error response if nothing is cached for that URL.
+- The status list credential's own [`ttl`](https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslistcredential) property (expressed in milliseconds, expected on `credentialSubject.ttl`) determines how long a cached entry may be trusted. If `Date.now() - cachedAt` is lower than the `ttl`, the cached credential is used and the status list is not re-fetched.
+- If the cached entry is missing, stale, or the caching service is unreachable, the library falls back to fetching the status list credential from `statusListCredential`. If that fetched document defines a `ttl`, the library writes it back to the cache with `POST {statusListCredentialCacheUrl}` and a body of `{ url: statusListCredentialUrl, credential: Object, cachedAt: number }`.
+- If the status list credential does not define a `ttl`, no caching strategy is employed for it (no read, no write) even when `statusListCredentialCacheUrl` is set.
+- If `statusListCredentialCacheUrl` is not provided, no caching strategy is employed and the status list credential is always fetched fresh, matching the library's prior behavior.
+- This library does not implement any dedicated authorization/auth-token mechanism for the caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
 
 ## Contribute
 

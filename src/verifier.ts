@@ -65,6 +65,7 @@ export interface VerifierAPI {
   proofPurpose?: string;
   proofDomain?: string | string[];
   proofChallenge?: string;
+  statusListCredentialCacheUrl?: string;
 }
 
 export default class Verifier {
@@ -94,6 +95,7 @@ export default class Verifier {
   public proofPurpose?: string;
   public proofDomain?: string | string[];
   public proofChallenge?: string;
+  public statusListCredentialCacheUrl?: string;
 
   constructor ({
     certificateJson,
@@ -106,7 +108,8 @@ export default class Verifier {
     validFrom,
     proofPurpose,
     proofDomain,
-    proofChallenge
+    proofChallenge,
+    statusListCredentialCacheUrl
   }: VerifierAPI) {
     this.expires = expires;
     this.validFrom = validFrom;
@@ -118,6 +121,7 @@ export default class Verifier {
     this.proofPurpose = proofPurpose;
     this.proofDomain = proofDomain;
     this.proofChallenge = proofChallenge;
+    this.statusListCredentialCacheUrl = statusListCredentialCacheUrl;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
   }
@@ -378,7 +382,9 @@ export default class Verifier {
     if ((this.documentToVerify as BlockcertsV3).credentialStatus) {
       const { default: checkBitStringStatusList } = await import('./inspectors/checkBitStringStatusList');
       await this.executeStep(SUB_STEPS.checkRevokedStatus, async () => {
-        await checkBitStringStatusList((this.documentToVerify as BlockcertsV3).credentialStatus);
+        await checkBitStringStatusList((this.documentToVerify as BlockcertsV3).credentialStatus, {
+          statusListCredentialCacheUrl: this.statusListCredentialCacheUrl
+        });
       });
       return;
     }

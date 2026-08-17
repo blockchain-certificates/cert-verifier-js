@@ -66,11 +66,16 @@ const cacheServiceUrl = 'https://cache.example.com/status-list-cache?token=secre
 const cacheServiceRequests: Array<{ url: string; method?: string; body?: any }> = [];
 let cacheServiceStore = new Map<string, { credential: any; cachedAt: number }>();
 let withTtlListFetchCount = 0;
+let cacheServiceGetResponseOverride: string | undefined;
 
 async function handleCacheServiceRequest ({ url, method, body }: { url: string; method?: string; body?: any }): Promise<string | undefined> {
   cacheServiceRequests.push({ url, method, body });
 
   if (!method || method === 'GET') {
+    if (cacheServiceGetResponseOverride !== undefined) {
+      return cacheServiceGetResponseOverride;
+    }
+
     const targetUrl = new URL(url).searchParams.get('url');
     const cacheEntry = cacheServiceStore.get(targetUrl);
     return cacheEntry ? JSON.stringify(cacheEntry) : undefined;
@@ -95,6 +100,7 @@ describe('checkBitStringStatusList inspector test suite', function () {
     cacheServiceRequests.length = 0;
     cacheServiceStore = new Map();
     withTtlListFetchCount = 0;
+    cacheServiceGetResponseOverride = undefined;
   });
 
   describe('when the certificate has been revoked', function () {
@@ -307,6 +313,40 @@ describe('checkBitStringStatusList inspector test suite', function () {
         await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
 
         expect(withTtlListFetchCount).toBe(1);
+      });
+    });
+
+    describe('and the caching service returns a response that does not match the expected contract', function () {
+      it('should not throw when the caching service reports no cache entry (empty response)', async function () {
+        cacheServiceGetResponseOverride = undefined;
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+        }).not.toThrow();
+      });
+
+      it('should throw when the caching service response is not valid JSON', async function () {
+        cacheServiceGetResponseOverride = 'not-json';
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+      });
+
+      it('should throw when the caching service response is missing the credential property', async function () {
+        cacheServiceGetResponseOverride = JSON.stringify({ cachedAt: Date.now() });
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+      });
+
+      it('should throw when the caching service response has a non-numeric cachedAt property', async function () {
+        cacheServiceGetResponseOverride = JSON.stringify({ credential: withTtlCredential, cachedAt: 'yesterday' });
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
       });
     });
   });

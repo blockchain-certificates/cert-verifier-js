@@ -319,6 +319,13 @@ The library manages the caching strategy itself:
 - If `statusListCredentialCacheUrl` is not provided, no caching strategy is employed and the status list credential is always fetched fresh, matching the library's prior behavior.
 - This library does not implement any dedicated authorization/auth-token mechanism for the caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
 
+### Caching service response contract
+The caching service **must** honor the following contract on `GET {statusListCredentialCacheUrl}`:
+- if there is no cache entry for the requested status list URL, it must return a falsy/empty response (e.g. HTTP 404, or an empty body) — this is treated as a normal cache miss and the library transparently falls back to fetching the status list credential.
+- if there is a cache entry, it must return a JSON body exactly shaped as `{ "credential": Object, "cachedAt": number }`, where `credential` is the previously cached status list credential and `cachedAt` is the millisecond epoch timestamp at which it was cached.
+
+If the caching service returns a response that is present but does not conform to this contract (e.g. invalid JSON, or a JSON object missing `credential` or with a non-numeric `cachedAt`), the library considers this a misconfigured caching service integration and throws a `VerifierError`, failing the verification rather than silently falling back — this is meant to make integration mistakes obvious rather than fail open and hide a broken cache.
+
 ## Contribute
 
 ### Run the tests

@@ -43,25 +43,35 @@ function buildCacheReadUrl (statusListCredentialCacheUrl: string, statusListUrl:
 }
 
 async function getCachedStatusListCredential (statusListCredentialCacheUrl: string, statusListUrl: string): Promise<CachedStatusListCredentialEntry | undefined> {
+  let response: any;
   try {
-    const response = await request({
+    response = await request({
       url: buildCacheReadUrl(statusListCredentialCacheUrl, statusListUrl)
     });
-
-    if (!response) {
-      return undefined;
-    }
-
-    const cacheEntry = JSON.parse(response);
-    if (!cacheEntry?.credential || typeof cacheEntry.cachedAt !== 'number') {
-      return undefined;
-    }
-
-    return cacheEntry;
   } catch (e) {
-    // an unreachable or misbehaving cache service should not block verification, fall back to fetching the document
+    // an unreachable cache service should not block verification, fall back to fetching the document
+    console.error(e);
     return undefined;
   }
+
+  if (!response) {
+    // no cache entry found for this status list url; this is a valid cache miss, not a contract violation
+    return undefined;
+  }
+
+  let cacheEntry: any;
+  try {
+    cacheEntry = JSON.parse(response);
+  } catch (e) {
+    console.error(e);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${statusListCredentialCacheUrl}.`);
+  }
+
+  if (!cacheEntry || typeof cacheEntry !== 'object' || !cacheEntry.credential || typeof cacheEntry.cachedAt !== 'number') {
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${statusListCredentialCacheUrl}.`);
+  }
+
+  return cacheEntry;
 }
 
 async function cacheStatusListCredential (statusListCredentialCacheUrl: string, statusListUrl: string, credential: VerifiableCredential): Promise<void> {

@@ -484,5 +484,65 @@ describe('checkBitStringStatusList inspector test suite', function () {
         }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheFilePath}.`);
       });
     });
+    describe('and the cache file contains other expired entries', function () {
+      it('should prune expired entries from the cache file on startup, keeping fresh and ttl-less entries', async function () {
+        const otherExpiredUrl = 'https://www.blockcerts.org/samples/3.0/other-status-list.json';
+        const otherFreshUrl = 'https://www.blockcerts.org/samples/3.0/fresh-status-list.json';
+        const otherNoTtlUrl = 'https://www.blockcerts.org/samples/3.0/no-ttl-status-list.json';
+
+        await mkdir(cacheDir, { recursive: true });
+        await writeFile(cacheFilePath, JSON.stringify({
+          [otherExpiredUrl]: {
+            credential: { credentialSubject: { ttl: 60000 } },
+            cachedAt: Date.now() - 120000 // 2 minutes ago, ttl is 60s -> expired
+          },
+          [otherFreshUrl]: {
+            credential: { credentialSubject: { ttl: 60000 } },
+            cachedAt: Date.now() // fresh
+          },
+          [otherNoTtlUrl]: {
+            credential: { credentialSubject: {} }, // no ttl -> no basis to expire, kept untouched
+            cachedAt: Date.now() - 999999999
+          }
+        }), 'utf-8');
+
+        await checkBitStringStatusList(noTtlEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        const store = JSON.parse(await readFile(cacheFilePath, 'utf-8'));
+        expect(Object.keys(store).sort()).toEqual([otherFreshUrl, otherNoTtlUrl].sort());
+      });
+
+      it('should not rewrite the cache file when there is nothing to prune', async function () {
+        const otherFreshUrl = 'https://www.blockcerts.org/samples/3.0/fresh-status-list.json';
+
+        await mkdir(cacheDir, { recursive: true });
+        await writeFile(cacheFilePath, JSON.stringify({
+          [otherFreshUrl]: {
+            credential: { credentialSubject: { ttl: 60000 } },
+            cachedAt: Date.now()
+          }
+        }), 'utf-8');
+
+        const before = await readFile(cacheFilePath, 'utf-8');
+
+        await checkBitStringStatusList(noTtlEntry, { statusListCredentialCacheUrl: cacheFilePath });
+
+        const after = await readFile(cacheFilePath, 'utf-8');
+        expect(after).toBe(before);
+      });
+
+      it('should not prune the http caching service, only the filesystem cache is garbage collected by this library', async function () {
+        cacheServiceStore.set(withTtlListUrl, {
+          credential: withTtlCredential,
+          cachedAt: Date.now() - 120000 // expired, ttl is 60s
+        });
+
+        await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+
+        // the expired entry is still present in the http store; the library does not delete it,
+        // it simply treats it as stale and refetches/overwrites it on the next read/write cycle
+        expect(cacheServiceStore.has(withTtlListUrl)).toBe(true);
+      });
+    });
   });
 });

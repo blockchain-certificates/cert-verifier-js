@@ -159,6 +159,45 @@ async function cacheStatusListCredentialToFs (cacheFilePath: string, statusListU
   }
 }
 
+async function cleanupExpiredFsCacheEntries (cacheFilePath: string): Promise<void> {
+  let store: StatusListCredentialCacheStore;
+  try {
+    store = await readCacheStoreFile(cacheFilePath);
+  } catch (e) {
+    // a malformed cache file is a contract violation surfaced by regular read/write paths;
+    // cleanup itself should not block verification, so just skip pruning here
+    console.error(e);
+    return;
+  }
+
+  let hasRemovedEntries = false;
+  const prunedStore: StatusListCredentialCacheStore = {};
+  for (const [url, cacheEntry] of Object.entries(store)) {
+    // entries that don't conform to the expected shape (e.g. non-numeric cachedAt) are left untouched here;
+    // it is not this cleanup pass's responsibility to enforce/report the cache contract, that is done
+    // by assertCacheEntryShape() when the entry is actually read for use
+    const isWellFormed = !!cacheEntry && typeof cacheEntry.cachedAt === 'number' && !!cacheEntry.credential;
+    // entries without a resolvable ttl are left untouched, there is no basis on which to consider them expired
+    const ttl = isWellFormed ? getTTL(cacheEntry.credential) : undefined;
+    if (!isWellFormed || typeof ttl !== 'number' || (Date.now() - cacheEntry.cachedAt) < ttl) {
+      prunedStore[url] = cacheEntry;
+    } else {
+      hasRemovedEntries = true;
+    }
+  }
+
+  if (!hasRemovedEntries) {
+    return;
+  }
+
+  try {
+    const { writeFile } = await import('fs/promises');
+    await writeFile(cacheFilePath, JSON.stringify(prunedStore), 'utf-8');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 async function getCachedStatusListCredential (statusListCredentialCacheUrl: string, statusListUrl: string): Promise<CachedStatusListCredentialEntry | undefined> {
   if (isHttpCacheUrl(statusListCredentialCacheUrl)) {
     return await getCachedStatusListCredentialFromHttp(statusListCredentialCacheUrl, statusListUrl);
@@ -219,6 +258,13 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
 }
 
 export default async function checkBitStringStatusList (credentialStatus: VCCredentialStatus | VCCredentialStatus[], options: CheckBitStringStatusListOptions = {}): Promise<void> {
+  const { statusListCredentialCacheUrl } = options;
+  if (statusListCredentialCacheUrl && !isHttpCacheUrl(statusListCredentialCacheUrl)) {
+    // HTTP caching services are expected to manage their own garbage collection; only the filesystem
+    // cache is pruned here, since this library is the sole owner/writer of that cache file
+    await cleanupExpiredFsCacheEntries(statusListCredentialCacheUrl);
+  }
+
   if (!Array.isArray(credentialStatus)) {
     credentialStatus = [credentialStatus];
   }

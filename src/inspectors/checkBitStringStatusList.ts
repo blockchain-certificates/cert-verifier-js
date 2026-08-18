@@ -43,9 +43,38 @@ function isHttpCacheUrl (statusListCredentialCacheUrl: string): boolean {
   return /^https?:\/\//i.test(statusListCredentialCacheUrl);
 }
 
+function isNodeEnvironment (): boolean {
+  // process.versions.node is only populated in a genuine Node.js runtime; bundlers/polyfills used for
+  // browser builds do not provide it, giving a reliable, dependency-free way to detect the environment
+  // before attempting a dynamic `fs/promises` import
+  return typeof process !== 'undefined' && !!process.versions?.node;
+}
+
+function assertFsCacheSupported (cacheFilePath: string): void {
+  if (!isNodeEnvironment()) {
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'filesystemCacheUnsupported')} ${cacheFilePath}.`);
+  }
+}
+
+function redactCacheLocationForError (cacheLocation: string): string {
+  // statusListCredentialCacheUrl may embed an auth token as a query param (per README guidance);
+  // strip query string/fragment from HTTP(S) URLs before surfacing them in thrown error messages
+  // so secrets don't leak into VerifierError messages/downstream logs. Filesystem paths have no
+  // query/fragment semantics and are left untouched.
+  if (!isHttpCacheUrl(cacheLocation)) {
+    return cacheLocation;
+  }
+  try {
+    const url = new URL(cacheLocation);
+    return `${url.origin}${url.pathname}`;
+  } catch (e) {
+    return cacheLocation;
+  }
+}
+
 function assertCacheEntryShape (cacheEntry: any, cacheLocation: string): CachedStatusListCredentialEntry {
   if (!cacheEntry || typeof cacheEntry !== 'object' || !cacheEntry.credential || typeof cacheEntry.cachedAt !== 'number') {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${cacheLocation}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(cacheLocation)}.`);
   }
   return cacheEntry;
 }
@@ -80,7 +109,7 @@ async function getCachedStatusListCredentialFromHttp (statusListCredentialCacheU
     cacheEntry = JSON.parse(response);
   } catch (e) {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${statusListCredentialCacheUrl}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(statusListCredentialCacheUrl)}.`);
   }
 
   return assertCacheEntryShape(cacheEntry, statusListCredentialCacheUrl);
@@ -99,8 +128,10 @@ async function cacheStatusListCredentialToHttp (statusListCredentialCacheUrl: st
 }
 
 async function readCacheStoreFile (cacheFilePath: string): Promise<StatusListCredentialCacheStore> {
-  // dynamic imports: this branch is only reached server-side (Node), never bundled/executed for a browser
-  // consumer, since statusListCredentialCacheUrl must be an HTTP URL in that context
+  // guard against a misconfigured browser consumer passing a filesystem path instead of an HTTP URL:
+  // fail loudly with a clear library error rather than a confusing module-resolution/runtime failure
+  // from the dynamic `fs/promises` import below
+  assertFsCacheSupported(cacheFilePath);
   const { readFile } = await import('fs/promises');
 
   let raw: string;
@@ -145,21 +176,31 @@ async function getCachedStatusListCredentialFromFs (cacheFilePath: string, statu
 }
 
 async function cacheStatusListCredentialToFs (cacheFilePath: string, statusListUrl: string, credential: VerifiableCredential): Promise<void> {
+  assertFsCacheSupported(cacheFilePath);
   try {
     const { mkdir, writeFile } = await import('fs/promises');
     const { dirname } = await import('path');
 
-    const store = await readCacheStoreFile(cacheFilePath).catch(() => ({}));
+    const store = await readCacheStoreFile(cacheFilePath).catch((e) => {
+      if (e instanceof VerifierError) {
+        throw e;
+      }
+      return {};
+    });
     store[statusListUrl] = { credential, cachedAt: Date.now() };
 
     await mkdir(dirname(cacheFilePath), { recursive: true });
     await writeFile(cacheFilePath, JSON.stringify(store), 'utf-8');
   } catch (e) {
+    if (e instanceof VerifierError) {
+      throw e;
+    }
     console.error(e);
   }
 }
 
 async function cleanupExpiredFsCacheEntries (cacheFilePath: string): Promise<void> {
+  assertFsCacheSupported(cacheFilePath);
   let store: StatusListCredentialCacheStore;
   try {
     store = await readCacheStoreFile(cacheFilePath);

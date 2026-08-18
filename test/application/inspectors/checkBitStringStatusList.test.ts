@@ -320,6 +320,8 @@ describe('checkBitStringStatusList inspector test suite', function () {
     });
 
     describe('and the caching service returns a response that does not match the expected contract', function () {
+      const redactedCacheServiceUrl = 'https://cache.example.com/status-list-cache';
+
       it('should not throw when the caching service reports no cache entry (empty response)', async function () {
         cacheServiceGetResponseOverride = undefined;
 
@@ -333,7 +335,15 @@ describe('checkBitStringStatusList inspector test suite', function () {
 
         await expect(async () => {
           await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
-        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${redactedCacheServiceUrl}.`);
+      });
+
+      it('should not leak the auth token query param embedded in statusListCredentialCacheUrl into the thrown error message', async function () {
+        cacheServiceGetResponseOverride = 'not-json';
+
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
+        }).rejects.not.toThrow('secret-token');
       });
 
       it('should throw when the caching service response is missing the credential property', async function () {
@@ -341,7 +351,7 @@ describe('checkBitStringStatusList inspector test suite', function () {
 
         await expect(async () => {
           await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
-        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${redactedCacheServiceUrl}.`);
       });
 
       it('should throw when the caching service response has a non-numeric cachedAt property', async function () {
@@ -349,7 +359,7 @@ describe('checkBitStringStatusList inspector test suite', function () {
 
         await expect(async () => {
           await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheServiceUrl });
-        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheServiceUrl}.`);
+        }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${redactedCacheServiceUrl}.`);
       });
     });
   });
@@ -482,6 +492,35 @@ describe('checkBitStringStatusList inspector test suite', function () {
         await expect(async () => {
           await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
         }).rejects.toThrow(`The status list cache service response does not match the expected format for URL: ${cacheFilePath}.`);
+      });
+    });
+
+    describe('and the library is running outside a Node environment (e.g. a browser)', function () {
+      let originalNodeVersion: string | undefined;
+
+      beforeEach(function () {
+        originalNodeVersion = process.versions.node;
+        // simulate a non-Node runtime (e.g. a browser bundle) where process.versions.node is undefined
+        // @ts-expect-error simulating a non-Node environment for this test only
+        delete process.versions.node;
+      });
+
+      afterEach(function () {
+        process.versions.node = originalNodeVersion as string;
+      });
+
+      it('should throw a clear VerifierError instead of attempting the fs/promises import', async function () {
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        }).rejects.toThrow(`Filesystem caching via statusListCredentialCacheUrl is only supported in a Node/server-side environment, not in a browser. Received path: ${cacheFilePath}.`);
+      });
+
+      it('should not have written anything to the filesystem', async function () {
+        await expect(async () => {
+          await checkBitStringStatusList(cacheableEntry, { statusListCredentialCacheUrl: cacheFilePath });
+        }).rejects.toThrow();
+
+        await expect(readFile(cacheFilePath, 'utf-8')).rejects.toThrow();
       });
     });
     describe('and the cache file contains other expired entries', function () {

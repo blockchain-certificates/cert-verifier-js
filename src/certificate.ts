@@ -39,6 +39,10 @@ export interface CertificateOptions {
   // https://www.w3.org/TR/vc-data-integrity/#defn-challenge
   // https://github.com/w3c/vc-data-integrity/issues/324#issuecomment-2521054375
   challenge?: string;
+  // HTTP URL of a caching service used to store/retrieve status list credentials (BitstringStatusList/StatusList2021)
+  // between verifications, honoring the `ttl` property of the status list credential when present.
+  // https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslistcredential
+  statusListCredentialCacheUrl?: string;
 }
 
 export interface Signers {
@@ -74,6 +78,7 @@ export default class Certificate {
   public proofPurpose: string;
   public proofDomain?: string | string[];
   public proofChallenge?: string;
+  public statusListCredentialCacheUrl?: string;
   public recipientFullName: string;
   public recordLink: string;
   public revocationKey: string;
@@ -138,7 +143,8 @@ export default class Certificate {
       explorerAPIs: deepCopy<ExplorerAPI[]>(this.explorerAPIs),
       proofPurpose: this.proofPurpose,
       proofDomain: this.proofDomain,
-      proofChallenge: this.proofChallenge
+      proofChallenge: this.proofChallenge,
+      statusListCredentialCacheUrl: this.statusListCredentialCacheUrl
     });
     await this.verifier.init();
     this.verificationSteps = this.verifier.getVerificationSteps();
@@ -190,6 +196,7 @@ export default class Certificate {
     this.proofPurpose = this.options.proofPurpose;
     this.proofDomain = this.options.domain;
     this.proofChallenge = this.options.challenge;
+    this.statusListCredentialCacheUrl = this.options.statusListCredentialCacheUrl;
 
     if (options.didResolverUrl) {
       domain.did.didResolver.url = options.didResolverUrl;

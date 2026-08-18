@@ -322,7 +322,7 @@ The value of `statusListCredentialCacheUrl` determines which caching strategy is
 Regardless of the strategy used, the library manages the caching decision itself:
 - The status list credential's own [`ttl`](https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslistcredential) property (expressed in milliseconds, expected on `credentialSubject.ttl`) determines how long a cached entry may be trusted. If `Date.now() - cachedAt` is lower than the `ttl`, the cached credential is used and the status list is not re-fetched.
 - If the cached entry is missing, stale, or the cache backend is unreachable, the library falls back to fetching the status list credential from `statusListCredential`. If that fetched document defines a `ttl`, the library writes it back to the cache.
-- If the status list credential does not define a `ttl`, no caching strategy is employed for it (no read, no write) even when `statusListCredentialCacheUrl` is set.
+- If the status list credential does not define a `ttl`, it is not written to the cache and will be fetched fresh on each verification even when `statusListCredentialCacheUrl` is set.
 - If `statusListCredentialCacheUrl` is not provided, no caching strategy is employed and the status list credential is always fetched fresh, matching the library's prior behavior.
 - This library does not implement any dedicated authorization/auth-token mechanism for the HTTP caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
 

@@ -1,4 +1,5 @@
 import { VerifierError } from '../../models';
+import { ProblemDetailsType } from '../../models/ProblemDetails';
 import domain from '../../domain';
 import { baseError } from './index';
 import type { IDidDocument } from '../../models/DidDocument';
@@ -27,7 +28,8 @@ export default function retrieveVerificationMethodPublicKey (
   if (!verificationMethodPublicKey) {
     throw new VerifierError(
       'retrieveVerificationMethodPublicKey',
-      `${baseError} - ${domain.i18n.getText('errors', 'retrieveVerificationMethodPublicKey')}`);
+      `${baseError} - ${domain.i18n.getText('errors', 'retrieveVerificationMethodPublicKey')}`,
+      ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
   }
   return {
     ...verificationMethodPublicKey

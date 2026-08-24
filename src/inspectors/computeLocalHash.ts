@@ -1,5 +1,6 @@
 import jsonld from 'jsonld';
 import VerifierError from '../models/verifierError';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { sha256 } from '@noble/hashes/sha2.js';
 import { Buffer } from 'buffer';
 import { preloadedContexts } from '../constants';
@@ -53,14 +54,15 @@ export default async function computeLocalHash (document: Blockcerts): Promise<s
     normalizedDocument = await jsonld.normalize(theDocument, normalizeArgs);
   } catch (e) {
     console.error(e);
-    throw new VerifierError('computeLocalHash', getText('errors', 'failedJsonLdNormalization'));
+    throw new VerifierError('computeLocalHash', getText('errors', 'failedJsonLdNormalization'), ProblemDetailsType.PROOF_TRANSFORMATION_ERROR);
   }
 
   const unmappedFields: string[] = getUnmappedFields(normalizedDocument);
   if (unmappedFields) {
     throw new VerifierError(
       'computeLocalHash',
-      `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`
+      `${getText('errors', 'foundUnmappedFields')}: ${unmappedFields.join(', ')}`,
+      ProblemDetailsType.MALFORMED_VALUE_ERROR
     );
   } else {
     return Buffer.from(sha256(Uint8Array.from(toUTF8Data(normalizedDocument)))).toString('hex');

@@ -2,12 +2,16 @@ import { request } from '@blockcerts/explorer-lookup';
 // @ts-expect-error not a TS package
 import { decodeList, type RevocationList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import Certificate from '../certificate';
 import { VERIFICATION_STATUSES } from '../constants/verificationStatuses';
 import domain from '../domain';
 import { CREDENTIAL_STATUS_OPTIONS } from '../domain/certificates/useCases/generateRevocationReason';
 import type { BlockcertsV3, VCCredentialStatus, VerifiableCredential } from '../models/BlockcertsV3';
+
+// per https://www.w3.org/TR/vc-bitstring-status-list/#validate-algorithm
+const MINIMUM_STATUS_LIST_LENGTH = 131072;
 
 export interface CheckBitStringStatusListOptions {
   // HTTP URL of a caching service, or a relative filesystem path to a JSON cache file, used to store/retrieve
@@ -52,7 +56,7 @@ function isNodeEnvironment (): boolean {
 
 function assertFsCacheSupported (cacheFilePath: string): void {
   if (!isNodeEnvironment()) {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'filesystemCacheUnsupported')} ${cacheFilePath}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'filesystemCacheUnsupported')} ${cacheFilePath}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   }
 }
 
@@ -74,7 +78,7 @@ function redactCacheLocationForError (cacheLocation: string): string {
 
 function assertCacheEntryShape (cacheEntry: any, cacheLocation: string): CachedStatusListCredentialEntry {
   if (!cacheEntry || typeof cacheEntry !== 'object' || !cacheEntry.credential || typeof cacheEntry.cachedAt !== 'number') {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(cacheLocation)}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(cacheLocation)}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   }
   return cacheEntry;
 }
@@ -109,7 +113,7 @@ async function getCachedStatusListCredentialFromHttp (statusListCredentialCacheU
     cacheEntry = JSON.parse(response);
   } catch (e) {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(statusListCredentialCacheUrl)}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${redactCacheLocationForError(statusListCredentialCacheUrl)}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   }
 
   return assertCacheEntryShape(cacheEntry, statusListCredentialCacheUrl);
@@ -149,7 +153,7 @@ async function readCacheStoreFile (cacheFilePath: string): Promise<StatusListCre
     return JSON.parse(raw);
   } catch (e) {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${cacheFilePath}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'invalidStatusListCacheResponse')} ${cacheFilePath}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   }
 }
 
@@ -266,7 +270,7 @@ async function getRevocationCredential (statusListUrl: string, statusListCredent
     url: statusListUrl
   }).catch(e => {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   });
 
   if (statusList) {
@@ -275,7 +279,7 @@ async function getRevocationCredential (statusListUrl: string, statusListCredent
       revocationCredential = JSON.parse(statusList);
     } catch (e) {
       console.error(e);
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`);
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${statusListUrl}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
     }
 
     if (statusListCredentialCacheUrl && typeof getTTL(revocationCredential) === 'number') {
@@ -294,7 +298,7 @@ async function verifyRevocationCredential (revocationCredential: VerifiableCrede
   const result = await certificate.verify();
 
   if (result.status === VERIFICATION_STATUSES.FAILURE) {
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.i18n.getText('revocation', 'revocationListAuthenticityFailure'));
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.i18n.getText('revocation', 'revocationListAuthenticityFailure'), ProblemDetailsType.STATUS_VERIFICATION_ERROR);
   }
 }
 
@@ -321,7 +325,7 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
     const revocationCredential: VerifiableCredential = await getRevocationCredential(status.statusListCredential, options.statusListCredentialCacheUrl);
 
     if (!revocationCredential) {
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${status.statusListCredential}.`);
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, `${domain.i18n.getText('revocation', 'noRevocationStatusList2021Found')} ${status.statusListCredential}.`, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
     }
 
     await verifyRevocationCredential(revocationCredential);
@@ -329,7 +333,29 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
     const { encodedList } = revocationCredential.credentialSubject;
     const decodedList: RevocationList = await decodeList({ encodedList });
 
-    if (decodedList.isRevoked(credentialIndex)) {
+    if (decodedList.length < MINIMUM_STATUS_LIST_LENGTH) {
+      throw new VerifierError(
+        SUB_STEPS.checkRevokedStatus,
+        `${domain.i18n.getText('revocation', 'statusListLengthError')} (${decodedList.length} < ${MINIMUM_STATUS_LIST_LENGTH}).`,
+        ProblemDetailsType.STATUS_LIST_LENGTH_ERROR
+      );
+    }
+
+    let isRevoked: boolean;
+    try {
+      if (!Number.isInteger(credentialIndex) || credentialIndex < 0) {
+        throw new Error(`statusListIndex "${status.statusListIndex}" is not a valid non-negative integer.`);
+      }
+      isRevoked = decodedList.isRevoked(credentialIndex);
+    } catch (e) {
+      throw new VerifierError(
+        SUB_STEPS.checkRevokedStatus,
+        `${domain.i18n.getText('revocation', 'statusListIndexOutOfRange')} (${e.message})`,
+        ProblemDetailsType.RANGE_ERROR
+      );
+    }
+
+    if (isRevoked) {
       const statusText = status.statusPurpose === 'revocation' ? CREDENTIAL_STATUS_OPTIONS.REVOKED : CREDENTIAL_STATUS_OPTIONS.SUSPENDED;
       throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', statusText));
     }

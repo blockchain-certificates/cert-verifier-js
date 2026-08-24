@@ -19,6 +19,8 @@ import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarte
 import validateDateFormat from './inspectors/validateDateFormat';
 import { isVCV2 } from './parsers/helpers/retrieveVCVersion';
 import { cryptoSuiteToType } from './helpers/cryptoSuite';
+import type { ProblemDetails } from './models/ProblemDetails';
+import { ProblemDetailsType } from './models/ProblemDetails';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -36,12 +38,14 @@ export interface IFinalVerificationStatus {
   status: VERIFICATION_STATUSES;
   message: string;
   errors?: IFinalVerificationStatus[];
+  problemDetails?: ProblemDetails;
 }
 
 interface StepVerificationStatus {
   code: string;
   status: VERIFICATION_STATUSES;
   message?: string;
+  problemDetails?: ProblemDetails;
 }
 
 export enum SupportedVerificationSuites {
@@ -355,6 +359,7 @@ export default class Verifier {
         this._stepsStatuses.push({
           code: step,
           message: err.message,
+          problemDetails: err.problemDetails,
           status: VERIFICATION_STATUSES.FAILURE
         });
       }
@@ -372,7 +377,7 @@ export default class Verifier {
         await this.hashlinkVerifier.verifyHashlinkTable()
           .catch((error) => {
             console.error('hashlink verification error', error);
-            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
+            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'), ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
           });
       }
     );
@@ -475,8 +480,8 @@ export default class Verifier {
   }
 
   private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
-    const { message } = errorStep;
-    return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
+    const { message, problemDetails } = errorStep;
+    return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message, problemDetails });
   }
 
   private _isFailing (): boolean {
@@ -506,8 +511,8 @@ export default class Verifier {
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  private _setFinalStep ({ status, message }: { status: VERIFICATION_STATUSES; message: string }): IFinalVerificationStatus {
-    return { code: VerificationSteps.final, status, message };
+  private _setFinalStep ({ status, message, problemDetails }: { status: VERIFICATION_STATUSES; message: string; problemDetails?: ProblemDetails }): IFinalVerificationStatus {
+    return { code: VerificationSteps.final, status, message, ...(problemDetails ? { problemDetails } : {}) };
   }
 
   private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {

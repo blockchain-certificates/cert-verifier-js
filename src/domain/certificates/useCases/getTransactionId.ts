@@ -1,4 +1,5 @@
 import { VerifierError } from '../../../models';
+import { ProblemDetailsType } from '../../../models/ProblemDetails';
 import { getText } from '../../i18n/useCases';
 import type { Receipt } from '../../../models/Receipt';
 import type { MerkleProof2017Anchor } from '../../../models/MerkleProof2017';
@@ -16,6 +17,6 @@ export default function getTransactionId (certificateReceipt: Receipt = {}): str
       return dataArray.pop();
     }
   } catch (err) {
-    throw new VerifierError('', getText('errors', 'getTransactionId'));
+    throw new VerifierError('', getText('errors', 'getTransactionId'), ProblemDetailsType.PARSING_ERROR);
   }
 }

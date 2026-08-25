@@ -66,7 +66,9 @@
       "invalidStatusListCacheResponse": "The status list cache service response does not match the expected format for URL:",
       "filesystemCacheUnsupported": "Filesystem caching via statusListCredentialCacheUrl is only supported in a Node/server-side environment, not in a browser. Received path:",
       "revoked": "revoked",
-      "suspended": "suspended"
+      "suspended": "suspended",
+      "statusListLengthError": "The status list does not meet the minimum required length for herd privacy.",
+      "statusListIndexOutOfRange": "The status list index for this credential is out of range."
     },
     "success": {
       "mocknet": {
@@ -192,7 +194,9 @@
       "invalidStatusListCacheResponse": "La réponse du service de cache de la liste de statut ne correspond pas au format attendu pour l'URL :",
       "filesystemCacheUnsupported": "La mise en cache par système de fichiers via statusListCredentialCacheUrl n'est prise en charge que dans un environnement Node/serveur, pas dans un navigateur. Chemin reçu :",
       "revoked": "révoqué",
-      "suspended": "suspendu"
+      "suspended": "suspendu",
+      "statusListLengthError": "La liste de statut n'atteint pas la longueur minimale requise pour la confidentialité par effet de groupe (herd privacy).",
+      "statusListIndexOutOfRange": "L'index de la liste de statut pour ce justificatif est hors limites."
     },
     "success": {
       "mocknet": {
@@ -318,7 +322,9 @@
       "invalidStatusListCacheResponse": "La respuesta del servicio de caché de la lista de estado no coincide con el formato esperado para la URL:",
       "filesystemCacheUnsupported": "El almacenamiento en caché del sistema de archivos a través de statusListCredentialCacheUrl solo es compatible con un entorno Node/servidor, no en un navegador. Ruta recibida:",
       "revoked": "revocado",
-      "suspended": "suspendido"
+      "suspended": "suspendido",
+      "statusListLengthError": "La lista de estado no alcanza la longitud mínima requerida para la privacidad por agrupamiento (herd privacy).",
+      "statusListIndexOutOfRange": "El índice de la lista de estado para esta credencial está fuera de rango."
     },
     "success": {
       "mocknet": {
@@ -444,7 +450,9 @@
       "invalidStatusListCacheResponse": "It-tweġiba tas-servizz ta' cache tal-lista tal-istatus ma taqbilx mal-format mistenni għall-URL:",
       "filesystemCacheUnsupported": "L-użu ta' cache fis-sistema tal-fajls permezz ta' statusListCredentialCacheUrl huwa appoġġjat biss f'ambjent Node/server, mhux f'browser. Triq riċevuta:",
       "revoked": "revokat",
-      "suspended": "suspended"
+      "suspended": "suspended",
+      "statusListLengthError": "Il-lista tal-istatus ma tilħaqx it-tul minimu meħtieġ għall-privatezza tal-merħla (herd privacy).",
+      "statusListIndexOutOfRange": "L-indiċi tal-lista tal-istatus għal din il-kredenzjal huwa barra mill-firxa."
     },
     "success": {
       "mocknet": {
@@ -570,7 +578,9 @@
       "invalidStatusListCacheResponse": "La risposta del servizio di cache dell'elenco di stato non corrisponde al formato previsto per l'URL:",
       "filesystemCacheUnsupported": "La cache su file system tramite statusListCredentialCacheUrl è supportata solo in un ambiente Node/server, non in un browser. Percorso ricevuto:",
       "revoked": "revocato",
-      "suspended": "sospeso"
+      "suspended": "sospeso",
+      "statusListLengthError": "L'elenco di stato non raggiunge la lunghezza minima richiesta per la privacy di gruppo (herd privacy).",
+      "statusListIndexOutOfRange": "L'indice dell'elenco di stato per questa credenziale è fuori intervallo."
     },
     "success": {
       "mocknet": {
@@ -696,7 +706,9 @@
       "invalidStatusListCacheResponse": "ステータスリストのキャッシュサービスの応答が、URLの期待される形式と一致しません：",
       "filesystemCacheUnsupported": "statusListCredentialCacheUrlによるファイルシステムキャッシュは、Node/サーバー環境でのみサポートされており、ブラウザではサポートされていません。受信したパス：",
       "revoked": "取消されました",
-      "suspended": "停止されました"
+      "suspended": "停止されました",
+      "statusListLengthError": "ステータスリストが、集団プライバシー(herd privacy)に必要な最小長を満たしていません。",
+      "statusListIndexOutOfRange": "この資格情報のステータスリストのインデックスが範囲外です。"
     },
     "success": {
       "mocknet": {

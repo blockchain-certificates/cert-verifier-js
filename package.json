@@ -61,7 +61,7 @@
     "buffer": "^6.0.3",
     "jsonld": "^9.0.0",
     "jsonld-signatures": "^11.5.0",
-    "jsonld-signatures-merkleproof2019": "^2.20.1",
+    "jsonld-signatures-merkleproof2019": "^2.21.0",
     "lodash.clonedeep": "^4.5.0"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 import type { IDidDocument } from '../../models/DidDocument';
 import { VerifierError } from '../../models';
+import { ProblemDetailsType } from '../../models/ProblemDetails';
 import { SUB_STEPS } from '../../domain/verifier/entities/verificationSteps';
 import domain from '../../domain';
 import { baseError } from './index';
@@ -12,6 +13,6 @@ export default function controlVerificationMethod (didDocument: IDidDocument, ve
   const documentId = getDocumentId(didDocument);
   const verificationDid = verificationMethod.split('#')[0];
   if (documentId !== verificationDid) {
-    throw new VerifierError(SUB_STEPS.controlVerificationMethod, `${baseError} - ${domain.i18n.getText('errors', 'controlVerificationMethod')}`);
+    throw new VerifierError(SUB_STEPS.controlVerificationMethod, `${baseError} - ${domain.i18n.getText('errors', 'controlVerificationMethod')}`, ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
   }
 }

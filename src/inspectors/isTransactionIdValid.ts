@@ -1,4 +1,5 @@
 import VerifierError from '../models/verifierError';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { getText } from '../domain/i18n/useCases';
 
 /**
@@ -13,7 +14,8 @@ export default function isTransactionIdValid (transactionId: string): string {
   } else {
     throw new VerifierError(
       'getTransactionId',
-      getText('errors', 'isTransactionIdValid')
+      getText('errors', 'isTransactionIdValid'),
+      ProblemDetailsType.MALFORMED_VALUE_ERROR
     );
   }
 }

@@ -297,17 +297,25 @@ async function getRevocationCredential (statusListUrl: string, statusListCredent
 // is multibase-encoded (leading "u") and must be decoded via @digitalbazaar/vc-bitstring-status-list.
 // Legacy status lists (RevocationList2020, StatusList2021) are not multibase-encoded and are decoded via
 // the older @digitalbazaar/vc-revocation-list package instead. The package is dynamically imported based
-// on the credentialStatus type so consumers only load the implementation they actually need.
+// on the credentialStatus type so consumers only load the implementation they actually need. The two
+// import() calls use literal specifiers (rather than a single call with a variable specifier) so that
+// bundlers (e.g. Rollup, including the IIFE build with inlineDynamicImports) can statically analyze and
+// inline both dependencies.
 async function decodeStatusList (credentialStatusType: string, encodedList: string): Promise<{ length: number, isSet: (index: number) => boolean }> {
-  const packageName = credentialStatusType === BITSTRING_STATUS_LIST_ENTRY_TYPE
-    ? '@digitalbazaar/vc-bitstring-status-list'
-    : '@digitalbazaar/vc-revocation-list';
-  const { decodeList } = await import(packageName);
+  let decodeList: any;
+  if (credentialStatusType === BITSTRING_STATUS_LIST_ENTRY_TYPE) {
+    // @ts-expect-error not a TS package
+    ({ decodeList } = await import('@digitalbazaar/vc-bitstring-status-list'));
+  } else {
+    // @ts-expect-error not a TS package
+    ({ decodeList } = await import('@digitalbazaar/vc-revocation-list'));
+  }
   const decodedList = await decodeList({ encodedList });
   // both RevocationList and BitstringStatusList wrap a @digitalbazaar/bitstring instance under `bitstring`,
   // so status/revocation lookup can be read consistently regardless of which package decoded the list
   return { length: decodedList.length, isSet: (index: number) => decodedList.bitstring.get(index) };
 }
+
 
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
   const certificate = new Certificate(revocationCredential as BlockcertsV3);

@@ -7,6 +7,7 @@ import Certificate from '../../../src/certificate';
 import { VERIFICATION_STATUSES } from '../../../src/constants/verificationStatuses';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
+import BlockcertsBitstringStatusList from '../../fixtures/blockcerts-bitstring-status-list.json';
 import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-revoked.json';
 import StatusList2021Suspended from '../../fixtures/v3/cert-rl-status-list-2021-suspended.json';
 import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
@@ -26,6 +27,10 @@ vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
 
       if (url === 'https://www.blockcerts.org/samples/3.0/status-list-2021-suspension.json') {
         return JSON.stringify(BlockcertsStatusList2021Suspension);
+      }
+
+      if (url === 'https://www.blockcerts.org/samples/3.0/bitstring-status-list.json') {
+        return JSON.stringify(BlockcertsBitstringStatusList);
       }
 
       if (url === tamperedListUrl) {
@@ -133,6 +138,54 @@ describe('checkBitStringStatusList inspector test suite', function () {
       }
 
       expect(failed).toBe(false);
+    });
+  });
+
+  describe('when the credentialStatus type is BitstringStatusListEntry', function () {
+    // the fixture's status list credential does not carry a real cryptographic proof, so authenticity
+    // verification (already covered by the other suites in this file) is stubbed here to isolate the
+    // BitstringStatusListEntry decoding/dispatch logic under test
+    let verifySpy: any;
+    let initSpy: any;
+
+    beforeEach(function () {
+      initSpy = vi.spyOn(Certificate.prototype, 'init').mockResolvedValue(undefined);
+      verifySpy = vi.spyOn(Certificate.prototype, 'verify').mockResolvedValue({
+        status: VERIFICATION_STATUSES.SUCCESS
+      } as any);
+    });
+
+    afterEach(function () {
+      initSpy.mockRestore();
+      verifySpy.mockRestore();
+    });
+
+    const bitstringStatusListCredential = 'https://www.blockcerts.org/samples/3.0/bitstring-status-list.json';
+
+    it('should throw when the entry at the given index is set (revoked)', async function () {
+      const revokedEntry = {
+        id: `${bitstringStatusListCredential}#500`,
+        type: 'BitstringStatusListEntry',
+        statusPurpose: 'revocation',
+        statusListIndex: '500',
+        statusListCredential: bitstringStatusListCredential
+      };
+
+      await expect(async () => {
+        await checkBitStringStatusList(revokedEntry);
+      }).rejects.toThrow('This certificate has been revoked by the issuer.');
+    });
+
+    it('should verify when the entry at the given index is not set', async function () {
+      const activeEntry = {
+        id: `${bitstringStatusListCredential}#501`,
+        type: 'BitstringStatusListEntry',
+        statusPurpose: 'revocation',
+        statusListIndex: '501',
+        statusListCredential: bitstringStatusListCredential
+      };
+
+      await expect(checkBitStringStatusList(activeEntry)).resolves.toBeUndefined();
     });
   });
 

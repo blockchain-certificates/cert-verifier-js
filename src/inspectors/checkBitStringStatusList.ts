@@ -1,6 +1,4 @@
 import { request } from '@blockcerts/explorer-lookup';
-// @ts-expect-error not a TS package
-import { decodeList, type RevocationList } from '@digitalbazaar/vc-revocation-list';
 import { VerifierError } from '../models';
 import { ProblemDetailsType } from '../models/ProblemDetails';
 import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
@@ -12,6 +10,9 @@ import type { BlockcertsV3, VCCredentialStatus, VerifiableCredential } from '../
 
 // per https://www.w3.org/TR/vc-bitstring-status-list/#validate-algorithm
 const MINIMUM_STATUS_LIST_LENGTH = 131072;
+
+// credentialStatus.type value defined by https://www.w3.org/TR/vc-bitstring-status-list/
+const BITSTRING_STATUS_LIST_ENTRY_TYPE = 'BitstringStatusListEntry';
 
 export interface CheckBitStringStatusListOptions {
   // HTTP URL of a caching service, or a relative filesystem path to a JSON cache file, used to store/retrieve
@@ -292,6 +293,22 @@ async function getRevocationCredential (statusListUrl: string, statusListCredent
   return statusList;
 }
 
+// credentialStatus.type value defined by https://www.w3.org/TR/vc-bitstring-status-list/; its encodedList
+// is multibase-encoded (leading "u") and must be decoded via @digitalbazaar/vc-bitstring-status-list.
+// Legacy status lists (RevocationList2020, StatusList2021) are not multibase-encoded and are decoded via
+// the older @digitalbazaar/vc-revocation-list package instead. The package is dynamically imported based
+// on the credentialStatus type so consumers only load the implementation they actually need.
+async function decodeStatusList (credentialStatusType: string, encodedList: string): Promise<{ length: number, isSet: (index: number) => boolean }> {
+  const packageName = credentialStatusType === BITSTRING_STATUS_LIST_ENTRY_TYPE
+    ? '@digitalbazaar/vc-bitstring-status-list'
+    : '@digitalbazaar/vc-revocation-list';
+  const { decodeList } = await import(packageName);
+  const decodedList = await decodeList({ encodedList });
+  // both RevocationList and BitstringStatusList wrap a @digitalbazaar/bitstring instance under `bitstring`,
+  // so status/revocation lookup can be read consistently regardless of which package decoded the list
+  return { length: decodedList.length, isSet: (index: number) => decodedList.bitstring.get(index) };
+}
+
 async function verifyRevocationCredential (revocationCredential: VerifiableCredential): Promise<void> {
   const certificate = new Certificate(revocationCredential as BlockcertsV3);
   await certificate.init();
@@ -331,7 +348,7 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
     await verifyRevocationCredential(revocationCredential);
 
     const { encodedList } = revocationCredential.credentialSubject;
-    const decodedList: RevocationList = await decodeList({ encodedList });
+    const decodedList = await decodeStatusList(status.type, encodedList);
 
     if (decodedList.length < MINIMUM_STATUS_LIST_LENGTH) {
       throw new VerifierError(
@@ -346,7 +363,7 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
       if (!Number.isInteger(credentialIndex) || credentialIndex < 0) {
         throw new Error(`statusListIndex "${status.statusListIndex}" is not a valid non-negative integer.`);
       }
-      isRevoked = decodedList.isRevoked(credentialIndex);
+      isRevoked = decodedList.isSet(credentialIndex);
     } catch (e) {
       throw new VerifierError(
         SUB_STEPS.checkRevokedStatus,

@@ -11,8 +11,9 @@ import type { BlockcertsV3, VCCredentialStatus, VerifiableCredential } from '../
 // per https://www.w3.org/TR/vc-bitstring-status-list/#validate-algorithm
 const MINIMUM_STATUS_LIST_LENGTH = 131072;
 
-// credentialStatus.type value defined by https://www.w3.org/TR/vc-bitstring-status-list/
-const BITSTRING_STATUS_LIST_ENTRY_TYPE = 'BitstringStatusListEntry';
+// credentialSubject.type value of the status list credential itself, as defined by
+// https://www.w3.org/TR/vc-bitstring-status-list/
+const BITSTRING_STATUS_LIST_TYPE = 'BitstringStatusList';
 
 export interface CheckBitStringStatusListOptions {
   // HTTP URL of a caching service, or a relative filesystem path to a JSON cache file, used to store/retrieve
@@ -293,17 +294,17 @@ async function getRevocationCredential (statusListUrl: string, statusListCredent
   return statusList;
 }
 
-// credentialStatus.type value defined by https://www.w3.org/TR/vc-bitstring-status-list/; its encodedList
-// is multibase-encoded (leading "u") and must be decoded via @digitalbazaar/vc-bitstring-status-list.
+// StatusListCredential.credentialSubject.type value defined by https://www.w3.org/TR/vc-bitstring-status-list/;
+// its encodedList is multibase-encoded (leading "u") and must be decoded via @digitalbazaar/vc-bitstring-status-list.
 // Legacy status lists (RevocationList2020, StatusList2021) are not multibase-encoded and are decoded via
 // the older @digitalbazaar/vc-revocation-list package instead. The package is dynamically imported based
-// on the credentialStatus type so consumers only load the implementation they actually need. The two
-// import() calls use literal specifiers (rather than a single call with a variable specifier) so that
-// bundlers (e.g. Rollup, including the IIFE build with inlineDynamicImports) can statically analyze and
-// inline both dependencies.
+// on the credentialSubject entry type of the actual status list credential,
+// so consumers only load the implementation they actually need. The two import() calls use literal specifiers
+// (rather than a single call with a variable specifier) so that bundlers (e.g. Rollup, including the IIFE build with
+// inlineDynamicImports) can statically analyze and inline both dependencies.
 async function decodeStatusList (credentialStatusType: string, encodedList: string): Promise<{ length: number, isSet: (index: number) => boolean }> {
   let decodeList: any;
-  if (credentialStatusType === BITSTRING_STATUS_LIST_ENTRY_TYPE) {
+  if (credentialStatusType === BITSTRING_STATUS_LIST_TYPE) {
     // @ts-expect-error not a TS package
     ({ decodeList } = await import('@digitalbazaar/vc-bitstring-status-list'));
   } else {
@@ -356,7 +357,10 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
     await verifyRevocationCredential(revocationCredential);
 
     const { encodedList } = revocationCredential.credentialSubject;
-    const decodedList = await decodeStatusList(status.type, encodedList);
+    const decodedList = await decodeStatusList(
+      revocationCredential.credentialSubject.type,
+      encodedList
+    );
 
     if (decodedList.length < MINIMUM_STATUS_LIST_LENGTH) {
       throw new VerifierError(

@@ -4,8 +4,6 @@
     "https://ns.did.ai/suites/secp256k1-2019/v1"
   ],
   "id": "https://www.blockcerts.org/samples/3.0/bitstring-status-list.json",
-  "issuer": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
-  "validFrom": "2025-03-07T13:32:54.030Z",
   "type": [
     "VerifiableCredential",
     "BitstringStatusListCredential"
@@ -13,14 +11,16 @@
   "credentialSubject": {
     "id": "https://www.blockcerts.org/samples/3.0/bitstring-status-list.json#list",
     "type": "BitstringStatusList",
-    "statusPurpose": "revocation",
-    "encodedList": "uH4sIAAAAAAAAA-3LoQEAAAwCIOP-v3jBE6zQSRY3bQAAAAAAAAAAAAAAAAAAAKAeUsNJmgBAAAA"
+    "encodedList": "uH4sIAAAAAAAAA-3OMQEAAAgDoEWwf1pbTA9IQAIAAJTMdQAAAAAAAAAAAAAAAAD4awEYNa3BAEAAAA",
+    "statusPurpose": "revocation"
   },
+  "validFrom": "2026-09-04T08:13:40.816Z",
+  "issuer": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
   "proof": {
     "type": "EcdsaSecp256k1Signature2019",
-    "created": "2025-03-07T13:32:54.030Z",
+    "created": "2026-09-04T08:25:37.677Z",
     "verificationMethod": "did:key:zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M#zQ3shWbMURApEGeYEYbyfMoPbuW5qCmM7gtWkwnhGf2LLkv2M",
     "proofPurpose": "assertionMethod",
-    "jws": "******"
+    "jws": "eyJhbGciOiJFUzI1NksiLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCJdfQ..QeW8dU8C_Vv9-KB0bntwc7Z_q_7LpvhEfMsy6yJG-ed8WM5UKDL12YbY_wne0PMmKYQgO235YIcirTbuMhJK9g"
   }
 }

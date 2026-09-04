@@ -142,32 +142,14 @@ describe('checkBitStringStatusList inspector test suite', function () {
   });
 
   describe('when the credentialStatus type is BitstringStatusListEntry', function () {
-    // the fixture's status list credential does not carry a real cryptographic proof, so authenticity
-    // verification (already covered by the other suites in this file) is stubbed here to isolate the
-    // BitstringStatusListEntry decoding/dispatch logic under test
-    let verifySpy: any;
-    let initSpy: any;
-
-    beforeEach(function () {
-      initSpy = vi.spyOn(Certificate.prototype, 'init').mockResolvedValue(undefined);
-      verifySpy = vi.spyOn(Certificate.prototype, 'verify').mockResolvedValue({
-        status: VERIFICATION_STATUSES.SUCCESS
-      } as any);
-    });
-
-    afterEach(function () {
-      initSpy.mockRestore();
-      verifySpy.mockRestore();
-    });
-
     const bitstringStatusListCredential = 'https://www.blockcerts.org/samples/3.0/bitstring-status-list.json';
 
     it('should throw when the entry at the given index is set (revoked)', async function () {
       const revokedEntry = {
-        id: `${bitstringStatusListCredential}#500`,
+        id: `${bitstringStatusListCredential}#23547`,
         type: 'BitstringStatusListEntry',
         statusPurpose: 'revocation',
-        statusListIndex: '500',
+        statusListIndex: '23547',
         statusListCredential: bitstringStatusListCredential
       };
 

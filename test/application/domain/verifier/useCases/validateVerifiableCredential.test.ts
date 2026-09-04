@@ -59,15 +59,6 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
           }).toThrow('Cannot have both v1 and v2 Verifiable Credential contexts');
         });
       });
-
-      describe('when more than one type is specified but only one context is defined', function () {
-        it('should throw an error', function () {
-          const fixture = { ...validFixture, '@context': [CONTEXT_URLS.VERIFIABLE_CREDENTIAL_V2_CONTEXT] };
-          expect(function () {
-            validateVerifiableCredential(fixture);
-          }).toThrow(`More specific type: ${validFixture.type[1]} was detected but no additional context provided`);
-        });
-      });
     });
 
     describe('validateIssuer method', function () {

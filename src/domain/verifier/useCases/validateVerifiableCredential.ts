@@ -50,9 +50,6 @@ function validateContext (context: JsonLDContext, type: string[]): void {
   if (isV1VerifiableCredential(context) && isV2VerifiableCredential(context)) {
     throw new Error('Cannot have both v1 and v2 Verifiable Credential contexts');
   }
-  if (type.length > 1 && context.length === 1) {
-    throw new Error(`More specific type: ${type[1]} was detected but no additional context provided`);
-  }
 }
 
 function validateIssuer (certificateIssuer: string | Issuer): void {

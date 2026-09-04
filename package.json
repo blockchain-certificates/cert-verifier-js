@@ -81,7 +81,7 @@
     "@vitest/coverage-istanbul": "4.1.10",
     "body-parser": "^2.2.0",
     "brfs": "^2.0.2",
-    "commitlint": "^20.1.0",
+    "commitlint": "^21.2.2",
     "crypto": "^1.0.1",
     "dts-bundle-generator": "^9.0.0",
     "eslint": "^10.0.3",

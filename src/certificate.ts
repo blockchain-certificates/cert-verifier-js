@@ -53,7 +53,7 @@ export interface Signers {
   issuerPublicKey: string;
   rawTransactionLink?: string;
   signatureSuiteType: string;
-  signingDate: string;
+  signingDate?: string;
   transactionId?: string;
   transactionLink?: string;
 }

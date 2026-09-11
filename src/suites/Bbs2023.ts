@@ -108,7 +108,11 @@ export default class Bbs2023 extends Suite {
     return this.issuer.id ?? '';
   }
 
-  getSigningDate (): string {
+  getSigningDate (): string | undefined {
+    // Unlike other Data Integrity suites, `proof.created` is intentionally
+    // omitted by the bbs-2023-cryptosuite reference implementation (to
+    // avoid a timestamp that would correlate all derived proofs), so this
+    // is genuinely `undefined` for real-world bbs-2023 credentials.
     return this.proof.created;
   }
 
@@ -199,6 +203,8 @@ export default class Bbs2023 extends Suite {
         if ((this.verificationMethod as any).revoked) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
+
+        this.publicKey = this.verificationMethod.publicKeyMultibase;
 
         return this.verificationMethod;
       },

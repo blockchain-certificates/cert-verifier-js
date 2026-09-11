@@ -10,4 +10,14 @@ describe('bbs-2023 signed and derived document test suite', function () {
 
     expect(result.status).toBe(VERIFICATION_STATUSES.SUCCESS);
   });
+
+  it('should expose the verified signer public key', async function () {
+    const certificate = new Certificate(fixture as any);
+    await certificate.init();
+    await certificate.verify();
+
+    expect(certificate.signers[0].issuerPublicKey).toBe(
+      fixture.proof.verificationMethod.split('#')[1]
+    );
+  });
 });

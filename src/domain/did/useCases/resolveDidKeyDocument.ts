@@ -4,7 +4,8 @@ import { publicKeyMultibaseToBytes } from '../../../helpers/keyUtils';
 
 enum SupportedSuite {
   ED25519 = 'ed25519',
-  SECP256K1 = 'secp256k1'
+  SECP256K1 = 'secp256k1',
+  BBS = 'bbs'
 }
 
 function generateDidDoc ({
@@ -48,9 +49,32 @@ async function generateDidDocumentFromDidEd25519 (did: string): Promise<IDidDocu
   return generateDidDoc({ keyId, did, jwk, keyType: 'JsonWebKey2020' });
 }
 
+// BBS (bbs-2023) keys are BLS12-381 Multikeys: unlike Ed25519/secp256k1 above,
+// the did:key document can be built directly from the multibase-encoded
+// public key, with no JWK conversion required.
+function generateDidDocumentFromDidBbs (did: string): IDidDocument {
+  const publicKeyMultibase = did.substring(8);
+  const keyId = did + '#' + publicKeyMultibase;
+  return {
+    '@context': ['https://www.w3.org/ns/did/v1', 'https://w3id.org/security/multikey/v1'],
+    id: did,
+    verificationMethod: [{
+      id: keyId,
+      type: 'Multikey',
+      controller: did,
+      publicKeyMultibase
+    } as any],
+    authentication: [keyId],
+    assertionMethod: [keyId],
+    capabilityDelegation: [keyId],
+    capabilityInvocation: [keyId]
+  } as any;
+}
+
 const supportedSuiteMap: Record<string, SupportedSuite> = {
   'did:key:z6Mk': SupportedSuite.ED25519,
-  'did:key:zQ3s': SupportedSuite.SECP256K1
+  'did:key:zQ3s': SupportedSuite.SECP256K1,
+  'did:key:zUC7': SupportedSuite.BBS
 };
 
 async function getResolver (suite: SupportedSuite): Promise<{ resolve(did: string): Promise<{ didDocument: IDidDocument }> }> {
@@ -66,6 +90,14 @@ async function getResolver (suite: SupportedSuite): Promise<{ resolve(did: strin
     return {
       resolve: async (did: string): Promise<{ didDocument: IDidDocument }> => ({
         didDocument: await generateDidDocumentFromDidSecp256k1(did) as any
+      })
+    };
+  }
+
+  if (suite === SupportedSuite.BBS) {
+    return {
+      resolve: async (did: string): Promise<{ didDocument: IDidDocument }> => ({
+        didDocument: generateDidDocumentFromDidBbs(did)
       })
     };
   }

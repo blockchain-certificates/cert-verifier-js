@@ -23,6 +23,11 @@ async function loadRequiredVerificationSuite (proofType: string): Promise<Suite>
     const { default: EcdsaSd2023VerificationSuite } = await import('../suites/EcdsaSd2023');
     return EcdsaSd2023VerificationSuite as unknown as Suite;
   }
+
+  if (proofType === SupportedVerificationSuites.Bbs2023) {
+    const { default: Bbs2023VerificationSuite } = await import('../suites/Bbs2023');
+    return Bbs2023VerificationSuite as unknown as Suite;
+  }
 }
 
 export default async function verifyIssuerProfile (issuerProfile: Issuer): Promise<any> {

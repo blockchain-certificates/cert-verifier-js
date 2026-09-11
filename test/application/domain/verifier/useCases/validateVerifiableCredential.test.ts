@@ -395,12 +395,12 @@ describe('domain verifier validateVerifiableCredential test suite', function () 
       });
 
       describe('when the proof.created property is missing', function () {
-        it('should throw an error', function () {
+        it('should not throw an error, as `created` is optional per the Data Integrity spec', function () {
           const fixture = JSON.parse(JSON.stringify(validFixture));
           delete fixture.proof.created;
           expect(function () {
             validateVerifiableCredential(fixture);
-          }).toThrow('`proof.created` must be defined');
+          }).not.toThrow();
         });
       });
 

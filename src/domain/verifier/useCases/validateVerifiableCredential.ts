@@ -111,9 +111,9 @@ function validatePropTypeAndId (prop: VCObject | VCObject[], propName: string): 
 }
 
 function validateProof (proof: VCProof): void {
-  if (!proof.created) {
-    throw new Error('`proof.created` must be defined');
-  }
+  // `created` is RECOMMENDED, not REQUIRED, per the Data Integrity spec.
+  // Some cryptosuites (eg. bbs-2023) intentionally omit it from the base
+  // proof to avoid providing a correlation vector across derived proofs.
 
   if (!proof.proofPurpose) {
     throw new Error('`proof.proofPurpose` must be defined');

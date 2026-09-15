@@ -19,6 +19,8 @@ import ensureValidityPeriodStarted from './inspectors/ensureValidityPeriodStarte
 import validateDateFormat from './inspectors/validateDateFormat';
 import { isVCV2 } from './parsers/helpers/retrieveVCVersion';
 import { cryptoSuiteToType } from './helpers/cryptoSuite';
+import type { ProblemDetails } from './models/ProblemDetails';
+import { ProblemDetailsType } from './models/ProblemDetails';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -36,12 +38,14 @@ export interface IFinalVerificationStatus {
   status: VERIFICATION_STATUSES;
   message: string;
   errors?: IFinalVerificationStatus[];
+  problemDetails?: ProblemDetails;
 }
 
 interface StepVerificationStatus {
   code: string;
   status: VERIFICATION_STATUSES;
   message?: string;
+  problemDetails?: ProblemDetails;
 }
 
 export enum SupportedVerificationSuites {
@@ -50,7 +54,8 @@ export enum SupportedVerificationSuites {
   Ed25519Signature2020 = 'Ed25519Signature2020',
   EcdsaSecp256k1Signature2019 = 'EcdsaSecp256k1Signature2019',
   EcdsaSd2023 = 'EcdsaSd2023',
-  EddsaRdfc2022 = 'EddsaRdfc2022'
+  EddsaRdfc2022 = 'EddsaRdfc2022',
+  Bbs2023 = 'Bbs2023'
 }
 
 export interface VerifierAPI {
@@ -65,6 +70,7 @@ export interface VerifierAPI {
   proofPurpose?: string;
   proofDomain?: string | string[];
   proofChallenge?: string;
+  statusListCredentialCacheUrl?: string;
 }
 
 export default class Verifier {
@@ -85,7 +91,8 @@ export default class Verifier {
     [SupportedVerificationSuites.Ed25519Signature2020]: null,
     [SupportedVerificationSuites.EcdsaSecp256k1Signature2019]: null,
     [SupportedVerificationSuites.EcdsaSd2023]: null,
-    [SupportedVerificationSuites.EddsaRdfc2022]: null
+    [SupportedVerificationSuites.EddsaRdfc2022]: null,
+    [SupportedVerificationSuites.Bbs2023]: null
   }; // defined here to later check if the proof type of the document is supported for verification
 
   public proofVerifiers: Suite[] = [];
@@ -94,6 +101,7 @@ export default class Verifier {
   public proofPurpose?: string;
   public proofDomain?: string | string[];
   public proofChallenge?: string;
+  public statusListCredentialCacheUrl?: string;
 
   constructor ({
     certificateJson,
@@ -106,7 +114,8 @@ export default class Verifier {
     validFrom,
     proofPurpose,
     proofDomain,
-    proofChallenge
+    proofChallenge,
+    statusListCredentialCacheUrl
   }: VerifierAPI) {
     this.expires = expires;
     this.validFrom = validFrom;
@@ -118,6 +127,7 @@ export default class Verifier {
     this.proofPurpose = proofPurpose;
     this.proofDomain = proofDomain;
     this.proofChallenge = proofChallenge;
+    this.statusListCredentialCacheUrl = statusListCredentialCacheUrl;
 
     this.documentToVerify = Object.assign<any, Blockcerts>({}, certificateJson);
   }
@@ -280,6 +290,11 @@ export default class Verifier {
       const { default: EddsaRdfc2022VerificationSuite } = await import('./suites/EddsaRdfc2022');
       this.supportedVerificationSuites.EddsaRdfc2022 = EddsaRdfc2022VerificationSuite as unknown as Suite;
     }
+
+    if (documentProofTypes.includes(SupportedVerificationSuites.Bbs2023)) {
+      const { default: Bbs2023VerificationSuite } = await import('./suites/Bbs2023');
+      this.supportedVerificationSuites.Bbs2023 = Bbs2023VerificationSuite as unknown as Suite;
+    }
   }
 
   private prepareVerificationProcess (): void {
@@ -351,6 +366,7 @@ export default class Verifier {
         this._stepsStatuses.push({
           code: step,
           message: err.message,
+          problemDetails: err.problemDetails,
           status: VERIFICATION_STATUSES.FAILURE
         });
       }
@@ -368,7 +384,7 @@ export default class Verifier {
         await this.hashlinkVerifier.verifyHashlinkTable()
           .catch((error) => {
             console.error('hashlink verification error', error);
-            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'));
+            throw new VerifierError(SUB_STEPS.checkImagesIntegrity, getText('errors', 'checkImagesIntegrity'), ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
           });
       }
     );
@@ -378,7 +394,9 @@ export default class Verifier {
     if ((this.documentToVerify as BlockcertsV3).credentialStatus) {
       const { default: checkBitStringStatusList } = await import('./inspectors/checkBitStringStatusList');
       await this.executeStep(SUB_STEPS.checkRevokedStatus, async () => {
-        await checkBitStringStatusList((this.documentToVerify as BlockcertsV3).credentialStatus);
+        await checkBitStringStatusList((this.documentToVerify as BlockcertsV3).credentialStatus, {
+          statusListCredentialCacheUrl: this.statusListCredentialCacheUrl
+        });
       });
       return;
     }
@@ -469,8 +487,8 @@ export default class Verifier {
   }
 
   private _failed (errorStep: StepVerificationStatus): IFinalVerificationStatus {
-    const { message } = errorStep;
-    return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message });
+    const { message, problemDetails } = errorStep;
+    return this._setFinalStep({ status: VERIFICATION_STATUSES.FAILURE, message, problemDetails });
   }
 
   private _isFailing (): boolean {
@@ -500,8 +518,8 @@ export default class Verifier {
     return this._setFinalStep({ status: VERIFICATION_STATUSES.SUCCESS, message });
   }
 
-  private _setFinalStep ({ status, message }: { status: VERIFICATION_STATUSES; message: string }): IFinalVerificationStatus {
-    return { code: VerificationSteps.final, status, message };
+  private _setFinalStep ({ status, message, problemDetails }: { status: VERIFICATION_STATUSES; message: string; problemDetails?: ProblemDetails }): IFinalVerificationStatus {
+    return { code: VerificationSteps.final, status, message, ...(problemDetails ? { problemDetails } : {}) };
   }
 
   private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {

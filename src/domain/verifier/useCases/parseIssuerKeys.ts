@@ -1,5 +1,6 @@
 import { dateToUnixTimestamp } from '../../../helpers/date';
 import { Key, VerifierError } from '../../../models';
+import { ProblemDetailsType } from '../../../models/ProblemDetails';
 import { getText } from '../../i18n/useCases';
 import type { NullableNumber } from '../../../models/helpers';
 import type { Issuer, IssuerPublicKeyList } from '../../../models/Issuer';
@@ -38,7 +39,8 @@ export default function parseIssuerKeys (issuerProfileJson: Issuer): IssuerPubli
     console.error(e);
     throw new VerifierError(
       'parseIssuerKeys',
-      getText('errors', 'parseIssuerKeys')
+      getText('errors', 'parseIssuerKeys'),
+      ProblemDetailsType.PARSING_ERROR
     );
   }
 }

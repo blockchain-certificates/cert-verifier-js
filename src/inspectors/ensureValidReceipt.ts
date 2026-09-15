@@ -1,6 +1,7 @@
 import { sha256 } from '@noble/hashes/sha2.js';
 import { Buffer } from 'buffer';
 import VerifierError from '../models/verifierError';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { toByteArray } from '../helpers/data';
 import { getText } from '../domain/i18n/useCases';
 import type { Receipt } from '../models/Receipt';
@@ -33,14 +34,16 @@ export default function ensureValidReceipt (receipt: Receipt): void {
   } catch (e) {
     throw new VerifierError(
       'checkReceipt',
-      getText('errors', 'ensureValidReceipt')
+      getText('errors', 'ensureValidReceipt'),
+      ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR
     );
   }
 
   if (proofHash !== merkleRoot) {
     throw new VerifierError(
       'checkReceipt',
-      getText('errors', 'invalidMerkleReceipt')
+      getText('errors', 'invalidMerkleReceipt'),
+      ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR
     );
   }
 }

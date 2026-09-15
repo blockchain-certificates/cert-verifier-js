@@ -8,6 +8,7 @@ import domain from '../../../src/domain';
 import { getText } from '../../../src/domain/i18n/useCases';
 import { SUB_STEPS } from '../../../src/domain/verifier/entities/verificationSteps';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
+import { ProblemDetailsType } from '../../../src/models/ProblemDetails';
 import didDocument from '../../fixtures/did/did-ion-EiA_Z6LQILbB2zj_eVrqfQ2xDm4HNqeJUw5Kj2Z7bFOOeQ.json';
 import fixtureIssuerProfile from '../../assertions/v3.0-issuer-profile.json';
 import v3RevocationList from '../../assertions/v3-revocation-list';
@@ -101,7 +102,11 @@ describe('Certificate test suite', function () {
           const expectedFinalStep = {
             code: STEPS.final,
             status: VERIFICATION_STATUSES.FAILURE,
-            message: errorMessage
+            message: errorMessage,
+            problemDetails: {
+              type: ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR,
+              detail: errorMessage
+            }
           };
 
           const finalStep = await certificate.verify();

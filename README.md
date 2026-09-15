@@ -135,6 +135,7 @@ The constructor automatically parses a certificate. Call `certificate.init()` to
     - locale: (`String`): language code used to set the language used by the verifier. Default: `en-US`. If set to `auto` it will use the user's browser language if available, or default to `en-US`. See the [dedicated section](#i18n) for more information.
     - explorerAPIs: (`[Object]`): As of v4.1.0 it is possible to provide a custom service API for the transaction explorer. This enables customers to select a potentially more reliable/private explorer to retrieve the blockchain transaction bound to a Blockcert. See the [dedicated section](#explorerAPIs) for more information.
     - didResolverUrl: (`String`): pass this option to specify your own did resolver url. By default this library uses the DIF universal resolver which is not recommended for production use.
+    - statusListCredentialCacheUrl: (`String`): HTTP URL of a caching service, or a filesystem path to a local JSON cache file (Node/server-side only), used to store/retrieve [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/) status list credentials between verifications. See the [dedicated section](#statusListCredentialCacheUrl) for more information.
 
 #### Returns
 The certificate instance has the following properties:
@@ -302,6 +303,47 @@ The consumer needs to write their own function for each service used.
 The `assertionId` is appended to the `revocationList` URL request as query parameter, to allow the filtering of the
  `revokedAssertions` by the provider: `{revocationList}?assertionId={assertionIdValue}` 
  More details here [in this ticket](https://github.com/blockchain-certificates/cert-verifier-js/issues/715).
+
+## statusListCredentialCacheUrl
+When verifying a credential using [BitstringStatusList/StatusList2021](https://www.w3.org/TR/vc-bitstring-status-list/), the library fetches the status list credential referenced by `credentialStatus.statusListCredential`. This can be cached to avoid unnecessary network requests, by providing the `statusListCredentialCacheUrl` option, as follows:
+
+```javascript
+// HTTP caching service
+const certificate = new Certificate(definition, { statusListCredentialCacheUrl: 'https://my-caching-service.example.com/status-list-cache' });
+
+// filesystem cache file (Node/server-side only)
+const certificate = new Certificate(definition, { statusListCredentialCacheUrl: './cache/status-list-cache.json' });
+```
+
+The value of `statusListCredentialCacheUrl` determines which caching strategy is used:
+- if it is an HTTP(S) URL (starts with `http://` or `https://`), the library uses an **HTTP caching service** strategy (see below).
+- otherwise, it is treated as a **filesystem path** (relative or absolute) to a local JSON cache file, read/written directly with Node's `fs` module. This strategy is only usable server-side (Node); it cannot be used in a browser context.
+
+Regardless of the strategy used, the library manages the caching decision itself:
+- The status list credential's own [`ttl`](https://www.w3.org/TR/vc-bitstring-status-list/#bitstringstatuslistcredential) property (expressed in milliseconds, expected on `credentialSubject.ttl`) determines how long a cached entry may be trusted. If `Date.now() - cachedAt` is lower than the `ttl`, the cached credential is used and the status list is not re-fetched.
+- If the cached entry is missing, stale, or the cache backend is unreachable, the library falls back to fetching the status list credential from `statusListCredential`. If that fetched document defines a `ttl`, the library writes it back to the cache.
+- If the status list credential does not define a `ttl`, it is not written to the cache and will be fetched fresh on each verification even when `statusListCredentialCacheUrl` is set.
+- If `statusListCredentialCacheUrl` is not provided, no caching strategy is employed and the status list credential is always fetched fresh, matching the library's prior behavior.
+- This library does not implement any dedicated authorization/auth-token mechanism for the HTTP caching service. If your caching service requires authentication, embed it directly in the `statusListCredentialCacheUrl` itself as a query parameter (e.g. `https://my-caching-service.example.com/status-list-cache?token=my-secret-token`); it will be preserved on every request made to the service.
+
+Both strategies share the same cache entry shape, `{ cachedAt: number, credential: Object }`, so that a caching backend doesn't need to be aware of which strategy is used when storing entries keyed by status list URL:
+
+### HTTP caching service contract
+- The caching service is queried with `GET {statusListCredentialCacheUrl}` with a `url` query parameter added (any existing query params on `statusListCredentialCacheUrl` are preserved). It is expected to respond with a JSON payload of shape `{ credential: Object, cachedAt: number }` (`cachedAt` being a millisecond epoch timestamp), or a falsy/error response if nothing is cached for that URL.
+- A fresh fetch is written back with `POST {statusListCredentialCacheUrl}` and a body of `{ url: statusListCredentialUrl, credential: Object, cachedAt: number }`.
+- If there is no cache entry for the requested status list URL, the service must return a falsy/empty response (e.g. HTTP 404, or an empty body) — this is treated as a normal cache miss and the library transparently falls back to fetching the status list credential.
+
+### Filesystem cache file contract
+- The file at `statusListCredentialCacheUrl` (resolved relative to `process.cwd()` when a relative path is given) holds a single JSON object keyed by status list credential URL: `{ [url]: { cachedAt: number, credential: Object } }`.
+- If the file does not exist yet, it is treated as an empty store (cache miss for every URL), and is created (along with any missing intermediate directories) on the first write.
+- A fresh fetch is written back by reading the whole file, merging in the new entry keyed by the status list URL, and rewriting the file in full — there is no file locking, so concurrent writes to the same cache file from multiple processes are not safe.
+- Because this library is the sole owner/writer of the filesystem cache file, it also garbage-collects it: every call to `checkBitStringStatusList` with a filesystem `statusListCredentialCacheUrl` prunes any entries whose `ttl` has been consumed (i.e. `Date.now() - cachedAt >= ttl`) from the file before proceeding, rewriting the file only if entries were actually removed. Entries without a resolvable `ttl`, or that don't match the expected shape, are left untouched by this cleanup pass. This is a lightweight, best-effort pass done on every call rather than a scheduled/background job — there is no periodic timer, and no cleanup is performed for the HTTP caching service, which is expected to manage its own garbage collection.
+- This backend is Node/server-side only. If `statusListCredentialCacheUrl` resolves to a filesystem path (i.e. it is not an `http(s)://` URL) while the library is running in a browser, it throws a clear `VerifierError` explaining that filesystem caching is unsupported in that environment, rather than failing with a confusing module-resolution/runtime error from the underlying dynamic `fs` import.
+
+### Contract violations
+If the cache backend (HTTP response body, or filesystem cache file content) is present but does not conform to the `{ cachedAt, credential }` shape described above (e.g. invalid JSON, or an object missing `credential` or with a non-numeric `cachedAt`), the library considers this a misconfigured caching integration and throws a `VerifierError`, failing the verification rather than silently falling back — this is meant to make integration mistakes obvious rather than fail open and hide a broken cache.
+
+The thrown error message includes the cache location to help diagnose the issue. For HTTP cache URLs, the query string and fragment are stripped before being included in the error message (only the origin and path are kept), since an auth token may be embedded there per the guidance above — this prevents secrets from leaking into thrown errors or downstream logs. Filesystem paths are included as-is.
 
 ## Contribute
 

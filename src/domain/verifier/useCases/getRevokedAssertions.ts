@@ -1,5 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
+import { ProblemDetailsType } from '../../../models/ProblemDetails';
 import { SUB_STEPS } from '../entities/verificationSteps';
 import { getText } from '../../i18n/useCases';
 import type { RevocationList, RevokedAssertion } from '../../../models/RevokedAssertions';
@@ -24,6 +25,6 @@ export default async function getRevokedAssertions (revocationListUrl: string, a
     return issuerRevocationJson.revokedAssertions ?? [];
   } catch (e) {
     console.error(e);
-    throw new VerifierError(SUB_STEPS.checkRevokedStatus, errorMessage);
+    throw new VerifierError(SUB_STEPS.checkRevokedStatus, errorMessage, ProblemDetailsType.STATUS_RETRIEVAL_ERROR);
   }
 }

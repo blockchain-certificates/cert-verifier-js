@@ -1,5 +1,6 @@
 import { request } from '@blockcerts/explorer-lookup';
 import { VerifierError } from '../../../models';
+import { ProblemDetailsType } from '../../../models/ProblemDetails';
 import { getText } from '../../i18n/useCases';
 import type { Issuer } from '../../../models/Issuer';
 import domain from '../../../domain';
@@ -67,7 +68,7 @@ function createIssuerProfileFromDidKey (didDocument: IDidDocument): Issuer {
 export default async function getIssuerProfile (issuerAddress: Issuer | string): Promise<Issuer> {
   const errorMessage = getText('errors', 'getIssuerProfile');
   if (!issuerAddress) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`, ProblemDetailsType.MALFORMED_VALUE_ERROR);
   }
 
   if (typeof issuerAddress === 'object') {
@@ -94,19 +95,19 @@ export default async function getIssuerProfile (issuerAddress: Issuer | string):
       };
     } catch (e) {
       console.error(e);
-      throw new VerifierError('getIssuerProfile', `${errorMessage} - ${e as string}`);
+      throw new VerifierError('getIssuerProfile', `${errorMessage} - ${e as string}`, ProblemDetailsType.PARSING_ERROR);
     }
   } else if (!isValidUrl(issuerAddress)) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileNotSet')}`, ProblemDetailsType.MALFORMED_VALUE_ERROR);
   }
 
   issuerProfile = JSON.parse(await request({ url: issuerAddress }).catch((error) => {
     console.error(error);
-    throw new VerifierError('getIssuerProfile', errorMessage);
+    throw new VerifierError('getIssuerProfile', errorMessage, ProblemDetailsType.PARSING_ERROR);
   }));
 
   if (!isValidProfile(issuerProfile) && !isValidV1Profile(issuerProfile)) {
-    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`);
+    throw new VerifierError('getIssuerProfile', `${errorMessage} - ${getText('errors', 'issuerProfileInvalid')}`, ProblemDetailsType.MALFORMED_VALUE_ERROR);
   }
 
   return issuerProfile;

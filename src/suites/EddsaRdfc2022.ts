@@ -19,6 +19,7 @@ import { preloadedContexts } from '../constants';
 import { BlockcertsV3 } from '../models/BlockcertsV3';
 import { IDidDocument } from '../models/DidDocument';
 import { VerifierError } from '../models';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { IPublicKeyJwk, jwkToMultibaseEd25519 } from '../helpers/keyUtils';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
@@ -211,14 +212,14 @@ export default class EddsaRdfc2022 extends Suite {
         const issuerDoc = this.getTargetVerificationMethodContainer();
         if (!issuerDoc) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
-            'The verification method of the document does not match the provided issuer.');
+            'The verification method of the document does not match the provided issuer.', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         this.verificationMethod = this.findVerificationMethod(issuerDoc.verificationMethod, issuerDoc.id);
 
         if (!this.verificationMethod) {
           throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey,
-            'The verification method of the document does not match the provided issuer.');
+            'The verification method of the document does not match the provided issuer.', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         try {
@@ -233,11 +234,11 @@ export default class EddsaRdfc2022 extends Suite {
         });
 
         if (!key) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         if (key.revoked) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         return key;
@@ -253,13 +254,13 @@ export default class EddsaRdfc2022 extends Suite {
         if (this.verificationMethod.expires) {
           const expirationDate = new Date(this.verificationMethod.expires).getTime();
           if (expirationDate < Date.now()) {
-            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired');
+            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
           }
         }
 
         if (this.verificationMethod.revoked) {
           // waiting on clarification https://github.com/w3c/cid/issues/152
-          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked');
+          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
       },
       this.type
@@ -284,7 +285,8 @@ export default class EddsaRdfc2022 extends Suite {
         if (!verificationStatus.verified) {
           console.error(JSON.stringify(verificationStatus, null, 2));
           throw new VerifierError(SUB_STEPS.checkDocumentSignature,
-            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`);
+            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`,
+            ProblemDetailsType.PROOF_VERIFICATION_ERROR);
         } else {
           console.log('Credential EddsaRdfc2022 signature successfully verified');
         }

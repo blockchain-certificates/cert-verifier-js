@@ -15,6 +15,7 @@ import type { SuiteAPI } from '../models/Suite';
 import type { BlockcertsV3, VCProof } from '../models/BlockcertsV3';
 import type { IDidDocument } from '../models/DidDocument';
 import { VerifierError } from '../models';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 
 const { purposes: { AssertionProofPurpose, AuthenticationProofPurpose } } = jsigs;
 
@@ -191,12 +192,12 @@ export default class EcdsaSd2023 extends Suite {
         );
 
         if (!this.verificationMethod) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'Could not derive the verification key', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         // TODO: revoked property should exist but we are currently using a forked implementation which does not expose it
         if ((this.verificationMethod as any).revoked) {
-          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked');
+          throw new VerifierError(SUB_STEPS.retrieveVerificationMethodPublicKey, 'The verification key has been revoked', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
 
         return this.verificationMethod;
@@ -212,13 +213,13 @@ export default class EcdsaSd2023 extends Suite {
         if (this.verificationMethod.expires) {
           const expirationDate = new Date(this.verificationMethod.expires).getTime();
           if (expirationDate < Date.now()) {
-            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired');
+            throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has expired', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
           }
         }
 
         if (this.verificationMethod.revoked) {
           // waiting on clarification https://github.com/w3c/cid/issues/152
-          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked');
+          throw new VerifierError(SUB_STEPS.ensureVerificationMethodValidity, 'The verification key has been revoked', ProblemDetailsType.CRYPTOGRAPHIC_SECURITY_ERROR);
         }
       },
       this.type
@@ -254,7 +255,8 @@ export default class EcdsaSd2023 extends Suite {
         if (!verificationStatus.verified) {
           console.error(JSON.stringify(verificationStatus, null, 2));
           throw new VerifierError(SUB_STEPS.checkDocumentSignature,
-            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`);
+            `The document's ${this.type} signature could not be confirmed: ${this.getErrorMessage(verificationStatus)}`,
+            ProblemDetailsType.PROOF_VERIFICATION_ERROR);
         } else {
           console.log(`Credential ${this.type} signature successfully verified`);
         }

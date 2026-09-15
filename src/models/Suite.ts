@@ -37,7 +37,7 @@ export abstract class Suite {
   abstract getIssuerName (): string;
   abstract getIssuerProfileDomain (): string;
   abstract getIssuerProfileUrl (): string;
-  abstract getSigningDate (): string;
+  abstract getSigningDate (): string | undefined;
 
   // only needed for Blockchain anchoring suites
   getChain? (): IBlockchainObject;

@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import fixtures from '../fixtures/fixtures.mjs';
+import { fixtureV1, fixtureV2, fixtureV3 } from '../fixtures/fixtures.mjs';
 
 function prettyFormat (jsonObject) {
   return JSON.stringify(jsonObject, null, 2);
@@ -26,7 +26,9 @@ async function verify (blockcerts, version) {
 }
 
 function verifyCerts () {
-  fixtures.forEach((fixture, index) => verify(fixture, `v${index + 2}`)); // no v1 anymore, bit dirty innit?
+  verify(fixtureV1, 'v1');
+  verify(fixtureV2, 'v2');
+  verify(fixtureV3, 'v3');
 }
 
 verifyCerts();

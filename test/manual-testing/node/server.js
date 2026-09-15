@@ -16,28 +16,23 @@ server.post('/verification', async (req, res) => {
     global.fetch = FakeFetch;
   }
   if (req.body.blockcerts) {
-    const blockcertsData = req.body.blockcerts;
-    const certificate = new certVerifierJs.Certificate(blockcertsData);
-    await certificate.init();
-    await certificate
-      .verify()
-      .then(({ status, message }) => {
-        console.log(`${req.body.version} Status:`, status);
+    try {
+      const blockcertsData = req.body.blockcerts;
+      const certificate = new certVerifierJs.Certificate(blockcertsData);
+      await certificate.init();
+      const { status, message } = await certificate.verify();
 
-        if (status === 'failure') {
-          console.log(`The certificate ${req.body.blockcerts.id} is not valid. Error: ${message}`);
-        }
+      console.log(`${req.body.version} Status:`, status);
 
-        return res.json({
-          version: req.body.version,
-          status,
-          message
-        });
-      })
-      .catch(err => {
-        console.log(req.body.version, err);
-        return err;
-      });
+      if (status === 'failure') {
+        console.log(`The certificate ${req.body.blockcerts.id} is not valid. Error: ${message}`);
+      }
+
+      return res.json({ version: req.body.version, status, message });
+    } catch (err) {
+      console.error(req.body.version, err);
+      return res.status(500).json({ version: req.body.version, status: 'failure', message: err.message });
+    }
   }
 });
 

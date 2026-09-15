@@ -15,7 +15,8 @@ export default tseslint.config(
         'caughtErrors': 'none'
       }],
       '@typescript-eslint/no-unused-expressions': 'off',
-      'no-undef': 'off'
+      'no-undef': 'off',
+      'preserve-caught-error': 'off'
     }
   }
 );

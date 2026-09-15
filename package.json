@@ -78,7 +78,7 @@
     "@rollup/plugin-terser": "^1.0.0",
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/node": "^25.3.2",
-    "@types/sinon": "^21.0.0",
+    "@types/sinon": "^22.0.0",
     "@vitest/coverage-istanbul": "^5.0.0",
     "body-parser": "^2.2.0",
     "brfs": "^2.0.2",

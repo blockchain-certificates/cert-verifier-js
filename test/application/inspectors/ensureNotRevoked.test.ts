@@ -26,6 +26,17 @@ describe('Inspectors test suite', function () {
               ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
             }).toThrowError(`This certificate has been revoked by the issuer. Reason given: ${revocationReasonAssertion}.`);
           });
+
+          it('should throw a VerifierError with credentialStatus set to "revoked"', function () {
+            const assertionUidFixture = revokedAssertionsFixture.revokedAssertions[0].id;
+            let error: any;
+            try {
+              ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
+            } catch (e) {
+              error = e;
+            }
+            expect(error.credentialStatus).toBe('revoked');
+          });
         });
 
         describe('given keys is an array', function () {

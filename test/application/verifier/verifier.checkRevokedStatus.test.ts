@@ -69,6 +69,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
         expect((verifier as any)._stepsStatuses).toEqual([{
           code: 'checkRevokedStatus',
           message: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.',
+          credentialStatus: 'revoked',
           status: 'failure'
         }]);
       });
@@ -135,6 +136,7 @@ describe('Verifier checkRevokedStatus method test suite', function () {
         expect((verifier as any)._stepsStatuses).toEqual([{
           code: 'checkRevokedStatus',
           message: 'This certificate has been revoked by the issuer.',
+          credentialStatus: 'revoked',
           status: 'failure'
         }]);
       });

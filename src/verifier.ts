@@ -21,6 +21,7 @@ import { isVCV2 } from './parsers/helpers/retrieveVCVersion';
 import { cryptoSuiteToType } from './helpers/cryptoSuite';
 import type { ProblemDetails } from './models/ProblemDetails';
 import { ProblemDetailsType } from './models/ProblemDetails';
+import type { CREDENTIAL_STATUS_OPTIONS } from './domain/certificates/useCases/generateRevocationReason';
 
 export interface IVerificationStepCallbackAPI {
   code: string;
@@ -28,6 +29,9 @@ export interface IVerificationStepCallbackAPI {
   status: VERIFICATION_STATUSES;
   errorMessage?: string;
   parentStep: string;
+  // Set only on checkRevokedStatus failures caused by an actual revoked/suspended
+  // credentialStatus entry, so consumers can branch on the outcome without parsing errorMessage.
+  credentialStatus?: CREDENTIAL_STATUS_OPTIONS;
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
@@ -46,6 +50,7 @@ interface StepVerificationStatus {
   status: VERIFICATION_STATUSES;
   message?: string;
   problemDetails?: ProblemDetails;
+  credentialStatus?: CREDENTIAL_STATUS_OPTIONS;
 }
 
 export enum SupportedVerificationSuites {
@@ -362,11 +367,12 @@ export default class Verifier {
     } catch (err) {
       console.error(err);
       if (step) {
-        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message, err.credentialStatus);
         this._stepsStatuses.push({
           code: step,
           message: err.message,
           problemDetails: err.problemDetails,
+          credentialStatus: err.credentialStatus,
           status: VERIFICATION_STATUSES.FAILURE
         });
       }
@@ -522,7 +528,7 @@ export default class Verifier {
     return { code: VerificationSteps.final, status, message, ...(problemDetails ? { problemDetails } : {}) };
   }
 
-  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {
+  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = '', credentialStatus?: CREDENTIAL_STATUS_OPTIONS): void {
     if (code != null) {
       const step: VerificationSubstep = this.findStepFromVerificationProcess(code, verificationSuite);
       if (step === undefined) {
@@ -540,6 +546,9 @@ export default class Verifier {
       };
       if (errorMessage) {
         update.errorMessage = errorMessage;
+      }
+      if (credentialStatus) {
+        update.credentialStatus = credentialStatus;
       }
       this._stepCallback(update);
     }

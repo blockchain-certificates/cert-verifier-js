@@ -99,7 +99,8 @@ describe('Certificate test suite', function () {
             label: getText('subSteps', `${SUB_STEPS.checkRevokedStatus}LabelPending`),
             parentStep: VerificationSteps.statusCheck,
             status: VERIFICATION_STATUSES.FAILURE,
-            errorMessage: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+            errorMessage: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.',
+            credentialStatus: 'revoked'
           };
 
           await certificate.verify(callbackSpy);

@@ -3,6 +3,7 @@ import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import domain from '../domain';
 import { intersect } from '../helpers/array';
 import type { RevokedAssertion } from '../models/RevokedAssertions';
+import { CREDENTIAL_STATUS_OPTIONS } from '../domain/certificates/useCases/generateRevocationReason';
 
 export default function ensureNotRevoked (revokedAddresses?: RevokedAssertion[], keys?: string | string[]): void {
   if (!revokedAddresses || !keys) {
@@ -26,7 +27,9 @@ export default function ensureNotRevoked (revokedAddresses?: RevokedAssertion[],
         SUB_STEPS.checkRevokedStatus,
         domain.certificates.generateRevocationReason(
           revokedAddresses[indexOfMatch].revocationReason
-        )
+        ),
+        undefined,
+        CREDENTIAL_STATUS_OPTIONS.REVOKED
       );
     }
   }

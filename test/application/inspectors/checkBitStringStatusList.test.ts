@@ -117,6 +117,11 @@ describe('checkBitStringStatusList inspector test suite', function () {
         await checkBitStringStatusList(StatusList2021Revoked.credentialStatus);
       }).rejects.toThrow('This certificate has been revoked by the issuer.');
     });
+
+    it('should throw a VerifierError with credentialStatus set to "revoked"', async function () {
+      const error = await checkBitStringStatusList(StatusList2021Revoked.credentialStatus).catch(e => e);
+      expect(error.credentialStatus).toBe('revoked');
+    });
   });
 
   describe('when the certificate has been suspended', function () {
@@ -124,6 +129,11 @@ describe('checkBitStringStatusList inspector test suite', function () {
       await expect(async () => {
         await checkBitStringStatusList(StatusList2021Suspended.credentialStatus);
       }).rejects.toThrow('This certificate has been suspended by the issuer.');
+    });
+
+    it('should throw a VerifierError with credentialStatus set to "suspended"', async function () {
+      const error = await checkBitStringStatusList(StatusList2021Suspended.credentialStatus).catch(e => e);
+      expect(error.credentialStatus).toBe('suspended');
     });
   });
 
@@ -179,6 +189,14 @@ describe('checkBitStringStatusList inspector test suite', function () {
       await expect(async () => {
         await checkBitStringStatusList(tamperedList.credentialStatus);
       }).rejects.toThrow('The authenticity of the revocation list could not be verified.');
+    });
+
+    it('should throw a VerifierError without a credentialStatus, since this is an infrastructure failure and not an actual revoked/suspended outcome', async function () {
+      const tamperedList = JSON.parse(JSON.stringify(StatusList2021Revoked));
+      tamperedList.credentialStatus.statusListCredential = tamperedListUrl;
+
+      const error = await checkBitStringStatusList(tamperedList.credentialStatus).catch(e => e);
+      expect(error.credentialStatus).toBeUndefined();
     });
   });
 

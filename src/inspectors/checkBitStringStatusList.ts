@@ -386,7 +386,10 @@ export default async function checkBitStringStatusList (credentialStatus: VCCred
 
     if (isRevoked) {
       const statusText = status.statusPurpose === 'revocation' ? CREDENTIAL_STATUS_OPTIONS.REVOKED : CREDENTIAL_STATUS_OPTIONS.SUSPENDED;
-      throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', statusText));
+      const problemDetailsType = statusText === CREDENTIAL_STATUS_OPTIONS.REVOKED
+        ? ProblemDetailsType.CREDENTIAL_REVOKED
+        : ProblemDetailsType.CREDENTIAL_SUSPENDED;
+      throw new VerifierError(SUB_STEPS.checkRevokedStatus, domain.certificates.generateRevocationReason('', statusText), problemDetailsType);
     }
   }
 }

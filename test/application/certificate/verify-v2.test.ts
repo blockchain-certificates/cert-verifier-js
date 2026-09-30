@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Certificate, STEPS, VERIFICATION_STATUSES } from '../../../src';
+import { Certificate, ProblemDetailsType, STEPS, VERIFICATION_STATUSES } from '../../../src';
 import domain from '../../../src/domain';
 import { SUB_STEPS, VerificationSteps } from '../../../src/domain/verifier/entities/verificationSteps';
 import { getText } from '../../../src/domain/i18n/useCases';
@@ -99,7 +99,11 @@ describe('Certificate test suite', function () {
             label: getText('subSteps', `${SUB_STEPS.checkRevokedStatus}LabelPending`),
             parentStep: VerificationSteps.statusCheck,
             status: VERIFICATION_STATUSES.FAILURE,
-            errorMessage: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+            errorMessage: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.',
+            problemDetails: {
+              type: ProblemDetailsType.CREDENTIAL_REVOKED,
+              detail: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+            }
           };
 
           await certificate.verify(callbackSpy);
@@ -115,7 +119,11 @@ describe('Certificate test suite', function () {
           const expectedFinalStep = {
             code: STEPS.final,
             status: VERIFICATION_STATUSES.FAILURE,
-            message: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+            message: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.',
+            problemDetails: {
+              type: ProblemDetailsType.CREDENTIAL_REVOKED,
+              detail: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+            }
           };
 
           const finalStep = await certificate.verify();

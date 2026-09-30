@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { ensureNotRevoked } from '../../../src/inspectors';
+import { ProblemDetailsType } from '../../../src/models/ProblemDetails';
 import revokedAssertionsFixture from '../../application/domain/verifier/useCases/fixtures/revokedAssertionsFixture.json';
 
 describe('Inspectors test suite', function () {
@@ -25,6 +26,17 @@ describe('Inspectors test suite', function () {
             expect(function () {
               ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
             }).toThrowError(`This certificate has been revoked by the issuer. Reason given: ${revocationReasonAssertion}.`);
+          });
+
+          it('should throw a VerifierError with problemDetails.type set to CREDENTIAL_REVOKED', function () {
+            const assertionUidFixture = revokedAssertionsFixture.revokedAssertions[0].id;
+            let error: any;
+            try {
+              ensureNotRevoked(revokedAssertionsFixture.revokedAssertions, assertionUidFixture);
+            } catch (e) {
+              error = e;
+            }
+            expect(error.problemDetails.type).toBe(ProblemDetailsType.CREDENTIAL_REVOKED);
           });
         });
 

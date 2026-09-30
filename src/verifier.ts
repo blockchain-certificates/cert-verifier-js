@@ -28,6 +28,11 @@ export interface IVerificationStepCallbackAPI {
   status: VERIFICATION_STATUSES;
   errorMessage?: string;
   parentStep: string;
+  // Carries the failing VerifierError's problemDetails (RFC 9457), so consumers can branch
+  // on a specific outcome (e.g. problemDetails.type === ProblemDetailsType.CREDENTIAL_REVOKED)
+  // without parsing errorMessage. Any VerifierError that sets a problemDetailsType surfaces
+  // it here, not just revocation/suspension.
+  problemDetails?: ProblemDetails;
 }
 
 export type IVerificationStepCallbackFn = (update: IVerificationStepCallbackAPI) => any;
@@ -362,7 +367,7 @@ export default class Verifier {
     } catch (err) {
       console.error(err);
       if (step) {
-        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message);
+        this._updateStatusCallback(step, VERIFICATION_STATUSES.FAILURE, verificationSuite, err.message, err.problemDetails);
         this._stepsStatuses.push({
           code: step,
           message: err.message,
@@ -522,7 +527,7 @@ export default class Verifier {
     return { code: VerificationSteps.final, status, message, ...(problemDetails ? { problemDetails } : {}) };
   }
 
-  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = ''): void {
+  private _updateStatusCallback (code: string, status: VERIFICATION_STATUSES, verificationSuite = '', errorMessage = '', problemDetails?: ProblemDetails): void {
     if (code != null) {
       const step: VerificationSubstep = this.findStepFromVerificationProcess(code, verificationSuite);
       if (step === undefined) {
@@ -540,6 +545,9 @@ export default class Verifier {
       };
       if (errorMessage) {
         update.errorMessage = errorMessage;
+      }
+      if (problemDetails) {
+        update.problemDetails = problemDetails;
       }
       this._stepCallback(update);
     }

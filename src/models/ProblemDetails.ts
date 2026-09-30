@@ -23,7 +23,17 @@ export enum ProblemDetailsType {
   // https://www.w3.org/TR/vc-data-integrity/#processing-errors
   // Per the spec, these type URLs MUST start with https://w3id.org/security#
   PROOF_VERIFICATION_ERROR = 'https://w3id.org/security#PROOF_VERIFICATION_ERROR',
-  PROOF_TRANSFORMATION_ERROR = 'https://w3id.org/security#PROOF_TRANSFORMATION_ERROR'
+  PROOF_TRANSFORMATION_ERROR = 'https://w3id.org/security#PROOF_TRANSFORMATION_ERROR',
+
+  // Library-specific extensions, as explicitly permitted by the spec's "Implementations
+  // MAY extend the ProblemDetails object" guidance. Minted under the same blockcerts
+  // vocabulary namespace already used elsewhere in this library (see
+  // src/constants/contexts/blockcerts.v3-beta.json). Distinguishing revoked from suspended
+  // this way - via `type`, the field RFC 9457 defines for exactly this purpose - means any
+  // future outcome that needs its own identity gets a new `type` value here instead of
+  // another bespoke field on VerifierError.
+  CREDENTIAL_REVOKED = 'https://w3id.org/blockcerts#CREDENTIAL_REVOKED',
+  CREDENTIAL_SUSPENDED = 'https://w3id.org/blockcerts#CREDENTIAL_SUSPENDED'
 }
 
 export interface ProblemDetails {

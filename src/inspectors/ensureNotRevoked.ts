@@ -1,4 +1,5 @@
 import VerifierError from '../models/verifierError';
+import { ProblemDetailsType } from '../models/ProblemDetails';
 import { SUB_STEPS } from '../domain/verifier/entities/verificationSteps';
 import domain from '../domain';
 import { intersect } from '../helpers/array';
@@ -26,7 +27,8 @@ export default function ensureNotRevoked (revokedAddresses?: RevokedAssertion[],
         SUB_STEPS.checkRevokedStatus,
         domain.certificates.generateRevocationReason(
           revokedAddresses[indexOfMatch].revocationReason
-        )
+        ),
+        ProblemDetailsType.CREDENTIAL_REVOKED
       );
     }
   }

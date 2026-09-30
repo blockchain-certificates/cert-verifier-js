@@ -5,6 +5,7 @@ import { join } from 'path';
 import { checkBitStringStatusList } from '../../../src/inspectors';
 import Certificate from '../../../src/certificate';
 import { VERIFICATION_STATUSES } from '../../../src/constants/verificationStatuses';
+import { ProblemDetailsType } from '../../../src/models/ProblemDetails';
 import BlockcertsStatusList2021 from '../../fixtures/blockcerts-status-list-2021.json';
 import BlockcertsStatusList2021Suspension from '../../fixtures/blockcerts-status-list-2021-suspension.json';
 import BlockcertsBitstringStatusList from '../../fixtures/blockcerts-bitstring-status-list.json';
@@ -118,9 +119,9 @@ describe('checkBitStringStatusList inspector test suite', function () {
       }).rejects.toThrow('This certificate has been revoked by the issuer.');
     });
 
-    it('should throw a VerifierError with credentialStatus set to "revoked"', async function () {
+    it('should throw a VerifierError with problemDetails.type set to CREDENTIAL_REVOKED', async function () {
       const error = await checkBitStringStatusList(StatusList2021Revoked.credentialStatus).catch(e => e);
-      expect(error.credentialStatus).toBe('revoked');
+      expect(error.problemDetails.type).toBe(ProblemDetailsType.CREDENTIAL_REVOKED);
     });
   });
 
@@ -131,9 +132,9 @@ describe('checkBitStringStatusList inspector test suite', function () {
       }).rejects.toThrow('This certificate has been suspended by the issuer.');
     });
 
-    it('should throw a VerifierError with credentialStatus set to "suspended"', async function () {
+    it('should throw a VerifierError with problemDetails.type set to CREDENTIAL_SUSPENDED', async function () {
       const error = await checkBitStringStatusList(StatusList2021Suspended.credentialStatus).catch(e => e);
-      expect(error.credentialStatus).toBe('suspended');
+      expect(error.problemDetails.type).toBe(ProblemDetailsType.CREDENTIAL_SUSPENDED);
     });
   });
 
@@ -191,12 +192,12 @@ describe('checkBitStringStatusList inspector test suite', function () {
       }).rejects.toThrow('The authenticity of the revocation list could not be verified.');
     });
 
-    it('should throw a VerifierError without a credentialStatus, since this is an infrastructure failure and not an actual revoked/suspended outcome', async function () {
+    it('should throw a VerifierError with a different problemDetails.type, since this is an infrastructure failure and not an actual revoked/suspended outcome', async function () {
       const tamperedList = JSON.parse(JSON.stringify(StatusList2021Revoked));
       tamperedList.credentialStatus.statusListCredential = tamperedListUrl;
 
       const error = await checkBitStringStatusList(tamperedList.credentialStatus).catch(e => e);
-      expect(error.credentialStatus).toBeUndefined();
+      expect(error.problemDetails.type).toBe(ProblemDetailsType.STATUS_VERIFICATION_ERROR);
     });
   });
 

@@ -12,6 +12,7 @@ import StatusList2021Revoked from '../../fixtures/v3/cert-rl-status-list-2021-re
 import StatusList2021 from '../../fixtures/v3/cert-rl-status-list-2021.json';
 import MainnetV2Revoked from '../../fixtures/v2/mainnet-revoked-2.0.json';
 import BlockcertsV3VerificationMethodIssuerProfile from '../../fixtures/v3/testnet-v3-verification-method-issuer-profile.json';
+import { ProblemDetailsType } from '../../../src/models/ProblemDetails';
 
 vi.mock('@blockcerts/explorer-lookup', async (importOriginal) => {
   const explorerLookup = await importOriginal();
@@ -69,7 +70,10 @@ describe('Verifier checkRevokedStatus method test suite', function () {
         expect((verifier as any)._stepsStatuses).toEqual([{
           code: 'checkRevokedStatus',
           message: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.',
-          credentialStatus: 'revoked',
+          problemDetails: {
+            type: ProblemDetailsType.CREDENTIAL_REVOKED,
+            detail: 'This certificate has been revoked by the issuer. Reason given: Incorrect Issue Date. New credential to be issued.'
+          },
           status: 'failure'
         }]);
       });
@@ -136,7 +140,10 @@ describe('Verifier checkRevokedStatus method test suite', function () {
         expect((verifier as any)._stepsStatuses).toEqual([{
           code: 'checkRevokedStatus',
           message: 'This certificate has been revoked by the issuer.',
-          credentialStatus: 'revoked',
+          problemDetails: {
+            type: ProblemDetailsType.CREDENTIAL_REVOKED,
+            detail: 'This certificate has been revoked by the issuer.'
+          },
           status: 'failure'
         }]);
       });

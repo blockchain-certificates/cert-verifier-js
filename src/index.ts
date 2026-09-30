@@ -16,4 +16,5 @@ export { SignatureImage } from './models';
 export { retrieveBlockcertsVersion } from './parsers';
 export { isVerifiablePresentation } from './models/BlockcertsV3';
 export { CONTENT_MEDIA_TYPES } from './models/contentMediaTypes';
-export { CREDENTIAL_STATUS_OPTIONS } from './domain/certificates/useCases/generateRevocationReason';
+export { ProblemDetailsType } from './models/ProblemDetails';
+export type { ProblemDetails } from './models/ProblemDetails';

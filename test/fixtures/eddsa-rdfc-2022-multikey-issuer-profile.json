@@ -1,0 +1,21 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/blockcerts/v3"
+  ],
+  "type": "Profile",
+  "id": "https://example.com/issuer/eddsa-multikey/issuer-profile.json",
+  "name": "Example EdDSA Multikey Issuer",
+  "url": "https://example.com",
+  "verificationMethod": [
+    {
+      "id": "https://example.com/issuer/eddsa-multikey/issuer-profile.json#z6MkmKeM47G7UqD3LnPpKdiyTR2XCAo8qBpnCCSYe6ak1R1C",
+      "type": "Multikey",
+      "controller": "https://example.com/issuer/eddsa-multikey/issuer-profile.json",
+      "publicKeyMultibase": "z6MkmKeM47G7UqD3LnPpKdiyTR2XCAo8qBpnCCSYe6ak1R1C"
+    }
+  ],
+  "assertionMethod": [
+    "https://example.com/issuer/eddsa-multikey/issuer-profile.json#z6MkmKeM47G7UqD3LnPpKdiyTR2XCAo8qBpnCCSYe6ak1R1C"
+  ]
+}

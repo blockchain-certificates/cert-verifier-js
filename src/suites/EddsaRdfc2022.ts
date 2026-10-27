@@ -198,7 +198,8 @@ export default class EddsaRdfc2022 extends Suite {
     const multikey = {
       '@context': 'https://w3id.org/security/multikey/v1',
       type: 'Multikey',
-      publicKeyMultibase: jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk as IPublicKeyJwk),
+      publicKeyMultibase: this.verificationMethod.publicKeyMultibase ??
+        jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk as IPublicKeyJwk),
       id: typeof this.verificationMethod.id === 'string' ? this.verificationMethod.id : undefined,
       controller: typeof this.verificationMethod.controller === 'string' ? this.verificationMethod.controller : undefined
     };

@@ -122,8 +122,9 @@ export default class EddsaRdfc2022 extends Suite {
     throw new Error('doAction method needs to be overwritten by injecting from CVJS');
   }
 
-  private async publicKeyJwkToString (publicKey: any): Promise<string> {
-    return jwkToMultibaseEd25519(publicKey.publicKeyJwk);
+  private getPublicKeyMultibase (): string {
+    return this.verificationMethod.publicKeyMultibase ??
+      jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk as IPublicKeyJwk);
   }
 
   private validateProofType (): void {
@@ -198,8 +199,7 @@ export default class EddsaRdfc2022 extends Suite {
     const multikey = {
       '@context': 'https://w3id.org/security/multikey/v1',
       type: 'Multikey',
-      publicKeyMultibase: this.verificationMethod.publicKeyMultibase ??
-        jwkToMultibaseEd25519(this.verificationMethod.publicKeyJwk as IPublicKeyJwk),
+      publicKeyMultibase: this.getPublicKeyMultibase(),
       id: typeof this.verificationMethod.id === 'string' ? this.verificationMethod.id : undefined,
       controller: typeof this.verificationMethod.controller === 'string' ? this.verificationMethod.controller : undefined
     };
@@ -224,8 +224,7 @@ export default class EddsaRdfc2022 extends Suite {
         }
 
         try {
-          this.publicKey = this.verificationMethod.publicKeyMultibase ??
-            await this.publicKeyJwkToString(this.verificationMethod);
+          this.publicKey = this.getPublicKeyMultibase();
         } catch (e) {
           console.error('ERROR retrieving Ed25519Signature2020 public key', e);
         }

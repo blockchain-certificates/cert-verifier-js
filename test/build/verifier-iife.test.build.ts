@@ -1,4 +1,15 @@
 /* eslint no-undef: 0 */
+import { describe, it, expect } from 'vitest';
+import mockFetchScript from './mocks/FakeFetch.iife.js?raw';
+import verifierScript from '../../dist/verifier-iife.js?raw';
+
+// the iife bundles are classic scripts exposing globals, they need to be loaded as such
+[mockFetchScript, verifierScript].forEach(source => {
+  const script = document.createElement('script');
+  script.textContent = source;
+  document.head.appendChild(script);
+});
+
 const fixtureV1 = {
   receipt: {
     merkleRoot: '68f3ede17fdb67ffd4a5164b5687a71f9fbb68da803b803935720f2aa38f7728',
@@ -120,8 +131,8 @@ window.fetch = mockFetch.FakeFetch;
 describe('verifier build test suite', function () {
   it('throws a deprecation error with a v1 certificate', async function () {
     const certificate = new Verifier.Certificate(fixtureV1);
-    await expectAsync(certificate.init())
-      .toBeRejectedWith(new Error('Verification of v1 certificates is not supported by this component. ' +
+    await expect(certificate.init())
+      .rejects.toEqual(new Error('Verification of v1 certificates is not supported by this component. ' +
       'See the python cert-verifier for v1.1 verification ' +
       'or the npm package cert-verifier-js-v1-legacy for v1.2 ' +
       '(https://www.npmjs.com/package/@blockcerts/cert-verifier-js-v1-legacy)'));

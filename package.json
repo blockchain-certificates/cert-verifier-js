@@ -103,6 +103,7 @@
     "tslib": "^2.4.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.29.1",
+    "vite": "^8.3.5",
     "vitest": "^5.1.0",
     "xmlhttprequest": "^1.8.0"
   },

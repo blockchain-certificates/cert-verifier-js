@@ -37,6 +37,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox
+
       - name: Build
         run: npm run build
 

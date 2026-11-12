@@ -5,6 +5,7 @@ import type { TransactionData } from '../../../src/models/TransactionData';
 import domain from '../../../src/domain';
 import { universalResolverUrl } from '../../../src/domain/did/valueObjects/didResolver';
 import MainnetV2Valid from '../../fixtures/v2/mainnet-valid-2.0.json';
+import VerifiablePresentationFixture from '../../fixtures/v3/mocknet-verifiable-presentation.json';
 
 describe('Certificate entity test suite', function () {
   describe('constructor method', function () {
@@ -140,6 +141,39 @@ describe('Certificate entity test suite', function () {
               const customDidResolverUrl = 'https://resolver.blockcerts.org';
               new Certificate(MainnetV2Valid, { didResolverUrl: customDidResolverUrl });
               expect(domain.did.didResolver.url).toBe(customDidResolverUrl);
+            });
+          });
+        });
+
+        describe('given the certificate is a verifiable presentation', function () {
+          const fixtureOptions: CertificateOptions = {
+            proofPurpose: 'authentication',
+            challenge: 'a-verifier-challenge',
+            domain: 'verifier.example.com',
+            locale: 'fr'
+          };
+
+          it('should apply proofPurpose, challenge and domain to the presentation', function () {
+            const instance = new Certificate(VerifiablePresentationFixture, fixtureOptions);
+            expect(instance.proofPurpose).toBe('authentication');
+            expect(instance.proofChallenge).toBe('a-verifier-challenge');
+            expect(instance.proofDomain).toBe('verifier.example.com');
+          });
+
+          it('should not apply proofPurpose, challenge and domain to the embedded credentials', function () {
+            const instance = new Certificate(VerifiablePresentationFixture, fixtureOptions);
+            expect(instance.verifiableCredentials.length).toBeGreaterThan(0);
+            instance.verifiableCredentials.forEach(credential => {
+              expect(credential.proofPurpose).toBeUndefined();
+              expect(credential.proofChallenge).toBeUndefined();
+              expect(credential.proofDomain).toBeUndefined();
+            });
+          });
+
+          it('should apply the other options to the embedded credentials', function () {
+            const instance = new Certificate(VerifiablePresentationFixture, fixtureOptions);
+            instance.verifiableCredentials.forEach(credential => {
+              expect(credential.locale).toBe('fr');
             });
           });
         });

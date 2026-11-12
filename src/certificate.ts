@@ -58,6 +58,17 @@ export interface Signers {
   transactionLink?: string;
 }
 
+// proofPurpose, challenge and domain describe the presentation's own proof (typically an `authentication` proof
+// bound to the verifier's challenge). Each embedded credential carries its issuer's proof, so it is verified with
+// the remaining options only.
+function getEmbeddedCredentialOptions (options: CertificateOptions): CertificateOptions {
+  const credentialOptions: CertificateOptions = { ...options };
+  delete credentialOptions.proofPurpose;
+  delete credentialOptions.challenge;
+  delete credentialOptions.domain;
+  return credentialOptions;
+}
+
 export default class Certificate {
   public certificateImage?: string;
   public certificateJson: Blockcerts;
@@ -112,7 +123,7 @@ export default class Certificate {
 
     if (this.isVerifiablePresentation) {
       this.verifiableCredentials = (this.certificateJson as any)
-        .verifiableCredential?.map((vc: Blockcerts) => new Certificate(vc, options)) ?? [];
+        .verifiableCredential?.map((vc: Blockcerts) => new Certificate(vc, getEmbeddedCredentialOptions(options))) ?? [];
     }
   }
 
